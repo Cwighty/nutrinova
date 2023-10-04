@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: nutrinova-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: nutrinovadb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Pleasegivemecoke!
+    volumes:
+      - ../nutrinova-db/data:/var/lib/postgresql/data
+      - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d

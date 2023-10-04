@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/nutrinova-api/.vs/nutrinova-api/FileContentIndex
+/nutrinova-api/.vs
+/nutrinova-api/NutrinovaApi.IntegrationTests/bin
+/nutrinova-api/NutrinovaApi.IntegrationTests/obj
+nutrinova-db/data/*
+/nutrinova-api/NutrinovaData/obj
+/nutrinova-api/NutrinovaData/bin/Debug/net7.0
