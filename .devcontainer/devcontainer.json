@@ -1,0 +1,15 @@
+{
+	"name": "nutrinova",
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+	"workspaceFolder": "/app",
+	"shutdownAction": "stopCompose",
+	"service": "editor",
+	"customizations": {
+	},
+	"remoteUser": "node",
+	"features": {
+		"docker-from-docker": "latest"
+	}
+}
