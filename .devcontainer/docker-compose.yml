@@ -1,12 +1,32 @@
 version: "3.9"
 services:
   editor:
-    image: mcr.microsoft.com/vscode/devcontainers/typescript-node:0-16-bullseye
+    build: .
+    user: developer
+    container_name: nutrinova-editor
     volumes:
+      - developer_home:/home/developer
       - ../:/app
-      - ./.bashrc:/home/node/.bashrc
+      - ./.bashrc:/home/developer/.bashrc
+      - $HOME/.ssh:/home/developer/.ssh
     working_dir: /app
     command: tail -f /dev/null
+
+  client:
+    container_name: nutrinova-client
+    build: 
+      context: .
+    user: developer
+    volumes:
+      - ../:/app
+    command: >
+      sh -c "
+        cd nutrinova-ui
+        npm i
+        npm run dev
+      "
+    ports:
+      - 3000:3000
 
   postgres:
     image: postgres:latest
@@ -21,3 +41,5 @@ services:
       - ../nutrinova-db/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
     
+volumes:
+  developer_home:

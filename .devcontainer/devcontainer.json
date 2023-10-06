@@ -8,8 +8,5 @@
 	"service": "editor",
 	"customizations": {
 	},
-	"remoteUser": "node",
-	"features": {
-		"docker-from-docker": "latest"
-	}
+	"remoteUser": "developer"
 }
