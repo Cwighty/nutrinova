@@ -28,6 +28,21 @@ services:
     ports:
       - 3000:3000
 
+  api:
+    container_name: nutrinova_api
+    build: 
+      context: .
+    user: developer
+    volumes:
+      - ../:/app/
+      - developer_home:/home/developer
+    working_dir: /app
+    command: >
+      sh -c "
+        cd nutrinova-api/NutrinovaApi
+        dotnet watch run
+        "
+
   postgres:
     image: postgres:latest
     container_name: nutrinova-db
