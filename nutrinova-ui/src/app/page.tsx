@@ -6,7 +6,7 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.description}>
         <p>
-          oke then
+          Im inside the devcontainer immediate changes!
           <code className={styles.code}>src/app/page.tsx</code>
         </p>
         <div>
