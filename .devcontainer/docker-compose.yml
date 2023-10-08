@@ -35,13 +35,16 @@ services:
     user: developer
     volumes:
       - ../:/app/
-      - developer_home:/home/developer
     working_dir: /app
+    environment:
+      - DOTNET_URLS=http://+:5000 # by default Dotnet only listens to requests coming from 'localhost' from within the container, adding this will listen outside
     command: >
       sh -c "
         cd nutrinova-api/NutrinovaApi
         dotnet watch run
         "
+    ports:
+      - "5000:5000"
 
   postgres:
     image: postgres:latest
