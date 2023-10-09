@@ -23,7 +23,7 @@ jobs:
 
     - name: Restore dependencies and run tests
       run: |
-        cd nutrinova-api/NutrinovaApi-IntegrationTests
+        cd nutrinova-api/NutrinovaApi.IntegrationTests
         dotnet restore
         dotnet test
 
