@@ -35,7 +35,7 @@ services:
       - URL=nutrinova.duckdns.org
       - VALIDATION=duckdns
       - DUCKDNSTOKEN=${DUCKDNSTOKEN}
-      - STAGING=true
+      - STAGING=false
     volumes:
       - /home/caleb/data/swag:/config
       - ./swag-default.conf:/config/nginx/site-confs/default.conf
