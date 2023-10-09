@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: nutrinovadb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: Pleasegivemecoke!
+      PUID: 1000
+      PGID: 1000
     volumes:
       - ../home/caleb/nutrinovadata/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
