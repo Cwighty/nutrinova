@@ -17,7 +17,7 @@ services:
   client:
     container_name: nutrinova-client
     build: 
-      context: ../nutrinova-api/NutrinovaApi/
+      context: ../nutrinova-api/
 
   api:
     container_name: nutrinova_api
