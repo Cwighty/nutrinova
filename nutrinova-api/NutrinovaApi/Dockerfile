@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["NutrinovaApi/NutrinovaApi.csproj", "NutrinovaApi/"]
+COPY ["NutrinovaApi.csproj", "NutrinovaApi/"]
 RUN dotnet restore "NutrinovaApi/NutrinovaApi.csproj"
 COPY . .
 WORKDIR "/src/NutrinovaApi"
