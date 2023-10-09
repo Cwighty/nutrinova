@@ -26,8 +26,8 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger(c => c.RouteTemplate = "/swagger/docs/{documentName}/swagger.json");
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/docs/v2/swagger.json", "My API"));
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.MapControllers();
