@@ -1,7 +1,13 @@
 name: deploy
 env: 
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
-on: [push, workflow_dispatch]
+on: 
+  push: 
+    branches:
+      - main
+  workflow_dispatch:
+    branches:
+      - main
 jobs:
   deploy-application:
     runs-on: [ self-hosted ]
