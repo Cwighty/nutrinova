@@ -9,7 +9,26 @@ on:
     branches:
       - main
 jobs:
+  test-api:
+    runs-on: [ self-hosted ]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0'
+
+    - name: Restore dependencies and run tests
+      run: |
+        cd nutrinova-api/NutrinovaApi-IntegrationTests
+        dotnet restore
+        dotnet test
+
   deploy-application:
+    needs: test-api
     runs-on: [ self-hosted ]
     steps:
       - name: checkout repo
