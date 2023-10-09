@@ -11,5 +11,34 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: Pleasegivemecoke!
     volumes:
-      - ../nutrinova-db/data:/var/lib/postgresql/data
+      - ../home/caleb/nutrinovadata/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
+
+  client:
+    container_name: nutrinova-client
+    build: 
+      context: ../nutrinova-api/NutrinovaApi/
+
+  api:
+    container_name: nutrinova_api
+    build: 
+      context: ../nutrinova-ui/
+
+  swag:
+    image: lscr.io/linuxserver/swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - URL=nutrinova.duckdns.org
+      - VALIDATION=duckdns
+      - DUCKDNSTOKEN=${DUCKDNSTOKEN}
+      - STAGING=true
+    volumes:
+      - /home/caleb/data/swag:/config
+      - ./swag-default.conf:/config/nginx/site-confs/default.conf
+    ports:
+    - 0.0.0.0:1359:443
+    restart: unless-stopped
