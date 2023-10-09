@@ -17,12 +17,12 @@ services:
   client:
     container_name: nutrinova-client
     build: 
-      context: ../nutrinova-api/
+      context: ../nutrinova-ui/
 
   api:
     container_name: nutrinova_api
     build: 
-      context: ../nutrinova-ui/
+      context: ../nutrinova-api/
 
   swag:
     image: lscr.io/linuxserver/swag
