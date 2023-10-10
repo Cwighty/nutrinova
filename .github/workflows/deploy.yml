@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy To Production
 env: 
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
 on: 
@@ -8,7 +8,7 @@ on:
 jobs:
   test-api:
     runs-on: [ self-hosted ]
-    uses: ./.github/workflows/testapi.yml
+    uses: ./.github/workflows/api_integration_tests.yml
 
   deploy-application:
     needs: test-api
