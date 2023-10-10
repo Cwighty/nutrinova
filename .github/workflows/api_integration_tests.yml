@@ -4,18 +4,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  runs-on: [ self-hosted ]
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v2
+  test:
+    runs-on: [ self-hosted ]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  - name: Setup .NET
-    uses: actions/setup-dotnet@v1
-    with:
-      dotnet-version: '7.0'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0'
 
-  - name: Restore dependencies and run tests
-    run: |
-      cd nutrinova-api/NutrinovaApi.IntegrationTests
-      dotnet restore
-      dotnet test
+    - name: Restore dependencies and run tests
+      run: |
+        cd nutrinova-api/NutrinovaApi.IntegrationTests
+        dotnet restore
+        dotnet test
