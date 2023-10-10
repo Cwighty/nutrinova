@@ -8,4 +8,4 @@ on:
 jobs:
   test:
     runs-on: [ self-hosted ]
-    uses: ./.github/actions/testapi
+    uses: ./.github/workflows/testapi.yml

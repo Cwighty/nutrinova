@@ -8,7 +8,7 @@ on:
 jobs:
   test-api:
     runs-on: [ self-hosted ]
-    uses: ./.github/actions/testapi.yml
+    uses: ./.github/workflows/testapi.yml
 
   deploy-application:
     needs: test-api
