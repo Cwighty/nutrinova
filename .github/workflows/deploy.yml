@@ -1,13 +1,15 @@
 name: Deploy To Production
+
 env: 
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
+
 on: 
   workflow_dispatch:
     branches:
       - main
+
 jobs:
   test-api:
-    runs-on: [ self-hosted ]
     uses: ./.github/workflows/api_integration_tests.yml
 
   deploy-application:
