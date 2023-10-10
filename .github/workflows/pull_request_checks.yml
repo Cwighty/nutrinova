@@ -11,4 +11,4 @@ jobs:
 
     steps:
     - name: Test Dotnet Api 
-      uses: ../actions/testapi
+      uses: ./.github/actions/testapi
