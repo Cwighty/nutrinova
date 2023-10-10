@@ -2,9 +2,6 @@ name: deploy
 env: 
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
 on: 
-  push: 
-    branches:
-      - main
   workflow_dispatch:
     branches:
       - main
