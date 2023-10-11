@@ -32,7 +32,6 @@ public class Program
 
         app.MapControllers();
 
-        Console.WriteLine(app.Environment);
         app.Run();
     }
 }

@@ -41,7 +41,7 @@ services:
     command: >
       sh -c "
         cd nutrinova-api/NutrinovaApi
-        dotnet watch run
+        dotnet watch run --non-interactive --no-hot-reload
         "
     ports:
       - "5000:5000"
