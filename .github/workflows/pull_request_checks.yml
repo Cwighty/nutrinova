@@ -6,5 +6,8 @@ on:
       - main
 
 jobs:
-  test:
+  check-tests:
     uses: ./.github/workflows/api_integration_tests.yml
+  
+  check-projects-build:
+    uses: ./.github/workflows/build.yml
