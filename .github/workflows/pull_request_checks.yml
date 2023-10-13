@@ -6,6 +6,9 @@ on:
       - main
 
 jobs:
+  check-lint:
+    uses: ./.github/workflows/ui_lint.yml
+
   check-tests:
     uses: ./.github/workflows/api_integration_tests.yml
   

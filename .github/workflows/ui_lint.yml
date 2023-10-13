@@ -1,0 +1,23 @@
+name: Lint Next.js Project 
+
+on: 
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: [ self-hosted ]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup node 
+      uses: actions/setup-node
+      with:
+        node-version: '20'
+
+    - name: Restore dependencies and lint 
+      run: |
+        cd nutrinova-ui
+        npm ci
+        npm run lint
