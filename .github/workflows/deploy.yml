@@ -1,23 +1,24 @@
 name: Deploy To Production
 
-env: 
+env:
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
 
-on: 
+on:
   push:
     branches:
       - main
   workflow_dispatch:
-    branches:
-      - main
 
 jobs:
+  lint-ui:
+    uses: ./.github/workflows/ui_lint.yml
+
   test-api:
     uses: ./.github/workflows/api_integration_tests.yml
 
   deploy-application:
     needs: test-api
-    runs-on: [ self-hosted ]
+    runs-on: [self-hosted]
     steps:
       - name: checkout repo
         uses: actions/checkout@v2
