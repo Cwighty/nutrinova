@@ -41,11 +41,12 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
 
-        while (directory != null && !directory.GetFiles("*.git").Any())
+        while (directory != null && !directory.GetFiles("*.sln").Any())
         {
             directory = directory.Parent;
         }
 
+        directory = directory?.Parent;
         return directory?.FullName ?? throw new Exception("Project root could not be located.");
     }
 
