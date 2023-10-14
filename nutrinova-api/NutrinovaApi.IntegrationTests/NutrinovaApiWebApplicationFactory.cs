@@ -8,7 +8,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
 
     public NutrinovaApiWebApplicationFactory()
     {
-        var directory = FindProjectRootByMarker() + "/TestDbScripts";
+        var directory = FindProjectRootByMarker() + "/nutrinova-db/init-scripts";
         Debug.WriteLine(directory);
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres")
@@ -41,7 +41,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
 
-        while (directory != null && !directory.GetFiles("*.sln").Any())
+        while (directory != null && !directory.GetFiles("*.git").Any())
         {
             directory = directory.Parent;
         }
