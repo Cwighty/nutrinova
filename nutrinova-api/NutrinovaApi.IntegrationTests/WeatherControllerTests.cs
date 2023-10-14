@@ -15,6 +15,6 @@ public class WeatherControllerTests : IClassFixture<WebApplicationFactory<Progra
     public async Task TestWeatherController()
     {
         var weather = await httpClient.GetFromJsonAsync<IEnumerable<WeatherForecast>>("api/WeatherForecast");
-        weather.Should().BeEmpty();
+        weather.Should().NotBeEmpty();
     }
 }
