@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Hosting;
-using Testcontainers.PostgreSql;
+using System.Net.Http.Headers;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -20,6 +16,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
            .Build();
     }
 
+    public string DefaultUserId { get; set; } = "1";
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -27,9 +24,18 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
         {
             services.RemoveAll(typeof(DbContextOptions<NutrinovaDbContext>));
             services.AddDbContext<NutrinovaDbContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
+
+            services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
+
+            services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
+                .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
         });
     }
 
+    protected override void ConfigureClient(HttpClient client)
+    {
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.AuthenticationScheme);
+    }
 
     public async Task InitializeAsync()
     {

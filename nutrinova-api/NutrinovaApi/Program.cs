@@ -58,10 +58,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        if (app.Environment.IsStaging())
-            app.MapControllers().AllowAnonymous(); // bypass auth for for tests
-        else
-            app.MapControllers();
+        app.MapControllers();
 
         app.Run();
     }
