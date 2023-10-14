@@ -1,4 +1,6 @@
-﻿namespace NutrinovaApi.IntegrationTests;
+﻿using System.Diagnostics;
+
+namespace NutrinovaApi.IntegrationTests;
 
 public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<NutrinovaApi.Program>, IAsyncLifetime
 {
@@ -6,15 +8,12 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
 
     public NutrinovaApiWebApplicationFactory()
     {
-        var whereAmI = Environment.CurrentDirectory;
-        var backupFile = Directory.GetFiles("../../../../TestDBScripts", "*.sql", SearchOption.AllDirectories)
-           .Select(f => new FileInfo(f))
-           .OrderByDescending(fi => fi.LastWriteTime)
-           .First();
+        var directory = FindProjectRootByMarker() + "/TestDBScripts";
+        Debug.WriteLine(directory);
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres")
            .WithPassword("Strong_password_123!")
-           .WithBindMount(backupFile.Directory?.FullName, "/docker-entrypoint-initdb.d")
+           .WithBindMount(directory, "/docker-entrypoint-initdb.d")
            .Build();
     }
 
@@ -37,4 +36,17 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     {
         await _dbContainer.StopAsync();
     }
+
+    public static string FindProjectRootByMarker()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory != null && !directory.GetFiles("*.sln").Any())
+        {
+            directory = directory.Parent;
+        }
+
+        return directory?.FullName ?? throw new Exception("Project root could not be located.");
+    }
+
 }
