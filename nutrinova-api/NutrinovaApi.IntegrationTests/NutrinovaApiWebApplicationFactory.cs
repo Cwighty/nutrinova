@@ -8,7 +8,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
 
     public NutrinovaApiWebApplicationFactory()
     {
-        var directory = FindProjectRootByMarker() + "/TestDBScripts";
+        var directory = FindProjectRootByMarker() + "/TestDbScripts";
         Debug.WriteLine(directory);
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres")
