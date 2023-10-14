@@ -5,19 +5,14 @@ on:
   workflow_call:
 
 jobs:
-  test:
+  lint-frontend:
     runs-on: [self-hosted]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-
-      - name: Restore dependencies and lint
+      - name: Lint Frontend
         run: |
-          cd nutrinova-ui
-          npm ci
-          npm run lint
+          cd nutrinova-ui/
+          docker build -t nutrinova_ui_lint -f lint.Dockerfile .
+          docker run -i --rm nutrinova_ui_lint

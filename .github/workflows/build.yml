@@ -1,40 +1,30 @@
-name: Build front and back 
+name: Build front and back
 
-on: 
+on:
   workflow_dispatch:
   workflow_call:
 
 jobs:
   build-backend:
-    runs-on: [ self-hosted ]
+    runs-on: [self-hosted]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0'
+      - name: Build Backend
+        run: |
+          cd nutrinova-api/
+          docker build -t nutrinova_api_build -f build.Dockerfile .
+          docker run -i --rm nutrinova_api_build
 
-    - name: Restore dependencies and build 
-      run: |
-        cd nutrinova-api/NutrinovaApi
-        dotnet restore
-        dotnet build
-  
   build-frontend:
-    runs-on: [ self-hosted ]
+    runs-on: [self-hosted]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup node 
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-
-    - name: Build 
-      run: |
-        cd nutrinova-ui
-        npm i
-        npm run build
+      - name: Build Frontend
+        run: |
+          cd nutrinova-ui/
+          docker build -t nutrinova_ui_build -f build.Dockerfile .
+          docker run -i --rm nutrinova_ui_build
