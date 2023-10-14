@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
+using Testcontainers.PostgreSql;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -9,7 +13,6 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     public NutrinovaApiWebApplicationFactory()
     {
         var directory = FindProjectRootByMarker() + "/nutrinova-db/init-scripts";
-        Debug.WriteLine(directory);
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres")
            .WithPassword("Strong_password_123!")
@@ -26,6 +29,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
             services.AddDbContext<NutrinovaDbContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
         });
     }
+
 
     public async Task InitializeAsync()
     {
