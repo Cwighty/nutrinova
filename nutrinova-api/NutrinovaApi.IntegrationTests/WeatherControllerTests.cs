@@ -1,12 +1,9 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-
 namespace NutrinovaApi.IntegrationTests;
 
-public class WeatherControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class WeatherControllerTests : IClassFixture<NutrinovaApiWebApplicationFactory>
 {
     private readonly HttpClient httpClient;
-    public WeatherControllerTests(WebApplicationFactory<Program> factory)
+    public WeatherControllerTests(NutrinovaApiWebApplicationFactory factory)
     {
         httpClient = factory.CreateClient();
     }

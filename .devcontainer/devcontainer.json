@@ -1,22 +1,22 @@
 {
-	"name": "nutrinova",
-	"dockerComposeFile": [
-		"docker-compose.yml"
-	],
-	"workspaceFolder": "/app",
-	"shutdownAction": "stopCompose",
-	"service": "editor",
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"esbenp.prettier-vscode",
-				"dbaeumer.vscode-eslint",
-				"dsznajder.es7-react-js-snippets",
-				"ms-azuretools.vscode-docker",
-				"GitHub.copilot",
-				"GitHub.copilot-chat"
-			]
-		}
-	},
-	"remoteUser": "developer"
+  "name": "nutrinova",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "service": "editor",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit"
+      ]
+    }
+  },
+  "remoteUser": "developer"
 }
