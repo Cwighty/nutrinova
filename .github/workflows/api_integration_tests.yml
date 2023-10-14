@@ -15,4 +15,4 @@ jobs:
         run: |
           cd nutrinova-api/
           docker build -t api_integration_tests -f test.Dockerfile .
-          docker run -i --rm api_integration_tests
+          docker run -i --rm -v /var/run/docker.sock.raw:/var/run/docker.sock api_integration_tests
