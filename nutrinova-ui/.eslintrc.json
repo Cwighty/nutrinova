@@ -38,6 +38,7 @@
   ],
   "rules": {
     // ...add rules which you'd like to disable
-    
+    "@typescript-eslint/no-unsafe-assignment": "none",
+    "@typescript-eslint/no-unsafe-return": "none"
   }
 }
