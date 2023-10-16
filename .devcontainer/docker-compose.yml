@@ -4,17 +4,22 @@ services:
     build: .
     user: developer
     container_name: nutrinova-editor
+    environment:
+      # This is needed to connect to the host's docker daemon for dotnet testcontainers
+      - TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal
     volumes:
       - developer_home:/home/developer
       - ../:/app
       - ./.bashrc:/home/developer/.bashrc
       - $HOME/.ssh:/home/developer/.ssh
+      # To connect to the host's docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
     working_dir: /app
     command: tail -f /dev/null
 
   client:
     container_name: nutrinova-client
-    build: 
+    build:
       context: .
     user: developer
     volumes:
@@ -30,7 +35,7 @@ services:
 
   api:
     container_name: nutrinova_api
-    build: 
+    build:
       context: .
     user: developer
     volumes:
@@ -58,6 +63,6 @@ services:
     volumes:
       - ../nutrinova-db/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
-    
+
 volumes:
   developer_home:

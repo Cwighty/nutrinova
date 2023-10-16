@@ -11,8 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "7.0"
+
       - name: Restore dependencies and run tests
         run: |
           cd nutrinova-api/
-          docker build -t api_integration_tests -f test.Dockerfile .
-          docker run -i --rm api_integration_tests
+          dotnet test
