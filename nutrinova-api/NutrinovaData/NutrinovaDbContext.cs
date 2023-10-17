@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NutrinovaData.Entities;
-using System;
 
 namespace NutrinovaData;
 
