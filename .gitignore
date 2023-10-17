@@ -10,3 +10,5 @@
 nutrinova-db/data/*
 /nutrinova-api/NutrinovaData/obj
 /nutrinova-api/NutrinovaData/bin/Debug/net7.0
+*/.idea
+/.idea/
