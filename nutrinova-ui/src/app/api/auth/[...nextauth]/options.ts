@@ -7,22 +7,24 @@ export const options: NextAuthOptions = {
     {
       id: "oidc",
       name: "Keycloak",
-      type: 'oauth',
+      type: "oauth",
       version: "2.0",
+      wellKnown:
+        process.env.KEYCLOAK_BASE_URL + "/.well-known/openid-configuration",
       params: { grant_type: "authorization_code" },
       scope: "openid profile email",
       accessTokenUrl:
-        "https://nutrinova-auth.duckdns.org:9000/auth/realms/master/protocol/openid-connect/token",
+        process.env.KEYCLOAK_BASE_URL + "/protocol/openid-connect/token",
       authorizationUrl:
-        "https://nutrinova-auth.duckdns.org:9000/auth/realms/master/protocol/openid-connect/auth",
-        clientId: process.env.KEYCLOAK_CLIENT_ID,
-        clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-        profileUrl:
-          "https://nutrinova-auth.duckdns.org:9000/auth/realms/master/protocol/openid-connect/userinfo",
+        process.env.KEYCLOAK_BASE_URL + "/protocol/openid-connect/auth",
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      profileUrl:
+        process.env.KEYCLOAK_BASE_URL + "/protocol/openid-connect/userinfo",
       profile: (profile) => {
         return {
           ...profile,
-          id: profile.sub  // Adjust accordingly if Keycloak provides image URL
+          id: profile.sub, // Adjust accordingly if Keycloak provides image URL
         };
       },
     } as OAuthConfig<any>,
