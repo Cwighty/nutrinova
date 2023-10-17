@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="PowerToys Rules" Description="Based on Microsoft Minimum Recommended Rules and customized to include other required rules. These rules focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects." ToolsVersion="15.0">
+<RuleSet Name="PowerToys Rules" Description="Based on Microsoft Minimum Recommended Rules and customized to include other required rules. These rules focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects." ToolsVersion="17.0">
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
-    <Rule Id="CA1001" Action="Warning" />
+	  <!--These make it so we don't have to leave xml comments on everything-->
+	<Rule Id="CS1573" Action="None" />
+	<Rule Id="CS1591" Action="None" />
+	<Rule Id="CS1712" Action="None" />
+
+	<Rule Id="CA1001" Action="Warning" />
     <Rule Id="CA1009" Action="Warning" />
     <Rule Id="CA1016" Action="Warning" />
     <Rule Id="CA1033" Action="Warning" />
@@ -17,9 +22,6 @@
     <Rule Id="CA1306" Action="Warning" />
     <Rule Id="CA1307" Action="Warning" />
     <Rule Id="CA1308" Action="Warning" />
-    <Rule Id="SA1309" Action="None" />
-    <Rule Id="SA1310" Action="None" />
-    <Rule Id="SA1314" Action="None" />
     <Rule Id="CA1400" Action="Warning" />
     <Rule Id="CA1401" Action="Warning" />
     <Rule Id="CA1403" Action="Warning" />
@@ -72,6 +74,10 @@
     <Rule Id="CA2240" Action="Warning" />
     <Rule Id="CA2241" Action="Warning" />
     <Rule Id="CA2242" Action="Warning" />
+	<Rule Id="SA0001" Action="None" />
+    <Rule Id="SA1309" Action="None" />
+    <Rule Id="SA1310" Action="None" />
+    <Rule Id="SA1314" Action="None" />
     <Rule Id="SA1633" Action="None" />
   </Rules>
 </RuleSet>

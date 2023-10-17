@@ -30,7 +30,7 @@ public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
         // otherwise use the default User ID from the options.
         if (Context.Request.Headers.TryGetValue(UserId, out var userId))
         {
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId[0]));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId[0] ?? "0"));
         }
         else
         {

@@ -9,7 +9,9 @@
       "fileNamingConvention": "metadata",
       "documentInterfaces": false,
       "documentExposedElements": false,
-      "documentInternalElements": false
+      "documentInternalElements": false,
+      "documentPrivateElements": false,
+      "documentPrivateFields": false
     },
     "layoutRules": {
       "newlineAtEndOfFile": "require"

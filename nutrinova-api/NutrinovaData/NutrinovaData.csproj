@@ -4,10 +4,14 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditonalFiles Include="..\RuleSet.ruleset" Link="RuleSet.ruleset" />
   </ItemGroup>
 
   <ItemGroup>
