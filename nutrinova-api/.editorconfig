@@ -5,7 +5,7 @@
 dotnet_diagnostic.SA1201.severity = none
 
 # CA1303: Do not pass literals as localized parameters
-dotnet_diagnostic.CA1303.severity = suggestion
+dotnet_diagnostic.CA1303.severity = error
 
 # CA1051: Do not declare visible instance fields
 dotnet_code_quality.ca1051.exclude_structs = true
@@ -16,12 +16,12 @@ csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_expression_bodied_methods = false:silent
 csharp_style_expression_bodied_constructors = false:silent
 csharp_style_expression_bodied_operators = false:silent
-csharp_style_expression_bodied_properties = when_on_single_line:suggestion
+csharp_style_expression_bodied_properties = when_on_single_line:error
 csharp_style_expression_bodied_indexers = true:silent
 csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = false:silent
-csharp_style_throw_expression = true:suggestion
+csharp_style_throw_expression = true:error
 csharp_indent_labels = one_less_than_current
 csharp_style_prefer_null_check_over_type_check = true:suggestion
 csharp_using_directive_placement = outside_namespace:silent
@@ -37,15 +37,15 @@ csharp_style_prefer_range_operator = true:suggestion
 
 # Naming rules
 
-dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = error
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
 dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
 
-dotnet_naming_rule.types_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.types_should_be_pascal_case.severity = error
 dotnet_naming_rule.types_should_be_pascal_case.symbols = types
 dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
 
-dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = error
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
@@ -106,4 +106,4 @@ dotnet_diagnostic.IDE0065.severity = none
 dotnet_diagnostic.IDE0009.severity = none
 
 # IDE0005: Remove unused usings
-dotnet_diagnostic.IDE0005.severity = warning
+dotnet_diagnostic.IDE0005.severity = error
