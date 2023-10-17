@@ -1,14 +1,10 @@
-// https://mazeez.dev/posts/auth-in-integration-tests
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-public class TestAuthHandlerOptions : AuthenticationSchemeOptions
-{
-    public string DefaultUserId { get; set; } = null!;
-}
 
+// https://mazeez.dev/posts/auth-in-integration-tests
 public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
 {
     public const string UserId = "UserId";
@@ -20,7 +16,8 @@ public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
         IOptionsMonitor<TestAuthHandlerOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock) : base(options, logger, encoder, clock)
+        ISystemClock clock)
+        : base(options, logger, encoder, clock)
     {
         _defaultUserId = options.CurrentValue.DefaultUserId;
     }
@@ -41,7 +38,6 @@ public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
         }
 
         // TODO: Add as many claims as you need here
-
         var identity = new ClaimsIdentity(claims, AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, AuthenticationScheme);

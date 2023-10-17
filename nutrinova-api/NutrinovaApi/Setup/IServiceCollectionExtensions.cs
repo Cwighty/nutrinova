@@ -7,6 +7,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var keycloakSection = configuration.GetSection("Keycloak");
+
         // https://dev.to/kayesislam/integrating-openid-connect-to-your-application-stack-25ch
         services
             .AddAuthentication()
@@ -19,6 +20,7 @@ public static class IServiceCollectionExtensions
                     RoleClaimType = "groups",
                     NameClaimType = $"{configuration["Keycloak:name_claim"]}",
                     ValidAudience = $"{configuration["Keycloak:audience"]}",
+
                     // https://stackoverflow.com/questions/60306175/bearer-error-invalid-token-error-description-the-issuer-is-invalid
                     ValidateIssuer = Convert.ToBoolean($"{configuration["Keycloak:validate-issuer"]}"),
                 };
@@ -28,6 +30,7 @@ public static class IServiceCollectionExtensions
         {
             o.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
+
                 // .RequireClaim("email_verified", "true")
                 .Build();
         });
