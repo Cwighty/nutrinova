@@ -9,7 +9,7 @@
     <IsTestProject>true</IsTestProject>
 
 	<NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<GenerateDocumentationFile>false</GenerateDocumentationFile>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
