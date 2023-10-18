@@ -1,4 +1,6 @@
-import type { NextAuthOptions } from "next-auth";
+import type { Account,  NextAuthOptions, Profile, Session, User } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
+import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { OAuthConfig } from "next-auth/providers/oauth";
 
@@ -27,6 +29,10 @@ export const options: NextAuthOptions = {
           id: profile.sub, // Adjust accordingly if Keycloak provides image URL
         };
       },
+      session: {
+        strategy: 'jwt',
+      },
+      
     } as OAuthConfig<any>,
     Credentials({
       name: "Credentials",
@@ -41,5 +47,11 @@ export const options: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+        async jwt({token, user}: { token: JWT; user: User }) : Promise<JWT> {
+             console.log(user) 
+             return token 
+        },
+      },
   pages: {}, // can route to custom signin/signout pages
 };
