@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 
 namespace NutrinovaApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/[controller]")]
 public class WeatherForecastController : ControllerBase
