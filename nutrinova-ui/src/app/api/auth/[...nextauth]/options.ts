@@ -1,7 +1,6 @@
 import customerService, { Customer } from "@/app/services/customerService";
 import type { NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import Credentials from "next-auth/providers/credentials";
 import { OAuthConfig } from "next-auth/providers/oauth";
 
 export const options: NextAuthOptions = {
@@ -26,12 +25,14 @@ export const options: NextAuthOptions = {
       profile: (profile) => {
         return {
           ...profile,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           id: profile.sub, // Adjust accordingly if Keycloak provides image URL
         };
       },
       session: {
         strategy: "jwt",
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as OAuthConfig<any>,
   ],
   callbacks: {
