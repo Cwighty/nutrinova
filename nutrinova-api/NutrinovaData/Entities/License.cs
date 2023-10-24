@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿// Copyright (c) Nutrinova
 namespace NutrinovaData.Entities;
 
 public partial class License

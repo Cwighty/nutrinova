@@ -1,4 +1,3 @@
-
 namespace NutrinovaApi.Controllers;
 
 [Authorize]
@@ -8,8 +7,8 @@ public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
     {
-    "Freezing", "Bracing", "Chilly", "Cool", "Could be worse", "Warm", "Balmy", "Hot", "Sweltering", "Scorching","like a Buttcheek on a Stick"
-};
+    "Freezing", "Bracing", "Chilly", "Cool", "Could be worse", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "like a Buttcheek on a Stick",
+    };
 
     private readonly ILogger<WeatherForecastController> _logger;
 
@@ -25,7 +24,7 @@ public class WeatherForecastController : ControllerBase
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
             TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            Summary = Summaries[Random.Shared.Next(Summaries.Length)],
         })
         .ToArray();
     }

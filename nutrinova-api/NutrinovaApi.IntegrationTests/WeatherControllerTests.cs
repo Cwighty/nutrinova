@@ -3,6 +3,7 @@ namespace NutrinovaApi.IntegrationTests;
 public class WeatherControllerTests : IClassFixture<NutrinovaApiWebApplicationFactory>
 {
     private readonly HttpClient httpClient;
+
     public WeatherControllerTests(NutrinovaApiWebApplicationFactory factory)
     {
         httpClient = factory.CreateClient();

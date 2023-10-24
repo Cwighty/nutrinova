@@ -13,11 +13,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65DD9DC4-8740-4BC5-882A-A627C13F4BAB}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		GlobalSuppression.cs = GlobalSuppression.cs
+		RuleSet.ruleset = RuleSet.ruleset
+		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NutrinovaApi.IntegrationTests", "NutrinovaApi.IntegrationTests\NutrinovaApi.IntegrationTests.csproj", "{8527CCAB-367A-46DF-B92E-0B28D44DB7A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NutrinovaData", "NutrinovaData\NutrinovaData.csproj", "{E92EDF3C-E5EE-4A33-AE0D-7A2794B2716D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NutrinovaData", "NutrinovaData\NutrinovaData.csproj", "{E92EDF3C-E5EE-4A33-AE0D-7A2794B2716D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,8 +2,21 @@ using System.Net.Http.Headers;
 
 namespace NutrinovaApi.IntegrationTests;
 
-public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<NutrinovaApi.Program>, IAsyncLifetime
+public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public static string FindProjectRootByMarker()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory != null && !directory.GetFiles("*.sln").Any())
+        {
+            directory = directory.Parent;
+        }
+
+        directory = directory?.Parent;
+        return directory?.FullName ?? throw new Exception("Project root could not be located.");
+    }
+
     private readonly PostgreSqlContainer _dbContainer;
 
     public NutrinovaApiWebApplicationFactory()
@@ -17,6 +30,16 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     }
 
     public string DefaultUserId { get; set; } = "1";
+
+    public async Task InitializeAsync()
+    {
+        await _dbContainer.StartAsync();
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
+    {
+        await _dbContainer.StopAsync();
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -36,28 +59,4 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Nutrinova
     {
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.AuthenticationScheme);
     }
-
-    public async Task InitializeAsync()
-    {
-        await _dbContainer.StartAsync();
-    }
-
-    async Task IAsyncLifetime.DisposeAsync()
-    {
-        await _dbContainer.StopAsync();
-    }
-
-    public static string FindProjectRootByMarker()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory != null && !directory.GetFiles("*.sln").Any())
-        {
-            directory = directory.Parent;
-        }
-
-        directory = directory?.Parent;
-        return directory?.FullName ?? throw new Exception("Project root could not be located.");
-    }
-
 }
