@@ -1,4 +1,4 @@
-import userService from "@/app/services/userService";
+import customerService, { Customer } from "@/app/services/customerService";
 import type { NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
@@ -30,9 +30,8 @@ export const options: NextAuthOptions = {
         };
       },
       session: {
-        strategy: 'jwt',
+        strategy: "jwt",
       },
-
     } as OAuthConfig<any>,
     Credentials({
       name: "Credentials",
@@ -50,12 +49,16 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }): Promise<JWT> {
       if (user) {
-        if (!(await userService.userExists(user.id))) {
-          const customer = { id: user.id, firstName: user.email ?? "" }
-          await userService.createUser(customer)
+        if (!(await customerService.customerExists(user.id))) {
+          console.log("Creating a new customer...");
+          const customer: Customer = {
+            objectId: user.id,
+            email: user.email ?? "",
+          };
+          await customerService.createCustomer(customer);
         }
       }
-      return token
+      return token;
     },
   },
   pages: {}, // can route to custom signin/signout pages

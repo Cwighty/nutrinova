@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   postgres:
@@ -16,12 +16,12 @@ services:
 
   client:
     container_name: nutrinova-client
-    build: 
+    build:
       context: ../nutrinova-ui/
 
   api:
-    container_name: nutrinova_api
-    build: 
+    container_name: nutrinova-api
+    build:
       context: ../nutrinova-api/
 
   swag:
@@ -40,5 +40,5 @@ services:
       - /home/caleb/data/swag:/config
       - ./swag-default.conf:/config/nginx/site-confs/default.conf
     ports:
-    - 0.0.0.0:1359:443
+      - 0.0.0.0:1359:443
     restart: unless-stopped

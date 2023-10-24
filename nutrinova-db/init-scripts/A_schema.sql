@@ -5,8 +5,10 @@ SET
 CREATE TABLE
     Customer (
         id UUID PRIMARY KEY,
-        FirstName TEXT NOT NULL,
-        LastName TEXT NOT NULL
+        ObjectId TEXT NOT NULL,
+        Email TEXT NOT NULL,
+        FirstName TEXT,
+        LastName TEXT
     );
 
 CREATE TABLE

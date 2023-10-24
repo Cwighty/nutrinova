@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using NutrinovaData.Entities;
 
 namespace NutrinovaData;
@@ -63,8 +65,10 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.Firstname).HasColumnName("firstname");
             entity.Property(e => e.Lastname).HasColumnName("lastname");
+            entity.Property(e => e.Objectid).HasColumnName("objectid");
         });
 
         modelBuilder.Entity<CustomerLicenseContract>(entity =>
