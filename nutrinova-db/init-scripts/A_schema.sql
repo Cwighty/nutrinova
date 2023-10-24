@@ -5,10 +5,11 @@ SET
 CREATE TABLE
     Customer (
         id UUID PRIMARY KEY,
-        ObjectId TEXT NOT NULL,
+        ObjectId TEXT NOT NULL UNIQUE,
         Email TEXT NOT NULL,
         FirstName TEXT,
-        LastName TEXT
+        LastName TEXT,
+        created_at TIMESTAMP WITH TIME ZONE
     );
 
 CREATE TABLE

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using NutrinovaData.Entities;
 
 namespace NutrinovaData;
@@ -49,8 +51,6 @@ public partial class NutrinovaDbContext : DbContext
     public virtual DbSet<Unit> Units { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-        // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=nutrinova-db;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,9 +61,12 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.ToTable("customer");
 
+            entity.HasIndex(e => e.Objectid, "customer_objectid_key").IsUnique();
+
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.Firstname).HasColumnName("firstname");
             entity.Property(e => e.Lastname).HasColumnName("lastname");
