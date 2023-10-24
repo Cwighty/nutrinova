@@ -33,18 +33,6 @@ export const options: NextAuthOptions = {
         strategy: "jwt",
       },
     } as OAuthConfig<any>,
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "smith" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        if (!credentials) return null;
-        const user = { id: "1", name: "J Smith", email: "" };
-        return Promise.resolve(user);
-      },
-    }),
   ],
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }): Promise<JWT> {
