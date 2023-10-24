@@ -3,19 +3,21 @@ using Microsoft.OpenApi.Models;
 using NutrinovaData;
 
 namespace NutrinovaApi;
+
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        // Add services to the container.
 
+        // Add services to the container.
         builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
         builder.Services.AddControllers();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(option =>
+        _ = builder.Services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -25,7 +27,7 @@ public class Program
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",
-                    Scheme = "Bearer"
+                    Scheme = "Bearer",
                 });
                 option.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
@@ -34,12 +36,12 @@ public class Program
                     {
                         Reference = new OpenApiReference
                         {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
-                        }
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer",
+                        },
                     },
-                    new string[]{}
-                }
+                    new string[] { }
+                },
             });
             });
 
