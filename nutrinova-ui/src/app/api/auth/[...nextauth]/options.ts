@@ -1,5 +1,5 @@
-import type { Account,  NextAuthOptions, Profile, Session, User } from "next-auth";
-import { AdapterUser } from "next-auth/adapters";
+import userService from "@/app/services/userService";
+import type { NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { OAuthConfig } from "next-auth/providers/oauth";
@@ -32,7 +32,7 @@ export const options: NextAuthOptions = {
       session: {
         strategy: 'jwt',
       },
-      
+
     } as OAuthConfig<any>,
     Credentials({
       name: "Credentials",
@@ -48,10 +48,15 @@ export const options: NextAuthOptions = {
     }),
   ],
   callbacks: {
-        async jwt({token, user}: { token: JWT; user: User }) : Promise<JWT> {
-             console.log(user) 
-             return token 
-        },
-      },
+    async jwt({ token, user }: { token: JWT; user: User }): Promise<JWT> {
+      if (user) {
+        if (!(await userService.userExists(user.id))) {
+          const customer = { id: user.id, firstName: user.email ?? "" }
+          await userService.createUser(customer)
+        }
+      }
+      return token
+    },
+  },
   pages: {}, // can route to custom signin/signout pages
 };
