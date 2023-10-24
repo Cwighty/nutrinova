@@ -1,6 +1,4 @@
-﻿// Copyright (c) Nutrinova
-
-namespace NutrinovaData.Entities;
+﻿namespace NutrinovaData.Entities;
 
 public partial class CustomerLicenseContract
 {
