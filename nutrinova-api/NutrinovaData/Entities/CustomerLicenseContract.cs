@@ -1,4 +1,5 @@
-﻿// Copyright (c) Nutrinova
+﻿using System;
+using System.Collections.Generic;
 
 namespace NutrinovaData.Entities;
 

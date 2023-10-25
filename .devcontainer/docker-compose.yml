@@ -34,7 +34,7 @@ services:
       - 3000:3000
 
   api:
-    container_name: nutrinova_api
+    container_name: nutrinova-api
     build:
       context: .
     user: developer
@@ -61,8 +61,9 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: Pleasegivemecoke!
     volumes:
-      - ../nutrinova-db/data:/var/lib/postgresql/data
+      - nutrinova_db_data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
 
 volumes:
   developer_home:
+  nutrinova_db_data:

@@ -1,9 +1,22 @@
-import style from "./page.module.scss";
+import { getServerSession } from "next-auth";
+import { options } from "./api/auth/[...nextauth]/options";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(options);
+  if (!session) {
+    return (
+      <div>
+        <h1>Hi, please login</h1>
+      </div>
+    );
+  }
   return (
-    <div className={style.home}>
-      <h1>NutriNova</h1>
-    </div>
+    <>
+      {session && (
+        <div>
+          <h1>Welcome {session.user.name}</h1>
+        </div>
+      )}
+    </>
   );
 }
