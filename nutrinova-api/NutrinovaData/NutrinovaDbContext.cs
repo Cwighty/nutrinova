@@ -48,9 +48,6 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<Unit> Units { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=nutrinova-db;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Customer>(entity =>

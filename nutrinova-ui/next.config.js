@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: "standalone",
   webpack: (config, _) => ({
     ...config,
     watchOptions: {
@@ -12,15 +12,15 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/be/swagger/:path*',
-        destination: 'http://api:5000/swagger/:path*' // Proxy to Backend
+        source: "/be/swagger/:path*",
+        destination: process.env.NUTRINOVA_API_URL + "/swagger/:path*", // Proxy to Backend
       },
       {
-        source: '/be/:path*',
-        destination: 'http://api:5000/api/:path*' // Proxy to Backend
-      }
-    ]
-  }
-}
+        source: "/be/:path*",
+        destination: process.env.NUTRINOVA_API_URL + "/be/:path*", // Proxy to Backend
+      },
+    ];
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
