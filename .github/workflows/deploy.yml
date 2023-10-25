@@ -6,6 +6,7 @@ env:
   KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
   KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
   KEYCLOAK_BASE_URL: ${{ secrets.KEYCLOAK_BASE_URL }}
+  NEXTAUTH_URL: ${{ secrets.KEYCLOAK_BASE_URL }}
 
 on:
   push:
