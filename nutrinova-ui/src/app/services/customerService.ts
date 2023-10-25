@@ -6,7 +6,7 @@ export interface Customer {
 }
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://nutrinova-api:5000/be/",
+  baseURL: process.env.NUTRINOVA_API_URL + "/be/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +32,7 @@ const userService = {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       console.log("Customer created.", customer.email);
       return response.status === 201;
