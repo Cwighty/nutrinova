@@ -2,6 +2,10 @@ name: Deploy To Production
 
 env:
   DUCKDNSTOKEN: ${{ secrets.DUCKDNSTOKEN }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  KEYCLOAK_CLIENT_ID: ${{ secrets.KEYCLOAK_CLIENT_ID }}
+  KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+  KEYCLOAK_BASE_URL: ${{ secrets.KEYCLOAK_BASE_URL }}
 
 on:
   push:
