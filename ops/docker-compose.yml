@@ -23,6 +23,7 @@ services:
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_BASE_URL=${KEYCLOAK_BASE_URL}
+      - NUTRINOVA_API_URL=${NUTRINOVA_API_URL}
 
   api:
     container_name: nutrinova-api
