@@ -12,7 +12,7 @@ public class WeatherControllerTests : IClassFixture<NutrinovaApiWebApplicationFa
     [Fact]
     public async Task TestWeatherController()
     {
-        var weather = await httpClient.GetFromJsonAsync<IEnumerable<WeatherForecast>>("api/WeatherForecast");
+        var weather = await httpClient.GetFromJsonAsync<IEnumerable<WeatherForecast>>("be/WeatherForecast");
         weather.Should().NotBeEmpty();
     }
 }

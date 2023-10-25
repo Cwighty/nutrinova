@@ -1,4 +1,7 @@
-﻿namespace NutrinovaData.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace NutrinovaData.Entities;
 
 public partial class Module
 {

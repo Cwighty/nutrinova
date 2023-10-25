@@ -20,5 +20,6 @@
       "usingDirectivesPlacement": "outsideNamespace",
       "systemUsingDirectivesFirst": true
     }
-  }
+  },
+  "excludeFiles": ["**/NutrinovaDbContext.cs"]
 }

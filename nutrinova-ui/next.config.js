@@ -12,11 +12,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/swagger/:path*',
+        source: '/be/swagger/:path*',
         destination: 'http://api:5000/swagger/:path*' // Proxy to Backend
       },
       {
-        source: '/api/:path*',
+        source: '/be/:path*',
         destination: 'http://api:5000/api/:path*' // Proxy to Backend
       }
     ]

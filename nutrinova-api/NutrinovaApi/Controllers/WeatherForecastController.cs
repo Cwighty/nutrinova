@@ -2,7 +2,7 @@ namespace NutrinovaApi.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("/api/[controller]")]
+[Route("/be/[controller]")]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]

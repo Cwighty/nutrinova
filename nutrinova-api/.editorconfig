@@ -111,3 +111,7 @@ dotnet_diagnostic.IDE0009.severity = none
 dotnet_diagnostic.SA1101.severity = none
 # IDE0005: Remove unused usings
 dotnet_diagnostic.IDE0005.severity = error
+
+[NutrinovaDbContext.cs]
+dotnet_diagnostic.CS8618.severity = none
+dotnet_diagnostic.CS1030.severity = none
