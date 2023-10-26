@@ -28,6 +28,7 @@ export const options: NextAuthOptions = {
           id: profile.sub, // Adjust accordingly if Keycloak provides image URL
         };
       },
+      
       session: {
         strategy: "jwt",
       },
