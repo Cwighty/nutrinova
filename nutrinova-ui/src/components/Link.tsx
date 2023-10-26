@@ -74,7 +74,8 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       locale,
       noLinkStyle,
       prefetch,
-      replace,
+      replace, 
+        // eslint-disable-next-line
       role, // Link don't have roles.
       scroll,
       shallow,
