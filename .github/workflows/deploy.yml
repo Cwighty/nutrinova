@@ -8,6 +8,9 @@ env:
   KEYCLOAK_BASE_URL: ${{ secrets.KEYCLOAK_BASE_URL }}
   NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
   NUTRINOVA_API_URL: ${{ secrets.NUTRINOVA_API_URL }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
 on:
   push:
