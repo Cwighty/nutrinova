@@ -49,7 +49,7 @@ export const NavigationDrawer = ({
         <ListItemButton
           key="Search Foods"
           component={NextLinkComposed}
-          to={{ pathname: "/foods/search" }}
+          to={{ pathname: "/food/search" }}
         >
           <ListItemIcon>
             <Search />
@@ -59,7 +59,7 @@ export const NavigationDrawer = ({
         <ListItemButton
           key="Create Food"
           component={NextLinkComposed}
-          to={{ pathname: "/foods/create" }}
+          to={{ pathname: "/food/create" }}
         >
           <ListItemIcon>
             <AddBox />

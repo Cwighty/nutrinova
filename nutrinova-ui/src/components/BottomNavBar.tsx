@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
+  Box,
   Paper,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import { Dashboard, Menu, Person, Settings } from "@mui/icons-material";
 import { NextLinkComposed } from "@/components/Link";
@@ -31,17 +30,8 @@ export const BottomNavBar = () => {
     setDrawerOpen(false);
   };
 
-  // Get the current theme and check if the screen width is larger than 'sm' breakpoint
-  const theme = useTheme();
-  const isWideScreen = useMediaQuery(theme.breakpoints.up("sm"));
-
-  // Conditionally render the BottomNavBar based on screen width
-  if (isWideScreen) {
-    return null; // Don't render BottomNavBar for wider screens
-  }
-
   return (
-    <>
+    <Box sx={{ display: { xs: "flex", sm: "none" } }}>
       <NavigationDrawer
         open={isDrawerOpen}
         onClose={closeDrawer}
@@ -71,6 +61,6 @@ export const BottomNavBar = () => {
           ))}
         </BottomNavigation>
       </Paper>
-    </>
+    </Box>
   );
 };
