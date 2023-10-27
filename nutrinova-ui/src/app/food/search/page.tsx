@@ -1,5 +1,11 @@
+import { Box, Grid } from "@mui/material";
 import FoodSearchForm from "./FoodSearchForm";
 import SearchResultDataGrid, { FoodSearchResult } from "./SearchResultDataGrid";
+import FoodLayout from "../FoodLayout";
+
+export const metadata = {
+  title: "Food Search",
+};
 
 export interface UsdaFoodDivisionOption {
   name: string;
@@ -105,9 +111,21 @@ export default async function Page({ searchParams }: PageProps) {
   const rows = await fetchFoodSearchResults();
 
   return (
-    <div style={{ padding: "20px" }}>
-      <FoodSearchForm usdaFoodDivisionOptions={usdaFoodDivisionOptions} />
-      <SearchResultDataGrid rows={rows} />
-    </div>
+    <>
+      <FoodLayout title="Food Search">
+        <Box sx={{ m: 2 }}>
+          <Grid container columnSpacing={4}>
+            <Grid item xs={12} md={3}>
+              <FoodSearchForm
+                usdaFoodDivisionOptions={usdaFoodDivisionOptions}
+              />
+            </Grid>
+            <Grid item xs={12} md={9}>
+              <SearchResultDataGrid rows={rows} />
+            </Grid>
+          </Grid>
+        </Box>
+      </FoodLayout>
+    </>
   );
 }

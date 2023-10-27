@@ -60,7 +60,7 @@ export default function FoodSearchForm({
         label="Search"
         variant="outlined"
         placeholder="Buttered toast"
-        sx={{ my: 2 }}
+        sx={{ mb: 2 }}
         onChange={handleKeywordChange}
         InputProps={{
           startAdornment: (
@@ -71,7 +71,14 @@ export default function FoodSearchForm({
         }}
       />
 
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box
+        sx={(theme) => ({
+          [theme.breakpoints.down("md")]: {
+            display: "flex",
+            justifyContent: "space-between",
+          },
+        })}
+      >
         <TextField
           label="USDA Food Division"
           variant="outlined"
