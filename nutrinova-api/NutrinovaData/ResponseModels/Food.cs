@@ -10,11 +10,17 @@ public class Food
 
     public string dataType { get; set; }
 
-    public string gtinUpc { get; set; }
-
     public string publishedDate { get; set; }
 
     public string brandOwner { get; set; }
+
+    public string brandName { get; set; }
+
+    public double servingSize { get; set; }
+
+    public string servingSizeUnit { get; set; }
+
+    public string servingSizeWithUnits { get; set; }
 
     public List<FoodNutrient> foodNutrients { get; set; }
 }

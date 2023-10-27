@@ -15,4 +15,9 @@ public class FoodNutrient
     public string derivationDescription { get; set; }
 
     public double value { get; set; }
+
+    public bool isSimplifiedFoodNutrient()
+    {
+        return nutrientName == "Total lipid (fat)" || nutrientName == "Carbohydrate, by difference" || nutrientName == "Energy" || nutrientName == "Protein";
+    }
 }

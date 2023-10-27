@@ -37,7 +37,7 @@ public class FoodController : ControllerBase
             query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
         }
 
-        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("apikeyhere")}";
+        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("apiKeyHere")}";
         logger.LogInformation(query);
         var res = await httpClient.GetAsync($"{query}");
         logger.LogInformation(res.StatusCode.ToString());
@@ -50,7 +50,18 @@ public class FoodController : ControllerBase
         var rawContent = await res.Content.ReadAsStringAsync();
         logger.LogInformation("Raw Content: " + rawContent);
         logger.LogInformation("Response Content: " + deserRes?.foods);
-        return deserRes?.foods ?? new List<Food>();
+
+        var simplifiedFoods = deserRes?.foods.Select(f => new Food()
+        {
+            fdcId = f.fdcId,
+            description = f.description,
+            ingredients = f.ingredients,
+            brandName = f.brandName,
+            servingSizeWithUnits = f.servingSize.ToString() + f.servingSizeUnit,
+            foodNutrients = f.foodNutrients.Where(
+            nutri => nutri.isSimplifiedFoodNutrient()).ToList(),
+        }).ToList();
+        return simplifiedFoods ?? throw new Exception("No foods found");
     }
 
     [HttpGet("details")]
