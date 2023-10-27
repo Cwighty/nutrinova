@@ -6,8 +6,8 @@ import { NextLinkComposed } from "@/components/Link";
 
 const LINKS = [
   { label: "Home", href: "/" },
-  { label: "Search", href: "/search-foods" },
-  { label: "Create Food", href: "/create-food" },
+  { label: "Search", href: "/food/search" },
+  { label: "Create Food", href: "/food/create" },
 ];
 
 // eslint-disable-next-line react/jsx-key
