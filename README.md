@@ -1,146 +1,150 @@
 # NutriNova
 ## CI/CD
-- [ ] Deployment pipline
-
+- [x] Deployment pipline
+- [x] Automated testing and linting in the pipeline (abort build if fails)
+- [x] Live production environment
+- [x] https support
 
 ## Authentication
 
-- [ ] The application will use a SSO provider to handle sign-ups for new users and logins for existing users. (Authentication and user account support)
-- [ ] Users can authenticate so that their data can be persisted. (Authentication and user account support)
-- [ ] Users will only have access to their information and won't be able to see other people's information. (Authentication and user account support)
-- [ ] Users can easily log out of their accounts for convenience and security. (Authentication and user account support)
+- [ ] The application will use a SSO provider to handle sign-ups for new users and logins for existing users. (Authentication)
+- [ ] Users can authenticate so that their data can be persisted. (Authentication)
+- [ ] Users will only have access to their information and won't be able to see other people's information. (Authentication)
+- [ ] Users can easily log out of their accounts for convenience and security. (Authentication)
 
-## Foods/Ingredients
+## Foods/Ingredients (Lots of reading/writing data)
 
 ### View Used Foods/Ingredients
 
-- [ ] Overview list of my saved foods (all that have been imported/used before). (Network Calls - read data)
-- [ ] Sort and filter foods. (Experience Requirements - Organized and smooth experience)
-- [ ] See details about the food/ingredient. (Network Calls - read data)
+- [ ] Overview list of my saved foods (all that have been imported/used before). 
+- [ ] Sort and filter foods. 
+- [ ] See details about the food/ingredient. 
 
 ### Edit Foods/Ingredients (Custom input components)
 
-- [ ] Edit the details of a food. (Network Calls - write data)
+- [ ] Edit the details of a food. 
 - [ ] Changing a food should not change recorded history totals. 
 
 ### Search Foods/Ingredients (USDA API)
 
-- [ ] Search and import foods from USDA API. (Network Calls - read data)
-- [ ] Adjust imported foods from the USDA API. (Network Calls - write data)
-- [ ] Search results to appear in at most 3 seconds. (Experience Requirements - Organized and smooth experience)
+- [ ] Search and import foods from USDA API. 
+- [ ] Adjust imported foods from the USDA API. 
 
-### Create Food
+### Create Food (generic form input components)
 
-- [ ] Create custom foods. (Network Calls - write data) 
+- [ ] Create custom foods.  
 - [ ] Validate user-created custom foods. (Error handling)
-- [ ] Specify details like name, nutritional facts, and macronutrients. (3+ generic form input components)
+- [ ] Specify details like name, nutritional facts, and macronutrients. 
 
 ## Individual/Managed Profiles
 
 ### Single Profile
 
-- [ ] Users can create a profile just for them. (Authentication and user account support)
+- [ ] Users can create a profile just for them. (Authentication)
 
 ### Multi-Profile
 
-- [ ] Manage profiles for one or more individuals. (Authentication and user account support)
-- [ ] Switch between profiles without logging out. (Authentication and user account support)
-- [ ] Add a new profile for a new person. (Authentication and user account support)
+- [ ] Manage profiles for one or more individuals. (Authentication)
+- [ ] Switch between profiles without logging out. (Authentication)
+- [ ] Add a new profile for a new person. (Authentication)
 - [ ] Profile context to share patient details across flows (Client-side state stores)
 
-## Recipe
+## Recipe (Lots of reading/writing data)
 
-### Create Recipe
+### Create Recipe  (generic form input components)
 
-- [ ] Create a recipe from stored foods. (Network Calls - write data)
-- [ ] Provide food and amount. (3+ generic form input components)
-- [ ] Measure foods in different ways. (3+ generic form input components)
-- [ ] Write notes about a recipe. (3+ generic form input components)
+- [ ] Create a recipe from stored foods. 
+- [ ] Provide food and amount. 
+- [ ] Measure foods in different ways. 
+- [ ] Write notes about a recipe. 
 
 ### Edit Recipe
 
-- [ ] Edit the details of a recipe. (Network Calls - write data)
+- [ ] Edit the details of a recipe. 
 
 ### View Recipes/Details
 
-- [ ] Overview of my recipe library. (Network Calls - read data)
-- [ ] Filter and sort recipes. (Experience Requirements - Organized and smooth experience)
+- [ ] Overview of my recipe library. 
+- [ ] Filter and sort recipes. 
 
 ## Meal Records/Details
 
 ### Record Meal
 
-- [ ] Record what meals have been eaten and when. (Network Calls - write data)
-- [ ] Meals can consist of multiple recipes and foods. (Network Calls - write data)
+- [ ] Record what meals have been eaten and when. 
+- [ ] Meals can consist of multiple recipes and foods. 
   
 ### View Recorded Meals/Details
 
-- [ ] View a history of meals. (Network Calls - read data)
+- [ ] View a history of meals. 
   
 ### Edit Meal Records
 
-- [ ] Edit the amount of meal that was fed. (Network Calls - write data)
+- [ ] Edit the amount of meal that was fed. 
 
 ## Onboarding
 
 ### User Info
 
 - [ ] Identifying questions at initial sign-in. (Authentication)
-- [ ] Cache onboarding progress in local storage on page leave ( Local Storage )
+- [ ] Cache onboarding progress in local storage on page leave (Local Storage)
   
 ### Patient Profile
 
-- [ ] Set up new profiles for each patient. (Authentication and user account support)
+- [ ] Set up new profiles for each patient. (Authentication)
+- [ ] Can quick switch between patients. (generic layout components)
   
 ### Account Settings
 
-- [ ] Access and edit account information. (Authentication and user account support)
+- [ ] Access and edit account information. (Authentication)
 
-## Dashboard
+## Dashboard (generic layout components)
 
 ### Daily Summary
 
-- [ ] Daily summary of nutritional information. (Network Calls - read data)
+- [ ] Daily summary of nutritional information. 
   
 ### Goals Summary
 
-- [ ] Summaries of nutritional goals. (Network Calls - read data)
+- [ ] Summaries of nutritional goals. 
   
 ### Alerts/Notification
 
 - [ ] Alerts/notifications for when to eat. (Toasts / Websockets)
 
-### Meal Schedule
 
-- [ ] Schedule meals for the week. (Network Calls - write data)
+# Stretch Goals
 
+## Meal Schedule
+
+- [ ] Schedule meals for the week.
+      
 ## Goals
 
 ### Set a Nutrition Goal
 
-- [ ] Set goals for a macro or a nutrient. (Network Calls - write data)
+- [ ] Set goals for a macro or a nutrient. 
 
 ### View Goals
 
-- [ ] Visualize my goal. (Network Calls - read data)
+- [ ] Visualize my goal. 
 
 ## Interactions
 
-- [ ] Update nutritional goals when recording a meal. (Network Calls - write data)
+- [ ] Update nutritional goals when recording a meal. 
 
-## Growth Features
 
 ### Reports
 
-- [ ] View reports. (Network Calls - read data)
+- [ ] View reports. 
   
 ### Export Reports
 
-- [ ] Export reports. (Network Calls - read data)
+- [ ] Export reports. 
 
 ## Module Library
 
-- [ ] Enable a module. (Network Calls - write data)
+- [ ] Enable a module. 
 
 ### Allergen Alerts
 
@@ -148,21 +152,21 @@
   
 ### Insulin Tracking
 
-- [ ] Record insulin taken. (Network Calls - write data)
+- [ ] Record insulin taken. 
   
 ### Feeding Pump Rate Calculator
 
-- [ ] Calculate feeding pump rate. (Network Calls - read data)
+- [ ] Calculate feeding pump rate. 
 
 ## Licensing
 
 ### Payment
 
-- [ ] Pay for specific features. (Network Calls - write data)
+- [ ] Pay for specific features. 
 
 ### Limited Access
 
-- [ ] Access only features corresponding to a paid license. (Authentication and user account support)
+- [ ] Access only features corresponding to a paid license. (Authentication)
 
 ## User Feedback
 
