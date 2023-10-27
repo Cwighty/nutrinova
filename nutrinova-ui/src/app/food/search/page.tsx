@@ -1,15 +1,18 @@
-"use client";
-import { Box, Button, MenuItem, TextField } from "@mui/material";
+import FoodSearchForm from "./FoodSearchForm";
 import SearchResultDataGrid, { FoodSearchResult } from "./SearchResultDataGrid";
-import { ChangeEvent, useState } from "react";
-import { Search } from "@mui/icons-material";
 
-interface UsdaFoodDivisionOption {
+export interface UsdaFoodDivisionOption {
   name: string;
   categories: string[];
 }
 
-export default function SearchFoods() {
+interface PageProps {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+const fetchUsdaFoodDivisionOptions = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   const usdaFoodDivisionOptions: UsdaFoodDivisionOption[] = [
     {
       name: "Foundation",
@@ -77,94 +80,33 @@ export default function SearchFoods() {
       categories: [],
     },
   ];
+  return usdaFoodDivisionOptions;
+};
 
-  const [selectedFoodDivision, setSelectedFoodDivision] = useState<string>(
-    usdaFoodDivisionOptions[0].name
-  );
+const fetchFoodSearchResults = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const [selectedFoodCategory, setSelectedFoodCategory] =
-    useState<string>("All");
+  const foodSearchResults: FoodSearchResult[] = [];
+  for (let i = 0; i < 1000; i++) {
+    foodSearchResults.push({
+      id: i,
+      description: `Eggs, Grade A, Large, egg white ${i}`,
+    });
+  }
 
-  const handleDivisionChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setSelectedFoodDivision(e.target.value);
-    setSelectedFoodCategory("All");
-  };
+  return foodSearchResults;
+};
 
-  const handleCategoryChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setSelectedFoodCategory(e.target.value);
-  };
+export default async function Page({ searchParams }: PageProps) {
+  console.log(searchParams);
 
-  const handleSearch = () => {
-    console.log("searching usda for food");
-  };
+  const usdaFoodDivisionOptions = await fetchUsdaFoodDivisionOptions();
 
-  const rows: FoodSearchResult[] = [
-    { id: 1, description: "Eggs, Grade A, Large, egg white" },
-    { id: 2, description: "Eggs, Grade A, Large, egg whole" },
-  ];
+  const rows = await fetchFoodSearchResults();
 
   return (
     <div style={{ padding: "20px" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <TextField
-          fullWidth
-          label="Search"
-          variant="outlined"
-          placeholder="Buttered toast"
-          sx={{ my: 2 }}
-        />
-        <Button
-          variant="contained"
-          endIcon={<Search />}
-          sx={{ my: 2 }}
-          onClick={handleSearch}
-        >
-          Search
-        </Button>
-      </Box>
-
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <TextField
-          label="USDA Food Division"
-          variant="outlined"
-          fullWidth
-          select
-          value={selectedFoodDivision}
-          onChange={handleDivisionChange}
-          sx={{ my: 2 }}
-        >
-          {usdaFoodDivisionOptions.map((option) => (
-            <MenuItem key={option.name} value={option.name}>
-              {option.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          label="Type"
-          variant="outlined"
-          fullWidth
-          select
-          value={selectedFoodCategory}
-          onChange={handleCategoryChange}
-          sx={{ my: 2 }}
-        >
-          <MenuItem value="All">All</MenuItem>
-          {selectedFoodDivision &&
-            usdaFoodDivisionOptions.map((option) => {
-              if (option.name === selectedFoodDivision) {
-                return option.categories.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
-                  </MenuItem>
-                ));
-              }
-            })}
-        </TextField>
-      </Box>
+      <FoodSearchForm usdaFoodDivisionOptions={usdaFoodDivisionOptions} />
       <SearchResultDataGrid rows={rows} />
     </div>
   );

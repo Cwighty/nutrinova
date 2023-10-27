@@ -18,5 +18,13 @@ export default function SearchResultDataGrid({
     { field: "id", headerName: "ID", width: 100 },
     { field: "description", headerName: "Description", width: 500 },
   ];
-  return <DataGrid rows={rows} columns={columns} pageSizeOptions={[5, 10]} />;
+  return (
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      initialState={{
+        pagination: { paginationModel: { pageSize: 20 } },
+      }}
+    />
+  );
 }
