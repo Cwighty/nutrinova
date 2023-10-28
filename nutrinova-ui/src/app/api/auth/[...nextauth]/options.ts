@@ -1,4 +1,5 @@
 import customerService, { Customer } from "@/app/services/customerService";
+import { NextAuthOptions, Profile, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { OAuthConfig } from "next-auth/providers/oauth";
 
