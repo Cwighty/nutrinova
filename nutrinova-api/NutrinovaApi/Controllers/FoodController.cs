@@ -1,5 +1,4 @@
 using System.Web;
-using NutrinovaData;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
 
@@ -10,15 +9,13 @@ namespace NutrinovaApi.User.Controllers;
 public class FoodController : ControllerBase
 {
     // USDA API Documentation: https://app.swaggerhub.com/apis/fdcnal/food-data_central_api/1.0.1#/FDC/getFood
-    private readonly NutrinovaDbContext context;
     private readonly ILogger<FoodController> logger;
     private readonly IConfiguration configuration;
 
     private readonly HttpClient httpClient;
 
-    public FoodController(NutrinovaDbContext dbContext, ILogger<FoodController> logger, IConfiguration configuration)
+    public FoodController(ILogger<FoodController> logger, IConfiguration configuration)
     {
-        this.context = dbContext;
         this.logger = logger;
         this.configuration = configuration;
         this.httpClient = new HttpClient()
@@ -39,7 +36,7 @@ public class FoodController : ControllerBase
             query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
         }
 
-        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("apiKeyhere")}";
+        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}";
         logger.LogInformation(query);
         var res = await httpClient.GetAsync($"{query}");
         logger.LogInformation(res.StatusCode.ToString());

@@ -4,7 +4,6 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-NutrinovaApi-5213c93f-950e-4038-96df-9ab7284877b1</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	<NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
 	<GenerateDocumentationFile>false</GenerateDocumentationFile>
@@ -17,6 +16,7 @@
   </ItemGroup>
 	
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="2.5.0" />
     <PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.5.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.9" />

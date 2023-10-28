@@ -9,13 +9,11 @@ public class CustomerController : ControllerBase
 {
     private readonly NutrinovaDbContext context;
     private readonly ILogger<CustomerController> logger;
-    private readonly IConfiguration configuration;
 
-    public CustomerController(NutrinovaDbContext dbContext, ILogger<CustomerController> logger, IConfiguration configuration)
+    public CustomerController(NutrinovaDbContext dbContext, ILogger<CustomerController> logger)
     {
         this.context = dbContext;
         this.logger = logger;
-        this.configuration = configuration;
     }
 
     [HttpGet("exists")]
