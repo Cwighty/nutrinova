@@ -1,3 +1,5 @@
+using NutrinovaData.FlattenedResponseModels;
+
 namespace NutrinovaData.ResponseModels;
 
 public class Food
@@ -23,4 +25,6 @@ public class Food
     public string servingSizeWithUnits { get; set; }
 
     public List<FoodNutrient> foodNutrients { get; set; }
+
+    public FlattenedFood MakeFlattenedFood() => new FlattenedFood(this);
 }

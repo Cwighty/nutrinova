@@ -1,5 +1,6 @@
 using System.Web;
 using NutrinovaData;
+using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.User.Controllers;
@@ -8,6 +9,7 @@ namespace NutrinovaApi.User.Controllers;
 [Route("/be/[controller]")]
 public class FoodController : ControllerBase
 {
+    // USDA API Documentation: https://app.swaggerhub.com/apis/fdcnal/food-data_central_api/1.0.1#/FDC/getFood
     private readonly NutrinovaDbContext context;
     private readonly ILogger<FoodController> logger;
     private readonly IConfiguration configuration;
@@ -26,7 +28,7 @@ public class FoodController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<IEnumerable<Food>>> RetrieveAllOfName([FromQuery] string foodName, [FromQuery] string? brandOwner, [FromQuery] string filterOption = "Branded", [FromQuery] int maxReturnedResults = 25)
+    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllOfName([FromQuery] string foodName, [FromQuery] string? brandOwner, [FromQuery] string filterOption = "Branded", [FromQuery] int maxReturnedResults = 25)
     {
         logger.LogInformation("RetrieveAllOfName");
 
@@ -37,7 +39,7 @@ public class FoodController : ControllerBase
             query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
         }
 
-        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("apiKeyHere")}";
+        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("vqdvXqTXTEAu5SwWCVskzvkvUpCCbCtHWBSsLRoA")}";
         logger.LogInformation(query);
         var res = await httpClient.GetAsync($"{query}");
         logger.LogInformation(res.StatusCode.ToString());
@@ -51,16 +53,7 @@ public class FoodController : ControllerBase
         logger.LogInformation("Raw Content: " + rawContent);
         logger.LogInformation("Response Content: " + deserRes?.foods);
 
-        var simplifiedFoods = deserRes?.foods.Select(f => new Food()
-        {
-            fdcId = f.fdcId,
-            description = f.description,
-            ingredients = f.ingredients,
-            brandName = f.brandName,
-            servingSizeWithUnits = f.servingSize.ToString() + f.servingSizeUnit,
-            foodNutrients = f.foodNutrients.Where(
-            nutri => nutri.isSimplifiedFoodNutrient()).ToList(),
-        }).ToList();
+        var simplifiedFoods = deserRes?.foods.Select(f => f.MakeFlattenedFood()).ToList();
         return simplifiedFoods ?? throw new Exception("No foods found");
     }
 
