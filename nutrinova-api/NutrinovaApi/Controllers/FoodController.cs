@@ -39,7 +39,7 @@ public class FoodController : ControllerBase
             query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
         }
 
-        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("vqdvXqTXTEAu5SwWCVskzvkvUpCCbCtHWBSsLRoA")}";
+        query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode("apiKeyhere")}";
         logger.LogInformation(query);
         var res = await httpClient.GetAsync($"{query}");
         logger.LogInformation(res.StatusCode.ToString());
