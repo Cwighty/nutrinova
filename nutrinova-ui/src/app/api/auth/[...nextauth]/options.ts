@@ -37,7 +37,6 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }): Promise<JWT> {
       if (user) {
-        console.log(token);
         if (!(await customerService.customerExists(user.id))) {
           console.log("Creating a new customer...");
           const customer: Customer = {
