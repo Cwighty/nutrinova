@@ -1,6 +1,7 @@
 "use client";
 import {
   Collapse,
+  Divider,
   List,
   ListItemButton,
   ListItemIcon,
@@ -13,17 +14,25 @@ import {
   Dashboard,
   ExpandLess,
   ExpandMore,
+  Fastfood,
+  MenuBook,
+  Person,
   Restaurant,
   Search,
+  Settings,
   ViewList,
 } from "@mui/icons-material";
 import { useState } from "react";
 
 interface NavigationListProps {
   closeDrawer?: () => void;
+  isDesktop?: boolean;
 }
 
-export const NavigationList = ({ closeDrawer }: NavigationListProps) => {
+export const NavigationList = ({
+  closeDrawer,
+  isDesktop,
+}: NavigationListProps) => {
   const [foodOpen, setFoodOpen] = useState(false);
   const [recipesOpen, setRecipesOpen] = useState(false);
   const [mealsOpen, setMealsOpen] = useState(false);
@@ -41,20 +50,25 @@ export const NavigationList = ({ closeDrawer }: NavigationListProps) => {
   };
 
   return (
-    <List sx={{ width: "100%" }}>
-      <ListItemButton
-        key="Dashboard"
-        component={NextLinkComposed}
-        to={{ pathname: "/" }}
-      >
-        <ListItemIcon>
-          <Dashboard />
-        </ListItemIcon>
-        <ListItemText primary="Dashboard" />
-      </ListItemButton>
+    <List disablePadding={true} sx={{ width: "100%" }}>
+      {isDesktop && (
+        <>
+          <ListItemButton
+            key="Dashboard"
+            component={NextLinkComposed}
+            to={{ pathname: "/" }}
+          >
+            <ListItemIcon>
+              <Dashboard />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItemButton>
+          <Divider />
+        </>
+      )}
       <ListItemButton onClick={handleFoodClick}>
         <ListItemIcon>
-          <Restaurant />
+          <Fastfood />
         </ListItemIcon>
         <ListItemText primary="Food" />
         {foodOpen ? <ExpandLess /> : <ExpandMore />}
@@ -89,7 +103,7 @@ export const NavigationList = ({ closeDrawer }: NavigationListProps) => {
       </Collapse>
       <ListItemButton onClick={handleRecipesClick}>
         <ListItemIcon>
-          <Restaurant />
+          <MenuBook />
         </ListItemIcon>
         <ListItemText primary="Recipes" />
         {recipesOpen ? <ExpandLess /> : <ExpandMore />}
@@ -157,6 +171,31 @@ export const NavigationList = ({ closeDrawer }: NavigationListProps) => {
           </ListItemButton>
         </List>
       </Collapse>
+      {isDesktop && (
+        <>
+          <Divider />
+          <ListItemButton
+            key="Account"
+            component={NextLinkComposed}
+            to={{ pathname: "/account" }}
+          >
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Account" />
+          </ListItemButton>
+          <ListItemButton
+            key="Settings"
+            component={NextLinkComposed}
+            to={{ pathname: "/settings" }}
+          >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItemButton>
+        </>
+      )}
     </List>
   );
 };

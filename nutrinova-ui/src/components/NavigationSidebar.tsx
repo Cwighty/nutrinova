@@ -11,7 +11,7 @@ export const NavigationSidebar = () => {
         width: { md: 200, lg: 300 },
       }}
     >
-      <NavigationList />
+      <NavigationList isDesktop />
     </Paper>
   );
 };
