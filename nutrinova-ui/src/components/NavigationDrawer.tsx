@@ -22,8 +22,14 @@ export const NavigationDrawer = ({
       open={isOpen}
       onClose={() => toggleDrawer(false)}
       onOpen={() => toggleDrawer(true)}
+      sx={{
+        width: { xs: "80%", sm: "50%" },
+        "& .MuiDrawer-paper": {
+          width: { xs: "80%", sm: "50%" },
+        },
+      }}
     >
-      <NavigationList />
+      <NavigationList closeDrawer={onClose} />
     </SwipeableDrawer>
   );
 };

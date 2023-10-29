@@ -1,11 +1,17 @@
 "use client";
 import { NavigationList } from "@/components/NavigationList";
-import { Box } from "@mui/material";
+import { Paper } from "@mui/material";
 
 export const NavigationSidebar = () => {
   return (
-    <Box sx={{ display: { xs: "none", md: "flex" } }}>
+    <Paper
+      sx={{
+        display: { xs: "none", md: "flex" },
+        height: "100vh",
+        width: { md: 200, lg: 300 },
+      }}
+    >
       <NavigationList />
-    </Box>
+    </Paper>
   );
 };
