@@ -16,7 +16,11 @@ const LINKS = [
   { label: "Settings", href: "/settings" },
 ];
 
-const ICONS = [<Dashboard />, <Person />, <Settings />];
+const ICONS = [
+  <Dashboard key="Dashboard" />,
+  <Person key="Person" />,
+  <Settings key="Settings" />,
+];
 
 export const BottomNavBar = () => {
   const [value, setValue] = useState(0);
@@ -31,9 +35,9 @@ export const BottomNavBar = () => {
   };
 
   return (
-    <Box sx={{ display: { xs: "flex", sm: "none" } }}>
+    <Box sx={{ display: { xs: "flex", md: "none" } }}>
       <NavigationDrawer
-        open={isDrawerOpen}
+        isOpen={isDrawerOpen}
         onClose={closeDrawer}
         onOpen={openDrawer}
       />
