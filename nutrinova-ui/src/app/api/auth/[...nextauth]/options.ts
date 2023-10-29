@@ -1,5 +1,5 @@
-import customerService, { Customer } from "@/services/customerService";
-import type { NextAuthOptions, Profile, User } from "next-auth";
+import customerService, { Customer } from "@/app/services/customerService";
+import { NextAuthOptions, Profile, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { OAuthConfig } from "next-auth/providers/oauth";
 
@@ -22,17 +22,17 @@ export const options: NextAuthOptions = {
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
       profileUrl:
         process.env.KEYCLOAK_BASE_URL + "/protocol/openid-connect/userinfo",
-      profile: (profile : Profile) => {
+      profile: (profile: Profile) => {
         return {
           ...profile,
           id: profile.sub, // Adjust accordingly if Keycloak provides image URL
         };
       },
-      
+
       session: {
         strategy: "jwt",
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as OAuthConfig<any>,
   ],
   callbacks: {

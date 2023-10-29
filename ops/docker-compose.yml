@@ -34,6 +34,7 @@ services:
       context: ../nutrinova-api/
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password={POSTGRES_PASSWORD}
+      - USDA_API_KEY={USDA_API_KEY}
 
   swag:
     image: lscr.io/linuxserver/swag

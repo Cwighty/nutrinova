@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NutrinovaData;
@@ -10,10 +11,21 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        if (builder.Environment.IsDevelopment())
+        {
+            Env.Load(".env.local");
+        }
+
         // Add services to the container.
         builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
         builder.Services.AddControllers();
+
+        builder.Configuration
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .AddCommandLine(args)
+            .Build();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
