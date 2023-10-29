@@ -31,9 +31,9 @@ export const BottomNavBar = () => {
   };
 
   return (
-    <Box sx={{ display: { xs: "flex", sm: "none" } }}>
+    <Box sx={{ display: { xs: "flex", md: "none" } }}>
       <NavigationDrawer
-        open={isDrawerOpen}
+        isOpen={isDrawerOpen}
         onClose={closeDrawer}
         onOpen={openDrawer}
       />
