@@ -26,5 +26,5 @@ public class Food
 
     public List<FoodNutrient> foodNutrients { get; set; }
 
-    public FlattenedFood MakeFlattenedFood() => new FlattenedFood(this);
+    public FlattenedFood MakeFlattenedFood(bool onlyPrimaryNutrients = false) => new FlattenedFood(this, onlyPrimaryNutrients);
 }

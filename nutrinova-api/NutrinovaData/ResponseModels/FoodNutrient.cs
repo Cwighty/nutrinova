@@ -1,20 +1,22 @@
+using System.Text.Json.Serialization;
 using NutrinovaData.FlattenedResponseModels;
 
 namespace NutrinovaData.ResponseModels;
 
+[JsonConverter(typeof(FoodNutrientConverter))]
 public class FoodNutrient
 {
     public int nutrientId { get; set; }
 
-    public string nutrientName { get; set; }
+    public string? nutrientName { get; set; }
 
-    public string nutrientNumber { get; set; }
+    public string? nutrientNumber { get; set; }
 
-    public string unitName { get; set; }
+    public string? unitName { get; set; }
 
-    public string derivationCode { get; set; }
+    public string? derivationCode { get; set; }
 
-    public string derivationDescription { get; set; }
+    public string? derivationDescription { get; set; }
 
     public double value { get; set; }
 
