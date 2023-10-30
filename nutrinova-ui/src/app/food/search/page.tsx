@@ -15,6 +15,9 @@ interface PageProps {
 const fetchFoodSearchResults = async (
   searchParams: { [key: string]: string | string[] | undefined }
 ) => {
+  if (!searchParams["foodName"]) {
+    return [];
+  }
   const query = new URLSearchParams();
   query.set("foodName", searchParams["foodName"] as string);
   query.set("filterOption", searchParams["usdaFilterOption"] as string);
