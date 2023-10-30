@@ -37,6 +37,11 @@
     "next/core-web-vitals"
   ],
   "rules": {
-    // ...add rules which you'd like to disable
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false // allows async functions to be used in onClick
+      }
+    ]
   }
 }

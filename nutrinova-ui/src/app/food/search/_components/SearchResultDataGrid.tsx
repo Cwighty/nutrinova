@@ -2,11 +2,7 @@
 
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
-
-export interface FoodSearchResult {
-  id: number;
-  description: string;
-}
+import { FoodSearchResult } from "../_models/foodSearchResult";
 
 interface SearchResultDataGridProps {
   rows: FoodSearchResult[];
@@ -16,8 +12,9 @@ export default function SearchResultDataGrid({
   rows,
 }: SearchResultDataGridProps) {
   const router = useRouter();
+  console.log("rows", rows);
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100 },
+    { field: "fdcId", headerName: "ID", width: 100 },
     { field: "description", headerName: "Description", width: 500 },
   ];
   const handleRowClick = (row: GridRowParams<FoodSearchResult>) => {
@@ -27,6 +24,7 @@ export default function SearchResultDataGrid({
 
   return (
     <DataGrid
+      getRowId={(row: FoodSearchResult) => row.fdcId}
       rows={rows}
       columns={columns}
       onRowClick={handleRowClick}
