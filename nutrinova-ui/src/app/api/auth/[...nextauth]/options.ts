@@ -1,4 +1,4 @@
-import customerService, { Customer } from "@/app/services/customerService";
+import customerService, { Customer } from "@/services/customerService";
 import { NextAuthOptions, Profile, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { OAuthConfig } from "next-auth/providers/oauth";
@@ -38,7 +38,6 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }): Promise<JWT> {
       if (user) {
-        console.log(token)
         if (!(await customerService.customerExists(user.id))) {
           console.log("Creating a new customer...");
           const customer: Customer = {
