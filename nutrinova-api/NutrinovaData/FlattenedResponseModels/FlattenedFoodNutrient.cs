@@ -4,11 +4,11 @@ namespace NutrinovaData.FlattenedResponseModels;
 
 public class FlattenedFoodNutrient
 {
-    public string NutrientName { get; set; }
+    public string? Name { get; set; }
 
-    public string NameWithAmountAndUnit { get; set; }
+    public string? NameWithAmountAndUnit { get; set; }
 
-    public string UnitName { get; set; }
+    public string? UnitName { get; set; }
 
     public double Value { get; set; }
 
@@ -20,6 +20,6 @@ public class FlattenedFoodNutrient
 
         this.Value = foodNutrient.value;
 
-        this.NutrientName = foodNutrient.nutrientName;
+        this.Name = foodNutrient.nutrientName;
     }
 }

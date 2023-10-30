@@ -20,7 +20,7 @@ public class FlattenedFood
 
     public List<FlattenedFoodNutrient> FoodNutrients { get; set; }
 
-    public FlattenedFood(Food food)
+    public FlattenedFood(Food food, bool onlyPrimaryNutrients)
     {
         this.FdcId = food.fdcId;
         this.Description = food.description;
@@ -29,9 +29,18 @@ public class FlattenedFood
         this.ServingSize = food.servingSize;
         this.ServingSizeUnit = food.servingSizeUnit;
         this.ServingSizeWithUnits = $"{food.servingSize} {food.servingSizeUnit}";
-        this.FoodNutrients = food.foodNutrients
-            .Where(fn => fn.IsPrimaryFoodNutrient())
-            .Select(pfn => pfn.MakeFlattenedFoodNutrient())
-            .ToList();
+        if (onlyPrimaryNutrients)
+        {
+            this.FoodNutrients = food.foodNutrients
+                .Where(fn => fn.IsPrimaryFoodNutrient())
+                .Select(pfn => pfn.MakeFlattenedFoodNutrient())
+                .ToList();
+        }
+        else
+        {
+            this.FoodNutrients = food.foodNutrients
+               .Select(pfn => pfn.MakeFlattenedFoodNutrient())
+               .ToList();
+        }
     }
 }
