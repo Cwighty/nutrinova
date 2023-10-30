@@ -17,8 +17,25 @@ interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-const fetchUsdaFoodDivisionOptions = async () => {
+const fetchFoodSearchResults = async (
+  searchParams: { [key: string]: string | string[] | undefined }
+) => {
+
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (searchParams["keyword"] === undefined || searchParams["keyword"] == "") return [];
+  const foodSearchResults: FoodSearchResult[] = [];
+  for (let i = 0; i < 1000; i++) {
+    foodSearchResults.push({
+      id: i,
+      description: `Eggs, Grade A, Large, egg white ${i}`,
+    });
+  }
+
+  return foodSearchResults;
+};
+
+export default async function Page({ searchParams }: PageProps) {
+  console.log(searchParams);
   const usdaFoodDivisionOptions: UsdaFoodDivisionOption[] = [
     {
       name: "Foundation",
@@ -86,29 +103,8 @@ const fetchUsdaFoodDivisionOptions = async () => {
       categories: [],
     },
   ];
-  return usdaFoodDivisionOptions;
-};
 
-const fetchFoodSearchResults = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const foodSearchResults: FoodSearchResult[] = [];
-  for (let i = 0; i < 1000; i++) {
-    foodSearchResults.push({
-      id: i,
-      description: `Eggs, Grade A, Large, egg white ${i}`,
-    });
-  }
-
-  return foodSearchResults;
-};
-
-export default async function Page({ searchParams }: PageProps) {
-  console.log(searchParams);
-
-  const usdaFoodDivisionOptions = await fetchUsdaFoodDivisionOptions();
-
-  const rows = await fetchFoodSearchResults();
+  const rows = await fetchFoodSearchResults(searchParams);
 
   return (
     <>
