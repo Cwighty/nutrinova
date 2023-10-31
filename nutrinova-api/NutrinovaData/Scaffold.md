@@ -5,7 +5,11 @@
 
 
 ```bash
-dotnet ef dbcontext scaffold "Host=nutrinova-db;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!" Npgsql.EntityFrameworkCore.PostgreSQL --project ./NutrinovaData/ -c NutrinovaDbContext --context-dir ./ -o Entities -f
+dotnet ef dbcontext scaffold "Host=nutrinova-db;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!" Npgsql.EntityFrameworkCore.PostgreSQL --project ./NutrinovaData/ -c NutrinovaDbContext --context-dir ./ -o Entities -f --no-onconfiguring
 ```
-
 - Note: This is to be run from within the development container, the connection string is set up to work with the docker-compose networK
+
+# for drew
+```bash
+dotnet ef dbcontext scaffold "Host=localhost;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!" Npgsql.EntityFrameworkCore.PostgreSQL --project ./NutrinovaData/ -c NutrinovaDbContext --context-dir ./ -o Entities -f --no-onconfiguring
+```

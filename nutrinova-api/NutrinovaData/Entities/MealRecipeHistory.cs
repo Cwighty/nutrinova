@@ -9,6 +9,8 @@ public partial class MealRecipeHistory
 
     public Guid MealHistoryId { get; set; }
 
+    public decimal? Amount { get; set; }
+
     public Guid? UnitId { get; set; }
 
     public virtual MealHistory MealHistory { get; set; } = null!;

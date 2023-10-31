@@ -11,5 +11,7 @@ public partial class Nutrient
 
     public string? PreferredUnit { get; set; }
 
-    public virtual ICollection<FoodHistory> Foodhistories { get; set; } = new List<FoodHistory>();
+    public virtual ICollection<FoodHistoryNutrient> FoodHistoryNutrients { get; set; } = new List<FoodHistoryNutrient>();
+
+    public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
 }
