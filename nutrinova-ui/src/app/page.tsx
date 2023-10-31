@@ -1,22 +1,19 @@
-import { Session, getServerSession } from "next-auth";
-import { options } from "./api/auth/[...nextauth]/options";
+'use client'
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default async function Home() {
-  const session = await getServerSession(options) as Session;
+  const session = useSession();
+  const router = useRouter();
   if (!session) {
+    // redirect to single user flow
     return (
       <div>
-        <h1>Hi, please login</h1>
+        <h1>Hi, please login { }</h1>
       </div>
     );
+  } else {
+    await router.push("/dashboard")
   }
-  return (
-    <>
-      {session && (
-        <div>
-          <h1>Welcome {session.user.name}</h1>
-        </div>
-      )}
-    </>
-  );
 }
