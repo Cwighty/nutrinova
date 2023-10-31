@@ -164,14 +164,14 @@ CREATE TABLE
 -- Meal_Food_History Table
 CREATE TABLE
     Meal_Food_History (
+        id UUID PRIMARY KEY,
         Meal_History_id UUID NOT NULL,
-        Food_id UUID NOT NULL,
+        food_id UUID not null,
         Amount DECIMAL,
         Unit_id UUID,
         FOREIGN KEY (Meal_History_id) REFERENCES Meal_History (id),
-        FOREIGN KEY (Food_id) REFERENCES Food_History (id),
-        FOREIGN KEY (Unit_id) REFERENCES Unit (id),
-        PRIMARY KEY (Meal_History_id, Food_id)
+        FOREIGN KEY (food_id) REFERENCES Food_History (id),
+        FOREIGN KEY (Unit_id) REFERENCES Unit (id)
     );
 
 CREATE TABLE

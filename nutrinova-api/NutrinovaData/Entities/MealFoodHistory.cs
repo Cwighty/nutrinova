@@ -5,6 +5,8 @@ namespace NutrinovaData.Entities;
 
 public partial class MealFoodHistory
 {
+    public Guid Id { get; set; }
+
     public Guid MealHistoryId { get; set; }
 
     public Guid FoodId { get; set; }

@@ -214,13 +214,16 @@ public partial class NutrinovaDbContext : DbContext
 
         modelBuilder.Entity<MealFoodHistory>(entity =>
         {
-            entity.HasKey(e => new { e.MealHistoryId, e.FoodId }).HasName("meal_food_history_pkey");
+            entity.HasKey(e => e.Id).HasName("meal_food_history_pkey");
 
             entity.ToTable("meal_food_history");
 
-            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
-            entity.Property(e => e.FoodId).HasColumnName("food_id");
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.FoodId).HasColumnName("food_id");
+            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
             entity.Property(e => e.UnitId).HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.MealFoodHistories)
