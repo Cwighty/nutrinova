@@ -34,15 +34,25 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    Food_Plan (id UUID PRIMARY KEY, Food_Name TEXT, Meal_id UUID);
+    Food_Plan (
+        id UUID PRIMARY KEY,
+        fdcid integer,
+        Description TEXT, 
+        created_by uuid REFERENCES Customer(id),
+        created_at TIMESTAMP WITH TIME ZONE,
+        serving_size DECIMAL,
+        unit UUID REFERENCES Unit(id),
+        note TEXT
+        );
 
 -- Recipe_Plan Table
 CREATE TABLE
     Recipe_Plan (
         id UUID PRIMARY KEY,
-        Recipe_Name TEXT,
+        description TEXT,
         Tags TEXT,
-        Notes TEXT
+        Notes TEXT,
+        created_by uuid REFERENCES Customer(id)
     );
 
 -- Nutrient Table
@@ -57,9 +67,10 @@ CREATE TABLE
 CREATE TABLE
     Recipe_History (
         id UUID PRIMARY KEY,
-        Recipe_Name TEXT,
+        description TEXT,
         Tags TEXT,
-        Notes TEXT
+        Notes TEXT,
+        created_by uuid REFERENCES Customer(id)
     );
 
 -- Reported_Issues Table
@@ -115,12 +126,13 @@ CREATE TABLE
 CREATE TABLE
     Food_History (
         id UUID PRIMARY KEY,
-        Food_Name TEXT,
-        Meal_id UUID,
-        Amount DECIMAL,
-        Unit UUID,
-        FOREIGN KEY (Meal_id) REFERENCES Meal_History (id),
-        FOREIGN KEY (Unit) REFERENCES Unit (id)
+        fdcid integer,
+        description TEXT, 
+        created_by uuid REFERENCES Customer(id),
+        created_at TIMESTAMP WITH TIME ZONE,
+        serving_size DECIMAL,
+        unit UUID REFERENCES Unit(id),
+        note TEXT
     );
 
 -- Recipe_Food_History Table
@@ -141,6 +153,7 @@ CREATE TABLE
     Meal_Recipe_History (
         Recipe_History_id UUID NOT NULL,
         Meal_History_id UUID NOT NULL,
+        Amount DECIMAL,
         Unit_id UUID,
         FOREIGN KEY (Recipe_History_id) REFERENCES Recipe_History (id),
         FOREIGN KEY (Meal_History_id) REFERENCES Meal_History (id),
@@ -153,7 +166,7 @@ CREATE TABLE
     Meal_Food_History (
         Meal_History_id UUID NOT NULL,
         Food_id UUID NOT NULL,
-        Amount FLOAT,
+        Amount DECIMAL,
         Unit_id UUID,
         FOREIGN KEY (Meal_History_id) REFERENCES Meal_History (id),
         FOREIGN KEY (Food_id) REFERENCES Food_History (id),
@@ -161,25 +174,38 @@ CREATE TABLE
         PRIMARY KEY (Meal_History_id, Food_id)
     );
 
+CREATE TABLE
+    Food_Plan_Nutrient (
+        id UUID PRIMARY KEY,
+        FoodPlan_id UUID NOT NULL,
+        Nutrient_id UUID NOT NULL,
+        amount DECIMAL,
+        unit_id UUID REFERENCES Unit (id),
+        FOREIGN KEY (FoodPlan_id) REFERENCES Food_Plan (id),
+        FOREIGN KEY (Nutrient_id) REFERENCES Nutrient (id)
+    );
+
 -- Food_History_Nutrient Table
 CREATE TABLE
     Food_History_Nutrient (
+        id UUID PRIMARY KEY,
         FoodHistory_id UUID NOT NULL,
         Nutrient_id UUID NOT NULL,
+        amount DECIMAL,
+        unit_id UUID REFERENCES Unit (id),
         FOREIGN KEY (FoodHistory_id) REFERENCES Food_History (id),
-        FOREIGN KEY (Nutrient_id) REFERENCES Nutrient (id),
-        PRIMARY KEY (FoodHistory_id, Nutrient_id)
+        FOREIGN KEY (Nutrient_id) REFERENCES Nutrient (id)
     );
 
 -- Recipe_Food Table
 CREATE TABLE
     Recipe_Food (
+        id UUID PRIMARY KEY,
         Food_id UUID NOT NULL,
         Recipe_id UUID NOT NULL,
         Amount DECIMAL,
         Unit_id UUID,
         FOREIGN KEY (Food_id) REFERENCES Food_History (id),
         FOREIGN KEY (Recipe_id) REFERENCES Recipe_Plan (id),
-        FOREIGN KEY (Unit_id) REFERENCES Unit (id),
-        PRIMARY KEY (Food_id, Recipe_id)
+        FOREIGN KEY (Unit_id) REFERENCES Unit (id)
     );

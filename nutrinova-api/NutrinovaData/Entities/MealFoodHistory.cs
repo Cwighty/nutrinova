@@ -9,7 +9,7 @@ public partial class MealFoodHistory
 
     public Guid FoodId { get; set; }
 
-    public double? Amount { get; set; }
+    public decimal? Amount { get; set; }
 
     public Guid? UnitId { get; set; }
 
