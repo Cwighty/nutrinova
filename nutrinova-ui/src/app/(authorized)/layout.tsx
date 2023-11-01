@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { BottomNavBar } from "@/components/BottomNavBar";
-import { MUIThemeProvider } from "@/components/MUIThemeProvider";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { TopAppBar } from "@/components/TopAppBar";
 import { Box } from "@mui/material";
