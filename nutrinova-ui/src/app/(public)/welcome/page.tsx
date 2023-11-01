@@ -10,11 +10,18 @@ const Welcome = () => {
     const { data } = useSession();
     const router = useRouter();
     const handleSingleUser = async () => {
+        if (await customerService.customerExistsClient(data!.user.id ?? "")) {
+            router.push('/dashboard');
+            return;
+        }
         const customer = {
             objectId: data!.user.id,
             email: data!.user.email,
         } as Customer;
-        await customerService.createCustomer(customer);
+        const created = await customerService.createCustomer(customer);
+        if (!created) {
+            throw new Error('Failed to create customer');
+        }
         router.push('/dashboard');
     }
     return (
