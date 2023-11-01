@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using NutrinovaData.Entities;
 
 namespace NutrinovaData;
 
 public partial class NutrinovaDbContext : DbContext
 {
-    public NutrinovaDbContext()
-    {
-    }
-
     public NutrinovaDbContext(DbContextOptions<NutrinovaDbContext> options)
         : base(options)
     {
@@ -20,7 +18,11 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<FoodHistory> FoodHistories { get; set; }
 
+    public virtual DbSet<FoodHistoryNutrient> FoodHistoryNutrients { get; set; }
+
     public virtual DbSet<FoodPlan> FoodPlans { get; set; }
+
+    public virtual DbSet<FoodPlanNutrient> FoodPlanNutrients { get; set; }
 
     public virtual DbSet<License> Licenses { get; set; }
 
@@ -92,37 +94,50 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.FoodName).HasColumnName("food_name");
-            entity.Property(e => e.MealId).HasColumnName("meal_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.Fdcid).HasColumnName("fdcid");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.ServingSize).HasColumnName("serving_size");
             entity.Property(e => e.Unit).HasColumnName("unit");
 
-            entity.HasOne(d => d.Meal).WithMany(p => p.FoodHistories)
-                .HasForeignKey(d => d.MealId)
-                .HasConstraintName("food_history_meal_id_fkey");
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.FoodHistories)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("food_history_created_by_fkey");
 
             entity.HasOne(d => d.UnitNavigation).WithMany(p => p.FoodHistories)
                 .HasForeignKey(d => d.Unit)
                 .HasConstraintName("food_history_unit_fkey");
+        });
 
-            entity.HasMany(d => d.Nutrients).WithMany(p => p.Foodhistories)
-                .UsingEntity<Dictionary<string, object>>(
-                    "FoodHistoryNutrient",
-                    r => r.HasOne<Nutrient>().WithMany()
-                        .HasForeignKey("NutrientId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("food_history_nutrient_nutrient_id_fkey"),
-                    l => l.HasOne<FoodHistory>().WithMany()
-                        .HasForeignKey("FoodhistoryId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("food_history_nutrient_foodhistory_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("FoodhistoryId", "NutrientId").HasName("food_history_nutrient_pkey");
-                        j.ToTable("food_history_nutrient");
-                        j.IndexerProperty<Guid>("FoodhistoryId").HasColumnName("foodhistory_id");
-                        j.IndexerProperty<Guid>("NutrientId").HasColumnName("nutrient_id");
-                    });
+        modelBuilder.Entity<FoodHistoryNutrient>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("food_history_nutrient_pkey");
+
+            entity.ToTable("food_history_nutrient");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.FoodhistoryId).HasColumnName("foodhistory_id");
+            entity.Property(e => e.NutrientId).HasColumnName("nutrient_id");
+            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+
+            entity.HasOne(d => d.Foodhistory).WithMany(p => p.FoodHistoryNutrients)
+                .HasForeignKey(d => d.FoodhistoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_history_nutrient_foodhistory_id_fkey");
+
+            entity.HasOne(d => d.Nutrient).WithMany(p => p.FoodHistoryNutrients)
+                .HasForeignKey(d => d.NutrientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_history_nutrient_nutrient_id_fkey");
+
+            entity.HasOne(d => d.Unit).WithMany(p => p.FoodHistoryNutrients)
+                .HasForeignKey(d => d.UnitId)
+                .HasConstraintName("food_history_nutrient_unit_id_fkey");
         });
 
         modelBuilder.Entity<FoodPlan>(entity =>
@@ -134,8 +149,50 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.FoodName).HasColumnName("food_name");
-            entity.Property(e => e.MealId).HasColumnName("meal_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.Fdcid).HasColumnName("fdcid");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.ServingSize).HasColumnName("serving_size");
+            entity.Property(e => e.Unit).HasColumnName("unit");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.FoodPlans)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("food_plan_created_by_fkey");
+
+            entity.HasOne(d => d.UnitNavigation).WithMany(p => p.FoodPlans)
+                .HasForeignKey(d => d.Unit)
+                .HasConstraintName("food_plan_unit_fkey");
+        });
+
+        modelBuilder.Entity<FoodPlanNutrient>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("food_plan_nutrient_pkey");
+
+            entity.ToTable("food_plan_nutrient");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.FoodplanId).HasColumnName("foodplan_id");
+            entity.Property(e => e.NutrientId).HasColumnName("nutrient_id");
+            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+
+            entity.HasOne(d => d.Foodplan).WithMany(p => p.FoodPlanNutrients)
+                .HasForeignKey(d => d.FoodplanId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_plan_nutrient_foodplan_id_fkey");
+
+            entity.HasOne(d => d.Nutrient).WithMany(p => p.FoodPlanNutrients)
+                .HasForeignKey(d => d.NutrientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_plan_nutrient_nutrient_id_fkey");
+
+            entity.HasOne(d => d.Unit).WithMany(p => p.FoodPlanNutrients)
+                .HasForeignKey(d => d.UnitId)
+                .HasConstraintName("food_plan_nutrient_unit_id_fkey");
         });
 
         modelBuilder.Entity<License>(entity =>
@@ -157,13 +214,16 @@ public partial class NutrinovaDbContext : DbContext
 
         modelBuilder.Entity<MealFoodHistory>(entity =>
         {
-            entity.HasKey(e => new { e.MealHistoryId, e.FoodId }).HasName("meal_food_history_pkey");
+            entity.HasKey(e => e.Id).HasName("meal_food_history_pkey");
 
             entity.ToTable("meal_food_history");
 
-            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
-            entity.Property(e => e.FoodId).HasColumnName("food_id");
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.FoodId).HasColumnName("food_id");
+            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
             entity.Property(e => e.UnitId).HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.MealFoodHistories)
@@ -208,6 +268,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.Property(e => e.RecipeHistoryId).HasColumnName("recipe_history_id");
             entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.UnitId).HasColumnName("unit_id");
 
             entity.HasOne(d => d.MealHistory).WithMany(p => p.MealRecipeHistories)
@@ -290,13 +351,16 @@ public partial class NutrinovaDbContext : DbContext
 
         modelBuilder.Entity<RecipeFood>(entity =>
         {
-            entity.HasKey(e => new { e.FoodId, e.RecipeId }).HasName("recipe_food_pkey");
+            entity.HasKey(e => e.Id).HasName("recipe_food_pkey");
 
             entity.ToTable("recipe_food");
 
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodId).HasColumnName("food_id");
             entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.UnitId).HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.RecipeFoods)
@@ -349,9 +413,14 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");
-            entity.Property(e => e.RecipeName).HasColumnName("recipe_name");
             entity.Property(e => e.Tags).HasColumnName("tags");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.RecipeHistories)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("recipe_history_created_by_fkey");
         });
 
         modelBuilder.Entity<RecipePlan>(entity =>
@@ -363,9 +432,14 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");
-            entity.Property(e => e.RecipeName).HasColumnName("recipe_name");
             entity.Property(e => e.Tags).HasColumnName("tags");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.RecipePlans)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("recipe_plan_created_by_fkey");
         });
 
         modelBuilder.Entity<ReportedIssue>(entity =>

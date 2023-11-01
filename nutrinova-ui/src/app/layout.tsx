@@ -1,29 +1,28 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { BottomNavBar } from "@/components/BottomNavBar";
 import { MUIThemeProvider } from "@/components/MUIThemeProvider";
-import { NavigationSidebar } from "@/components/NavigationSidebar";
-import { Box } from "@mui/material";
-import { ReactNode } from "react";
+import { Provider } from "../components/SessionProvider";
+import { Session, getServerSession } from "next-auth";
 
 export const metadata: Metadata = {
   title: "NutriNova",
   description: "NutriNova",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getServerSession() as Session;
   return (
     <html lang="en">
       <body>
-        <MUIThemeProvider>
-          <Box style={{ display: "flex", flexDirection: "row" }}>
-            <NavigationSidebar />
-            <Box style={{ flex: 1 }}>
-              {children}
-              <BottomNavBar />
-            </Box>
-          </Box>
-        </MUIThemeProvider>
+        <Provider session={session}>
+          {<MUIThemeProvider>
+            {children}
+          </MUIThemeProvider>}
+        </Provider>
       </body>
     </html>
   );

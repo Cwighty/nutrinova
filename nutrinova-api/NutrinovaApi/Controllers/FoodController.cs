@@ -54,7 +54,7 @@ public class FoodController : ControllerBase
 
             if (deserRes?.foods == null || !deserRes.foods.Any())
             {
-                return NotFound("No foods found");
+                return new List<FlattenedFood>();
             }
 
             var simplifiedFoods = deserRes.foods.Select(f => f.MakeFlattenedFood(onlyPrimaryNutrients: true)).ToList();
