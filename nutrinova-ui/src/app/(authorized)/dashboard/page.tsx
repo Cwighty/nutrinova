@@ -1,9 +1,14 @@
-import React from 'react'
-const Dashboard
-  = () => {
-    return (
-      <div>Dashboard</div>
-    )
-  }
+import { PageContainer } from "@/components/PageContainer";
+import { Typography } from "@mui/material";
 
-export default Dashboard
+export const metadata = {
+    title: "Dashboard",
+};
+
+export default function DashboardPage() {
+    return (
+        <PageContainer title={metadata.title}>
+            <Typography variant={"h3"}>Dashboard</Typography>
+        </PageContainer>
+    );
+}

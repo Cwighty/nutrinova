@@ -16,16 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <TopAppBar />
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <Box style={{ display: "flex", flexDirection: "row" }}>
         <NavigationSidebar />
-        <div style={{ flex: 1 }}>
-          <Box sx={{ p: 2, mb: { xs: 3 } }} >
-            {children}
-          </Box>
+        <Box style={{ flex: 1 }}>
+          {children}
           <BottomNavBar />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </>
   );
 }
