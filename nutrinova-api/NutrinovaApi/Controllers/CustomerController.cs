@@ -20,7 +20,9 @@ public class CustomerController : ControllerBase
   public ActionResult<bool> UserExists([FromQuery] string id)
   {
     logger.LogInformation("Checking if user exists...");
-    return context.Customers.Any(c => c.Objectid == id);
+    var exists = context.Customers.Any(c => c.Objectid == id);
+    logger.LogInformation($"User exists: {exists}");
+    return exists;
   }
 
   [HttpPost("create")]

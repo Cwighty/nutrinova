@@ -56,7 +56,7 @@ export const NavigationList = ({
           <ListItemButton
             key="Dashboard"
             component={NextLinkComposed}
-            to={{ pathname: "/" }}
+            to={{ pathname: "/dashboard" }}
           >
             <ListItemIcon>
               <Dashboard />
