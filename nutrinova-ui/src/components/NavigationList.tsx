@@ -1,8 +1,10 @@
 "use client";
 import {
+  Box,
   Collapse,
   Divider,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -51,6 +53,19 @@ export const NavigationList = ({
 
   return (
     <List disablePadding={true} sx={{ width: "100%" }}>
+      <ListItem>
+        <Box
+          component="img"
+          sx={{
+            maxWidth: "100%",
+            height: "auto",
+            p: 1,
+            px: { xs: 10, sm: 5, md: 1 },
+          }}
+          src="/nutrinova.png"
+        />
+      </ListItem>
+      <Divider />
       {isDesktop && (
         <>
           <ListItemButton

@@ -17,39 +17,39 @@ const usdaFilterOptions: string[] = [
   "Experimental",
 ];
 
-export default function FoodSearchForm({
-  searchParams
-}: FoodSearchFormProps) {
-  const [searchKeyword, setSearchKeyword] = useState<string>(searchParams["foodName"] as string);
+export default function FoodSearchForm({ searchParams }: FoodSearchFormProps) {
+  const [searchKeyword, setSearchKeyword] = useState<string>(
+    searchParams["foodName"] as string,
+  );
   const foodName = useDebounce(searchKeyword, 500);
   const [usdaFilterOption, setUsdaFilterOption] = useState<string>(
-    searchParams["usdaFilterOption"] as string ?? usdaFilterOptions[0]
+    (searchParams["usdaFilterOption"] as string) ?? usdaFilterOptions[0],
   );
 
   const router = useRouter();
 
   const handleDivisionChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setUsdaFilterOption(e.target.value);
   };
 
   const handleKeywordChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setSearchKeyword(e.target.value);
   };
 
   useEffect(() => {
-    if (foodName === "") {
+    if (foodName === "" || foodName === undefined) {
       return;
     }
     router.push(
       "/food/search?" +
-      new URLSearchParams({
-        foodName,
-        usdaFilterOption,
-      }).toString()
+        new URLSearchParams({
+          foodName,
+          usdaFilterOption,
+        }).toString(),
     );
   }, [foodName, usdaFilterOption, router]);
 

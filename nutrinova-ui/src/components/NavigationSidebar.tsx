@@ -5,6 +5,7 @@ import { Paper } from "@mui/material";
 export const NavigationSidebar = () => {
   return (
     <Paper
+      elevation={3}
       sx={{
         display: { xs: "none", md: "flex" },
         height: "100vh",
