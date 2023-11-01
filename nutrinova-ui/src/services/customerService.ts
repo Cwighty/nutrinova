@@ -5,28 +5,49 @@ export interface Customer {
   email: string;
 }
 
-const axiosInstance: AxiosInstance = axios.create({
+const serverAxiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.NUTRINOVA_API_URL + "/be/",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+const clientAxiosInstance: AxiosInstance = axios.create({
+  baseURL: "/be/",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 const userService = {
-  async customerExists(id: string): Promise<boolean> {
+  async customerExistsServer(id: string): Promise<boolean> {
+    'use server'
     try {
-      const response = await axiosInstance.get(`customer/exists?id=${id}`);
+      const response = await serverAxiosInstance.get(`customer/exists?id=${id}`);
+      console.log("Customer exists.", id);
+      console.log("Customer exists.", response.data);
       return response.data === true;
     } catch (error) {
-      return false;
+      console.error("Failed to check if customer exists...", error);
+      throw new Error("Failed to check if customer exists...");
+    }
+  },
+
+  async customerExistsClient(id: string): Promise<boolean> {
+    try {
+      const response = await clientAxiosInstance.get(`customer/exists?id=${id}`);
+      return response.data === true;
+    } catch (error) {
+      console.error("Failed to check if customer exists...", error);
+      throw new Error("Failed to check if customer exists...");
     }
   },
 
   async createCustomer(customer: Customer): Promise<boolean> {
     try {
       const customer_json = JSON.stringify(customer);
-      const response = await axiosInstance.post(
-        `customer/create`,
+      await clientAxiosInstance.post(
+        `Customer/create`,
         customer_json,
         {
           headers: {
@@ -34,10 +55,8 @@ const userService = {
           },
         },
       );
-      console.log("Customer created.", customer.email);
-      return response.status === 201;
+      return true;
     } catch (error) {
-      console.log("Failed to create customer...", error);
       return false;
     }
   },

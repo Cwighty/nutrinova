@@ -11,7 +11,7 @@ import { NextLinkComposed } from "@/components/Link";
 import { NavigationDrawer } from "@/components/NavigationDrawer";
 
 const LINKS = [
-  { label: "Dashboard", href: "/" },
+  { label: "Dashboard", href: "/dashboard" },
   { label: "Account", href: "/account" },
   { label: "Settings", href: "/settings" },
 ];
