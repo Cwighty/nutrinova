@@ -3,7 +3,9 @@ name: Lint Next.js Project
 on:
   workflow_dispatch:
   workflow_call:
-
+  pull_request:
+    paths-ignore:
+      - "**.md"
 jobs:
   lint-frontend:
     runs-on: [self-hosted]

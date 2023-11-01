@@ -4,6 +4,9 @@ env:
 on:
   workflow_dispatch:
   workflow_call:
+  pull_request:
+    paths-ignore:
+      - "**.md"
 
 jobs:
   build-backend:
