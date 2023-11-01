@@ -1,15 +1,18 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 import CenteredSpinnerWithBackdrop from './CenteredSpinnerOverlay';
+import React from 'react';
 
 export const ClientRouter = ({ route }: { route: string }) => {
   const router = useRouter();
-  router.push(route)
-  return (
-    <>
-      <CenteredSpinnerWithBackdrop message='Loading...' />
-    </>
-  )
-}
+
+  React.useEffect(() => {
+    if (route) {
+      router.push(route);
+    }
+  }, [route, router]);
+
+  return <CenteredSpinnerWithBackdrop message='Loading...' />;
+};
+
