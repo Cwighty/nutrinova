@@ -1,5 +1,4 @@
-import customerService, { Customer } from "@/services/customerService";
-import { NextAuthOptions, Profile, Session, User } from "next-auth";
+import { NextAuthOptions, Profile, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { OAuthConfig } from "next-auth/providers/oauth";
 

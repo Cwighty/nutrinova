@@ -1,20 +1,20 @@
-'use client'
+import { ClientRouter } from "@/components/ClientRouter";
+import customerService from "@/services/customerService";
+import { Session, getServerSession } from "next-auth";
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
-export default function Home() {
-  const session = useSession();
-  const router = useRouter();
-  if (!session) {
+export default async function Home() {
+  // if user exits go to dashboard else go to createUser flow
+  const session = await getServerSession() as Session;
+  console.log(session)
+  if (session.user.id && await customerService.customerExists(session.user.id)) {
     // redirect to single user flow
     return (
-      <div>
-        <h1>Hi, please login { }</h1>
-      </div>
+      <ClientRouter route="/dashboard" />
     );
   } else {
-
-    router.push("/dashboard")
+    <>
+      <h1> Make user here</h1>
+    </>
   }
+
 }
