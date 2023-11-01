@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MUIThemeProvider } from "@/components/MUIThemeProvider";
-import { SessionProvider } from "../components/SessionProvider";
+import { Provider } from "../components/SessionProvider";
 import { Session, getServerSession } from "next-auth";
 
 export const metadata: Metadata = {
@@ -17,11 +17,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider session={session}>
-          <MUIThemeProvider>
+        <Provider session={session}>
+          {<MUIThemeProvider>
             {children}
-          </MUIThemeProvider>
-        </SessionProvider>
+          </MUIThemeProvider>}
+        </Provider>
       </body>
     </html>
   );

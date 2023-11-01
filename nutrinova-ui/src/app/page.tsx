@@ -14,6 +14,6 @@ export default async function Home() {
       </div>
     );
   } else {
-    await router.push("/dashboard")
+    router.push("/dashboard")
   }
 }
