@@ -1,4 +1,7 @@
 # NutriNova
+
+# Up to date progress can be viewed in our [github project](https://github.com/users/Cwighty/projects/5)
+
 ## CI/CD
 - [x] Deployment pipline
 - [x] Automated testing and linting in the pipeline (abort build if fails)
