@@ -7,12 +7,27 @@
 
 ## Authentication
 
-- [ ] The application will use a SSO provider to handle sign-ups for new users and logins for existing users. (Authentication)
-- [ ] Users can authenticate so that their data can be persisted. (Authentication)
+- [x] The application will use a SSO provider to handle sign-ups for new users and logins for existing users. (Authentication)
+- [x] Users can authenticate so that their data can be persisted. (Authentication)
 - [ ] Users will only have access to their information and won't be able to see other people's information. (Authentication)
 - [ ] Users can easily log out of their accounts for convenience and security. (Authentication)
+      
+# Nov 4th
 
 ## Foods/Ingredients (Lots of reading/writing data)
+
+### Search Foods/Ingredients (USDA API)
+
+- [x] Search and import foods from USDA API. 
+- [ ] Adjust imported foods from the USDA API.
+
+### Create Food (generic form input components)
+
+- [ ] Create custom foods.  
+- [ ] Validate user-created custom foods. (Error handling)
+- [ ] Specify details like name, nutritional facts, and macronutrients.
+
+# Nov 11th
 
 ### View Used Foods/Ingredients
 
@@ -25,16 +40,6 @@
 - [ ] Edit the details of a food. 
 - [ ] Changing a food should not change recorded history totals. 
 
-### Search Foods/Ingredients (USDA API)
-
-- [ ] Search and import foods from USDA API. 
-- [ ] Adjust imported foods from the USDA API. 
-
-### Create Food (generic form input components)
-
-- [ ] Create custom foods.  
-- [ ] Validate user-created custom foods. (Error handling)
-- [ ] Specify details like name, nutritional facts, and macronutrients. 
 
 ## Individual/Managed Profiles
 
@@ -42,12 +47,11 @@
 
 - [ ] Users can create a profile just for them. (Authentication)
 
-### Multi-Profile
+# Nov 18th
 
-- [ ] Manage profiles for one or more individuals. (Authentication)
-- [ ] Switch between profiles without logging out. (Authentication)
-- [ ] Add a new profile for a new person. (Authentication)
-- [ ] Profile context to share patient details across flows (Client-side state stores)
+### Alerts/Notification
+
+- [ ] Alerts/notifications for when to eat. (Toasts / Websockets)
 
 ## Recipe (Lots of reading/writing data)
 
@@ -56,7 +60,9 @@
 - [ ] Create a recipe from stored foods. 
 - [ ] Provide food and amount. 
 - [ ] Measure foods in different ways. 
-- [ ] Write notes about a recipe. 
+- [ ] Write notes about a recipe.
+      
+# Nov 25th
 
 ### Edit Recipe
 
@@ -73,7 +79,9 @@
 
 - [ ] Record what meals have been eaten and when. 
 - [ ] Meals can consist of multiple recipes and foods. 
-  
+
+# Dec 2
+
 ### View Recorded Meals/Details
 
 - [ ] View a history of meals. 
@@ -87,12 +95,20 @@
 ### User Info
 
 - [ ] Identifying questions at initial sign-in. (Authentication)
-- [ ] Cache onboarding progress in local storage on page leave (Local Storage)
   
 ### Patient Profile
 
 - [ ] Set up new profiles for each patient. (Authentication)
 - [ ] Can quick switch between patients. (generic layout components)
+      
+# Dec 9 (due date)
+
+### Multi-Profile
+
+- [ ] Manage profiles for one or more individuals. (Authentication)
+- [ ] Switch between profiles without logging out. (Authentication)
+- [ ] Add a new profile for a new person. (Authentication)
+- [ ] Profile context to share patient details across flows (Client-side state stores)
   
 ### Account Settings
 
@@ -108,9 +124,7 @@
 
 - [ ] Summaries of nutritional goals. 
   
-### Alerts/Notification
 
-- [ ] Alerts/notifications for when to eat. (Toasts / Websockets)
 
 
 # Stretch Goals
