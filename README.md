@@ -48,7 +48,7 @@
 
 ### Single Profile
 
-- [ ] Users can create a profile just for them. (Authentication)
+- [x] Users can create a profile just for them. (Authentication)
 
 # Nov 18th
 
