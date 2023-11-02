@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using NutrinovaData.Entities;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -25,15 +26,33 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
         _dbContainer = new PostgreSqlBuilder()
            .WithImage("postgres")
            .WithPassword("Strong_password_123!")
+           .WithResourceMapping(new DirectoryInfo(directory), "/docker-entrypoint-initdb.d")
            .WithBindMount(directory, "/docker-entrypoint-initdb.d")
            .Build();
     }
 
-    public string DefaultUserId { get; set; } = "1";
+    public string DefaultUserId { get; set; } = Guid.Empty.ToString();
 
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+
+        // Add test user here if not using SQL script
+        var optionsBuilder = new DbContextOptionsBuilder<NutrinovaDbContext>();
+        optionsBuilder.UseNpgsql(_dbContainer.GetConnectionString());
+
+        using var context = new NutrinovaDbContext(optionsBuilder.Options);
+        var testCustomer = new Customer
+        {
+            Id = Guid.Parse(DefaultUserId),
+            Objectid = DefaultUserId,
+            Firstname = "Test",
+            Lastname = "User",
+            Email = "testuser@example.com",
+        };
+
+        context.Customers.Add(testCustomer);
+        await context.SaveChangesAsync();
     }
 
     async Task IAsyncLifetime.DisposeAsync()

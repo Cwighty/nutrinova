@@ -1,5 +1,8 @@
 using System.Text.Json;
 using System.Web;
+using NutrinovaApi.Extensions;
+using NutrinovaData;
+using NutrinovaData.Entities;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
 
@@ -12,13 +15,15 @@ public class FoodController : ControllerBase
     // USDA API Documentation: https://app.swaggerhub.com/apis/fdcnal/food-data_central_api/1.0.1#/FDC/getFood
     private readonly ILogger<FoodController> logger;
     private readonly IConfiguration configuration;
-
+    private readonly NutrinovaDbContext context;
     private readonly HttpClient httpClient;
 
-    public FoodController(ILogger<FoodController> logger, IConfiguration configuration)
+    public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
     {
         this.logger = logger;
         this.configuration = configuration;
+        this.context = context;
+
         this.httpClient = new HttpClient()
         {
             BaseAddress = new Uri("https://api.nal.usda.gov/fdc/v1/"),
@@ -119,5 +124,64 @@ public class FoodController : ControllerBase
             logger.LogError($"An unexpected error occurred: {ex.Message}");
             return StatusCode(500, "Internal server error");
         }
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
+    {
+        // Validate the input
+        if (createFoodRequestModel == null)
+        {
+            return BadRequest("Invalid food plan data");
+        }
+
+        if (string.IsNullOrWhiteSpace(createFoodRequestModel.Description))
+        {
+            return BadRequest("Description is required");
+        }
+
+        if (createFoodRequestModel.ServingSize <= 0)
+        {
+            return BadRequest("Serving size must be greater than 0");
+        }
+
+        var userId = User.GetIdFromClaims();
+
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var foodPlan = new FoodPlan
+        {
+            Id = Guid.NewGuid(),
+            Description = createFoodRequestModel.Description,
+            CreatedBy = Guid.Parse(userId), // dont forget to change this
+            CreatedAt = DateTime.UtcNow,
+            ServingSize = createFoodRequestModel.ServingSize,
+            Unit = createFoodRequestModel.Unit,
+            Note = createFoodRequestModel.Note,
+            FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
+            {
+                NutrientId = n.NutrientId,
+                Amount = n.Amount,
+                UnitId = n.UnitId,
+            }).ToList(),
+        };
+
+        // Save to the database
+        await context.FoodPlans.AddAsync(foodPlan);
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Failed to save to the database: {ex.Message}");
+            return StatusCode(500, "Failed to save to the database");
+        }
+
+        return Ok(new { message = "Food created successfully", id = foodPlan.Id });
     }
 }

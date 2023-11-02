@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 // https://mazeez.dev/posts/auth-in-integration-tests
 public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
 {
-    public const string UserId = "UserId";
+    public const string UserId = "User Id";
 
     public const string AuthenticationScheme = "Test";
     private readonly string _defaultUserId;

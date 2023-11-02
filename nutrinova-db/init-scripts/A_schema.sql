@@ -1,6 +1,5 @@
 SET
     search_path TO public;
-
 -- Customer Table
 CREATE TABLE
     Customer (
