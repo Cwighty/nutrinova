@@ -22,6 +22,7 @@ declare module "next-auth" {
 
   interface Account extends account {
     access_token: string | undefined,
+    id_token: string
   }
 
 }
@@ -33,7 +34,7 @@ declare module "next-auth/jwt"
     name?: string,
     picture?: string,
     sub?: string,
-    accessToken: string | undefined
+    access_token: string | undefined
   }
 
 }

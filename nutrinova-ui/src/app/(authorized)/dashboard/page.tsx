@@ -11,7 +11,7 @@ export const metadata = {
 
 export default async function DashboardPage() {
     const session = await getServerSession(options) as Session;
-    console.log(session);
+    console.log("here is the session", session);
     return (
         <PageContainer title={metadata.title}>
             <Typography variant={"h3"}>Dashboard</Typography>
