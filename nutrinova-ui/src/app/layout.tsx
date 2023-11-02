@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { MUIThemeProvider } from "@/components/MUIThemeProvider";
-import { Provider } from "../components/SessionProvider";
+import { Provider } from "@/components/SessionProvider";
 import { Session, getServerSession } from "next-auth";
+import { MUIThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "NutriNova",
@@ -13,14 +13,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession() as Session;
+  const session = (await getServerSession()) as Session;
   return (
     <html lang="en">
       <body>
         <Provider session={session}>
-          {<MUIThemeProvider>
-            {children}
-          </MUIThemeProvider>}
+          <MUIThemeProvider>{children}</MUIThemeProvider>
         </Provider>
       </body>
     </html>

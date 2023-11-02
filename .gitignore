@@ -12,3 +12,4 @@ nutrinova-db/data/*
 /nutrinova-api/NutrinovaData/bin/Debug/net7.0
 */.idea
 /.idea/
+.DS_Store
