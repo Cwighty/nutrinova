@@ -9,7 +9,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { Brightness2, Brightness7 } from "@mui/icons-material";
 import { useTheme } from "@/context/ThemeContext";
 
 export interface PageBarProps {
@@ -20,7 +20,7 @@ export default function PageBar({ title }: PageBarProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <AppBar position="static" elevation={0}>
+    <AppBar color="transparent" position="static" elevation={0}>
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -29,7 +29,7 @@ export default function PageBar({ title }: PageBarProps) {
 
           <Box sx={{ flexGrow: 0 }}>
             <IconButton onClick={toggleTheme} sx={{ mr: 2 }}>
-              {theme === "light" ? <Brightness7 /> : <Brightness4 />}
+              {theme === "dark" ? <Brightness7 /> : <Brightness2 />}
             </IconButton>
             <Tooltip title="Select a Patient">
               <IconButton sx={{ p: 0 }}>
