@@ -4,8 +4,6 @@ import SearchResultDataGrid from "./_components/SearchResultDataGrid";
 import { FoodSearchResult } from "./_models/foodSearchResult";
 import { PageContainer } from "@/components/PageContainer";
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
-import { getServerSession } from "next-auth";
-import { options } from "@/app/api/auth/[...nextauth]/options";
 
 export const metadata = {
   title: "Food Search",
@@ -24,18 +22,16 @@ const fetchFoodSearchResults = async (searchParams: {
     return [];
   }
   const query = new URLSearchParams();
-  const session = await getServerSession(options);
   query.set("foodName", searchParams["foodName"] as string);
   query.set("filterOption", searchParams["usdaFilterOption"] as string);
 
   // const url = new URL(
   //   process.env.NUTRINOVA_API_URL + "/be/food/search?" + query.toString(),
   // );
-  const foodSearchInstance = createAuthenticatedAxiosInstanceFactory(
+  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory(
     {
       additionalHeaders: {},
-      origin: "server",
-      sessionToken: session?.user.access_token
+      origin: "server"
     }
   )
   const response = await foodSearchInstance.get("food/search?" + query.toString());
