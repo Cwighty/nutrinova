@@ -15,7 +15,6 @@ const createAuthenticatedAxiosInstanceFactory = async ({
   }): Promise<AxiosInstance> => {
 
   const session = origin === "client" ? await getSession() as Session : await getServerSession(options) as Session;
-  console.log("here is the session", session.user.access_token)
   if (!session.user.access_token) {
     throw new Error("Session not found or access token is missing");
   }
@@ -25,7 +24,6 @@ const createAuthenticatedAxiosInstanceFactory = async ({
     ...additionalHeaders, // Merge any additional headers passed to the function
   };
 
-  console.log("here are the headers", factoryHeaders)
   const url = origin === "client" ? "/be/" : process.env.NUTRINOVA_API_URL + "/be/"
   const axiosInstance = axios.create(
     {

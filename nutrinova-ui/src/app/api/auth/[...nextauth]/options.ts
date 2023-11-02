@@ -37,7 +37,6 @@ export const options: NextAuthOptions = {
   callbacks: {
     jwt({ token, account }: { token: JWT, account: Account | null }): JWT {
       // Add the access token to the token object
-      console.log("here is the token", token, "here is the account", account);
       token.access_token = account?.access_token != undefined ? account.access_token : token.access_token;
       return token
     },

@@ -17,7 +17,6 @@ interface PageProps {
 const fetchFoodSearchResults = async (searchParams: {
   [key: string]: string | string[] | undefined;
 }) => {
-  console.log(searchParams);
   if (!searchParams["foodName"] || searchParams["foodName"] === "") {
     return [];
   }

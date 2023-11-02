@@ -11,8 +11,6 @@ const userService = {
     try {
       const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
       const response = await axiosInstance.get(`customer/exists?id=${id}`);
-      console.log("Customer exists.", id);
-      console.log("Customer exists.", response.data);
       return response.data === true;
     } catch (error) {
       console.error("Failed to check if customer exists...", error);
