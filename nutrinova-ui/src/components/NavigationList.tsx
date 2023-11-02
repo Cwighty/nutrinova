@@ -25,6 +25,7 @@ import {
   ViewList,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 interface NavigationListProps {
   closeDrawer?: () => void;
@@ -38,6 +39,13 @@ export const NavigationList = ({
   const [foodOpen, setFoodOpen] = useState(false);
   const [recipesOpen, setRecipesOpen] = useState(false);
   const [mealsOpen, setMealsOpen] = useState(false);
+
+  const { theme } = useTheme();
+
+  const imageSrc =
+    theme === "dark"
+      ? "/nutrinova-atomic-white.svg"
+      : "/nutrinova-atomic-black.svg";
 
   const handleFoodClick = () => {
     setFoodOpen(!foodOpen);
@@ -59,10 +67,9 @@ export const NavigationList = ({
           sx={{
             maxWidth: "100%",
             height: "auto",
-            p: 1,
-            px: { xs: 10, sm: 5, md: 1 },
+            py: { xs: 5, md: 1.3, lg: 0.3 },
           }}
-          src="/nutrinova.png"
+          src={imageSrc}
         />
       </ListItem>
       <Divider />
