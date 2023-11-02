@@ -24,9 +24,6 @@ const fetchFoodSearchResults = async (searchParams: {
   query.set("foodName", searchParams["foodName"] as string);
   query.set("filterOption", searchParams["usdaFilterOption"] as string);
 
-  // const url = new URL(
-  //   process.env.NUTRINOVA_API_URL + "/be/food/search?" + query.toString(),
-  // );
   const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory(
     {
       additionalHeaders: {},
