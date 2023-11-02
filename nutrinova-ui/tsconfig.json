@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "types": ["next-auth"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,7 +31,7 @@
     "**/*.js",
     ".next/types/**/*.ts",
     "types/**/*.ts",
-    "src/app/middleware.ts"
+    "src/app/middleware.ts",
   ],
   "exclude": ["node_modules", ".next", ".vercel", "out"]
 }

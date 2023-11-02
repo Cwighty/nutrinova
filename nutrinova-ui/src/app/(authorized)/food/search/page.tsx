@@ -3,6 +3,7 @@ import FoodSearchForm from "./_components/FoodSearchForm";
 import SearchResultDataGrid from "./_components/SearchResultDataGrid";
 import { FoodSearchResult } from "./_models/foodSearchResult";
 import { PageContainer } from "@/components/PageContainer";
+import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 
 export const metadata = {
   title: "Food Search",
@@ -16,7 +17,6 @@ interface PageProps {
 const fetchFoodSearchResults = async (searchParams: {
   [key: string]: string | string[] | undefined;
 }) => {
-  console.log(searchParams);
   if (!searchParams["foodName"] || searchParams["foodName"] === "") {
     return [];
   }
@@ -24,13 +24,16 @@ const fetchFoodSearchResults = async (searchParams: {
   query.set("foodName", searchParams["foodName"] as string);
   query.set("filterOption", searchParams["usdaFilterOption"] as string);
 
-  const url = new URL(
-    process.env.NUTRINOVA_API_URL + "/be/food/search?" + query.toString(),
-  );
-  const response = await fetch(url);
+  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory(
+    {
+      additionalHeaders: {},
+      origin: "server"
+    }
+  )
+  const response = await foodSearchInstance.get("food/search?" + query.toString());
 
-  if (response.ok) {
-    return (await response.json()) as FoodSearchResult[];
+  if (response.data) {
+    return (await response.data) as FoodSearchResult[];
   } else {
     throw new Error("Error fetching food search results: " + response.status);
   }
