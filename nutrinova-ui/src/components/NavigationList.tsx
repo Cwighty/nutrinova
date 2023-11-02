@@ -62,7 +62,7 @@ export const NavigationList = ({
             p: 1,
             px: { xs: 10, sm: 5, md: 1 },
           }}
-          src="/nutrinova.png"
+          src="/nutrinova-atomic-white.svg"
         />
       </ListItem>
       <Divider />
