@@ -1,5 +1,5 @@
 import { NextAuthOptions, Profile, Session } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { JWT } from "next-auth/jwt"
 import { OAuthConfig } from "next-auth/providers/oauth";
 
 export const options: NextAuthOptions = {
@@ -35,13 +35,19 @@ export const options: NextAuthOptions = {
     } as OAuthConfig<any>,
   ],
   callbacks: {
+    jwt({ token }: { token: JWT }) {
+      // Add the access token to the token object
+      console.log(token);
+      return token;
+    },
     session({ session, token }: { session: Session, token: JWT }): Session {
       session.user;
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.sub
+          id: token.sub,
+          access_token: token.accessToken
         }
       };
     },
