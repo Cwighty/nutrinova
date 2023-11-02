@@ -10,26 +10,14 @@ import {
   Typography,
 } from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 export interface PageBarProps {
   title: string;
 }
 
 export default function PageBar({ title }: PageBarProps) {
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    return savedTheme !== "light";
-  });
-
-  useEffect(() => {
-    const theme = darkMode ? "dark" : "light";
-    localStorage.setItem("theme", theme);
-  }, [darkMode]);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <AppBar position="static" elevation={0}>
@@ -40,8 +28,8 @@ export default function PageBar({ title }: PageBarProps) {
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={toggleDarkMode} sx={{ mr: 2 }}>
-              {darkMode ? <Brightness7 /> : <Brightness4 />}
+            <IconButton onClick={toggleTheme} sx={{ mr: 2 }}>
+              {theme === "light" ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
             <Tooltip title="Select a Patient">
               <IconButton sx={{ p: 0 }}>
