@@ -1,6 +1,7 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import axios, { AxiosInstance } from "axios";
 import { Session, getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
 
 
 
@@ -13,7 +14,7 @@ const createAuthenticatedAxiosInstanceFactory = async ({
     origin: "client" | "server"
   }): Promise<AxiosInstance> => {
 
-  const session = await getServerSession(options) as Session;
+  const session = origin === "client" ? await getSession() as Session : await getServerSession(options) as Session;
   console.log("here is the session", session.user.access_token)
   if (!session.user.access_token) {
     throw new Error("Session not found or access token is missing");
