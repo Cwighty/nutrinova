@@ -5,6 +5,7 @@ using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/be/[controller]")]
 public class FoodController : ControllerBase
