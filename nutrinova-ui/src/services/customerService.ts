@@ -1,31 +1,16 @@
-import axios, { AxiosInstance } from "axios";
+import createAuthenticatedAxiosInstanceFactory from "./axiosRequestFactory";
 
 export interface Customer {
   objectId: string;
   email: string;
 }
 
-const serverAxiosInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NUTRINOVA_API_URL + "/be/",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-const clientAxiosInstance: AxiosInstance = axios.create({
-  baseURL: "/be/",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 const userService = {
   async customerExistsServer(id: string): Promise<boolean> {
     'use server'
     try {
-      const response = await serverAxiosInstance.get(`customer/exists?id=${id}`);
-      console.log("Customer exists.", id);
-      console.log("Customer exists.", response.data);
+      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
+      const response = await axiosInstance.get(`customer/exists?id=${id}`);
       return response.data === true;
     } catch (error) {
       console.error("Failed to check if customer exists...", error);
@@ -35,7 +20,8 @@ const userService = {
 
   async customerExistsClient(id: string): Promise<boolean> {
     try {
-      const response = await clientAxiosInstance.get(`customer/exists?id=${id}`);
+      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
+      const response = await axiosInstance.get(`customer/exists?id=${id}`);
       return response.data === true;
     } catch (error) {
       console.error("Failed to check if customer exists...", error);
@@ -45,15 +31,11 @@ const userService = {
 
   async createCustomer(customer: Customer): Promise<boolean> {
     try {
+      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
       const customer_json = JSON.stringify(customer);
-      await clientAxiosInstance.post(
+      await axiosInstance.post(
         `Customer/create`,
         customer_json,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
       );
       return true;
     } catch (error) {

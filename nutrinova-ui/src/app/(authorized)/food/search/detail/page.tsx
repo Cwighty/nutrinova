@@ -11,9 +11,6 @@ interface PageProps {
 }
 
 async function importFood(fdcId: number) {
-  // const url = new URL(process.env.NUTRINOVA_API_URL + "/be/food/import?fdcId=" + fdcId);
-  // const response = await fetch(url, { method: "POST" });
-  // console.log("response", response);
   console.log("simulate importing food with fdcId", fdcId);
   await new Promise(resolve => setTimeout(resolve, 2000));
   console.log("imported food with fdcId", fdcId);

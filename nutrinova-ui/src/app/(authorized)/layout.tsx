@@ -1,31 +1,28 @@
 import type { Metadata } from "next";
 import { BottomNavBar } from "@/components/BottomNavBar";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
-import { TopAppBar } from "@/components/TopAppBar";
 import { Box } from "@mui/material";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "NutriNova",
   description: "NutriNova",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <TopAppBar />
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <Box style={{ display: "flex", flexDirection: "row" }}>
         <NavigationSidebar />
-        <div style={{ flex: 1 }}>
-          <Box sx={{ p: 2, mb: { xs: 3 } }} >
-            {children}
-          </Box>
+        <Box style={{ flex: 1 }}>
+          {children}
           <BottomNavBar />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </>
   );
 }

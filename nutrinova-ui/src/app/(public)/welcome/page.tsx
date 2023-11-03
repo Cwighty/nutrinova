@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
@@ -9,14 +9,21 @@ import customerService, { Customer } from '@/services/customerService';
 const Welcome = () => {
     const { data } = useSession();
     const router = useRouter();
+
+    useEffect(() => {}, [data, data?.user.id]);
+
     const handleSingleUser = async () => {
-        if (await customerService.customerExistsClient(data!.user.id ?? "")) {
+        if (data == null || data == undefined || data.user.id == null || data.user.id == undefined) {
+            return;
+        }
+
+        if (await customerService.customerExistsClient(data.user.id)) {
             router.push('/dashboard');
             return;
         }
         const customer = {
-            objectId: data!.user.id,
-            email: data!.user.email,
+            objectId: data.user.id,
+            email: data.user.email,
         } as Customer;
         const created = await customerService.createCustomer(customer);
         if (!created) {
