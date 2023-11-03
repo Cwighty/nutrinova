@@ -147,9 +147,12 @@ public class FoodController : ControllerBase
             return BadRequest("Serving size must be greater than 0");
         }
 
-        var userId = User.GetIdFromClaims();
+        var userObjectId = User.GetObjectIdFromClaims();
+        Console.WriteLine($"User id: {userObjectId}");
 
-        if (userId == null)
+        var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
+
+        if (customer == null)
         {
             return Unauthorized();
         }
@@ -158,7 +161,7 @@ public class FoodController : ControllerBase
         {
             Id = Guid.NewGuid(),
             Description = createFoodRequestModel.Description,
-            CreatedBy = Guid.Parse(userId), // dont forget to change this
+            CreatedBy = customer.Id, // dont forget to change this
             CreatedAt = DateTime.UtcNow,
             ServingSize = createFoodRequestModel.ServingSize,
             Unit = createFoodRequestModel.Unit,

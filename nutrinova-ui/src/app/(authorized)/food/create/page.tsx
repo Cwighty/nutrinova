@@ -1,5 +1,5 @@
 import { PageContainer } from "@/components/PageContainer";
-import { Typography } from "@mui/material";
+import CreateFoodForm from "./_components/CreateFoodForm";
 
 export const metadata = {
   title: "Create Food",
@@ -8,7 +8,7 @@ export const metadata = {
 export default function CreateFoodPage() {
   return (
     <PageContainer title={metadata.title}>
-      <Typography variant={"h3"}>Create Food</Typography>
+      <CreateFoodForm />
     </PageContainer>
   );
 }
