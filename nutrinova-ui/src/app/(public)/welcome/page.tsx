@@ -10,9 +10,7 @@ const Welcome = () => {
     const { data } = useSession();
     const router = useRouter();
 
-    useEffect(() => {
-        console.log(data);
-    }, [data, data?.user.id]);
+    useEffect(() => {}, [data, data?.user.id]);
 
     const handleSingleUser = async () => {
         if (data == null || data == undefined || data.user.id == null || data.user.id == undefined) {
