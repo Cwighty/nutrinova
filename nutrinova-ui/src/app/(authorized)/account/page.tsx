@@ -6,6 +6,7 @@ export const metadata = {
 };
 
 export default function AccountPage() {
+  throw new Error('Your Mom!');
   return (
     <PageContainer title={metadata.title}>
       <Typography variant={"h3"}>Account</Typography>
