@@ -1,29 +1,32 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from '@mui/icons-material';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import customerService, { Customer } from '@/services/customerService';
+import { getSession } from 'next-auth/react';
 
 const Welcome = () => {
-    const { data } = useSession();
     const router = useRouter();
 
-    useEffect(() => {}, [data, data?.user.id]);
-
     const handleSingleUser = async () => {
-        if (data == null || data == undefined || data.user.id == null || data.user.id == undefined) {
-            return;
+        const session = await getSession();
+
+        if (session == null || session == undefined) {
+            throw new Error('Failed to get user session');
+        }
+        if (session.user.id == null || session.user.id == undefined) {
+            throw new Error('Failed to get user id');
         }
 
-        if (await customerService.customerExistsClient(data.user.id)) {
+        if (await customerService.customerExistsClient(session.user.id)) {
             router.push('/dashboard');
             return;
         }
+
         const customer = {
-            objectId: data.user.id,
-            email: data.user.email,
+            objectId: session.user.id,
+            email: session.user.email,
         } as Customer;
         const created = await customerService.createCustomer(customer);
         if (!created) {
