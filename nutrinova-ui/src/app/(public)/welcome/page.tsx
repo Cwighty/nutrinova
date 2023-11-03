@@ -10,14 +10,16 @@ const Welcome = () => {
     const { data } = useSession();
     const router = useRouter();
 
-    useEffect(() => { }, [data]);
+    useEffect(() => {
+        console.log(data);
+    }, [data, data?.user.id]);
 
     const handleSingleUser = async () => {
-        if (data == null || data == undefined) {
+        if (data == null || data == undefined || data.user.id == null || data.user.id == undefined) {
             return;
         }
 
-        if (await customerService.customerExistsClient(data.user.id ?? "")) {
+        if (await customerService.customerExistsClient(data.user.id)) {
             router.push('/dashboard');
             return;
         }
