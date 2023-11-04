@@ -5,11 +5,11 @@ namespace NutrinovaData.Entities;
 
 public partial class Unit
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
-    public string? UnitName { get; set; }
+    public string Description { get; set; } = null!;
 
-    public string? Type { get; set; }
+    public string Abreviation { get; set; } = null!;
 
     public virtual ICollection<FoodHistory> FoodHistories { get; set; } = new List<FoodHistory>();
 
@@ -22,6 +22,8 @@ public partial class Unit
     public virtual ICollection<MealFoodHistory> MealFoodHistories { get; set; } = new List<MealFoodHistory>();
 
     public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
+
+    public virtual ICollection<Nutrient> Nutrients { get; set; } = new List<Nutrient>();
 
     public virtual ICollection<RecipeFoodHistory> RecipeFoodHistories { get; set; } = new List<RecipeFoodHistory>();
 

@@ -1,24 +1,40 @@
-﻿using NutrinovaData.ResponseModels;
+﻿using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaData.FlattenedResponseModels;
 
 public class FlattenedFood
 {
-    public int FdcId { get; set; }
+    public int? FdcId { get; set; }
 
     public string Description { get; set; }
 
-    public string Ingredients { get; set; }
+    public string? Ingredients { get; set; }
 
-    public string BrandName { get; set; }
+    public string? BrandName { get; set; }
 
-    public double ServingSize { get; set; }
+    public double? ServingSize { get; set; }
 
-    public string ServingSizeUnit { get; set; }
+    public string? ServingSizeUnit { get; set; }
 
     public string ServingSizeWithUnits { get; set; }
 
     public List<FlattenedFoodNutrient> FoodNutrients { get; set; }
+
+    public FlattenedFood(FoodPlan fp)
+    {
+        FdcId = fp.Fdcid;
+        Description = fp.Description;
+        Ingredients = fp.Ingredients;
+        BrandName = fp.BrandName;
+        ServingSize = decimal.ToDouble(fp.ServingSize ?? 0);
+        ServingSizeUnit = fp?.ServingSizeUnitNavigation?.Description;
+        ServingSizeWithUnits = ServingSize + ServingSizeUnit;
+        FoodNutrients = fp?.FoodPlanNutrients
+            .Select(fpn => fpn.ToFlattenedFoodNutrient())
+            .ToList() ?? new List<FlattenedFoodNutrient>();
+    }
 
     public FlattenedFood(Food food, bool onlyPrimaryNutrients)
     {
