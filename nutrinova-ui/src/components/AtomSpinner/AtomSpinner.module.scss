@@ -13,6 +13,7 @@
   display: block;
   height: 100%;
   width: 100%;
+  animation: pulseAnimation 2s ease-in-out infinite;
 }
 
 .spinnerCircle {
@@ -40,21 +41,21 @@
 
 .darkTheme {
   .spinnerCircle {
-    border-color: #ffffff; // Change border color for the dark theme
+    border-color: #ffffff;
   }
 
   .spinnerLine {
-    border-left-color: #ffffff; // Change border color for the dark theme
+    border-left-color: #ffffff;
   }
 }
 
 .lightTheme {
   .spinnerCircle {
-    border-color: #000000; // Change border color for the light theme
+    border-color: #000000;
   }
 
   .spinnerLine {
-    border-left-color: #000000; // Change border color for the light theme
+    border-left-color: #000000;
   }
 }
 
@@ -88,5 +89,14 @@
 @keyframes atomSpinnerAnimation3 {
   100% {
     transform: rotateZ(90deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes pulseAnimation {
+  0%, 100% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
   }
 }
