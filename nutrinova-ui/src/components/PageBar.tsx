@@ -9,7 +9,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Brightness2, Brightness7 } from "@mui/icons-material";
+import { DarkMode, WbSunny } from "@mui/icons-material";
 import { useTheme } from "@/context/ThemeContext";
 
 export interface PageBarProps {
@@ -29,7 +29,7 @@ export default function PageBar({ title }: PageBarProps) {
 
           <Box sx={{ flexGrow: 0 }}>
             <IconButton onClick={toggleTheme} sx={{ mr: 2 }}>
-              {theme === "dark" ? <Brightness7 /> : <Brightness2 />}
+              {theme === "dark" ? <WbSunny /> : <DarkMode />}
             </IconButton>
             <Tooltip title="Select a Patient">
               <IconButton sx={{ p: 0 }}>
