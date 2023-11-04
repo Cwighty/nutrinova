@@ -3,15 +3,16 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import React, { useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
+import { NutrientOption } from '../../_models/nutrientOption';
+import { UnitOption } from '../../_models/unitOption';
 
 interface Props {
     handleAddNutrient: () => void;
     newNutrient: CreateFoodNutrientRequestModel;
     setNewNutrient: (newNutrient: CreateFoodNutrientRequestModel) => void;
-    availableNutrients: { id: string, name: string }[];
-    availableUnits: { id: string, name: string }[];
+    availableNutrients: NutrientOption[];
+    availableUnits: UnitOption[];
 }
-
 
 export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrient, availableNutrients, availableUnits }: Props) => {
     const [open, setOpen] = useState(false);
@@ -58,7 +59,7 @@ export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrie
                     <FormControl fullWidth margin="normal">
                         <Autocomplete
                             options={availableNutrients}
-                            getOptionLabel={(option) => option.name}
+                            getOptionLabel={(option) => option.nutrientName}
                             renderInput={(params) =>
                                 <TextField {...params}
                                     label="Nutrient"
@@ -94,7 +95,7 @@ export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrie
                         >
                             {availableUnits.map((unit) => (
                                 <MenuItem key={unit.id} value={unit.id}>
-                                    {unit.name}
+                                    {unit.description}
                                 </MenuItem>
                             ))}
                         </Select>

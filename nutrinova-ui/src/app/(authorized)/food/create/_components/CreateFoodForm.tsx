@@ -12,27 +12,29 @@ import {
     Paper,
     Alert,
     Box,
+    LinearProgress,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
 import { CreateFoodRequestModel } from '../_models/createFoodRequest';
 import { AddNutrientDialog } from './AddNutrientDialog';
+import { useGetNutrientsQuery } from '../../foodHooks';
 
 const initialNutrient: CreateFoodNutrientRequestModel = {
-    nutrientId: '',
+    nutrientId: 0,
     amount: 0,
-    unitId: ''
+    unitId: 0
 };
 
-const availableNutrients = [
-    { id: '1', name: 'Protein' },
-    { id: '2', name: 'Fat' },
-    // ... other nutrients
-];
+// const availableNutrients = [
+//     { id: '1', name: 'Protein' },
+//     { id: '2', name: 'Fat' },
+//     // ... other nutrients
+// ];
 
 const availableUnits = [
-    { id: 'g', name: 'grams' },
-    { id: 'mg', name: 'milligrams' },
+    { id: 1, description: 'grams', abreviation: 'g' },
+    { id: 2, description: 'milligrams', abreviation: 'mg' },
     // ... other units
 ];
 
@@ -42,10 +44,12 @@ export default function CreateFoodForm() {
         servingSize: undefined,
         unit: '',
         note: '',
-        foodNutrients: [initialNutrient]
+        foodNutrients: []
     });
 
     const [newNutrient, setNewNutrient] = useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
+
+    const { data: availableNutrients, isLoading: availableNutrientsLoading } = useGetNutrientsQuery();
 
     const handleAddNutrient = () => {
         setFoodFormState({
@@ -127,20 +131,24 @@ export default function CreateFoodForm() {
                 </Grid>
 
                 <List>
-                    <AddNutrientDialog
-                        newNutrient={newNutrient}
-                        setNewNutrient={setNewNutrient}
-                        handleAddNutrient={handleAddNutrient}
-                        availableNutrients={availableNutrients}
-                        availableUnits={availableUnits}
-                    />
+                    {availableNutrientsLoading && <LinearProgress />}
+                    {availableNutrients &&
+                        (
+                            <AddNutrientDialog
+                                newNutrient={newNutrient}
+                                setNewNutrient={setNewNutrient}
+                                handleAddNutrient={handleAddNutrient}
+                                availableNutrients={availableNutrients}
+                                availableUnits={availableUnits}
+                            />
+                        )}
                     {foodFormState.foodNutrients.length === 0 &&
                         <Alert severity='warning'>Please add at least one nutrient</Alert>
                     }
                     {foodFormState.foodNutrients.map((nutrient, index) => (
                         <ListItem key={index} divider>
                             <ListItemText
-                                primary={availableNutrients.find((n) => n.id === nutrient.nutrientId)?.name}
+                                primary={availableNutrients?.find((n) => n.id === nutrient.nutrientId)?.nutrientName}
                                 secondary={`${nutrient.amount} ${availableUnits.find((u) => u.id === nutrient.unitId)?.name}`}
                             />
                             <ListItemSecondaryAction>

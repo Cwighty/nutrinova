@@ -1,5 +1,5 @@
 export interface CreateFoodNutrientRequestModel {
-    nutrientId: string;
+    nutrientId: number;
     amount: number;
-    unitId: string;
+    unitId: number;
 }

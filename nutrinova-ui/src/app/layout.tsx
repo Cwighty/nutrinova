@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Provider } from "@/components/SessionProvider";
 import { Session, getServerSession } from "next-auth";
 import { MUIThemeProvider } from "@/context/ThemeContext";
+import { NextAuthSessionProvider } from "@/components/providers/SessionProvider";
+import { QueryClientNextProvider } from "@/components/providers/QueryClientNextProvider";
 
 export const metadata: Metadata = {
   title: "NutriNova",
@@ -17,10 +18,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Provider session={session}>
-          <MUIThemeProvider>{children}</MUIThemeProvider>
-        </Provider>
-      </body>
-    </html>
+        <NextAuthSessionProvider session={session}>
+          <QueryClientNextProvider>
+            <MUIThemeProvider>{children}</MUIThemeProvider>
+          </QueryClientNextProvider>
+        </NextAuthSessionProvider>
+      </body >
+    </html >
   );
 }
