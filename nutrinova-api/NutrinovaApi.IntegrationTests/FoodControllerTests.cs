@@ -25,7 +25,6 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         var createFoodRequestModel = new CreateFoodRequestModel
         {
             // Description is missing
-            ServingSize = 10,
         };
 
         var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
@@ -38,7 +37,6 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         var createFoodRequestModel = new CreateFoodRequestModel
         {
             Description = "Test food plan",
-            ServingSize = 10,
             Note = "Test note",
         };
 
@@ -52,7 +50,6 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         var createFoodRequestModel = new CreateFoodRequestModel
         {
             Description = "Test food plan",
-            ServingSize = 10,
         };
 
         var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
