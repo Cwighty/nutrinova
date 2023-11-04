@@ -1,5 +1,5 @@
 "use client";
-import { NavigationList } from "@/components/NavigationList";
+import { NavigationList } from "@/components/navigation/NavigationList";
 import { Paper } from "@mui/material";
 
 export const NavigationSidebar = () => {

@@ -121,6 +121,18 @@ export const NavigationList = ({
             </ListItemIcon>
             <ListItemText primary="Create Foods" />
           </ListItemButton>
+          <ListItemButton
+            key="My Foods"
+            component={NextLinkComposed}
+            to={{ pathname: "/food/view" }}
+            sx={{ pl: 4 }}
+            onClick={closeDrawer}
+          >
+            <ListItemIcon>
+              <ViewList />
+            </ListItemIcon>
+            <ListItemText primary="My Foods" />
+          </ListItemButton>
         </List>
       </Collapse>
       <ListItemButton onClick={handleRecipesClick}>
