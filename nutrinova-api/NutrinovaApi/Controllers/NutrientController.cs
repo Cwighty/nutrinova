@@ -29,8 +29,8 @@ public class NutrientController : ControllerBase
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Failed to retrieve data");
-            return StatusCode(500, "Failed to retrieve data from database");
+            logger.LogError(e, "Failed to retrieve nutrients from database");
+            return StatusCode(500, "Failed to retrieve nutrients from database");
         }
     }
 }
