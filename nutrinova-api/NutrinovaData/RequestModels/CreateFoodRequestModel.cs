@@ -4,7 +4,7 @@ public class CreateFoodRequestModel
 
     public decimal? ServingSize { get; set; }
 
-    public Guid? Unit { get; set; }
+    public int? Unit { get; set; }
 
     public string? Note { get; set; }
 

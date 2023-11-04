@@ -164,7 +164,7 @@ public class FoodController : ControllerBase
             CreatedBy = customer.Id,
             CreatedAt = DateTime.UtcNow,
             ServingSize = createFoodRequestModel.ServingSize,
-            Unit = createFoodRequestModel.Unit,
+            ServingSizeUnit = createFoodRequestModel.Unit ?? 0,
             Note = createFoodRequestModel.Note,
             FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
             {

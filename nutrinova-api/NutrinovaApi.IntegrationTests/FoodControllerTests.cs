@@ -68,8 +68,6 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         var testCustomer = new Customer
         {
             Id = Guid.Parse("94fa3168-d0a5-4107-a28e-52f89e6af3a91"),
-            Firstname = "Test",
-            Lastname = "User",
             Email = "test@email.com",
         };
 
