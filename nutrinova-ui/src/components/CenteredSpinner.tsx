@@ -1,4 +1,5 @@
-import { CircularProgress, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { AtomSpinner } from "@/components/AtomSpinner/AtomSpinner";
 
 export interface CenteredSpinnerProps {
   message?: string;
@@ -15,9 +16,12 @@ export default function CenteredSpinner({ message }: CenteredSpinnerProps) {
         height: "100vh",
       }}
     >
-      <CircularProgress />
-      {message && <Typography mt={2} variant="h6" >{message}</Typography>}
+      <AtomSpinner />
+      {message && (
+        <Typography mt={2} variant="h6">
+          {message}
+        </Typography>
+      )}
     </Box>
   );
 }
-
