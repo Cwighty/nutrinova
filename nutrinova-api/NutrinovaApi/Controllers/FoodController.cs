@@ -161,7 +161,7 @@ public class FoodController : ControllerBase
         {
             Id = Guid.NewGuid(),
             Description = createFoodRequestModel.Description,
-            CreatedBy = customer.Id, // dont forget to change this
+            CreatedBy = customer.Id,
             CreatedAt = DateTime.UtcNow,
             ServingSize = createFoodRequestModel.ServingSize,
             Unit = createFoodRequestModel.Unit,

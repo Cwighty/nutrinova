@@ -68,7 +68,7 @@ export default function CreateFoodForm() {
     };
 
     return (
-        <Paper elevation={1} sx={{ padding: 2 }}>
+        <Paper elevation={3} sx={{ padding: 2 }}>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                     {/* Food Name */}
