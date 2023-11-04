@@ -9,7 +9,6 @@ namespace NutrinovaApi.Controllers;
 [Route("/be/[controller]")]
 public class NutrientController : ControllerBase
 {
-    // USDA API Documentation: https://app.swaggerhub.com/apis/fdcnal/food-data_central_api/1.0.1#/FDC/getFood
     private readonly ILogger<NutrientController> logger;
     private readonly NutrinovaDbContext context;
 
