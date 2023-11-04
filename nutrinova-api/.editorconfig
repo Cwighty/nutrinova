@@ -119,6 +119,7 @@ dotnet_diagnostic.CS1030.severity = none
 dotnet_diagnostic.IDE0005.severity = none
 [NutrinovaData/Entities/*.cs]
 dotnet_diagnostic.IDE0005.severity = none
+dotnet_diagnostic.CS8618.severity = none
 
 [NutrinovaData/ResponseModels/*.cs]
 dotnet_diagnostic.CS8618.severity = none

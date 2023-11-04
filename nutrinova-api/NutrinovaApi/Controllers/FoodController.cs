@@ -1,10 +1,13 @@
 using System.Text.Json;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
+using Sprache;
 
 namespace NutrinovaApi.Controllers;
 
@@ -127,7 +130,6 @@ public class FoodController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
     {
@@ -151,7 +153,6 @@ public class FoodController : ControllerBase
         Console.WriteLine($"User id: {userObjectId}");
 
         var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
-
         if (customer == null)
         {
             return Unauthorized();
@@ -187,5 +188,53 @@ public class FoodController : ControllerBase
         }
 
         return Ok(new { message = "Food created successfully", id = foodPlan.Id });
+    }
+
+    [HttpGet("all-foods")]
+    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById([FromQuery] string? filterOption = "")
+    {
+        try
+        {
+            var userObjectId = User.GetObjectIdFromClaims();
+            Console.WriteLine($"User id: {userObjectId}");
+
+            var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+            if (customer?.Id is null)
+            {
+                return NotFound("Couldn't find the user id");
+            }
+
+            List<FoodPlan> result;
+            if (!string.IsNullOrEmpty(filterOption))
+            {
+                result = await context.FoodPlans
+                    .Where(fp => fp.CreatedBy == customer.Id && fp.Description.Contains(filterOption))
+                    .ToListAsync();
+            }
+            else
+            {
+                result = await context.FoodPlans
+                    .Where(fp => fp.CreatedBy == customer.Id)
+                    .ToListAsync();
+            }
+
+            return result.Select(fp => fp.ToFlattenedFood()).ToList();
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogError($"HTTP request failed: {ex.Message}");
+            return StatusCode(503, "Service unavailable");
+        }
+        catch (JsonException ex)
+        {
+            logger.LogError($"JSON deserialization failed: {ex.Message}");
+            return BadRequest("Invalid response format");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"An unexpected error occurred: {ex.Message}");
+            return StatusCode(500, "Internal server error");
+        }
     }
 }
