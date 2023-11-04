@@ -1,8 +1,8 @@
 public class CreateFoodNutrientRequestModel
 {
-    public Guid NutrientId { get; set; }
+    public int NutrientId { get; set; }
 
     public decimal Amount { get; set; }
 
-    public Guid UnitId { get; set; }
+    public int UnitId { get; set; }
 }

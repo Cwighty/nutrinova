@@ -46,8 +46,6 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
         {
             Id = Guid.Parse(DefaultUserId),
             Objectid = DefaultUserId,
-            Firstname = "Test",
-            Lastname = "User",
             Email = "testuser@example.com",
         };
 

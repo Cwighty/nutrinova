@@ -11,13 +11,13 @@ public partial class RecipeFood
 
     public Guid RecipeId { get; set; }
 
-    public decimal? Amount { get; set; }
+    public decimal Amount { get; set; }
 
-    public Guid? UnitId { get; set; }
+    public int UnitId { get; set; }
 
     public virtual FoodHistory Food { get; set; } = null!;
 
-    public virtual RecipePlan Recipe { get; set; } = null!;
+    public virtual RecipeHistory Recipe { get; set; } = null!;
 
-    public virtual Unit? Unit { get; set; }
+    public virtual Unit Unit { get; set; } = null!;
 }
