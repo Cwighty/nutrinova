@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NutrinovaApi\NutrinovaApi.csproj" />
+    <ProjectReference Include="..\NutrinovaData\NutrinovaData.csproj" />
   </ItemGroup>
 
 </Project>
