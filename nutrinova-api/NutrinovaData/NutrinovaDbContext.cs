@@ -65,8 +65,6 @@ public partial class NutrinovaDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Email).HasColumnName("email");
-            entity.Property(e => e.Firstname).HasColumnName("firstname");
-            entity.Property(e => e.Lastname).HasColumnName("lastname");
             entity.Property(e => e.Objectid).HasColumnName("objectid");
         });
 
@@ -94,21 +92,26 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
+            entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
-            entity.Property(e => e.Unit).HasColumnName("unit");
+            entity.Property(e => e.ServingSizeUnit)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("serving_size_unit");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.FoodHistories)
                 .HasForeignKey(d => d.CreatedBy)
                 .HasConstraintName("food_history_created_by_fkey");
 
-            entity.HasOne(d => d.UnitNavigation).WithMany(p => p.FoodHistories)
-                .HasForeignKey(d => d.Unit)
-                .HasConstraintName("food_history_unit_fkey");
+            entity.HasOne(d => d.ServingSizeUnitNavigation).WithMany(p => p.FoodHistories)
+                .HasForeignKey(d => d.ServingSizeUnit)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_history_serving_size_unit_fkey");
         });
 
         modelBuilder.Entity<FoodHistoryNutrient>(entity =>
@@ -122,8 +125,12 @@ public partial class NutrinovaDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodhistoryId).HasColumnName("foodhistory_id");
-            entity.Property(e => e.NutrientId).HasColumnName("nutrient_id");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.NutrientId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("nutrient_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.Foodhistory).WithMany(p => p.FoodHistoryNutrients)
                 .HasForeignKey(d => d.FoodhistoryId)
@@ -137,6 +144,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.FoodHistoryNutrients)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_history_nutrient_unit_id_fkey");
         });
 
@@ -149,21 +157,26 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
+            entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
-            entity.Property(e => e.Unit).HasColumnName("unit");
+            entity.Property(e => e.ServingSizeUnit)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("serving_size_unit");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.FoodPlans)
                 .HasForeignKey(d => d.CreatedBy)
                 .HasConstraintName("food_plan_created_by_fkey");
 
-            entity.HasOne(d => d.UnitNavigation).WithMany(p => p.FoodPlans)
-                .HasForeignKey(d => d.Unit)
-                .HasConstraintName("food_plan_unit_fkey");
+            entity.HasOne(d => d.ServingSizeUnitNavigation).WithMany(p => p.FoodPlans)
+                .HasForeignKey(d => d.ServingSizeUnit)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_plan_serving_size_unit_fkey");
         });
 
         modelBuilder.Entity<FoodPlanNutrient>(entity =>
@@ -177,8 +190,12 @@ public partial class NutrinovaDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodplanId).HasColumnName("foodplan_id");
-            entity.Property(e => e.NutrientId).HasColumnName("nutrient_id");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.NutrientId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("nutrient_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.Foodplan).WithMany(p => p.FoodPlanNutrients)
                 .HasForeignKey(d => d.FoodplanId)
@@ -192,6 +209,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.FoodPlanNutrients)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_plan_nutrient_unit_id_fkey");
         });
 
@@ -224,7 +242,9 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodId).HasColumnName("food_id");
             entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.MealFoodHistories)
                 .HasForeignKey(d => d.FoodId)
@@ -238,6 +258,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.MealFoodHistories)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("meal_food_history_unit_id_fkey");
         });
 
@@ -262,14 +283,19 @@ public partial class NutrinovaDbContext : DbContext
 
         modelBuilder.Entity<MealRecipeHistory>(entity =>
         {
-            entity.HasKey(e => new { e.RecipeHistoryId, e.MealHistoryId }).HasName("meal_recipe_history_pkey");
+            entity.HasKey(e => e.Id).HasName("meal_recipe_history_pkey");
 
             entity.ToTable("meal_recipe_history");
 
-            entity.Property(e => e.RecipeHistoryId).HasColumnName("recipe_history_id");
-            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
+            entity.Property(e => e.RecipeHistoryId).HasColumnName("recipe_history_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.MealHistory).WithMany(p => p.MealRecipeHistories)
                 .HasForeignKey(d => d.MealHistoryId)
@@ -283,6 +309,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.MealRecipeHistories)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("meal_recipe_history_unit_id_fkey");
         });
 
@@ -305,11 +332,16 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.ToTable("nutrient");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.NutrientName).HasColumnName("nutrient_name");
-            entity.Property(e => e.PreferredUnit).HasColumnName("preferred_unit");
+            entity.Property(e => e.PreferredUnit)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("preferred_unit");
+
+            entity.HasOne(d => d.PreferredUnitNavigation).WithMany(p => p.Nutrients)
+                .HasForeignKey(d => d.PreferredUnit)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("nutrient_preferred_unit_fkey");
         });
 
         modelBuilder.Entity<Patient>(entity =>
@@ -361,7 +393,9 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodId).HasColumnName("food_id");
             entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.RecipeFoods)
                 .HasForeignKey(d => d.FoodId)
@@ -375,19 +409,25 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.RecipeFoods)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("recipe_food_unit_id_fkey");
         });
 
         modelBuilder.Entity<RecipeFoodHistory>(entity =>
         {
-            entity.HasKey(e => new { e.FoodId, e.RecipeId }).HasName("recipe_food_history_pkey");
+            entity.HasKey(e => e.Id).HasName("recipe_food_history_pkey");
 
             entity.ToTable("recipe_food_history");
 
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.FoodId).HasColumnName("food_id");
             entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.UnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("unit_id");
 
             entity.HasOne(d => d.Food).WithMany(p => p.RecipeFoodHistories)
                 .HasForeignKey(d => d.FoodId)
@@ -401,6 +441,7 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.HasOne(d => d.Unit).WithMany(p => p.RecipeFoodHistories)
                 .HasForeignKey(d => d.UnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("recipe_food_history_unit_id_fkey");
         });
 
@@ -466,11 +507,9 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.ToTable("unit");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.Type).HasColumnName("type");
-            entity.Property(e => e.UnitName).HasColumnName("unit_name");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Abreviation).HasColumnName("abreviation");
+            entity.Property(e => e.Description).HasColumnName("description");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -20,4 +20,6 @@ public partial class RecipeHistory
     public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
 
     public virtual ICollection<RecipeFoodHistory> RecipeFoodHistories { get; set; } = new List<RecipeFoodHistory>();
+
+    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
 }
