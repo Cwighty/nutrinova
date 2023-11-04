@@ -59,16 +59,4 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         Assert.NotNull(foodPlan);
         Assert.NotEqual(Guid.Empty, foodPlan.CreatedBy);
     }
-
-    private static void CreateTestCustomer(NutrinovaDbContext context)
-    {
-        var testCustomer = new Customer
-        {
-            Id = Guid.Parse("94fa3168-d0a5-4107-a28e-52f89e6af3a91"),
-            Email = "test@email.com",
-        };
-
-        context.Customers.Add(testCustomer);
-        context.SaveChanges();
-    }
 }

@@ -1,4 +1,5 @@
-﻿using NutrinovaData.ResponseModels;
+﻿using NutrinovaData.Entities;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaData.FlattenedResponseModels;
 
@@ -11,6 +12,17 @@ public class FlattenedFoodNutrient
     public string? UnitName { get; set; }
 
     public double Value { get; set; }
+
+    public FlattenedFoodNutrient(FoodPlanNutrient fpn)
+    {
+        this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.Description}";
+
+        this.UnitName = fpn?.Unit?.Description;
+
+        this.Value = decimal.ToDouble(fpn?.Amount ?? 0);
+
+        this.NutrientName = fpn?.Nutrient.NutrientName;
+    }
 
     public FlattenedFoodNutrient(FoodNutrient foodNutrient)
     {

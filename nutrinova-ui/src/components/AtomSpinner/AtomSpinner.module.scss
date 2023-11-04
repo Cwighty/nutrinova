@@ -1,0 +1,102 @@
+.atomSpinner, .atomSpinner * {
+  box-sizing: border-box;
+}
+
+.atomSpinner {
+  height: 6em;
+  width: 6em;
+  overflow: hidden;
+}
+
+.spinnerInner {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+  animation: pulseAnimation 2s ease-in-out infinite;
+}
+
+.spinnerCircle {
+  display: block;
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinnerLine {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation-duration: 1s;
+  border-left-width: calc(6em / 25);
+  border-top-width: calc(6em / 25);
+  border-left-style: solid;
+  border-top-style: solid;
+  border-top-color: transparent;
+}
+
+.darkTheme {
+  .spinnerCircle {
+    border-color: #ffffff;
+  }
+
+  .spinnerLine {
+    border-left-color: #ffffff;
+  }
+}
+
+.lightTheme {
+  .spinnerCircle {
+    border-color: #000000;
+  }
+
+  .spinnerLine {
+    border-left-color: #000000;
+  }
+}
+
+.spinnerLine:nth-child(1) {
+  animation: atomSpinnerAnimation1 1s linear infinite;
+  transform: rotateZ(210deg) rotateX(66deg) rotateZ(0deg);
+}
+
+.spinnerLine:nth-child(2) {
+  animation: atomSpinnerAnimation2 1s linear infinite;
+  transform: rotateZ(330deg) rotateX(66deg) rotateZ(0deg);
+}
+
+.spinnerLine:nth-child(3) {
+  animation: atomSpinnerAnimation3 1s linear infinite;
+  transform: rotateZ(90deg) rotateX(66deg) rotateZ(0deg);
+}
+
+@keyframes atomSpinnerAnimation1 {
+  100% {
+    transform: rotateZ(210deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes atomSpinnerAnimation2 {
+  100% {
+    transform: rotateZ(330deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes atomSpinnerAnimation3 {
+  100% {
+    transform: rotateZ(90deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes pulseAnimation {
+  0%, 100% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
