@@ -10,9 +10,9 @@ public class FlattenedFood
 
     public string Description { get; set; }
 
-    public string Ingredients { get; set; }
+    public string? Ingredients { get; set; }
 
-    public string BrandName { get; set; }
+    public string? BrandName { get; set; }
 
     public double? ServingSize { get; set; }
 
@@ -26,10 +26,10 @@ public class FlattenedFood
     {
         FdcId = fp.Fdcid;
         Description = fp.Description;
-        Ingredients = " ";
-        BrandName = " ";
+        Ingredients = fp.Ingredients;
+        BrandName = fp.BrandName;
         ServingSize = decimal.ToDouble(fp.ServingSize ?? 0);
-        ServingSizeUnit = fp?.UnitNavigation?.UnitName;
+        ServingSizeUnit = fp?.ServingSizeUnitNavigation?.Description;
         ServingSizeWithUnits = ServingSize + ServingSizeUnit;
         FoodNutrients = fp?.FoodPlanNutrients
             .Select(fpn => fpn.ToFlattenedFoodNutrient())

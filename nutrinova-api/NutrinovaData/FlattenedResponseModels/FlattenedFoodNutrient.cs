@@ -15,9 +15,9 @@ public class FlattenedFoodNutrient
 
     public FlattenedFoodNutrient(FoodPlanNutrient fpn)
     {
-        this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.UnitName}";
+        this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.Description}";
 
-        this.UnitName = fpn?.Unit?.UnitName;
+        this.UnitName = fpn?.Unit?.Description;
 
         this.Value = decimal.ToDouble(fpn?.Amount ?? 0);
 
