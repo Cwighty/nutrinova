@@ -10,8 +10,8 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-    const session = await getServerSession(options);
-    console.log(session);
+    const session = await getServerSession(options); //TODO: remove
+    console.log(session); // TODO: remove
     return (
         <PageContainer title={metadata.title}>
             <Typography variant={"h3"}>Dashboard</Typography>
