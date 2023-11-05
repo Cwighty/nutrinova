@@ -1,14 +1,12 @@
 using System.Text.Json;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
 using NutrinovaData.Extensions;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
-using Sprache;
 
 namespace NutrinovaApi.Controllers;
 
@@ -164,7 +162,7 @@ public class FoodController : ControllerBase
         {
             var userObjectId = User.GetObjectIdFromClaims();
 
-            var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+            var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
 
             if (customer?.Id is null)
             {
@@ -176,7 +174,7 @@ public class FoodController : ControllerBase
                 return BadRequest("Nutrient value must be greater than 0");
             }
 
-            if (nutrientFilter.IsNullOrEmpty() && nutrientFilterValue != 0)
+            if (string.IsNullOrEmpty(nutrientFilter) && nutrientFilterValue != 0)
             {
                 return BadRequest("Nutrient filter is required when non-zero nutrient value is provided");
             }
@@ -205,7 +203,7 @@ public class FoodController : ControllerBase
                                 (
                                     fp.Description.Contains(filterOption, StringComparison.OrdinalIgnoreCase) ||
                                     StringContainsForNullableValue(fp.Note, filterOption)) &&
-                                    !nutrientFilter.IsNullOrEmpty() ?
+                                    !string.IsNullOrEmpty(nutrientFilter) ?
                                     fp.FoodPlanNutrients.Any(fpn =>
                                         StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
                                         NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true))
@@ -217,7 +215,7 @@ public class FoodController : ControllerBase
                 // if there are nutrient filters we will apply the nutrient filters to the food plans
                 result = await context.FoodPlans
                     .Where(fp => fp.CreatedBy == customer.Id &&
-                                    !nutrientFilter.IsNullOrEmpty() ?
+                                    !string.IsNullOrEmpty(nutrientFilter) ?
                                     fp.FoodPlanNutrients.Any(fpn =>
                                         StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
                                         NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true)

@@ -60,6 +60,12 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         Assert.NotEqual(Guid.Empty, foodPlan.CreatedBy);
     }
 
+    [Fact]
+    public async Task CheckFilteringByFoodNameAndNotes()
+    {
+         
+    }
+
     private static void CreateTestCustomer(NutrinovaDbContext context)
     {
         var testCustomer = new Customer
