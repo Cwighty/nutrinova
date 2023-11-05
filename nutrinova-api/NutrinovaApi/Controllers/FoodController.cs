@@ -23,7 +23,31 @@ public class FoodController : ControllerBase
     private readonly NutrinovaDbContext context;
     private readonly HttpClient httpClient;
 
-    public bool StringContainsOnNullableValue(string? container, string containee) => container?.Contains(containee, StringComparison.OrdinalIgnoreCase) ?? false;
+    public bool StringContainsForNullableValue(string? container, string containee) => container?.Contains(containee, StringComparison.OrdinalIgnoreCase) ?? false;
+
+    public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+    {
+        if (leftOperand == null)
+        {
+            return false;
+        }
+
+        switch (operatorString)
+        {
+            case "gt":
+                return leftOperand > rightOperand;
+            case "gte":
+                return leftOperand >= rightOperand;
+            case "lt":
+                return leftOperand < rightOperand;
+            case "lte":
+                return leftOperand <= rightOperand;
+            case "eq":
+                return leftOperand == rightOperand;
+            default:
+                throw new InvalidOperationException("operatingString was not given a valid option");
+        }
+    }
 
     public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
     {
@@ -133,6 +157,92 @@ public class FoodController : ControllerBase
         }
     }
 
+    [HttpGet("all-foods")]
+    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById([FromQuery] string? filterOption = "", [FromQuery] double nutrientFilterValue = 0, [FromQuery] string nutrientFilterOperator = "gt", [FromQuery] string nutrientFilter = "")
+    {
+        try
+        {
+            var userObjectId = User.GetObjectIdFromClaims();
+
+            var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+            if (customer?.Id is null)
+            {
+                return NotFound("Couldn't find the user id");
+            }
+
+            if (nutrientFilterValue < 0)
+            {
+                return BadRequest("Nutrient value must be greater than 0");
+            }
+
+            if (nutrientFilter.IsNullOrEmpty() && nutrientFilterValue != 0)
+            {
+                return BadRequest("Nutrient filter is required when non-zero nutrient value is provided");
+            }
+
+            List<FoodPlan> result;
+
+            // bool FilterNutrientOptionsAndValue(FoodPlanNutrient fpn)
+            // {
+            //    if (nutrientFilter.IsNullOrEmpty())
+            //    {
+            //        return true;
+            //    }
+            //    return fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
+            //        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator);
+            // }
+            if (!string.IsNullOrEmpty(filterOption))
+            {
+                // this is when you are given a filter option we will apply the nutrient filters
+                // needs to apply value filter
+                // if there are no nutrient filters we hot wire that to true so that it will return all of the food plans based just on the filter option
+                // if there are nutrient filters we will apply the nutrient filters to the food plans
+                result = await context.FoodPlans
+                    .Where(fp =>
+                        fp.CreatedBy == customer.Id &&
+                            (
+                                (
+                                    fp.Description.Contains(filterOption, StringComparison.OrdinalIgnoreCase) ||
+                                    StringContainsForNullableValue(fp.Note, filterOption)) &&
+                                    !nutrientFilter.IsNullOrEmpty() ?
+                                    fp.FoodPlanNutrients.Any(fpn =>
+                                        StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
+                                        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true))
+                    .ToListAsync();
+            }
+            else
+            {
+                // if there are no filter options we will just return all of the food plans
+                // if there are nutrient filters we will apply the nutrient filters to the food plans
+                result = await context.FoodPlans
+                    .Where(fp => fp.CreatedBy == customer.Id &&
+                                    !nutrientFilter.IsNullOrEmpty() ?
+                                    fp.FoodPlanNutrients.Any(fpn =>
+                                        StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
+                                        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true)
+                    .ToListAsync();
+            }
+
+            return result.Select(fp => fp.ToFlattenedFood()).ToList();
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogError($"HTTP request failed: {ex.Message}");
+            return StatusCode(503, "Service unavailable");
+        }
+        catch (JsonException ex)
+        {
+            logger.LogError($"JSON deserialization failed: {ex.Message}");
+            return BadRequest("Invalid response format");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"An unexpected error occurred: {ex.Message}");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
     {
@@ -191,62 +301,5 @@ public class FoodController : ControllerBase
         }
 
         return Ok(new { message = "Food created successfully", id = foodPlan.Id });
-    }
-
-    [HttpGet("all-foods")]
-    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById([FromQuery] string? filterOption = "", [FromQuery] double? nutrientFilterValue = 0, [FromQuery] string? nutrientFilterOperator = "gt", [FromQuery] string? nutrientFilter = null)
-    {
-        try
-        {
-            var userObjectId = User.GetObjectIdFromClaims();
-
-            var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
-
-            if (customer?.Id is null)
-            {
-                return NotFound("Couldn't find the user id");
-            }
-
-            if (nutrientFilterValue < 0)
-            {
-                return BadRequest("Nutrient value must be greater than 0");
-            }
-
-            if (nutrientFilter.IsNullOrEmpty() && nutrientFilterValue != 0)
-            {
-                return BadRequest("Nutrient filter is required when nutrient value is provided");
-            }
-
-            List<FoodPlan> result;
-            if (!string.IsNullOrEmpty(filterOption))
-            {
-                result = await context.FoodPlans
-                    .Where(fp => fp.CreatedBy == customer.Id && (fp.Description.Contains(filterOption, StringComparison.OrdinalIgnoreCase) || StringContainsOnNullableValue(fp.Note, filterOption) || fp.FoodPlanNutrients.Any(fpn => fpn.Nutrient.NutrientName.Contains(filterOption, StringComparison.OrdinalIgnoreCase))))
-                    .ToListAsync();
-            }
-            else
-            {
-                result = await context.FoodPlans
-                    .Where(fp => fp.CreatedBy == customer.Id)
-                    .ToListAsync();
-            }
-
-            return result.Select(fp => fp.ToFlattenedFood()).ToList();
-        }
-        catch (HttpRequestException ex)
-        {
-            logger.LogError($"HTTP request failed: {ex.Message}");
-            return StatusCode(503, "Service unavailable");
-        }
-        catch (JsonException ex)
-        {
-            logger.LogError($"JSON deserialization failed: {ex.Message}");
-            return BadRequest("Invalid response format");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError($"An unexpected error occurred: {ex.Message}");
-            return StatusCode(500, "Internal server error");
-        }
     }
 }
