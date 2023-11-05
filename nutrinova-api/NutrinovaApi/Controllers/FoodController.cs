@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
@@ -21,6 +22,8 @@ public class FoodController : ControllerBase
     private readonly IConfiguration configuration;
     private readonly NutrinovaDbContext context;
     private readonly HttpClient httpClient;
+
+    public bool StringContainsOnNullableValue(string? container, string containee) => container?.Contains(containee, StringComparison.OrdinalIgnoreCase) ?? false;
 
     public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
     {
@@ -191,12 +194,11 @@ public class FoodController : ControllerBase
     }
 
     [HttpGet("all-foods")]
-    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById([FromQuery] string? filterOption = "")
+    public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById([FromQuery] string? filterOption = "", [FromQuery] double? nutrientFilterValue = 0, [FromQuery] string? nutrientFilterOperator = "gt", [FromQuery] string? nutrientFilter = null)
     {
         try
         {
             var userObjectId = User.GetObjectIdFromClaims();
-            Console.WriteLine($"User id: {userObjectId}");
 
             var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
 
@@ -205,11 +207,21 @@ public class FoodController : ControllerBase
                 return NotFound("Couldn't find the user id");
             }
 
+            if (nutrientFilterValue < 0)
+            {
+                return BadRequest("Nutrient value must be greater than 0");
+            }
+
+            if (nutrientFilter.IsNullOrEmpty() && nutrientFilterValue != 0)
+            {
+                return BadRequest("Nutrient filter is required when nutrient value is provided");
+            }
+
             List<FoodPlan> result;
             if (!string.IsNullOrEmpty(filterOption))
             {
                 result = await context.FoodPlans
-                    .Where(fp => fp.CreatedBy == customer.Id && fp.Description.Contains(filterOption))
+                    .Where(fp => fp.CreatedBy == customer.Id && (fp.Description.Contains(filterOption, StringComparison.OrdinalIgnoreCase) || StringContainsOnNullableValue(fp.Note, filterOption) || fp.FoodPlanNutrients.Any(fpn => fpn.Nutrient.NutrientName.Contains(filterOption, StringComparison.OrdinalIgnoreCase))))
                     .ToListAsync();
             }
             else
