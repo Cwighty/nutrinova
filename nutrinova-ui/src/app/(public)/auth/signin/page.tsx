@@ -3,6 +3,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import customerService from "@/services/customerService";
+import CenteredSpinner from "@/components/CenteredSpinner";
 
 export default function Signin() {
     const router = useRouter();
@@ -27,5 +28,5 @@ export default function Signin() {
         void handleSigninRedirect();
     }, [data?.user.id, router, status]);
 
-    return <div></div>;
+    return <CenteredSpinner message="Signing in..." />
 }
