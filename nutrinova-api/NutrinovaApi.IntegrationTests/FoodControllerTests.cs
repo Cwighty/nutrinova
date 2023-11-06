@@ -1,6 +1,7 @@
 using System.Net;
 using NutrinovaData.Entities;
 using NutrinovaData.FlattenedResponseModels;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -65,22 +66,23 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
   public async Task CheckFilteringByFoodNameAndNotes()
   {
     // Arrange
-    var customerID = Guid.Parse("94fa3168-d0a5-4107-a28e-52f89e6af3a1");
-    var testCustomer = new Customer
-    {
-      Id = customerID,
-      Email = "filterNameAndNotes@gmail.com",
-    };
-
+    var customerID = Guid.Empty.ToString();
     var testFoodPlan = new CreateFoodRequestModel
     {
       Description = "Test food plan",
       Note = "Test note",
     };
 
+    var testFoodPlan2 = new CreateFoodRequestModel
+    {
+      Description = "food plan",
+      Note = "note",
+    };
+
     // Act
-    var res = await httpClient.PostAsJsonAsync<Customer>("be/Customer/create", testCustomer);
+    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
     var resFoodCreation = await httpClient.PostAsJsonAsync<CreateFoodRequestModel>("be/food", testFoodPlan);
+    var resFoodCreation2 = await httpClient.PostAsJsonAsync<CreateFoodRequestModel>("be/food", testFoodPlan2);
     var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
 
     // Assert
@@ -88,17 +90,5 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
     Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
     Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
-  }
-
-  private static void CreateTestCustomer(NutrinovaDbContext context)
-  {
-    var testCustomer = new Customer
-    {
-      Id = Guid.Parse("94fa3168-d0a5-4107-a28e-52f89e6af3a1"),
-      Email = "test@email.com",
-    };
-
-    context.Customers.Add(testCustomer);
-    context.SaveChanges();
   }
 }

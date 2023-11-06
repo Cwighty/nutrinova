@@ -157,10 +157,10 @@ public class FoodController : ControllerBase
 
   [HttpGet("all-foods")]
   public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById(
-    [FromQuery] string? filterOption = "",
+    [FromQuery] string? filterOption = null,
     [FromQuery] double nutrientFilterValue = 0,
     [FromQuery] string nutrientFilterOperator = "gt",
-    [FromQuery] string nutrientFilter = "")
+    [FromQuery] string? nutrientFilter = null)
   {
     try
     {
