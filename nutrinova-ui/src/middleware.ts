@@ -1,7 +1,7 @@
 import withAuth from "next-auth/middleware";
 
 const publicRoutes = [
-    '/', '/atomic-white.svg', '/atomic-black.svg']
+    '/', '/atomic-white.svg', '/atomic-black.svg', '/atomic-berries-white.svg', '/atomic-berries-black.svg']
 
 export default withAuth(
     {

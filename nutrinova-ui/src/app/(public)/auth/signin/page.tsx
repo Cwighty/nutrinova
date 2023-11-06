@@ -1,5 +1,5 @@
 'use client'
-import { signIn, useSession } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import customerService from "@/services/customerService";
@@ -7,17 +7,18 @@ import CenteredSpinner from "@/components/CenteredSpinner";
 
 export default function Signin() {
     const router = useRouter();
-    const { status, data } = useSession();
 
     useEffect(() => {
         async function handleSigninRedirect() {
-            if (status === "unauthenticated") {
+            const session = await getSession();
+            if (session === undefined || session === null) {
                 void signIn("oidc");
-            } else if (status === "authenticated") {
-                if (data?.user.id === undefined) {
-                    return;
+            }
+            else {
+                if (session.user.id === undefined || session.user.id === null) {
+                    throw new Error("Could not get user id from session");
                 }
-                const customerExists = await customerService.customerExistsClient(data.user.id);
+                const customerExists = await customerService.customerExistsClient(session.user.id);
                 if (customerExists) {
                     void router.push("/dashboard");
                 } else {
@@ -26,7 +27,7 @@ export default function Signin() {
             }
         }
         void handleSigninRedirect();
-    }, [data?.user.id, router, status]);
+    }, [router]);
 
     return <CenteredSpinner message="Signing in..." />
 }
