@@ -17,7 +17,7 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   const { data: nutrientOptions, isLoading: nutrientOptionsLoading, isError: nutrientOptionsIsError } = useGetNutrientsQuery();
   const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
 
-  const [selectedNutrient, setSelectedNutrient] = useState<NutrientOption | null>();
+  const [selectedNutrient, setSelectedNutrient] = useState<NutrientOption | null>(null);
 
   const handleNutrientSelectionChange = (_: SyntheticEvent<Element, Event>, value: NutrientOption | null) => {
     setSelectedNutrient(value);
@@ -26,7 +26,6 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
 
   const handleNutrientAmountChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newAmount = parseFloat(event.target.value) ?? null;
-    console.log(newAmount);
     const newUnit = unitOptions?.find(u => u.id === selectedNutrient?.preferredUnit) ?? null;
     inputProps.onNutrientAmountChange(newAmount, newUnit);
   }
@@ -70,6 +69,7 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
               sx={{ width: 140 }}
               onChange={handleNutrientAmountChange}
               InputProps={{
+                inputProps: { min: 0 },
                 endAdornment: <InputAdornment position="end">{unitOptions.find(u => u.id === selectedNutrient?.preferredUnit)?.abreviation ?? ''}</InputAdornment>,
               }}
             />

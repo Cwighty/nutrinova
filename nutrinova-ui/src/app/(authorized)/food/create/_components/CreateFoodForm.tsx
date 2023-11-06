@@ -12,7 +12,6 @@ import {
   Paper,
   Alert,
   Box,
-  LinearProgress,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
@@ -26,12 +25,6 @@ const initialNutrient: CreateFoodNutrientRequestModel = {
   unitId: 0
 };
 
-// const availableNutrients = [
-//     { id: '1', name: 'Protein' },
-//     { id: '2', name: 'Fat' },
-//     // ... other nutrients
-// ];
-
 export default function CreateFoodForm() {
   const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
     description: '',
@@ -43,8 +36,8 @@ export default function CreateFoodForm() {
 
   const [newNutrient, setNewNutrient] = useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
 
-  const { data: nutrientOptions, isLoading: nutrientOptionsLoading } = useGetNutrientsQuery();
-  const { data: unitOptions, isLoading: unitOptionsLoading } = useGetUnitsQuery();
+  const { data: nutrientOptions } = useGetNutrientsQuery();
+  const { data: unitOptions } = useGetUnitsQuery();
 
   const handleAddNutrient = () => {
     setFoodFormState({
@@ -62,8 +55,6 @@ export default function CreateFoodForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // Form submission logic goes here
-    console.log(foodFormState);
   };
 
   return (
@@ -127,11 +118,11 @@ export default function CreateFoodForm() {
 
         <List>
           <Box  >
-                <AddNutrientDialog
-                  newNutrient={newNutrient}
-                  setNewNutrient={setNewNutrient}
-                  handleAddNutrient={handleAddNutrient}
-                />
+            <AddNutrientDialog
+              newNutrient={newNutrient}
+              setNewNutrient={setNewNutrient}
+              handleAddNutrient={handleAddNutrient}
+            />
           </Box>
           {foodFormState.foodNutrients.length === 0 &&
             <Alert severity='warning'>Please add at least one nutrient</Alert>

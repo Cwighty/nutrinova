@@ -13,8 +13,7 @@ interface Props {
 
 export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrient }: Props) => {
   const [open, setOpen] = useState(false);
-  const [isFormError, setIsFormError] = useState(false);
-  // Implement your component logic here
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -23,22 +22,8 @@ export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrie
     setOpen(false);
   };
 
-  const handleNewNutrientChange = (field: keyof CreateFoodNutrientRequestModel, value: string | number) => {
-    setNewNutrient({ ...newNutrient, [field]: value });
-  };
 
-  const validateAndSubmit = () => {
-
-    if (!newNutrient.nutrientId || newNutrient.amount <= 0 || !newNutrient.unitId) {
-      setIsFormError(true);
-    }
-    else {
-      setIsFormError(false);
-    }
-    if (isFormError) {
-      return;
-    }
-
+  const submit = () => {
     handleAddNutrient();
     handleClose();
   }
@@ -54,11 +39,9 @@ export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrie
         <DialogTitle>Add Nutrient</DialogTitle>
         <DialogContent>
           <SelectNutrient
-            error={isFormError}
-            onSelectedNutrientChange={(selectedNutrient) => { selectedNutrient && handleNewNutrientChange('nutrientId', selectedNutrient.id) }}
+            onSelectedNutrientChange={(selectedNutrient) => { selectedNutrient && setNewNutrient({ ...newNutrient, nutrientId: selectedNutrient.id }); }}
             onNutrientAmountChange={(newAmount, newUnit) => {
-              handleNewNutrientChange('amount', newAmount ?? 0);
-              handleNewNutrientChange('unitId', newUnit?.id ?? 0);
+              setNewNutrient({ ...newNutrient, amount: newAmount ?? 0, unitId: newUnit?.id ?? 0 });
             }
             } />
         </DialogContent>
@@ -66,7 +49,7 @@ export const AddNutrientDialog = ({ handleAddNutrient, newNutrient, setNewNutrie
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={() => { validateAndSubmit(); }
+          <Button onClick={() => { submit(); }
           } color="primary">
             Add
           </Button>
