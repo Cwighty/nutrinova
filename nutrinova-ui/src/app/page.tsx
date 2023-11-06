@@ -1,25 +1,73 @@
-import { ClientRouter } from "@/components/ClientRouter";
-import customerService from "@/services/customerService";
-import { Session, getServerSession } from "next-auth";
-import { options } from "./api/auth/[...nextauth]/options";
+'use client'
+import React from 'react';
+import { Container, Typography, Button, Box, Stack } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useTheme } from '@/context/ThemeContext';
 
-export default async function Home() {
-  const session = await getServerSession(options) as Session;
-  if (session.user.id !== undefined) {
-    const customerExists = await customerService.customerExistsServer(session.user.id);
-    if (customerExists) {
-      return (
-        <ClientRouter route="/dashboard" />
-      );
-    } else {
-      return (
-        <ClientRouter route="/welcome" />
-      );
-    }
-  }
-  else {
-    return (
-      <div>Something went wrong</div>
-    );
-  }
+export default function LandingPage() {
+  const router = useRouter();
+  const { theme } = useTheme();
+
+  const logoSrc = theme === 'light' ? '/atomic-black.svg' : '/atomic-white.svg';
+
+  return (
+    <>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens, row on medium and up
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '2rem',
+            minHeight: '100vh',
+            textAlign: 'center',
+          }}
+        >
+          <Container maxWidth="sm" sx={{ textAlign: 'center', mt: 4 }}>
+            <Box sx={{
+              display: 'inline-block', p: 2, borderRadius: '8px',
+            }}>
+              <Box
+                component="img"
+                sx={{
+                  height: 'auto',
+                  width: 400,
+                }}
+                src={logoSrc}
+              />
+            </Box>
+          </Container>
+          <Container maxWidth="md" sx={{ textAlign: 'center' }}>
+            <Typography variant="h3" component="h1" gutterBottom>
+              Take Health Into Your Own Hands.
+            </Typography>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Manage your nutrition and meal planning effortlessly with NutriNova, ensuring dietary precision for you and your loved ones.
+            </Typography>
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { m: 1, width: '25ch' },
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <Stack direction="row" spacing={2} mb={4}>
+                <Button variant="contained" color="secondary" onClick={() => router.push('/dashboard')}>
+                  Login
+                </Button>
+                <Button variant="outlined" color='secondary' onClick={() => router.push('/dashboard')}>
+                  Create Account
+                </Button>
+              </Stack>
+            </Box>
+          </Container>
+        </Box>
+      </Container>
+    </>
+  );
 }
+

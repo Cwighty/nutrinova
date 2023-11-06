@@ -17,6 +17,7 @@ import {
   ExpandLess,
   ExpandMore,
   Fastfood,
+  Logout,
   MenuBook,
   Person,
   Restaurant,
@@ -26,6 +27,7 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { signOut } from "next-auth/react";
 
 interface NavigationListProps {
   closeDrawer?: () => void;
@@ -218,6 +220,16 @@ export const NavigationList = ({
           </ListItemButton>
         </>
       )}
+      <Divider />
+      <ListItemButton
+        key="Signout"
+        onClick={() => signOut({ callbackUrl: "/" })}
+      >
+        <ListItemIcon>
+          <Logout />
+        </ListItemIcon>
+        <ListItemText primary="Sign Out" />
+      </ListItemButton>
     </List>
   );
 };
