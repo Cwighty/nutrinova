@@ -1,6 +1,25 @@
-// Applies auth to all routes in the app
-export { default } from "next-auth/middleware";
+import withAuth from "next-auth/middleware";
 
-// Put auth on specific routes - can be regex
-// Ref: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-// export const config = { matcher: ["/sample-route"] };
+const publicRoutes = [
+    '/', '/atomic-white.svg', '/atomic-black.svg']
+
+export default withAuth(
+    {
+        callbacks: {
+            authorized: ({ req, token }) => {
+                if (publicRoutes.includes(req.nextUrl.pathname)) {
+                    return true
+                }
+                if (
+                    token === null
+                ) {
+                    return false
+                }
+                return true
+            }
+        },
+        pages: {
+            signIn: '/auth/signin',
+        },
+    }
+)

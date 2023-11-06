@@ -8,25 +8,15 @@ export interface Customer {
 const userService = {
   async customerExistsServer(id: string): Promise<boolean> {
     'use server'
-    try {
-      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
-      const response = await axiosInstance.get(`customer/exists?id=${id}`);
-      return response.data === true;
-    } catch (error) {
-      console.error("Failed to check if customer exists...", error);
-      throw new Error("Failed to check if customer exists...");
-    }
+    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
+    const response = await axiosInstance.get(`customer/exists?id=${id}`);
+    return response.data === true;
   },
 
   async customerExistsClient(id: string): Promise<boolean> {
-    try {
-      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-      const response = await axiosInstance.get(`customer/exists?id=${id}`);
-      return response.data === true;
-    } catch (error) {
-      console.error("Failed to check if customer exists...", error);
-      throw new Error("Failed to check if customer exists...");
-    }
+    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
+    const response = await axiosInstance.get(`customer/exists?id=${id}`);
+    return response.data === true;
   },
 
   async createCustomer(customer: Customer): Promise<boolean> {
