@@ -147,6 +147,16 @@ public class FoodController : ControllerBase
             return BadRequest("Serving size must be greater than 0");
         }
 
+        if (createFoodRequestModel.FoodNutrients == null || !createFoodRequestModel.FoodNutrients.Any())
+        {
+            return BadRequest("At least one nutrient is required");
+        }
+
+        if (createFoodRequestModel.FoodNutrients.Any(n => n.Amount <= 0))
+        {
+            return BadRequest("Nutrient amounts must be greater than 0");
+        }
+
         var userObjectId = User.GetObjectIdFromClaims();
         Console.WriteLine($"User id: {userObjectId}");
 

@@ -39,42 +39,40 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <>
-          <Box display={'flex'} alignItems={'center'} p={2} >
-            <Autocomplete
-              options={nutrientOptions}
-              getOptionLabel={(option) => `${option.id} ${option.nutrientName}`}
-              renderOption={(props, option) => {
-                return (
-                  <li {...props} key={option.id}>
-                    {option.nutrientName}
-                  </li>
-                );
-              }}
-              renderInput={(params) =>
-                <TextField {...params}
-                  label="Nutrient"
-                  sx={{ width: 300 }}
-                  error={inputProps.error}
-                  helperText={inputProps.helperText}
-                />
-              }
-              onChange={handleNutrientSelectionChange}
-            />
-            <TextField
-              error={inputProps.error}
-              helperText={inputProps.helperText}
-              label="Amount"
-              type="number"
-              sx={{ width: 140 }}
-              onChange={handleNutrientAmountChange}
-              InputProps={{
-                inputProps: { min: 0 },
-                endAdornment: <InputAdornment position="end">{unitOptions.find(u => u.id === selectedNutrient?.preferredUnit)?.abreviation ?? ''}</InputAdornment>,
-              }}
-            />
-          </Box>
-        </>
+        <Box display={'flex'} alignItems={'center'} p={2} >
+          <Autocomplete
+            options={nutrientOptions}
+            getOptionLabel={(option) => `${option.id} ${option.nutrientName}`}
+            renderOption={(props, option) => {
+              return (
+                <li {...props} key={option.id}>
+                  {option.nutrientName}
+                </li>
+              );
+            }}
+            renderInput={(params) =>
+              <TextField {...params}
+                label="Nutrient"
+                sx={{ width: 300 }}
+                error={inputProps.error}
+                helperText={inputProps.helperText}
+              />
+            }
+            onChange={handleNutrientSelectionChange}
+          />
+          <TextField
+            error={inputProps.error}
+            helperText={inputProps.helperText}
+            label="Amount"
+            type="number"
+            sx={{ width: 140 }}
+            onChange={handleNutrientAmountChange}
+            InputProps={{
+              inputProps: { min: 0 },
+              endAdornment: <InputAdornment position="end">{unitOptions.find(u => u.id === selectedNutrient?.preferredUnit)?.abreviation ?? ''}</InputAdornment>,
+            }}
+          />
+        </Box>
       )}
     </>
   );

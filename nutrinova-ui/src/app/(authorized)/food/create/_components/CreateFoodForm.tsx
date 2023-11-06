@@ -17,7 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
 import { CreateFoodRequestModel } from '../_models/createFoodRequest';
 import { AddNutrientDialog } from './AddNutrientDialog';
-import { useGetNutrientsQuery, useGetUnitsQuery } from '../../foodHooks';
+import { useCreateFoodMutation, useGetNutrientsQuery, useGetUnitsQuery } from '../../foodHooks';
+import SelectUnit from '@/components/forms/SelectUnit';
 
 const initialNutrient: CreateFoodNutrientRequestModel = {
   nutrientId: 0,
@@ -29,7 +30,7 @@ export default function CreateFoodForm() {
   const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
     description: '',
     servingSize: undefined,
-    unit: '',
+    unit: 0,
     note: '',
     foodNutrients: []
   });
@@ -38,6 +39,8 @@ export default function CreateFoodForm() {
 
   const { data: nutrientOptions } = useGetNutrientsQuery();
   const { data: unitOptions } = useGetUnitsQuery();
+
+  const createFoodMutation = useCreateFoodMutation();
 
   const handleAddNutrient = () => {
     setFoodFormState({
@@ -55,6 +58,8 @@ export default function CreateFoodForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    console.log(foodFormState);
+    createFoodMutation.mutate(foodFormState);
   };
 
   return (
@@ -89,15 +94,7 @@ export default function CreateFoodForm() {
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <TextField
-              label="Unit"
-              value={foodFormState.unit}
-              onChange={(e) => setFoodFormState(
-                { ...foodFormState, unit: e.target.value }
-              )}
-              fullWidth
-              margin="normal"
-            />
+            <SelectUnit onSelectedUnitChange={(unit) => setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })} />
           </Grid>
 
           {/* Note */}

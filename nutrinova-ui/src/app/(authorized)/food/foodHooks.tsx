@@ -1,8 +1,9 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import { NutrientOption } from "./_models/nutrientOption";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitOption } from "./_models/unitOption";
-
+import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
+import toast from "react-hot-toast";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -36,4 +37,26 @@ export const useGetUnitsQuery = () => {
     queryKey: unitKeys.all,
     queryFn: fetchUnits
   });
+}
+
+const createFood = async (food: CreateFoodRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: {}, origin: 'client' });
+  const response = await apiClient.post("/food", food);
+  return response.status === 200;
+}
+
+export const useCreateFoodMutation = () => {
+  return useMutation(
+    {
+      mutationFn: (food: CreateFoodRequestModel) => createFood(food),
+      onSuccess: () => {
+        toast.success('Food created successfully');
+        //TODO: invalidate get foods query
+      },
+      onError: (error) => {
+        toast.error("Error creating food: " + error.message);
+        console.error(error);
+      }
+    }
+  );
 }
