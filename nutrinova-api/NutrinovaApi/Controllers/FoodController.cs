@@ -139,10 +139,10 @@ public class FoodController : ControllerBase
 
   [HttpGet("all-foods")]
   public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById(
-    [FromQuery] string? filterOption = null,
-    [FromQuery] double nutrientFilterValue = 0,
-    [FromQuery] string nutrientFilterOperator = "gt",
-    [FromQuery] string? nutrientFilter = null)
+      [FromQuery] string? filterOption = null,
+      [FromQuery] double nutrientFilterValue = 0,
+      [FromQuery] string nutrientFilterOperator = "gt",
+      [FromQuery] string? nutrientFilter = null)
   {
     try
     {
@@ -292,6 +292,7 @@ public class FoodController : ControllerBase
       Note = createFoodRequestModel.Note,
       FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
       {
+        Id = Guid.NewGuid(),
         NutrientId = n.NutrientId,
         Amount = n.Amount,
         UnitId = n.UnitId,
