@@ -14,4 +14,11 @@ export default function DashboardPage() {
             <AtomSpinner />
         </PageContainer>
     );
+export default function DashboardPage() {
+  return (
+    <PageContainer title={metadata.title}>
+      <Typography variant={"h3"}>Dashboard</Typography>
+      <AtomSpinner />
+    </PageContainer>
+  );
 }
