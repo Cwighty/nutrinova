@@ -13,6 +13,10 @@ public class FlattenedFoodNutrient
 
     public double Value { get; set; }
 
+    public FlattenedFoodNutrient()
+    {
+    }
+
     public FlattenedFoodNutrient(FoodPlanNutrient fpn)
     {
         this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.Description}";
