@@ -8,10 +8,10 @@ export const metadata = {
 };
 
 export default function DashboardPage() {
-    return (
-        <PageContainer title={metadata.title}>
-            <Typography variant={"h3"}>Dashboard</Typography>
-            <AtomSpinner />
-        </PageContainer>
-    );
+  return (
+    <PageContainer title={metadata.title}>
+      <Typography variant={"h3"}>Dashboard</Typography>
+      <AtomSpinner />
+    </PageContainer>
+  );
 }
