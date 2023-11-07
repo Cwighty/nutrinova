@@ -23,14 +23,14 @@ import SelectUnit from '@/components/forms/SelectUnit';
 const initialNutrient: CreateFoodNutrientRequestModel = {
   nutrientId: 0,
   amount: 0,
-  unitId: 0
+  unitId: 1
 };
 
 export default function CreateFoodForm() {
   const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
     description: '',
     servingSize: undefined,
-    unit: 0,
+    unit: 1,
     note: '',
     foodNutrients: []
   });
@@ -41,6 +41,8 @@ export default function CreateFoodForm() {
   const { data: unitOptions } = useGetUnitsQuery();
 
   const createFoodMutation = useCreateFoodMutation();
+
+  const [formValid, setFormValid] = useState<boolean>(true);
 
   const handleAddNutrient = () => {
     setFoodFormState({
@@ -58,9 +60,40 @@ export default function CreateFoodForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!validateForm()) {
+      setFormValid(false);
+      return;
+    }
+    setFormValid(true);
     console.log(foodFormState);
     createFoodMutation.mutate(foodFormState);
+    if (createFoodMutation.isSuccess) {
+      setFoodFormState({
+        description: '',
+        servingSize: undefined,
+        unit: 1,
+        note: '',
+        foodNutrients: []
+      });
+    }
+
   };
+
+  const validateForm = () => {
+    if (foodFormState.foodNutrients.length === 0) {
+      return false;
+    }
+    if (foodFormState.description === '') {
+      return false;
+    }
+    if (foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0) {
+      if (foodFormState.unit === 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   return (
     <Paper elevation={3} sx={{ padding: 2 }}>
@@ -76,6 +109,8 @@ export default function CreateFoodForm() {
               )}
               fullWidth
               margin="normal"
+              error={!formValid && foodFormState.description === ''}
+              helperText={!formValid && foodFormState.description === '' ? 'Please enter a food name' : ''}
             />
           </Grid>
 
@@ -84,17 +119,21 @@ export default function CreateFoodForm() {
             <TextField
               label="Serving Size"
               type="number"
-              value={foodFormState.servingSize}
               onChange={(e) => setFoodFormState(
                 { ...foodFormState, servingSize: Number(e.target.value) }
               )}
               fullWidth
               margin="normal"
+              error={!formValid && foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0}
+              helperText={!formValid && foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0 ? 'Please enter a valid serving size' : ''}
             />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <SelectUnit onSelectedUnitChange={(unit) => setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })} />
+            <SelectUnit
+              onSelectedUnitChange={(unit) => setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })}
+              error={!formValid && foodFormState.servingSize !== undefined && foodFormState.unit === undefined}
+              helperText={!formValid && foodFormState.servingSize ? 'A unit must be supplied with a serving size' : ''} />
           </Grid>
 
           {/* Note */}
