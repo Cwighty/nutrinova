@@ -1,5 +1,5 @@
-"use client";
-import React, { useState } from "react";
+'use client'
+import React, { useState } from 'react';
 import {
   Button,
   TextField,
@@ -12,51 +12,40 @@ import {
   Paper,
   Alert,
   Box,
-  LinearProgress,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { CreateFoodNutrientRequestModel } from "../_models/createFoodNutrientRequestModel";
-import { CreateFoodRequestModel } from "../_models/createFoodRequest";
-import { AddNutrientDialog } from "./AddNutrientDialog";
-import { useGetNutrientsQuery } from "../../foodHooks";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
+import { CreateFoodRequestModel } from '../_models/createFoodRequest';
+import { AddNutrientDialog } from './AddNutrientDialog';
+import { useCreateFoodMutation, useGetNutrientsQuery, useGetUnitsQuery } from '../../foodHooks';
+import SelectUnit from '@/components/forms/SelectUnit';
 
 const initialNutrient: CreateFoodNutrientRequestModel = {
   nutrientId: 0,
   amount: 0,
-  unitId: 0,
+  unitId: 0
 };
-
-// const availableNutrients = [
-//     { id: '1', name: 'Protein' },
-//     { id: '2', name: 'Fat' },
-//     // ... other nutrients
-// ];
-
-const availableUnits = [
-  { id: 1, description: "grams", abreviation: "g" },
-  { id: 2, description: "milligrams", abreviation: "mg" },
-  // ... other units
-];
 
 export default function CreateFoodForm() {
   const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
-    description: "",
+    description: '',
     servingSize: undefined,
-    unit: "",
-    note: "",
-    foodNutrients: [],
+    unit: 0,
+    note: '',
+    foodNutrients: []
   });
 
-  const [newNutrient, setNewNutrient] =
-    useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
+  const [newNutrient, setNewNutrient] = useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
 
-  const { data: availableNutrients, isLoading: availableNutrientsLoading } =
-    useGetNutrientsQuery();
+  const { data: nutrientOptions } = useGetNutrientsQuery();
+  const { data: unitOptions } = useGetUnitsQuery();
+
+  const createFoodMutation = useCreateFoodMutation();
 
   const handleAddNutrient = () => {
     setFoodFormState({
       ...foodFormState,
-      foodNutrients: [...foodFormState.foodNutrients, newNutrient],
+      foodNutrients: [...foodFormState.foodNutrients, newNutrient]
     });
     setNewNutrient({ ...initialNutrient });
   };
@@ -69,8 +58,8 @@ export default function CreateFoodForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // Form submission logic goes here
     console.log(foodFormState);
+    createFoodMutation.mutate(foodFormState);
   };
 
   return (
@@ -82,12 +71,9 @@ export default function CreateFoodForm() {
             <TextField
               label="Food Name"
               value={foodFormState.description}
-              onChange={(e) =>
-                setFoodFormState({
-                  ...foodFormState,
-                  description: e.target.value,
-                })
-              }
+              onChange={(e) => setFoodFormState(
+                { ...foodFormState, description: e.target.value }
+              )}
               fullWidth
               margin="normal"
             />
@@ -99,39 +85,28 @@ export default function CreateFoodForm() {
               label="Serving Size"
               type="number"
               value={foodFormState.servingSize}
-              onChange={(e) =>
-                setFoodFormState({
-                  ...foodFormState,
-                  servingSize: Number(e.target.value),
-                })
-              }
+              onChange={(e) => setFoodFormState(
+                { ...foodFormState, servingSize: Number(e.target.value) }
+              )}
               fullWidth
               margin="normal"
             />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <TextField
-              label="Unit"
-              value={foodFormState.unit}
-              onChange={(e) =>
-                setFoodFormState({ ...foodFormState, unit: e.target.value })
-              }
-              fullWidth
-              margin="normal"
-            />
+            <SelectUnit onSelectedUnitChange={(unit) => setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })} />
           </Grid>
 
           {/* Note */}
-          <Grid item xs={12}>
+          <Grid item xs={12} height={170}>
             <TextField
               label="Note"
               multiline
               rows={4}
               value={foodFormState.note}
-              onChange={(e) =>
-                setFoodFormState({ ...foodFormState, note: e.target.value })
-              }
+              onChange={(e) => setFoodFormState(
+                { ...foodFormState, note: e.target.value }
+              )}
               fullWidth
               margin="normal"
             />
@@ -139,36 +114,24 @@ export default function CreateFoodForm() {
         </Grid>
 
         <List>
-          {availableNutrientsLoading && <LinearProgress />}
-          {availableNutrients && (
+          <Box  >
             <AddNutrientDialog
               newNutrient={newNutrient}
               setNewNutrient={setNewNutrient}
               handleAddNutrient={handleAddNutrient}
-              availableNutrients={availableNutrients}
-              availableUnits={availableUnits}
             />
-          )}
-          {foodFormState.foodNutrients.length === 0 && (
-            <Alert severity="warning">Please add at least one nutrient</Alert>
-          )}
+          </Box>
+          {foodFormState.foodNutrients.length === 0 &&
+            <Alert severity='warning'>Please add at least one nutrient</Alert>
+          }
           {foodFormState.foodNutrients.map((nutrient, index) => (
             <ListItem key={index} divider>
               <ListItemText
-                primary={
-                  availableNutrients?.find((n) => n.id === nutrient.nutrientId)
-                    ?.nutrientName
-                }
-                secondary={`${nutrient.amount} ${availableUnits.find(
-                  (u) => u.id === nutrient.unitId,
-                )?.name}`}
+                primary={nutrientOptions?.find((n) => n.id === nutrient.nutrientId)?.nutrientName}
+                secondary={`${nutrient.amount} ${unitOptions?.find((u) => u.id === nutrient.unitId)?.description}`}
               />
               <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleRemoveNutrient(index)}
-                >
+                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveNutrient(index)}>
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
