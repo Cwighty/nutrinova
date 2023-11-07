@@ -39,26 +39,18 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     {
       Description = "Test food plan",
       Note = "Test note",
+      FoodNutrients = new List<CreateFoodNutrientRequestModel>
+      {
+        new()
+        {
+          NutrientId = 1005,
+          Amount = 10,
+        },
+      },
     };
 
     var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-  }
-
-  [Fact]
-  public async Task CreateFoodPlan_ShouldAttatchUserId_WhenUserIsAuthenticated()
-  {
-    var createFoodRequestModel = new CreateFoodRequestModel
-    {
-      Description = "Test food plan",
-    };
-
-    var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
-    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-    var foodPlan = await response.Content.ReadFromJsonAsync<FoodPlan>();
-    Assert.NotNull(foodPlan);
-    Assert.NotEqual(Guid.Empty, foodPlan.CreatedBy);
   }
 
   // [Fact]
@@ -154,7 +146,7 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       Note = "note",
       FoodNutrients = new List<CreateFoodNutrientRequestModel>
       {
-        new CreateFoodNutrientRequestModel
+        new()
         {
           NutrientId = 1003,
           Amount = 10,

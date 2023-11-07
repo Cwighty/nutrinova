@@ -22,30 +22,6 @@ public class FoodController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly HttpClient httpClient;
 
-  public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
-  {
-    if (leftOperand == null)
-    {
-      return false;
-    }
-
-    switch (operatorString)
-    {
-      case "gt":
-        return leftOperand > rightOperand;
-      case "gte":
-        return leftOperand >= rightOperand;
-      case "lt":
-        return leftOperand < rightOperand;
-      case "lte":
-        return leftOperand <= rightOperand;
-      case "eq":
-        return leftOperand == rightOperand;
-      default:
-        throw new InvalidOperationException("operatingString was not given a valid option");
-    }
-  }
-
   public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
   {
     this.logger = logger;
@@ -238,6 +214,30 @@ public class FoodController : ControllerBase
     {
       logger.LogError($"An unexpected error occurred: {ex.Message}");
       return StatusCode(500, "Internal server error");
+    }
+
+    bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+    {
+      if (leftOperand == null)
+      {
+        return false;
+      }
+
+      switch (operatorString)
+      {
+        case "gt":
+          return leftOperand > rightOperand;
+        case "gte":
+          return leftOperand >= rightOperand;
+        case "lt":
+          return leftOperand < rightOperand;
+        case "lte":
+          return leftOperand <= rightOperand;
+        case "eq":
+          return leftOperand == rightOperand;
+        default:
+          throw new InvalidOperationException("operatingString was not given a valid option");
+      }
     }
   }
 
