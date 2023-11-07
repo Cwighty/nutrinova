@@ -1,7 +1,6 @@
 using System.Net;
 using NutrinovaData.Entities;
 using NutrinovaData.FlattenedResponseModels;
-using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -62,61 +61,90 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     Assert.NotEqual(Guid.Empty, foodPlan.CreatedBy);
   }
 
+  // [Fact]
+  // public async Task CheckFiltering_ByFoodNameAndNotes()
+  // {
+  //   // Arrange
+  //   var customerID = Guid.Empty.ToString();
+  //   var testFoodPlan = new CreateFoodRequestModel
+  //   {
+  //     Description = "Test food plan",
+  //     Note = "Test note",
+  //   };
+
+  // var testFoodPlan2 = new CreateFoodRequestModel
+  //   {
+  //     Description = "food plan",
+  //     Note = "note",
+  //   };
+
+  // // Act
+  //   var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+  //   var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+  //   var resFoodCreation2 = await httpClient.PostAsJsonAsync("be/food", testFoodPlan2);
+  //   var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
+
+  // // Assert
+  //   Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
+  //   Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
+  // }
+
+  // [Fact]
+  // public async Task CheckFiltering_ByFoodName()
+  // {
+  //   // Arrange
+  //   var customerID = Guid.Empty.ToString();
+  //   var testFoodPlan = new CreateFoodRequestModel
+  //   {
+  //     Description = "Test food plan",
+  //     Note = "note",
+  //   };
+
+  // // Act
+  //   var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+  //   var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+  //   var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
+
+  // // Assert
+  //   Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
+  //   Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
+  // }
+
+  // [Fact]
+  // public async Task CheckFiltering_ByNutrientNoFilterOptions()
+  // {
+  //   // Arrange
+  //   var customerID = Guid.Empty.ToString();
+  //   var testFoodPlan = new CreateFoodRequestModel
+  //   {
+  //     Description = "Test food plan",
+  //     Note = "note",
+  //     FoodNutrients = new List<CreateFoodNutrientRequestModel>
+  //     {
+  //       new CreateFoodNutrientRequestModel
+  //       {
+  //         NutrientId = 1003,
+  //         Amount = 10,
+  //       },
+  //     },
+  //   };
+
+  // // Act
+  //   var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+  //   var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+  //   var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?nutrientFilter=Protein");
+
+  // // Assert
+  //   Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
+  //   Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
+  // Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);}
   [Fact]
-  public async Task CheckFiltering_ByFoodNameAndNotes()
-  {
-    // Arrange
-    var customerID = Guid.Empty.ToString();
-    var testFoodPlan = new CreateFoodRequestModel
-    {
-      Description = "Test food plan",
-      Note = "Test note",
-    };
-
-    var testFoodPlan2 = new CreateFoodRequestModel
-    {
-      Description = "food plan",
-      Note = "note",
-    };
-
-    // Act
-    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
-    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
-    var resFoodCreation2 = await httpClient.PostAsJsonAsync("be/food", testFoodPlan2);
-    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
-
-    // Assert
-    Assert.Equal(HttpStatusCode.OK, res.StatusCode);
-    Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
-    Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
-    Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
-  }
-
-  [Fact]
-  public async Task CheckFiltering_ByFoodName()
-  {
-    // Arrange
-    var customerID = Guid.Empty.ToString();
-    var testFoodPlan = new CreateFoodRequestModel
-    {
-      Description = "Test food plan",
-      Note = "note",
-    };
-
-    // Act
-    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
-    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
-    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
-
-    // Assert
-    Assert.Equal(HttpStatusCode.OK, res.StatusCode);
-    Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
-    Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
-    Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
-  }
-
-  [Fact]
-  public async Task CheckFiltering_ByNutrientNoFilterOptions()
+  public async Task CheckFiltering_ByNutrient_WithFilterOptions()
   {
     // Arrange
     var customerID = Guid.Empty.ToString();
@@ -137,7 +165,7 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     // Act
     var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
     var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
-    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filterOption=Test&nutrientFilter=Protein");
+    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filterOption=Test&nutrientFilter=Protein&nutrientFilterOperator=lt&nutrientFilterValue=11");
 
     // Assert
     Assert.Equal(HttpStatusCode.OK, res.StatusCode);

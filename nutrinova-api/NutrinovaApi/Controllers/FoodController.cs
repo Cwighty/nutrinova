@@ -186,6 +186,8 @@ public class FoodController : ControllerBase
       if (!string.IsNullOrEmpty(filterOption))
       {
         result = await context.FoodPlans
+          .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
+          .ThenInclude(fpn => fpn.Nutrient)
           .Where(fp =>
               fp.CreatedBy == customer.Id && (
                 fp.Description.Contains(filterOption) ||
@@ -195,9 +197,9 @@ public class FoodController : ControllerBase
       else
       {
         result = await context.FoodPlans
-          .Where(fp => fp.CreatedBy == customer.Id && (
-                  string.IsNullOrEmpty(nutrientFilter) || fp.FoodPlanNutrients.Any(fpn =>
-                  fpn.Nutrient.NutrientName != null && fpn.Nutrient.NutrientName.Contains(nutrientFilter))))
+          .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
+          .ThenInclude(fpn => fpn.Nutrient)
+          .Where(fp => fp.CreatedBy == customer.Id)
           .ToListAsync();
       }
 
