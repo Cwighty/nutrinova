@@ -63,7 +63,7 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
   }
 
   [Fact]
-  public async Task CheckFilteringByFoodNameAndNotes()
+  public async Task CheckFiltering_ByFoodNameAndNotes()
   {
     // Arrange
     var customerID = Guid.Empty.ToString();
@@ -81,9 +81,63 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
     // Act
     var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
-    var resFoodCreation = await httpClient.PostAsJsonAsync<CreateFoodRequestModel>("be/food", testFoodPlan);
-    var resFoodCreation2 = await httpClient.PostAsJsonAsync<CreateFoodRequestModel>("be/food", testFoodPlan2);
+    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+    var resFoodCreation2 = await httpClient.PostAsJsonAsync("be/food", testFoodPlan2);
     var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
+
+    // Assert
+    Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+    Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
+    Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
+    Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
+  }
+
+  [Fact]
+  public async Task CheckFiltering_ByFoodName()
+  {
+    // Arrange
+    var customerID = Guid.Empty.ToString();
+    var testFoodPlan = new CreateFoodRequestModel
+    {
+      Description = "Test food plan",
+      Note = "note",
+    };
+
+    // Act
+    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filteroption=Test");
+
+    // Assert
+    Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+    Assert.Equal(HttpStatusCode.OK, resFoodCreation.StatusCode);
+    Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter.StatusCode);
+    Assert.Equal(1, (await resFoodPlanFilter.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
+  }
+
+  [Fact]
+  public async Task CheckFiltering_ByNutrientNoFilterOptions()
+  {
+    // Arrange
+    var customerID = Guid.Empty.ToString();
+    var testFoodPlan = new CreateFoodRequestModel
+    {
+      Description = "Test food plan",
+      Note = "note",
+      FoodNutrients = new List<CreateFoodNutrientRequestModel>
+      {
+        new CreateFoodNutrientRequestModel
+        {
+          NutrientId = 1003,
+          Amount = 10,
+        },
+      },
+    };
+
+    // Act
+    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filterOption=Test&nutrientFilter=Protein");
 
     // Assert
     Assert.Equal(HttpStatusCode.OK, res.StatusCode);

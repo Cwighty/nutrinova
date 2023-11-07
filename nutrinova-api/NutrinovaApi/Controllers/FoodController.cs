@@ -21,8 +21,6 @@ public class FoodController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly HttpClient httpClient;
 
-  public bool StringContainsForNullableValue(string? container, string containee) => container?.Contains(containee, StringComparison.OrdinalIgnoreCase) ?? false;
-
   public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
   {
     if (leftOperand == null)
@@ -185,46 +183,31 @@ public class FoodController : ControllerBase
 
       List<FoodPlan> result;
 
-      // bool FilterNutrientOptionsAndValue(FoodPlanNutrient fpn)
-      // {
-      //    if (nutrientFilter.IsNullOrEmpty())
-      //    {
-      //        return true;
-      //    }
-      //    return fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
-      //        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator);
-      // }
       if (!string.IsNullOrEmpty(filterOption))
       {
-        // this is when you are given a filter option we will apply the nutrient filters
-        // needs to apply value filter
-        // if there are no nutrient filters we hot wire that to true so that it will return all of the food plans based just on the filter option
-        // if there are nutrient filters we will apply the nutrient filters to the food plans
         result = await context.FoodPlans
-            .Where(fp =>
-                fp.CreatedBy == customer.Id &&
-                    (
-                        (
-                            fp.Description.Contains(filterOption, StringComparison.OrdinalIgnoreCase) ||
-                            StringContainsForNullableValue(fp.Note, filterOption)) &&
-                            !string.IsNullOrEmpty(nutrientFilter) ?
-                            fp.FoodPlanNutrients.Any(fpn =>
-                                StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
-                                NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true))
-            .ToListAsync();
+          .Where(fp =>
+              fp.CreatedBy == customer.Id && (
+                fp.Description.Contains(filterOption) ||
+                (fp.Note != null && fp.Note.Contains(filterOption))))
+          .ToListAsync();
       }
       else
       {
-        // if there are no filter options we will just return all of the food plans
-        // if there are nutrient filters we will apply the nutrient filters to the food plans
         result = await context.FoodPlans
-            .Where(fp => fp.CreatedBy == customer.Id &&
-                            !string.IsNullOrEmpty(nutrientFilter) ?
-                            fp.FoodPlanNutrients.Any(fpn =>
-                                StringContainsForNullableValue(fpn.Nutrient.NutrientName, nutrientFilter) &&
-                                NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)) : true)
-            .ToListAsync();
+          .Where(fp => fp.CreatedBy == customer.Id && (
+                  string.IsNullOrEmpty(nutrientFilter) || fp.FoodPlanNutrients.Any(fpn =>
+                  fpn.Nutrient.NutrientName != null && fpn.Nutrient.NutrientName.Contains(nutrientFilter))))
+          .ToListAsync();
       }
+
+      result = result
+      .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
+        fp.FoodPlanNutrients.Any(fpn =>
+        fpn.Nutrient.NutrientName != null &&
+        fpn.Nutrient.NutrientName.Contains(nutrientFilter) &&
+        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)))
+        .ToList();
 
       return result.Select(fp => fp.ToFlattenedFood()).ToList();
     }
