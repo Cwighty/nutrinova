@@ -1,16 +1,15 @@
 "use client";
-
-import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { useRouter } from "next/navigation";
-import { FoodSearchResult } from "../../_models/foodSearchResult";
+import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 
-interface SearchResultDataGridProps {
+interface MyFoodsSearchResultDataGridProps {
   rows: FoodSearchResult[];
 }
 
-export default function SearchResultDataGrid({
+export const MyFoodsSearchResultDataGrid = ({
   rows,
-}: SearchResultDataGridProps) {
+}: MyFoodsSearchResultDataGridProps) => {
   const router = useRouter();
   const columns: GridColDef[] = [
     { field: "fdcId", headerName: "ID", width: 100 },
@@ -19,7 +18,6 @@ export default function SearchResultDataGrid({
   const handleRowClick = (row: GridRowParams<FoodSearchResult>) => {
     router.push(`/food/search/detail?food=` + JSON.stringify(row.row));
   };
-
   return (
     <DataGrid
       getRowId={(row: FoodSearchResult) => row.fdcId}
@@ -31,4 +29,4 @@ export default function SearchResultDataGrid({
       }}
     />
   );
-}
+};

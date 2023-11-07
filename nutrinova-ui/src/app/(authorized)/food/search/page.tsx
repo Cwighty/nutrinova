@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import FoodSearchForm from "./_components/FoodSearchForm";
 import SearchResultDataGrid from "./_components/SearchResultDataGrid";
-import { FoodSearchResult } from "./_models/foodSearchResult";
+import { FoodSearchResult } from "../_models/foodSearchResult";
 import { PageContainer } from "@/components/PageContainer";
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 
@@ -24,13 +24,13 @@ const fetchFoodSearchResults = async (searchParams: {
   query.set("foodName", searchParams["foodName"] as string);
   query.set("filterOption", searchParams["usdaFilterOption"] as string);
 
-  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory(
-    {
-      additionalHeaders: {},
-      origin: "server"
-    }
-  )
-  const response = await foodSearchInstance.get("food/search?" + query.toString());
+  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "server",
+  });
+  const response = await foodSearchInstance.get(
+    "food/search?" + query.toString(),
+  );
 
   if (response.data) {
     return (await response.data) as FoodSearchResult[];
