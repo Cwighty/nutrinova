@@ -1,9 +1,9 @@
 import { CreateFoodNutrientRequestModel } from "./createFoodNutrientRequestModel";
 
 export interface CreateFoodRequestModel {
-    description?: string;
-    servingSize?: number;
-    unit?: string;
-    note?: string;
-    foodNutrients: CreateFoodNutrientRequestModel[];
+  description?: string;
+  servingSize?: number;
+  unit?: number;
+  note?: string;
+  foodNutrients: CreateFoodNutrientRequestModel[];
 }

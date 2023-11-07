@@ -155,10 +155,10 @@ public class FoodController : ControllerBase
 
   [HttpGet("all-foods")]
   public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById(
-    [FromQuery] string? filterOption = null,
-    [FromQuery] double nutrientFilterValue = 0,
-    [FromQuery] string nutrientFilterOperator = "gt",
-    [FromQuery] string? nutrientFilter = null)
+      [FromQuery] string? filterOption = null,
+      [FromQuery] double nutrientFilterValue = 0,
+      [FromQuery] string nutrientFilterOperator = "gt",
+      [FromQuery] string? nutrientFilter = null)
   {
     try
     {
@@ -230,6 +230,7 @@ public class FoodController : ControllerBase
     }
   }
 
+  [Authorize]
   [HttpPost]
   public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
   {
@@ -249,10 +250,21 @@ public class FoodController : ControllerBase
       return BadRequest("Serving size must be greater than 0");
     }
 
+    if (createFoodRequestModel.FoodNutrients == null || !createFoodRequestModel.FoodNutrients.Any())
+    {
+      return BadRequest("At least one nutrient is required");
+    }
+
+    if (createFoodRequestModel.FoodNutrients.Any(n => n.Amount <= 0))
+    {
+      return BadRequest("Nutrient amounts must be greater than 0");
+    }
+
     var userObjectId = User.GetObjectIdFromClaims();
     Console.WriteLine($"User id: {userObjectId}");
 
     var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
+
     if (customer == null)
     {
       return Unauthorized();
@@ -269,6 +281,7 @@ public class FoodController : ControllerBase
       Note = createFoodRequestModel.Note,
       FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
       {
+        Id = Guid.NewGuid(),
         NutrientId = n.NutrientId,
         Amount = n.Amount,
         UnitId = n.UnitId,
