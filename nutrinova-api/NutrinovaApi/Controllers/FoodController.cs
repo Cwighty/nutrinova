@@ -1,8 +1,10 @@
 using System.Text.Json;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
 
@@ -18,6 +20,30 @@ public class FoodController : ControllerBase
   private readonly IConfiguration configuration;
   private readonly NutrinovaDbContext context;
   private readonly HttpClient httpClient;
+
+  public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+  {
+    if (leftOperand == null)
+    {
+      return false;
+    }
+
+    switch (operatorString)
+    {
+      case "gt":
+        return leftOperand > rightOperand;
+      case "gte":
+        return leftOperand >= rightOperand;
+      case "lt":
+        return leftOperand < rightOperand;
+      case "lte":
+        return leftOperand <= rightOperand;
+      case "eq":
+        return leftOperand == rightOperand;
+      default:
+        throw new InvalidOperationException("operatingString was not given a valid option");
+    }
+  }
 
   public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
   {
@@ -109,6 +135,83 @@ public class FoodController : ControllerBase
       }
 
       return deserRes.MakeFlattenedFood();
+    }
+    catch (HttpRequestException ex)
+    {
+      logger.LogError($"HTTP request failed: {ex.Message}");
+      return StatusCode(503, "Service unavailable");
+    }
+    catch (JsonException ex)
+    {
+      logger.LogError($"JSON deserialization failed: {ex.Message}");
+      return BadRequest("Invalid response format");
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"An unexpected error occurred: {ex.Message}");
+      return StatusCode(500, "Internal server error");
+    }
+  }
+
+  [HttpGet("all-foods")]
+  public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById(
+      [FromQuery] string? filterOption = null,
+      [FromQuery] double nutrientFilterValue = 0,
+      [FromQuery] string nutrientFilterOperator = "gt",
+      [FromQuery] string? nutrientFilter = null)
+  {
+    try
+    {
+      var userObjectId = User.GetObjectIdFromClaims();
+
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+
+      if (customer?.Id is null)
+      {
+        return NotFound("Couldn't find the user id");
+      }
+
+      if (nutrientFilterValue < 0)
+      {
+        return BadRequest("Nutrient value must be greater than 0");
+      }
+
+      if (string.IsNullOrEmpty(nutrientFilter) && nutrientFilterValue != 0)
+      {
+        return BadRequest("Nutrient filter is required when non-zero nutrient value is provided");
+      }
+
+      List<FoodPlan> result;
+
+      if (!string.IsNullOrEmpty(filterOption))
+      {
+        result = await context.FoodPlans
+          .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
+          .ThenInclude(fpn => fpn.Nutrient)
+          .Where(fp =>
+              fp.CreatedBy == customer.Id && (
+                fp.Description.Contains(filterOption) ||
+                (fp.Note != null && fp.Note.Contains(filterOption))))
+          .ToListAsync();
+      }
+      else
+      {
+        result = await context.FoodPlans
+          .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
+          .ThenInclude(fpn => fpn.Nutrient)
+          .Where(fp => fp.CreatedBy == customer.Id)
+          .ToListAsync();
+      }
+
+      result = result
+      .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
+        fp.FoodPlanNutrients.Any(fpn =>
+        fpn.Nutrient.NutrientName != null &&
+        fpn.Nutrient.NutrientName.Contains(nutrientFilter) &&
+        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)))
+        .ToList();
+
+      return result.Select(fp => fp.ToFlattenedFood()).ToList();
     }
     catch (HttpRequestException ex)
     {
