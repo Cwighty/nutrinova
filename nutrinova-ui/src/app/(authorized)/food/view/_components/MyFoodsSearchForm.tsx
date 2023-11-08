@@ -1,12 +1,38 @@
+"use client";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 
-export const MyFoodSearchForm = () => {
+interface MyFoodSearchFormProps {
+  searchTerm: string;
+  setSearchTerm: (searchTerm: string) => void;
+}
+
+export const MyFoodSearchForm = ({
+  searchTerm,
+  setSearchTerm,
+}: MyFoodSearchFormProps) => {
+  const foodName = useDebounce(searchTerm, 500);
+
+  const query = useGetAllFoodForUserQuery(foodName);
+
+  useEffect(() => {
+    if (foodName === "" || foodName === undefined) {
+      return;
+    }
+    const fetchFoods = async () => {
+      await query.refetch();
+    };
+
+    fetchFoods().catch(console.error);
+  }, [foodName, query]);
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
         <TextField
+          onChange={(e) => setSearchTerm(e.target.value)}
           label="Food Name"
           placeholder="Search my foods"
           fullWidth
