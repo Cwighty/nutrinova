@@ -1,6 +1,45 @@
-import { Account, NextAuthOptions, Profile, Session } from "next-auth";
+import axios, { AxiosResponse } from "axios";
+import { Account, NextAuthOptions, Profile, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt"
 import { OAuthConfig } from "next-auth/providers/oauth";
+
+interface KeycloakTokenResponse {
+  access_token: string;
+  expires_in: number;
+  expires_at: number;
+  refresh_expires_in: number;
+  refresh_token: string;
+  token_type: string;
+  id_token: string;
+  'not-before-policy': number;
+  session_state: string;
+  scope: string;
+}
+
+
+async function refreshAccessToken(tokenObject: JWT): Promise<JWT> {
+  const params = new URLSearchParams();
+  params.append('client_id', process.env.KEYCLOAK_CLIENT_ID ?? '');
+  params.append('client_secret', process.env.KEYCLOAK_CLIENT_SECRET ?? '');
+  params.append('grant_type', 'refresh_token');
+  params.append('refresh_token', tokenObject.refresh_token ?? '');
+
+  const tokenResponse: AxiosResponse<KeycloakTokenResponse> = await axios.post(
+    `${process.env.KEYCLOAK_BASE_URL}/protocol/openid-connect/token`,
+    params.toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return {
+    ...tokenObject,
+    accessToken: tokenResponse.data.access_token,
+    expires_at: Math.floor(Date.now() / 1000 + tokenResponse.data.expires_in),
+    refresh_token: tokenResponse.data.refresh_token ?? tokenObject.refresh_token,
+  }
+}
 
 export const options: NextAuthOptions = {
   providers: [
@@ -35,10 +74,33 @@ export const options: NextAuthOptions = {
     } as OAuthConfig<any>,
   ],
   callbacks: {
-    jwt({ token, account }: { token: JWT, account: Account | null }): JWT {
-      // Add the access token to the token object
-      token.access_token = account?.access_token != undefined ? account.access_token : token.access_token;
-      return token
+    async jwt({ token, account }: { token: JWT, account: Account | null, user: User }): Promise<JWT> {
+      const newToken = token;
+      if (account) {
+        // This will only be executed at login. Each next invocation will skip this part.
+        newToken.access_token = account.access_token;
+        newToken.expires_at = Math.floor(Date.now() / 1000 + account.expires_in);
+        newToken.refresh_token = account.refresh_token;
+      }
+      else if (Date.now() < token.expires_at * 1000) {
+        // If the access token has not expired yet, return it
+        return token
+      }
+      else {
+        try {
+          const refreshedToken = await refreshAccessToken(newToken);
+          return refreshedToken;
+        }
+        catch (error) {
+          console.error("Could not refresh token: ", error);
+          return {
+            ...newToken,
+            error: "RefreshAccessTokenError" as const,
+          }
+        }
+      }
+
+      return newToken;
     },
     session({ session, token }: { session: Session, token: JWT }): Session {
       session.user;
