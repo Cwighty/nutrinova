@@ -13,6 +13,7 @@ declare module "next-auth" {
       id: string | undefined,
       email: string,
       access_token: string | undefined,
+      error?: "RefreshAccessTokenError",
     }
   }
 
@@ -22,7 +23,9 @@ declare module "next-auth" {
 
   interface Account extends account {
     access_token: string | undefined,
-    id_token: string
+    id_token: string,
+    expires_at: number,
+    expires_in: number,
   }
 
 }
@@ -34,7 +37,10 @@ declare module "next-auth/jwt"
     name?: string,
     picture?: string,
     sub?: string,
-    access_token: string | undefined
+    access_token: string | undefined,
+    refresh_token?: string,
+    expires_at: number,
+    error?: "RefreshAccessTokenError",
   }
 
 }
