@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Dashboard, Menu, Person, Settings } from "@mui/icons-material";
 import { NextLinkComposed } from "@/components/Link";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
+import { NavigationDrawer } from "@/components/navigation/NavigationDrawer";
 
 const LINKS = [
   { label: "Dashboard", href: "/dashboard" },

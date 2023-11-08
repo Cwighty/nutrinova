@@ -1,162 +1,192 @@
 'use client'
 import React, { useState } from 'react';
 import {
-    Button,
-    TextField,
-    IconButton,
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
-    Grid,
-    Paper,
-    Alert,
-    Box,
+  Button,
+  TextField,
+  IconButton,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Grid,
+  Paper,
+  Alert,
+  Box,
+  Container,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateFoodNutrientRequestModel } from '../_models/createFoodNutrientRequestModel';
 import { CreateFoodRequestModel } from '../_models/createFoodRequest';
 import { AddNutrientDialog } from './AddNutrientDialog';
+import { useCreateFoodMutation, useGetNutrientsQuery, useGetUnitsQuery } from '../../foodHooks';
+import SelectUnit from '@/components/forms/SelectUnit';
 
 const initialNutrient: CreateFoodNutrientRequestModel = {
-    nutrientId: '',
-    amount: 0,
-    unitId: ''
+  nutrientId: 0,
+  amount: 0,
+  unitId: 1
 };
 
-const availableNutrients = [
-    { id: '1', name: 'Protein' },
-    { id: '2', name: 'Fat' },
-    // ... other nutrients
-];
-
-const availableUnits = [
-    { id: 'g', name: 'grams' },
-    { id: 'mg', name: 'milligrams' },
-    // ... other units
-];
-
 export default function CreateFoodForm() {
-    const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
-        description: '',
-        servingSize: undefined,
-        unit: '',
-        note: '',
-        foodNutrients: [initialNutrient]
+  const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
+    description: '',
+    servingSize: undefined,
+    unit: 1,
+    note: '',
+    foodNutrients: []
+  });
+
+  const [newNutrient, setNewNutrient] = useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
+
+  const { data: nutrientOptions } = useGetNutrientsQuery();
+  const { data: unitOptions } = useGetUnitsQuery();
+
+  const createFoodMutation = useCreateFoodMutation();
+
+  const [formValid, setFormValid] = useState<boolean>(true);
+
+  const handleAddNutrient = () => {
+    setFoodFormState({
+      ...foodFormState,
+      foodNutrients: [...foodFormState.foodNutrients, newNutrient]
     });
+    setNewNutrient({ ...initialNutrient });
+  };
 
-    const [newNutrient, setNewNutrient] = useState<CreateFoodNutrientRequestModel>({ ...initialNutrient });
+  const handleRemoveNutrient = (index: number) => {
+    const updatedNutrients = [...foodFormState.foodNutrients];
+    updatedNutrients.splice(index, 1);
+    setFoodFormState({ ...foodFormState, foodNutrients: updatedNutrients });
+  };
 
-    const handleAddNutrient = () => {
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!validateForm()) {
+      setFormValid(false);
+      return;
+    }
+    setFormValid(true);
+    console.log(foodFormState);
+    createFoodMutation.mutate(foodFormState, {
+      onSuccess: () => {
         setFoodFormState({
-            ...foodFormState,
-            foodNutrients: [...foodFormState.foodNutrients, newNutrient]
+          description: '',
+          servingSize: undefined,
+          unit: 1,
+          note: '',
+          foodNutrients: []
         });
-        setNewNutrient({ ...initialNutrient });
-    };
+      }
+    });
+  };
 
-    const handleRemoveNutrient = (index: number) => {
-        const updatedNutrients = [...foodFormState.foodNutrients];
-        updatedNutrients.splice(index, 1);
-        setFoodFormState({ ...foodFormState, foodNutrients: updatedNutrients });
-    };
+  const validateForm = () => {
+    if (foodFormState.foodNutrients.length === 0) {
+      return false;
+    }
+    if (foodFormState.description === '') {
+      return false;
+    }
+    if (foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0) {
+      if (foodFormState.unit === 0) {
+        return false;
+      }
+    }
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        // Form submission logic goes here
-        console.log(foodFormState);
-    };
+    return true;
+  }
 
-    return (
-        <Paper elevation={3} sx={{ padding: 2 }}>
-            <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    {/* Food Name */}
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            label="Food Name"
-                            value={foodFormState.description}
-                            onChange={(e) => setFoodFormState(
-                                { ...foodFormState, description: e.target.value }
-                            )}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
+  return (
+    <Container maxWidth="lg">
+      <Paper elevation={3} sx={{ padding: 2 }}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            {/* Food Name */}
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Food Name"
+                value={foodFormState.description}
+                onChange={(e) => setFoodFormState(
+                  { ...foodFormState, description: e.target.value }
+                )}
+                fullWidth
+                margin="normal"
+                error={!formValid && foodFormState.description === ''}
+                helperText={!formValid && foodFormState.description === '' ? 'Please enter a food name' : ''}
+              />
+            </Grid>
 
-                    {/* Serving Size */}
-                    <Grid item xs={12} md={3}>
-                        <TextField
-                            label="Serving Size"
-                            type="number"
-                            value={foodFormState.servingSize}
-                            onChange={(e) => setFoodFormState(
-                                { ...foodFormState, servingSize: Number(e.target.value) }
-                            )}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
+            {/* Serving Size */}
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Serving Size"
+                type="number"
+                value={foodFormState.servingSize ?? ''}
+                onChange={(e) => setFoodFormState(
+                  { ...foodFormState, servingSize: Number(e.target.value) }
+                )}
+                fullWidth
+                margin="normal"
+                error={!formValid && foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0}
+                helperText={!formValid && foodFormState.servingSize !== undefined && foodFormState.servingSize <= 0 ? 'Please enter a valid serving size' : ''}
+              />
+            </Grid>
 
-                    <Grid item xs={12} md={3}>
-                        <TextField
-                            label="Unit"
-                            value={foodFormState.unit}
-                            onChange={(e) => setFoodFormState(
-                                { ...foodFormState, unit: e.target.value }
-                            )}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
+            <Grid item xs={12} md={3}>
+              <SelectUnit
+                onSelectedUnitChange={(unit) => setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })}
+                error={!formValid && foodFormState.servingSize !== undefined && foodFormState.unit === undefined}
+                helperText={!formValid && foodFormState.servingSize ? 'A unit must be supplied with a serving size' : ''} />
+            </Grid>
 
-                    {/* Note */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Note"
-                            multiline
-                            rows={4}
-                            value={foodFormState.note}
-                            onChange={(e) => setFoodFormState(
-                                { ...foodFormState, note: e.target.value }
-                            )}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                </Grid>
+            {/* Note */}
+            <Grid item xs={12} height={170}>
+              <TextField
+                label="Note"
+                multiline
+                rows={4}
+                value={foodFormState.note}
+                onChange={(e) => setFoodFormState(
+                  { ...foodFormState, note: e.target.value }
+                )}
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
 
-                <List>
-                    <AddNutrientDialog
-                        newNutrient={newNutrient}
-                        setNewNutrient={setNewNutrient}
-                        handleAddNutrient={handleAddNutrient}
-                        availableNutrients={availableNutrients}
-                        availableUnits={availableUnits}
-                    />
-                    {foodFormState.foodNutrients.length === 0 &&
-                        <Alert severity='warning'>Please add at least one nutrient</Alert>
-                    }
-                    {foodFormState.foodNutrients.map((nutrient, index) => (
-                        <ListItem key={index} divider>
-                            <ListItemText
-                                primary={availableNutrients.find((n) => n.id === nutrient.nutrientId)?.name}
-                                secondary={`${nutrient.amount} ${availableUnits.find((u) => u.id === nutrient.unitId)?.name}`}
-                            />
-                            <ListItemSecondaryAction>
-                                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveNutrient(index)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    ))}
-                </List>
-                <Box display="flex" justifyContent="flex-end">
-                    <Button type="submit" variant="contained" color="primary">
-                        Create
-                    </Button>
-                </Box>
-            </form>
-        </Paper>
-    );
+          <List>
+            <Box  >
+              <AddNutrientDialog
+                newNutrient={newNutrient}
+                setNewNutrient={setNewNutrient}
+                handleAddNutrient={handleAddNutrient}
+              />
+            </Box>
+            {foodFormState.foodNutrients.length === 0 &&
+              <Alert severity='warning'>Please add at least one nutrient</Alert>
+            }
+            {foodFormState.foodNutrients.map((nutrient, index) => (
+              <ListItem key={index} divider>
+                <ListItemText
+                  primary={nutrientOptions?.find((n) => n.id === nutrient.nutrientId)?.nutrientName}
+                  secondary={`${nutrient.amount} ${unitOptions?.find((u) => u.id === nutrient.unitId)?.description}`}
+                />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveNutrient(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+          <Box display="flex" justifyContent="flex-end">
+            <Button type="submit" variant="contained" color="primary">
+              Create
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+    </Container>
+  );
 }

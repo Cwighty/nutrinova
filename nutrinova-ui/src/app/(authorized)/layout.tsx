@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { BottomNavBar } from "@/components/BottomNavBar";
-import { NavigationSidebar } from "@/components/NavigationSidebar";
+import { BottomNavBar } from "@/components/navigation/BottomNavBar";
+import { NavigationSidebar } from "@/components/navigation/NavigationSidebar";
 import { Box } from "@mui/material";
 import { ReactNode } from "react";
 

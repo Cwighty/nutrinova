@@ -21,30 +21,6 @@ public class FoodController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly HttpClient httpClient;
 
-  public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
-  {
-    if (leftOperand == null)
-    {
-      return false;
-    }
-
-    switch (operatorString)
-    {
-      case "gt":
-        return leftOperand > rightOperand;
-      case "gte":
-        return leftOperand >= rightOperand;
-      case "lt":
-        return leftOperand < rightOperand;
-      case "lte":
-        return leftOperand <= rightOperand;
-      case "eq":
-        return leftOperand == rightOperand;
-      default:
-        throw new InvalidOperationException("operatingString was not given a valid option");
-    }
-  }
-
   public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
   {
     this.logger = logger;
@@ -58,7 +34,11 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("search")]
-  public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllOfName([FromQuery] string foodName, [FromQuery] string? brandOwner, [FromQuery] string filterOption = "Branded", [FromQuery] int maxReturnedResults = 25)
+  public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllOfName(
+    [FromQuery] string foodName,
+    [FromQuery] string? brandOwner,
+    [FromQuery] string filterOption = "Branded",
+    [FromQuery] int maxReturnedResults = 25)
   {
     try
     {
@@ -70,7 +50,8 @@ public class FoodController : ControllerBase
         query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
       }
 
-      query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}";
+      query +=
+        $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}";
 
       var res = await httpClient.GetAsync($"{query}");
       if (!res.IsSuccessStatusCode)
@@ -79,10 +60,11 @@ public class FoodController : ControllerBase
         return StatusCode((int)res.StatusCode); // or you can return a custom error message
       }
 
-      var deserRes = await res.Content.ReadFromJsonAsync<FoodSearchResponseModel>(new System.Text.Json.JsonSerializerOptions
-      {
-        PropertyNameCaseInsensitive = true,
-      });
+      var deserRes = await res.Content.ReadFromJsonAsync<FoodSearchResponseModel>(
+        new System.Text.Json.JsonSerializerOptions
+        {
+          PropertyNameCaseInsensitive = true,
+        });
 
       if (deserRes?.foods == null || !deserRes.foods.Any())
       {
@@ -114,7 +96,8 @@ public class FoodController : ControllerBase
   {
     try
     {
-      string query = $"food/{foodId}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
+      string query =
+        $"food/{foodId}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
 
       var res = await httpClient.GetAsync($"{query}");
       if (!res.IsSuccessStatusCode)
@@ -155,10 +138,10 @@ public class FoodController : ControllerBase
 
   [HttpGet("all-foods")]
   public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllFoodForUserById(
-    [FromQuery] string? filterOption = null,
-    [FromQuery] double nutrientFilterValue = 0,
-    [FromQuery] string nutrientFilterOperator = "gt",
-    [FromQuery] string? nutrientFilter = null)
+      [FromQuery] string? filterOption = null,
+      [FromQuery] double nutrientFilterValue = 0,
+      [FromQuery] string nutrientFilterOperator = "gt",
+      [FromQuery] string? nutrientFilter = null)
   {
     try
     {
@@ -189,9 +172,9 @@ public class FoodController : ControllerBase
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
           .Where(fp =>
-              fp.CreatedBy == customer.Id && (
-                EF.Functions.Like(fp.Description, filterOption) ||
-                (fp.Note != null && EF.Functions.Like(fp.Note, filterOption))))
+            fp.CreatedBy == customer.Id && (
+              fp.Description.Contains(filterOption) ||
+              (fp.Note != null && fp.Note.Contains(filterOption))))
           .ToListAsync();
       }
       else
@@ -204,11 +187,14 @@ public class FoodController : ControllerBase
       }
 
       result = result
-      .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
-        fp.FoodPlanNutrients.Any(fpn =>
-        fpn.Nutrient.NutrientName != null &&
-        EF.Functions.Like(fpn.Nutrient.NutrientName, nutrientFilter) &&
-        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)))
+        .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
+                     fp.FoodPlanNutrients.Any(fpn =>
+                       fpn.Nutrient.NutrientName != null &&
+                       fpn.Nutrient.NutrientName.Contains(nutrientFilter) &&
+                       NumberComparsionViaOperatorString(
+                         decimal.ToDouble(fpn.Amount),
+                         nutrientFilterValue,
+                         nutrientFilterOperator)))
         .ToList();
 
       return result.Select(fp => fp.ToFlattenedFood()).ToList();
@@ -228,8 +214,33 @@ public class FoodController : ControllerBase
       logger.LogError($"An unexpected error occurred: {ex.Message}");
       return StatusCode(500, "Internal server error");
     }
+
+    bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+    {
+      if (leftOperand == null)
+      {
+        return false;
+      }
+
+      switch (operatorString)
+      {
+        case "gt":
+          return leftOperand > rightOperand;
+        case "gte":
+          return leftOperand >= rightOperand;
+        case "lt":
+          return leftOperand < rightOperand;
+        case "lte":
+          return leftOperand <= rightOperand;
+        case "eq":
+          return leftOperand == rightOperand;
+        default:
+          throw new InvalidOperationException("operatingString was not given a valid option");
+      }
+    }
   }
 
+  [Authorize]
   [HttpPost]
   public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
   {
@@ -249,10 +260,21 @@ public class FoodController : ControllerBase
       return BadRequest("Serving size must be greater than 0");
     }
 
+    if (createFoodRequestModel.FoodNutrients == null || !createFoodRequestModel.FoodNutrients.Any())
+    {
+      return BadRequest("At least one nutrient is required");
+    }
+
+    if (createFoodRequestModel.FoodNutrients.Any(n => n.Amount <= 0))
+    {
+      return BadRequest("Nutrient amounts must be greater than 0");
+    }
+
     var userObjectId = User.GetObjectIdFromClaims();
     Console.WriteLine($"User id: {userObjectId}");
 
     var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
+
     if (customer == null)
     {
       return Unauthorized();
@@ -269,6 +291,7 @@ public class FoodController : ControllerBase
       Note = createFoodRequestModel.Note,
       FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
       {
+        Id = Guid.NewGuid(),
         NutrientId = n.NutrientId,
         Amount = n.Amount,
         UnitId = n.UnitId,
