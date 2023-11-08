@@ -190,8 +190,8 @@ public class FoodController : ControllerBase
           .ThenInclude(fpn => fpn.Nutrient)
           .Where(fp =>
               fp.CreatedBy == customer.Id && (
-                fp.Description.Contains(filterOption) ||
-                (fp.Note != null && fp.Note.Contains(filterOption))))
+                EF.Functions.Like(fp.Description, filterOption) ||
+                (fp.Note != null && EF.Functions.Like(fp.Note, filterOption))))
           .ToListAsync();
       }
       else
@@ -207,7 +207,7 @@ public class FoodController : ControllerBase
       .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
         fp.FoodPlanNutrients.Any(fpn =>
         fpn.Nutrient.NutrientName != null &&
-        fpn.Nutrient.NutrientName.Contains(nutrientFilter) &&
+        EF.Functions.Like(fpn.Nutrient.NutrientName, nutrientFilter) &&
         NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)))
         .ToList();
 
