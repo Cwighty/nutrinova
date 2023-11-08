@@ -156,7 +156,7 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     // Act
     var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
     var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
-    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filterOption=Test&nutrientFilter=Protein&nutrientFilterOperator=lt&nutrientFilterValue=11");
+    var resFoodPlanFilter = await httpClient.GetAsync("be/food/all-foods?filterOption=test&nutrientFilter=Protein&nutrientFilterOperator=lt&nutrientFilterValue=11");
 
     // Assert
     Assert.Equal(HttpStatusCode.OK, res.StatusCode);
