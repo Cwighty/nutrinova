@@ -104,3 +104,29 @@ export const useCreateFoodMutation = () => {
     },
   });
 };
+
+export interface ImportFoodResponse {
+  id: number;
+}
+
+const importFood = async (fdcId: number): Promise<ImportFoodResponse> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.post<ImportFoodResponse>(`/food/import/${fdcId}`);
+  return response.data
+}
+
+export const useImportFoodMutation = () => {
+  return useMutation({
+    mutationFn: (fdcId: number) => importFood(fdcId),
+    onSuccess: () => {
+      toast.success("Food imported successfully");
+    },
+    onError: (error) => {
+      toast.error("Error importing food: " + error.message);
+      console.error(error);
+    },
+  });
+}

@@ -13,30 +13,32 @@ import {
 import { FoodSearchResult } from "../../_models/foodSearchResult";
 import React from "react";
 import CenteredSpinnerWithBackdrop from "@/components/CenteredSpinnerOverlay";
+import { ImportFoodResponse, useImportFoodMutation } from "../../foodHooks";
+import { useRouter } from "next/navigation";
 
 interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-async function importFood(fdcId: number) {
-  console.log("simulate importing food with fdcId", fdcId);
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  console.log("imported food with fdcId", fdcId);
-}
-
 export default function Page({ searchParams }: PageProps) {
-  const [loading, setLoading] = React.useState(false);
   const food = JSON.parse(searchParams["food"] as string) as FoodSearchResult;
+  const importFoodMutation = useImportFoodMutation();
+  const router = useRouter();
 
-  const handleImport = async () => {
-    setLoading(true);
-    await importFood(food.fdcId);
-    setLoading(false);
+  const handleImport = () => {
+    importFoodMutation.mutate(
+      food.fdcId,
+      {
+        onSuccess: (response: ImportFoodResponse) => {
+          router.push("/food/" + response.id + "/edit");
+        }
+      }
+    );
   };
 
   return (
     <>
-      {loading && <CenteredSpinnerWithBackdrop message="Importing food..." />}
+      {importFoodMutation.isPending && <CenteredSpinnerWithBackdrop message="Importing food..." />}
       <Card sx={{ maxWidth: 600, margin: "20px auto", padding: "20px" }}>
         <CardActions style={{ justifyContent: "flex-end" }}>
           <Button variant="contained" color="primary" onClick={handleImport}>
