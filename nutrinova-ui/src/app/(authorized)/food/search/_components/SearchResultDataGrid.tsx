@@ -2,7 +2,6 @@
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { FoodSearchResult } from "../../_models/foodSearchResult";
-import React from "react";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 
 interface SearchResultDataGridProps {
