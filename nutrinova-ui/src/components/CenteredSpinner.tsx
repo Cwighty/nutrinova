@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { AtomSpinner } from "@/components/AtomSpinner/AtomSpinner";
+import { AtomSpinner } from "@/components/atom-spinner/AtomSpinner";
 
 export interface CenteredSpinnerProps {
   message?: string;

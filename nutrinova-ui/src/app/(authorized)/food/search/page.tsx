@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 import FoodSearchForm from "./_components/FoodSearchForm";
 import SearchResultDataGrid from "./_components/SearchResultDataGrid";
 import { FoodSearchResult } from "../_models/foodSearchResult";
@@ -44,14 +44,16 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <PageContainer title={metadata.title}>
-      <Grid container columnSpacing={4}>
-        <Grid item xs={12} md={3}>
-          <FoodSearchForm searchParams={searchParams} />
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <Grid container columnSpacing={4}>
+          <Grid item xs={12} md={3}>
+            <FoodSearchForm searchParams={searchParams} />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <SearchResultDataGrid rows={rows} />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={9}>
-          <SearchResultDataGrid rows={rows} />
-        </Grid>
-      </Grid>
+      </Paper>
     </PageContainer>
   );
 }

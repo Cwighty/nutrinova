@@ -1,8 +1,9 @@
 "use client";
-
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { FoodSearchResult } from "../../_models/foodSearchResult";
+import React from "react";
+import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 
 interface SearchResultDataGridProps {
   rows: FoodSearchResult[];
@@ -26,8 +27,12 @@ export default function SearchResultDataGrid({
       rows={rows}
       columns={columns}
       onRowClick={handleRowClick}
+      sx={{ height: 170, maxHeight: 800, maxWidth: "85vw" }}
       initialState={{
         pagination: { paginationModel: { pageSize: 10 } },
+      }}
+      slots={{
+        noRowsOverlay: NoFoodRowsOverlay,
       }}
     />
   );

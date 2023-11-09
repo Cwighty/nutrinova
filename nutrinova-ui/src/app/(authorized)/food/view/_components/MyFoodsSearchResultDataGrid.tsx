@@ -1,10 +1,10 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert } from "@mui/material";
+import { Alert, Box, Skeleton } from "@mui/material";
 import React from "react";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
-import CenteredSpinner from "@/components/CenteredSpinner";
+import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 
 interface MyFoodsSearchResultDataGridProps {
   searchQuery: string;
@@ -24,7 +24,7 @@ export const MyFoodsSearchResultDataGrid = ({
   }
 
   if (isLoading) {
-    return <CenteredSpinner />;
+    return <Skeleton height={100} sx={{ m: 0 }} />;
   }
 
   return (
@@ -32,8 +32,12 @@ export const MyFoodsSearchResultDataGrid = ({
       getRowId={(row: FoodSearchResult) => row.description}
       rows={data ?? []}
       columns={columns}
+      sx={{ minHeight: 160, maxWidth: "89vw" }}
       initialState={{
         pagination: { paginationModel: { pageSize: 10 } },
+      }}
+      slots={{
+        noRowsOverlay: NoFoodRowsOverlay,
       }}
     />
   );
