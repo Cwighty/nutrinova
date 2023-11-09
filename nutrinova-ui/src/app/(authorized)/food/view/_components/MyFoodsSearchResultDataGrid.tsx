@@ -1,7 +1,7 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert, Skeleton } from "@mui/material";
+import { Alert } from "@mui/material";
 import React from "react";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import CenteredSpinner from "@/components/CenteredSpinner";

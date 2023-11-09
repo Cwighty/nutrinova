@@ -10,8 +10,10 @@ interface MyFoodSearchFormProps {
 }
 
 export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedNutrient, setSelectedNutrient] =
     useState<NutrientOption | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const handleNutrientSelectionChange = (nutrient: NutrientOption | null) => {
