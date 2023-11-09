@@ -58,7 +58,11 @@ public class Program
             });
 
         builder.Services.AddDbContext<NutrinovaDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        {
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            options.EnableDetailedErrors();
+            options.EnableSensitiveDataLogging();
+        });
 
         var app = builder.Build();
 

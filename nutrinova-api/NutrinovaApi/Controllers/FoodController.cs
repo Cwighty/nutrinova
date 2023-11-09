@@ -21,30 +21,6 @@ public class FoodController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly HttpClient httpClient;
 
-  public bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
-  {
-    if (leftOperand == null)
-    {
-      return false;
-    }
-
-    switch (operatorString)
-    {
-      case "gt":
-        return leftOperand > rightOperand;
-      case "gte":
-        return leftOperand >= rightOperand;
-      case "lt":
-        return leftOperand < rightOperand;
-      case "lte":
-        return leftOperand <= rightOperand;
-      case "eq":
-        return leftOperand == rightOperand;
-      default:
-        throw new InvalidOperationException("operatingString was not given a valid option");
-    }
-  }
-
   public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
   {
     this.logger = logger;
@@ -228,6 +204,30 @@ public class FoodController : ControllerBase
       logger.LogError($"An unexpected error occurred: {ex.Message}");
       return StatusCode(500, "Internal server error");
     }
+
+    bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+    {
+      if (leftOperand == null)
+      {
+        return false;
+      }
+
+      switch (operatorString)
+      {
+        case "gt":
+          return leftOperand > rightOperand;
+        case "gte":
+          return leftOperand >= rightOperand;
+        case "lt":
+          return leftOperand < rightOperand;
+        case "lte":
+          return leftOperand <= rightOperand;
+        case "eq":
+          return leftOperand == rightOperand;
+        default:
+          throw new InvalidOperationException("operatingString was not given a valid option");
+      }
+    }
   }
 
   [Authorize]
@@ -301,5 +301,103 @@ public class FoodController : ControllerBase
     }
 
     return Ok(new { message = "Food created successfully", id = foodPlan.Id });
+  }
+
+  [HttpPost("import/{fdcid}")]
+  public async Task<ActionResult<Guid>> ImportFood(long fdcid)
+  {
+    var format = "full";
+    try
+    {
+      string query = $"food/{fdcid}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
+
+      var result = await httpClient.GetAsync($"{query}");
+      if (!result.IsSuccessStatusCode)
+      {
+        logger.LogError($"Failed to retrieve data: {result.StatusCode}");
+        return StatusCode((int)result.StatusCode);
+      }
+
+      var deserializedResult = await result.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
+      {
+        PropertyNameCaseInsensitive = true,
+      });
+
+      logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.ingredients}");
+      if (deserializedResult?.description == null)
+      {
+        return NotFound("No foods found");
+      }
+
+      var userObjectId = User.GetObjectIdFromClaims();
+
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+
+      var foodPlan = new FoodPlan
+      {
+        Id = Guid.NewGuid(),
+        Description = deserializedResult.description,
+        CreatedBy = customer.Id,
+        CreatedAt = DateTime.UtcNow,
+        ServingSize = (decimal?)deserializedResult.servingSize,
+        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) : 0,
+        Note = deserializedResult.ingredients,
+        FoodPlanNutrients = deserializedResult.foodNutrients.Select(n => new FoodPlanNutrient
+        {
+          Id = Guid.NewGuid(),
+          NutrientId = n.nutrientId,
+          Amount = (decimal)n.value,
+          UnitId = GetUnitId(n.unitName ?? string.Empty),
+        }).ToList(),
+      };
+
+      // Save to the database
+      await context.FoodPlans.AddAsync(foodPlan);
+      try
+      {
+        await context.SaveChangesAsync();
+      }
+      catch (Exception ex)
+      {
+        logger.LogError($"Failed to import food to the database: {ex.Message}");
+        return StatusCode(500, "Failed to import food to the database");
+      }
+
+      return Ok(new { message = "Food imported successfully", id = foodPlan.Id });
+    }
+    catch (HttpRequestException ex)
+    {
+      logger.LogError($"HTTP request failed: {ex.Message}");
+      return StatusCode(503, "Service unavailable");
+    }
+    catch (JsonException ex)
+    {
+      logger.LogError($"JSON deserialization failed: {ex.Message}");
+      return BadRequest("Invalid response format");
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"An unexpected error occurred: {ex.Message}");
+      return StatusCode(500, "Internal server error");
+    }
+  }
+
+  private int GetUnitId(string unitAbreviation)
+  {
+    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbreviation) || EF.Functions.ILike(u.Description, unitAbreviation));
+    if (unit == null)
+    {
+      logger.LogError($"Failed to find unit with abbreviation {unitAbreviation}");
+      logger.LogError($"Creating new unit with abbreviation {unitAbreviation}");
+      unit = new Unit
+      {
+        Abreviation = unitAbreviation,
+        Description = unitAbreviation,
+      };
+      context.Units.Add(unit);
+      context.SaveChanges();
+    }
+
+    return unit.Id;
   }
 }
