@@ -1,6 +1,7 @@
 "use client";
 
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
+import { COMPARISON_OPERATOR_OPTIONS } from "@/app/(authorized)/food/_models/comparisonOperatorOptions";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import {
   useGetNutrientsQuery,
@@ -11,6 +12,8 @@ import {
   Autocomplete,
   Box,
   InputAdornment,
+  MenuItem,
+  Select,
   Skeleton,
   TextField,
 } from "@mui/material";
@@ -19,14 +22,16 @@ import React, { SyntheticEvent, useState } from "react";
 interface SelectNutrientProps {
   error?: boolean;
   helperText?: string;
+  canCompare?: boolean;
   onSelectedNutrientChange: (nutrient: NutrientOption | null) => void;
   onNutrientAmountChange: (
     amount: number | null,
     unit: UnitOption | null,
   ) => void;
+  onComparisonOperatorChange: (comparisonOperator: string) => void;
 }
 
-const SelectNutrient = (inputProps: SelectNutrientProps) => {
+const SelectNutrient = ({ error, helperText, canCompare = false, onComparisonOperatorChange, onNutrientAmountChange, onSelectedNutrientChange }: SelectNutrientProps) => {
   const {
     data: nutrientOptions,
     isLoading: nutrientOptionsLoading,
@@ -41,13 +46,22 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   const [selectedNutrient, setSelectedNutrient] =
     useState<NutrientOption | null>(null);
 
+  const [comparisonOperator, setComparisonOperator] = useState<string>("");
+
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
     value: NutrientOption | null,
   ) => {
     setSelectedNutrient(value);
-    inputProps.onSelectedNutrientChange(value);
+    onSelectedNutrientChange(value);
   };
+
+
+  const handleComparisonOperatorChange = (value: string) => {
+    setComparisonOperator(value);
+    onComparisonOperatorChange(value);
+  };
+
 
   const handleNutrientAmountChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,7 +70,7 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
     const newUnit =
       unitOptions?.find((u) => u.id === selectedNutrient?.preferredUnit) ??
       null;
-    inputProps.onNutrientAmountChange(newAmount, newUnit);
+    onNutrientAmountChange(newAmount, newUnit);
   };
 
   if (nutrientOptionsLoading || unitOptionsLoading) {
@@ -89,15 +103,28 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
                 {...params}
                 label="Nutrient"
                 sx={{ flexGrow: 1 }}
-                error={inputProps.error}
-                helperText={inputProps.helperText}
+                error={error}
+                helperText={helperText}
               />
             )}
             onChange={handleNutrientSelectionChange}
           />
+          {canCompare &&
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={comparisonOperator}
+              label="Age"
+              onChange={() => handleComparisonOperatorChange(comparisonOperator)}
+            >
+              {COMPARISON_OPERATOR_OPTIONS.map((option) => (
+                <MenuItem key={option.id} value={option.abbreviation} > {option.name} </MenuItem>))}
+            </Select>
+          }
+
           <TextField
-            error={inputProps.error}
-            helperText={inputProps.helperText}
+            error={error}
+            helperText={helperText}
             label="Amount"
             type="number"
             sx={{ width: "50%", ml: 2 }}
@@ -113,7 +140,7 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
               ),
             }}
           />
-        </Box>
+        </Box >
       )}
     </>
   );

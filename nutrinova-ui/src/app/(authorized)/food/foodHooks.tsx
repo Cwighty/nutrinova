@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
+import { searchParameters } from "./view/page";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -16,7 +17,7 @@ const unitKeys = {
 
 const foodKeys = {
   all: ["foods"] as const,
-  foodName: (foodName: string) => [...foodKeys.all, foodName] as const,
+  foodSearchParams: (foodName: string, nutrient: string, comparisonOperator: string, nutrientValue: number) => [...foodKeys.all, foodName, nutrient, nutrientValue, comparisonOperator] as const,
 };
 
 const fetchNutrients = async (): Promise<NutrientOption[]> => {
@@ -29,14 +30,19 @@ const fetchNutrients = async (): Promise<NutrientOption[]> => {
 };
 
 const fetchFoodsForUser = async (
-  foodName: string,
+  foodSearchParameters: searchParameters,
 ): Promise<FoodSearchResult[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
   });
+
   const response = await apiClient.get(
-    "/food/all-foods?filterOption=" + foodName,
+    `/food/all-foods?filterOption=${foodSearchParameters.foodSearchTerm}
+    &nutrientFilterValue=${foodSearchParameters?.nutrientValue ?? 0}
+    &nutrientFilterOperator=${foodSearchParameters?.comparisonOperator ?? ""}
+    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.nutrientName ?? ""}
+    `
   );
   return response.data as FoodSearchResult[];
 };
@@ -48,10 +54,15 @@ export const useGetNutrientsQuery = () => {
   });
 };
 
-export const useGetAllFoodForUserQuery = (foodName: string) => {
+export const useGetAllFoodForUserQuery = (foodSearchParameters: searchParameters) => {
   return useQuery({
-    queryKey: foodKeys.foodName(foodName),
-    queryFn: () => fetchFoodsForUser(foodName),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: foodKeys.foodSearchParams(
+      foodSearchParameters.foodSearchTerm,
+      foodSearchParameters.nutrientSearchTerm.nutrientName,
+      foodSearchParameters?.comparisonOperator ?? "",
+      foodSearchParameters?.nutrientValue ?? 0),
+    queryFn: () => fetchFoodsForUser(foodSearchParameters),
   });
 };
 

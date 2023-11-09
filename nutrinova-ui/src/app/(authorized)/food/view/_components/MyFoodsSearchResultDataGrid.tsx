@@ -4,9 +4,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
+import { searchParameters } from "../page";
 
 interface MyFoodsSearchResultDataGridProps {
-  searchQuery: string;
+  searchQuery: searchParameters;
 }
 
 export const MyFoodsSearchResultDataGrid = ({
