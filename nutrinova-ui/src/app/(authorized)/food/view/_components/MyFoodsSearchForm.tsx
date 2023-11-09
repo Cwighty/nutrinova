@@ -1,64 +1,53 @@
 "use client";
-import { Grid, InputAdornment, TextField } from "@mui/material";
+import { Box, InputAdornment, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import React, { useEffect } from "react";
-import { useDebounce } from "@uidotdev/usehooks";
-import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
+import React, { useState } from "react";
+import SelectNutrient from "@/components/forms/SelectNutrient";
+import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
 
 interface MyFoodSearchFormProps {
-  searchTerm: string;
   setSearchTerm: (searchTerm: string) => void;
 }
 
-export const MyFoodSearchForm = ({
-  searchTerm,
-  setSearchTerm,
-}: MyFoodSearchFormProps) => {
-  const foodName = useDebounce(searchTerm, 500);
+export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
+  const [selectedNutrient, setSelectedNutrient] =
+    useState<NutrientOption | null>(null);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
-  const query = useGetAllFoodForUserQuery(foodName);
+  const handleNutrientSelectionChange = (nutrient: NutrientOption | null) => {
+    setSelectedNutrient(nutrient);
+  };
 
-  useEffect(() => {
-    if (foodName === "" || foodName === undefined) {
-      return;
-    }
-    const fetchFoods = async () => {
-      await query.refetch();
-    };
+  const handleNutrientAmountChange = (amount: number | null) => {
+    setSelectedAmount(amount);
+  };
 
-    fetchFoods().catch(console.error);
-  }, [foodName, query]);
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
-        <TextField
-          onChange={(e) => setSearchTerm(e.target.value)}
-          label="Food Name"
-          placeholder="Search my foods"
-          fullWidth
-          margin="normal"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-        ></TextField>
-      </Grid>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        justifyContent: "space-between",
+      }}
+    >
+      <TextField
+        onChange={(e) => setSearchTerm(e.target.value)}
+        label="Food Name"
+        placeholder="Search my foods"
+        margin="normal"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search />
+            </InputAdornment>
+          ),
+        }}
+      />
 
-      <Grid item xs={12} md={3}>
-        <TextField
-          label="Serving Size"
-          type="number"
-          fullWidth
-          margin="normal"
-        />
-      </Grid>
-
-      <Grid item xs={12} md={3}>
-        <TextField label="Unit" fullWidth margin="normal" />
-      </Grid>
-    </Grid>
+      <SelectNutrient
+        onSelectedNutrientChange={handleNutrientSelectionChange}
+        onNutrientAmountChange={handleNutrientAmountChange}
+      />
+    </Box>
   );
 };

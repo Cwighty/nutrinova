@@ -1,28 +1,37 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Alert, Skeleton } from "@mui/material";
+import React from "react";
+import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
+import CenteredSpinner from "@/components/CenteredSpinner";
 
 interface MyFoodsSearchResultDataGridProps {
-  rows: FoodSearchResult[];
+  searchQuery: string;
 }
 
 export const MyFoodsSearchResultDataGrid = ({
-  rows,
+  searchQuery,
 }: MyFoodsSearchResultDataGridProps) => {
-  // const router = useRouter();
   const columns: GridColDef[] = [
     { field: "fdcId", headerName: "ID", width: 100 },
     { field: "description", headerName: "Description", width: 500 },
   ];
-  const handleRowClick = () => {
-    // router.push(`/food/search/detail?food=` + JSON.stringify(row.row));
-  };
+  const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
+
+  if (isError) {
+    return <Alert severity="error">Error loading foods</Alert>;
+  }
+
+  if (isLoading) {
+    return <CenteredSpinner />;
+  }
+
   return (
     <DataGrid
       getRowId={(row: FoodSearchResult) => row.description}
-      rows={rows}
+      rows={data ?? []}
       columns={columns}
-      onRowClick={handleRowClick}
       initialState={{
         pagination: { paginationModel: { pageSize: 10 } },
       }}
