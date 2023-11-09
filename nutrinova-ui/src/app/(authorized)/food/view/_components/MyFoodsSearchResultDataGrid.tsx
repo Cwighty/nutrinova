@@ -13,8 +13,8 @@ export const MyFoodsSearchResultDataGrid = ({
   searchQuery,
 }: MyFoodsSearchResultDataGridProps) => {
   const columns: GridColDef[] = [
-    { field: "fdcId", headerName: "ID", minWidth: 100, flex: 1 },
-    { field: "description", headerName: "Description", minWidth: 500, flex: 1 },
+    { field: "fdcId", headerName: "ID", minWidth: 100 },
+    { field: "description", headerName: "Description", minWidth: 500 },
   ];
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
 
