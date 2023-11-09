@@ -114,6 +114,8 @@ const SelectNutrient = ({ error, helperText, canCompare = false, onComparisonOpe
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={comparisonOperator}
+              helperText={comparisonOperator}
+              sx={{ width: "50%", ml: 2 }}
               label="Age"
               onChange={() => handleComparisonOperatorChange(comparisonOperator)}
             >

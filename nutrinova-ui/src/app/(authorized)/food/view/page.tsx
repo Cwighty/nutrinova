@@ -15,19 +15,19 @@ export interface searchParameters {
 }
 
 export default function MyFoodsPage() {
-  const [searchKeyword, setSearchKeyword] = useState<searchParameters>({
+  const [searchParameters, setSearchKeyword] = useState<searchParameters>({
     nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
     foodSearchTerm: "",
     comparisonOperator: "gt",
     nutrientValue: 0,
   });
-  const searchKeywordDebounce = useDebounce(searchKeyword, 500);
+  const searchParameterDebounce = useDebounce(searchParameters, 500);
 
   return (
     <PageContainer title={"My Foods"}>
       <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
-        <MyFoodSearchForm setSearchParameters={setSearchKeyword} currentSearchParameters={searchKeyword} />
-        <MyFoodsSearchResultDataGrid searchQuery={searchKeywordDebounce} />
+        <MyFoodSearchForm setSearchParameters={setSearchKeyword} currentSearchParameters={searchParameters} />
+        <MyFoodsSearchResultDataGrid searchQuery={searchParameterDebounce} />
       </Paper>
     </PageContainer>
   );
