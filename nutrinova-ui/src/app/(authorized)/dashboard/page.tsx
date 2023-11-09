@@ -1,6 +1,6 @@
 import { PageContainer } from "@/components/PageContainer";
 import { Typography } from "@mui/material";
-import { AtomSpinner } from "@/components/AtomSpinner/AtomSpinner";
+import { AtomSpinner } from "@/components/atom-spinner/AtomSpinner";
 
 export const metadata = {
   title: "Dashboard",

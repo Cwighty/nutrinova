@@ -30,13 +30,13 @@ export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
         justifyContent: "space-between",
+        gap: 2,
       }}
     >
       <TextField
         onChange={(e) => setSearchTerm(e.target.value)}
         label="Food Name"
         placeholder="Search my foods"
-        margin="normal"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

@@ -60,7 +60,6 @@ export default function FoodSearchForm({ searchParams }: FoodSearchFormProps) {
         label="Search"
         variant="outlined"
         placeholder="Buttered toast"
-        sx={{ mb: 2 }}
         value={searchKeyword}
         onChange={handleKeywordChange}
         InputProps={{

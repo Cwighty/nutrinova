@@ -12,7 +12,7 @@ export const PageContainer = ({ children, title }: PageContainerProps) => {
     <>
       <PageBar title={title} />
       <Divider />
-      <Container maxWidth={false} sx={{ pt: 3, pb: { xs: 3, md: 0 } }}>
+      <Container maxWidth={"lg"} sx={{ pt: 3, pb: { xs: 3, md: 0 } }}>
         {children}
       </Container>
     </>

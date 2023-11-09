@@ -12,7 +12,7 @@ export default function MyFoodsPage() {
 
   return (
     <PageContainer title={"My Foods"}>
-      <Paper elevation={3} sx={{ p: 2 }}>
+      <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
         <MyFoodSearchForm setSearchTerm={setSearchKeyword} />
         <MyFoodsSearchResultDataGrid searchQuery={searchKeywordDebounce} />
       </Paper>
