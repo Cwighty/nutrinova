@@ -31,7 +31,7 @@ export const MyFoodsSearchResultDataGrid = ({
       getRowId={(row: FoodSearchResult) => row.description}
       rows={data ?? []}
       columns={columns}
-      sx={{ minHeight: 162, height: 162, maxWidth: "89vw" }}
+      sx={{ mt: 2, minHeight: 162, height: 162, maxWidth: "89vw" }}
       initialState={{
         pagination: { paginationModel: { pageSize: 10 } },
       }}

@@ -72,7 +72,7 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Box display={"flex"} alignItems={"center"} py={2}>
+        <Box display={"flex"} alignItems={"center"}>
           <Autocomplete
             options={nutrientOptions}
             getOptionLabel={(option) => `${option.id} ${option.nutrientName}`}
