@@ -4,7 +4,6 @@ import { Search } from "@mui/icons-material";
 import React, { useState } from "react";
 import SelectNutrient from "@/components/forms/SelectNutrient";
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
-import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 
 interface MyFoodSearchFormProps {
   setSearchTerm: (searchTerm: string) => void;

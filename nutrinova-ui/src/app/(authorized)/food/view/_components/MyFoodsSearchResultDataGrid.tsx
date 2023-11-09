@@ -1,7 +1,7 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert, Box, Skeleton } from "@mui/material";
+import { Alert, Skeleton } from "@mui/material";
 import React from "react";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
