@@ -34,7 +34,11 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("search")]
-  public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllOfName([FromQuery] string foodName, [FromQuery] string? brandOwner, [FromQuery] string filterOption = "Branded", [FromQuery] int maxReturnedResults = 25)
+  public async Task<ActionResult<IEnumerable<FlattenedFood>>> RetrieveAllOfName(
+    [FromQuery] string foodName,
+    [FromQuery] string? brandOwner,
+    [FromQuery] string filterOption = "Branded",
+    [FromQuery] int maxReturnedResults = 25)
   {
     try
     {
@@ -46,7 +50,8 @@ public class FoodController : ControllerBase
         query += $"brandOwner={HttpUtility.UrlEncode(brandOwner)}&";
       }
 
-      query += $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}";
+      query +=
+        $"query={HttpUtility.UrlEncode(foodName)}&dataType={HttpUtility.UrlEncode(filterOption)}&pageSize={maxReturnedResults}&api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}";
 
       var res = await httpClient.GetAsync($"{query}");
       if (!res.IsSuccessStatusCode)
@@ -55,10 +60,11 @@ public class FoodController : ControllerBase
         return StatusCode((int)res.StatusCode); // or you can return a custom error message
       }
 
-      var deserRes = await res.Content.ReadFromJsonAsync<FoodSearchResponseModel>(new System.Text.Json.JsonSerializerOptions
-      {
-        PropertyNameCaseInsensitive = true,
-      });
+      var deserRes = await res.Content.ReadFromJsonAsync<FoodSearchResponseModel>(
+        new System.Text.Json.JsonSerializerOptions
+        {
+          PropertyNameCaseInsensitive = true,
+        });
 
       if (deserRes?.foods == null || !deserRes.foods.Any())
       {
@@ -90,7 +96,8 @@ public class FoodController : ControllerBase
   {
     try
     {
-      string query = $"food/{foodId}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
+      string query =
+        $"food/{foodId}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
 
       var res = await httpClient.GetAsync($"{query}");
       if (!res.IsSuccessStatusCode)
@@ -165,9 +172,9 @@ public class FoodController : ControllerBase
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
           .Where(fp =>
-              fp.CreatedBy == customer.Id && (
-                fp.Description.Contains(filterOption) ||
-                (fp.Note != null && fp.Note.Contains(filterOption))))
+            fp.CreatedBy == customer.Id && (
+          EF.Functions.ILike(fp.Description, $"%{filterOption}%") ||
+          (fp.Note != null && EF.Functions.ILike(fp.Note, $"%{filterOption}%"))))
           .ToListAsync();
       }
       else
@@ -180,11 +187,14 @@ public class FoodController : ControllerBase
       }
 
       result = result
-      .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
-        fp.FoodPlanNutrients.Any(fpn =>
-        fpn.Nutrient.NutrientName != null &&
-        fpn.Nutrient.NutrientName.Contains(nutrientFilter) &&
-        NumberComparsionViaOperatorString(decimal.ToDouble(fpn.Amount), nutrientFilterValue, nutrientFilterOperator)))
+        .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
+                     fp.FoodPlanNutrients.Any(fpn =>
+                       fpn.Nutrient.NutrientName != null &&
+                       fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
+                       NumberComparsionViaOperatorString(
+                         decimal.ToDouble(fpn.Amount),
+                         nutrientFilterValue,
+                         nutrientFilterOperator)))
         .ToList();
 
       return result.Select(fp => fp.ToFlattenedFood()).ToList();
@@ -340,16 +350,28 @@ public class FoodController : ControllerBase
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
         ServingSize = (decimal?)deserializedResult.servingSize,
-        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) : 0,
+        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 0 : 0,
         Note = deserializedResult.ingredients,
-        FoodPlanNutrients = deserializedResult.foodNutrients.Select(n => new FoodPlanNutrient
+      };
+
+      var foodPlanNutrients = new List<FoodPlanNutrient>();
+      foreach (var nutrient in deserializedResult.foodNutrients)
+      {
+        var unitId = nutrient.unitName != null ? GetUnitId(nutrient.unitName) : null;
+        if (unitId == null)
+        {
+          // only take nutrients with units that we are tracking
+          continue;
+        }
+
+        foodPlanNutrients.Add(new FoodPlanNutrient
         {
           Id = Guid.NewGuid(),
-          NutrientId = n.nutrientId,
-          Amount = (decimal)n.value,
-          UnitId = GetUnitId(n.unitName ?? string.Empty),
-        }).ToList(),
-      };
+          NutrientId = nutrient.nutrientId,
+          Amount = (decimal)nutrient.value,
+          UnitId = unitId.Value,
+        });
+      }
 
       // Save to the database
       await context.FoodPlans.AddAsync(foodPlan);
@@ -382,20 +404,13 @@ public class FoodController : ControllerBase
     }
   }
 
-  private int GetUnitId(string unitAbreviation)
+  private int? GetUnitId(string unitAbreviation)
   {
     var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbreviation) || EF.Functions.ILike(u.Description, unitAbreviation));
     if (unit == null)
     {
-      logger.LogError($"Failed to find unit with abbreviation {unitAbreviation}");
-      logger.LogError($"Creating new unit with abbreviation {unitAbreviation}");
-      unit = new Unit
-      {
-        Abreviation = unitAbreviation,
-        Description = unitAbreviation,
-      };
-      context.Units.Add(unit);
-      context.SaveChanges();
+      logger.LogError($"Failed to find unit with abbreviation {unitAbreviation}, skipping");
+      return null;
     }
 
     return unit.Id;

@@ -2,7 +2,7 @@
 
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
-import { FoodSearchResult } from "../_models/foodSearchResult";
+import { FoodSearchResult } from "../../_models/foodSearchResult";
 
 interface SearchResultDataGridProps {
   rows: FoodSearchResult[];

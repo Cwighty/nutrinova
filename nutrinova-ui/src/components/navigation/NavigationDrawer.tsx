@@ -1,5 +1,5 @@
 import { SwipeableDrawer } from "@mui/material";
-import { NavigationList } from "@/components/NavigationList";
+import { NavigationList } from "@/components/navigation/NavigationList";
 
 interface NavigationDrawerProps {
   isOpen: boolean;
