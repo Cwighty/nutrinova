@@ -5,7 +5,7 @@ export const NoFoodRowsOverlay = () => {
   return (
     <Typography
       variant="h5"
-      sx={{ textAlign: "center", alignItems: "center", pt: 2 }}
+      sx={{ textAlign: "center", alignItems: "center", pt: 1.25 }}
     >
       No foods found
     </Typography>

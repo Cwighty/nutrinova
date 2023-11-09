@@ -27,7 +27,7 @@ export default function SearchResultDataGrid({
       rows={rows}
       columns={columns}
       onRowClick={handleRowClick}
-      sx={{ height: 170, maxHeight: 800, maxWidth: "85vw" }}
+      sx={{ minHeight: 162, height: 162, maxWidth: "87vw" }}
       initialState={{
         pagination: { paginationModel: { pageSize: 10 } },
       }}
