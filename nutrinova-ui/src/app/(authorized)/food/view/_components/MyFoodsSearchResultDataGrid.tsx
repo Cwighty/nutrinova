@@ -1,7 +1,7 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert, Skeleton } from "@mui/material";
+import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 
@@ -13,8 +13,8 @@ export const MyFoodsSearchResultDataGrid = ({
   searchQuery,
 }: MyFoodsSearchResultDataGridProps) => {
   const columns: GridColDef[] = [
-    { field: "fdcId", headerName: "ID", width: 100 },
-    { field: "description", headerName: "Description", width: 500 },
+    { field: "fdcId", headerName: "ID", minWidth: 100, flex: 1 },
+    { field: "description", headerName: "Description", minWidth: 500, flex: 1 },
   ];
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
 
@@ -27,17 +27,23 @@ export const MyFoodsSearchResultDataGrid = ({
   }
 
   return (
-    <DataGrid
-      getRowId={(row: FoodSearchResult) => row.description}
-      rows={data ?? []}
-      columns={columns}
-      sx={{ mt: 2, minHeight: 162, height: 162, maxWidth: "89vw" }}
-      initialState={{
-        pagination: { paginationModel: { pageSize: 10 } },
+    <Box
+      sx={{
+        mt: 2,
       }}
-      slots={{
-        noRowsOverlay: NoFoodRowsOverlay,
-      }}
-    />
+    >
+      <DataGrid
+        getRowId={(row: FoodSearchResult) => row.description}
+        rows={data ?? []}
+        columns={columns}
+        autoHeight
+        initialState={{
+          pagination: { paginationModel: { pageSize: 10 } },
+        }}
+        slots={{
+          noRowsOverlay: NoFoodRowsOverlay,
+        }}
+      />
+    </Box>
   );
 };

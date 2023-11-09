@@ -3,10 +3,7 @@ import React from "react";
 
 export const NoFoodRowsOverlay = () => {
   return (
-    <Typography
-      variant="h5"
-      sx={{ textAlign: "center", alignItems: "center", pt: 1.25 }}
-    >
+    <Typography variant="h5" sx={{ textAlign: "center", pt: 4 }}>
       No foods found
     </Typography>
   );

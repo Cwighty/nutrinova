@@ -30,6 +30,7 @@ export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
         justifyContent: "space-between",
+        gap: 2,
       }}
     >
       <TextField

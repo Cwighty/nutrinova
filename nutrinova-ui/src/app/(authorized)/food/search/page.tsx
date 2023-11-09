@@ -44,7 +44,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <PageContainer title={metadata.title}>
-      <Paper elevation={3} sx={{ p: 2 }}>
+      <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
         <Grid container columnSpacing={4}>
           <Grid item xs={12} md={3}>
             <FoodSearchForm searchParams={searchParams} />
