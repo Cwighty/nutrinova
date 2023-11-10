@@ -11,13 +11,16 @@ import {
   Alert,
   Autocomplete,
   Box,
+  Grid,
   InputAdornment,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Skeleton,
   TextField,
 } from "@mui/material";
-import React, { SyntheticEvent, useState } from "react";
+import { ChangeEvent, ReactNode, SyntheticEvent, useState } from "react";
+import { ChangeEventHandler } from "preact/compat";
 
 interface SelectNutrientProps {
   error?: boolean;
@@ -31,7 +34,14 @@ interface SelectNutrientProps {
   onComparisonOperatorChange: (comparisonOperator: string) => void;
 }
 
-const SelectNutrient = ({ error, helperText, canCompare = false, onComparisonOperatorChange, onNutrientAmountChange, onSelectedNutrientChange }: SelectNutrientProps) => {
+const SelectNutrient = ({
+  error,
+  helperText,
+  canCompare = false,
+  onComparisonOperatorChange,
+  onNutrientAmountChange,
+  onSelectedNutrientChange,
+}: SelectNutrientProps) => {
   const {
     data: nutrientOptions,
     isLoading: nutrientOptionsLoading,
@@ -56,15 +66,15 @@ const SelectNutrient = ({ error, helperText, canCompare = false, onComparisonOpe
     onSelectedNutrientChange(value);
   };
 
-
-  const handleComparisonOperatorChange = (value: string) => {
-    setComparisonOperator(value);
-    onComparisonOperatorChange(value);
+  const handleComparisonOperatorChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setComparisonOperator(event.target.value);
+    onComparisonOperatorChange(event.target.value);
   };
 
-
   const handleNutrientAmountChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const newAmount = parseFloat(event.target.value) ?? null;
     const newUnit =
@@ -86,63 +96,61 @@ const SelectNutrient = ({ error, helperText, canCompare = false, onComparisonOpe
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Box display={"flex"} alignItems={"center"}>
-          <Autocomplete
-            options={nutrientOptions}
-            getOptionLabel={(option) => `${option.id} ${option.nutrientName}`}
-            sx={{ flexGrow: 1 }}
-            renderOption={(props, option) => {
-              return (
-                <li {...props} key={option.id}>
-                  {option.nutrientName}
-                </li>
-              );
-            }}
-            renderInput={(params) => (
+        <Grid container>
+          <Grid item xs={12} md={3}>
+            <Autocomplete
+              options={nutrientOptions}
+              getOptionLabel={(option) => option.nutrientName}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Nutrient"
+                  sx={{ flexGrow: 1 }}
+                  error={error}
+                  helperText={helperText}
+                />
+              )}
+              onChange={handleNutrientSelectionChange}
+            />
+          </Grid>
+          {canCompare && (
+            <Grid item xs={12} md={3}>
               <TextField
-                {...params}
-                label="Nutrient"
-                sx={{ flexGrow: 1 }}
-                error={error}
-                helperText={helperText}
-              />
-            )}
-            onChange={handleNutrientSelectionChange}
-          />
-          {canCompare &&
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={comparisonOperator}
-              helperText={comparisonOperator}
-              sx={{ width: "50%", ml: 2 }}
-              label="Age"
-              onChange={() => handleComparisonOperatorChange(comparisonOperator)}
-            >
-              {COMPARISON_OPERATOR_OPTIONS.map((option) => (
-                <MenuItem key={option.id} value={option.abbreviation} > {option.name} </MenuItem>))}
-            </Select>
-          }
-
-          <TextField
-            error={error}
-            helperText={helperText}
-            label="Amount"
-            type="number"
-            sx={{ width: "50%", ml: 2 }}
-            onChange={handleNutrientAmountChange}
-            InputProps={{
-              inputProps: { min: 0 },
-              endAdornment: (
-                <InputAdornment position="end">
-                  {unitOptions.find(
-                    (u) => u.id === selectedNutrient?.preferredUnit,
-                  )?.abreviation ?? ""}
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box >
+                select
+                value={comparisonOperator}
+                label="Comparison"
+                sx={{ ml: 2 }}
+                onChange={handleComparisonOperatorChange}
+              >
+                {COMPARISON_OPERATOR_OPTIONS.map((option) => (
+                  <MenuItem key={option.id} value={option.abbreviation}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          )}
+          <Grid item xs={12} md={3}>
+            <TextField
+              error={error}
+              helperText={helperText}
+              label="Amount"
+              type="number"
+              sx={{ ml: 2, flexGrow: 1, maxWidth: "50%" }}
+              onChange={handleNutrientAmountChange}
+              InputProps={{
+                inputProps: { min: 0 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {unitOptions.find(
+                      (u) => u.id === selectedNutrient?.preferredUnit,
+                    )?.abreviation ?? ""}
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
       )}
     </>
   );
