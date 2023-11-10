@@ -1,56 +1,42 @@
+'use client'
 import { Grid, Paper } from "@mui/material";
 import FoodSearchForm from "./_components/FoodSearchForm";
 import SearchResultDataGrid from "./_components/SearchResultDataGrid";
-import { FoodSearchResult } from "../_models/foodSearchResult";
 import { PageContainer } from "@/components/PageContainer";
-import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
+import { FoodSearchFilterParams } from "../_models/foodSearchFilterParams";
+import React from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 
-export const metadata = {
-  title: "Food Search",
-};
-
-interface PageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
-const fetchFoodSearchResults = async (searchParams: {
-  [key: string]: string | string[] | undefined;
-}) => {
-  if (!searchParams["foodName"] || searchParams["foodName"] === "") {
-    return [];
-  }
-  const query = new URLSearchParams();
-  query.set("foodName", searchParams["foodName"] as string);
-  query.set("filterOption", searchParams["usdaFilterOption"] as string);
-
-  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory({
-    additionalHeaders: {},
-    origin: "server",
+export default function Page() {
+  const [filterParams, setFilterParams] = React.useState<FoodSearchFilterParams>({
+    foodName: "",
+    filterOption: "Foundation",
   });
-  const response = await foodSearchInstance.get(
-    "food/search?" + query.toString(),
+  const [searchKeyword, setSearchKeyword] = React.useState<string>(
+    filterParams.foodName
   );
+  const foodName = useDebounce(searchKeyword, 500);
 
-  if (response.data) {
-    return (await response.data) as FoodSearchResult[];
-  } else {
-    throw new Error("Error fetching food search results: " + response.status);
-  }
-};
-
-export default async function Page({ searchParams }: PageProps) {
-  const rows = await fetchFoodSearchResults(searchParams);
+  React.useEffect(() => {
+    setFilterParams({
+      ...filterParams,
+      foodName: foodName,
+    });
+  }, [filterParams, foodName]);
 
   return (
-    <PageContainer title={metadata.title}>
+    <PageContainer title={"Food Search"}>
       <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
         <Grid container columnSpacing={4}>
           <Grid item xs={12} md={3}>
-            <FoodSearchForm searchParams={searchParams} />
+            <FoodSearchForm
+              filterParams={filterParams}
+              setFilterParams={setFilterParams}
+              searchKeyword={searchKeyword}
+              setSearchKeyword={setSearchKeyword} />
           </Grid>
           <Grid item xs={12} md={9}>
-            <SearchResultDataGrid rows={rows} />
+            <SearchResultDataGrid filterParams={filterParams} />
           </Grid>
         </Grid>
       </Paper>

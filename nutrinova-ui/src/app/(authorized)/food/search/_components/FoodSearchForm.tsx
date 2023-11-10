@@ -1,12 +1,14 @@
 "use client";
 import { Search } from "@mui/icons-material";
 import { Box, InputAdornment, MenuItem, TextField } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDebounce } from "@uidotdev/usehooks";
+import { ChangeEvent, useState } from "react";
+import { FoodSearchFilterParams } from "../../_models/foodSearchFilterParams";
 
 interface FoodSearchFormProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  filterParams: FoodSearchFilterParams;
+  setFilterParams: (FoodSearchFilterParams: FoodSearchFilterParams) => void;
+  searchKeyword: string;
+  setSearchKeyword: (searchKeyword: string) => void;
 }
 
 const usdaFilterOptions: string[] = [
@@ -17,41 +19,20 @@ const usdaFilterOptions: string[] = [
   "Experimental",
 ];
 
-export default function FoodSearchForm({ searchParams }: FoodSearchFormProps) {
+export default function FoodSearchForm({ filterParams, setFilterParams }: FoodSearchFormProps) {
   const [searchKeyword, setSearchKeyword] = useState<string>(
-    searchParams["foodName"] as string,
+    filterParams.foodName
   );
-  const foodName = useDebounce(searchKeyword, 500);
-  const [usdaFilterOption, setUsdaFilterOption] = useState<string>(
-    (searchParams["usdaFilterOption"] as string) ?? usdaFilterOptions[0],
-  );
-
-  const router = useRouter();
 
   const handleDivisionChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setUsdaFilterOption(e.target.value);
+    setFilterParams({
+      ...filterParams,
+      filterOption: e.target.value,
+    });
   };
 
-  const handleKeywordChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setSearchKeyword(e.target.value);
-  };
-
-  useEffect(() => {
-    if (foodName === "" || foodName === undefined) {
-      return;
-    }
-    router.push(
-      "/food/search?" +
-        new URLSearchParams({
-          foodName,
-          usdaFilterOption,
-        }).toString(),
-    );
-  }, [foodName, usdaFilterOption, router]);
 
   return (
     <>
@@ -61,7 +42,10 @@ export default function FoodSearchForm({ searchParams }: FoodSearchFormProps) {
         variant="outlined"
         placeholder="Buttered toast"
         value={searchKeyword}
-        onChange={handleKeywordChange}
+        onChange={(e) => {
+          setSearchKeyword(e.target.value);
+        }
+        }
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -84,7 +68,7 @@ export default function FoodSearchForm({ searchParams }: FoodSearchFormProps) {
           variant="outlined"
           fullWidth
           select
-          value={usdaFilterOption}
+          value={filterParams.filterOption}
           onChange={handleDivisionChange}
           sx={{ my: 2 }}
         >
