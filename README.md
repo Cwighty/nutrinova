@@ -12,8 +12,8 @@
 
 - [x] The application will use a SSO provider to handle sign-ups for new users and logins for existing users. (Authentication)
 - [x] Users can authenticate so that their data can be persisted. (Authentication)
-- [ ] Users will only have access to their information and won't be able to see other people's information. (Authentication)
-- [ ] Users can easily log out of their accounts for convenience and security. (Authentication)
+- [x] Users will only have access to their information and won't be able to see other people's information. (Authentication)
+- [x] Users can easily log out of their accounts for convenience and security. (Authentication)
       
 # Nov 4th
 
@@ -26,16 +26,16 @@
 
 ### Create Food (generic form input components)
 
-- [ ] Create custom foods.  
-- [ ] Validate user-created custom foods. (Error handling)
-- [ ] Specify details like name, nutritional facts, and macronutrients.
+- [x] Create custom foods.  
+- [x] Validate user-created custom foods. (Error handling)
+- [x] Specify details like name, nutritional facts, and macronutrients.
 
 # Nov 11th
 
 ### View Used Foods/Ingredients
 
-- [ ] Overview list of my saved foods (all that have been imported/used before). 
-- [ ] Sort and filter foods. 
+- [x] Overview list of my saved foods (all that have been imported/used before). 
+- [x] Sort and filter foods. 
 - [ ] See details about the food/ingredient. 
 
 ### Edit Foods/Ingredients (Custom input components)
