@@ -1,7 +1,7 @@
 "use client";
 import { Search } from "@mui/icons-material";
 import { Box, InputAdornment, MenuItem, TextField } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import { FoodSearchFilterParams } from "../../_models/foodSearchFilterParams";
 
 interface FoodSearchFormProps {
@@ -19,10 +19,7 @@ const usdaFilterOptions: string[] = [
   "Experimental",
 ];
 
-export default function FoodSearchForm({ filterParams, setFilterParams }: FoodSearchFormProps) {
-  const [searchKeyword, setSearchKeyword] = useState<string>(
-    filterParams.foodName
-  );
+export default function FoodSearchForm({ filterParams, setFilterParams, searchKeyword, setSearchKeyword }: FoodSearchFormProps) {
 
   const handleDivisionChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

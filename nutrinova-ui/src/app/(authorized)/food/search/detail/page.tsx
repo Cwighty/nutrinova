@@ -9,6 +9,7 @@ import {
   Chip,
   CardActions,
   Button,
+  Skeleton,
 } from "@mui/material";
 import React from "react";
 import CenteredSpinnerWithBackdrop from "@/components/CenteredSpinnerOverlay";
@@ -43,17 +44,33 @@ export default function Page({ searchParams }: PageProps) {
     );
   };
 
+  if (!food || foodIsLoading) {
+    return (
+      <Card sx={{ maxWidth: 600, margin: "20px auto", padding: "20px" }}>
+        <CardContent>
+          <Skeleton variant="rectangular" width="100%" height={150} />
+          <Skeleton variant="rectangular" width="100%" height={40} sx={{ my: 2 }} />
+          <Skeleton variant="rectangular" width="100%" height={20} sx={{ my: 1 }} />
+          <Skeleton variant="rectangular" width="100%" height={20} sx={{ my: 1 }} />
+          <Skeleton variant="rectangular" width="100%" height={20} sx={{ my: 1 }} />
+          <Skeleton variant="rectangular" width="100%" height={20} sx={{ my: 1 }} />
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <>
       {importFoodMutation.isPending && <CenteredSpinnerWithBackdrop message="Importing food..." />}
       <Card sx={{ maxWidth: 600, margin: "20px auto", padding: "20px" }}>
         <CardActions style={{ justifyContent: "flex-end" }}>
-          <Button variant="contained" color="primary" onClick={handleImport}>
-            Import
-          </Button>
+          {food && (
+            <Button variant="contained" color="primary" onClick={handleImport}>
+              Import
+            </Button>
+          )}
         </CardActions>
         <CardContent>
-          {foodIsLoading && <CenteredSpinnerWithBackdrop message="Loading food..." />}
           {food && (
             <>
               <Typography variant="h5" gutterBottom>

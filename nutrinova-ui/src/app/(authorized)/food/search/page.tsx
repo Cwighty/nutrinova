@@ -12,17 +12,8 @@ export default function Page() {
     foodName: "",
     filterOption: "Foundation",
   });
-  const [searchKeyword, setSearchKeyword] = React.useState<string>(
-    filterParams.foodName
-  );
+  const [searchKeyword, setSearchKeyword] = React.useState<string>("");
   const foodName = useDebounce(searchKeyword, 500);
-
-  React.useEffect(() => {
-    setFilterParams({
-      ...filterParams,
-      foodName: foodName,
-    });
-  }, [filterParams, foodName]);
 
   return (
     <PageContainer title={"Food Search"}>
@@ -36,7 +27,7 @@ export default function Page() {
               setSearchKeyword={setSearchKeyword} />
           </Grid>
           <Grid item xs={12} md={9}>
-            <SearchResultDataGrid filterParams={filterParams} />
+            <SearchResultDataGrid filterParams={{...filterParams, foodName}} />
           </Grid>
         </Grid>
       </Paper>
