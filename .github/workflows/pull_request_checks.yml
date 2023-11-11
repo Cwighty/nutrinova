@@ -1,11 +1,9 @@
-name: Pull Request Checks 
+name: Pull Request Checks
 
-on: 
+on:
   pull_request:
     branches:
       - main
-    paths-ignore: 
-      - "**.md"
 
 jobs:
   check-lint:
@@ -14,7 +12,7 @@ jobs:
   check-tests:
     needs: check-lint
     uses: ./.github/workflows/api_integration_tests.yml
-  
+
   check-projects-build:
     needs: check-tests
     uses: ./.github/workflows/build.yml
