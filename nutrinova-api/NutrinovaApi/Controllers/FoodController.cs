@@ -92,7 +92,7 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("details/{foodId}")]
-  public async Task<ActionResult<FlattenedFood>> RetrieveFoodDetailById(int foodId, [FromQuery] string format = "full")
+  public async Task<ActionResult<FlattenedFood>> RetrieveFoodDetailUSDAById(int foodId, [FromQuery] string format = "full")
   {
     try
     {
@@ -240,7 +240,50 @@ public class FoodController : ControllerBase
     }
   }
 
-  [Authorize]
+  [HttpGet("food-details/{foodId}")]
+  public async Task<ActionResult<FoodPlan>> RetrieveFoodForUserById(
+    string? foodId = null)
+  {
+    try
+    {
+      var userObjectId = User.GetObjectIdFromClaims();
+
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+
+      if (customer?.Id is null)
+      {
+        return NotFound("Couldn't find the user id");
+      }
+
+      var result = await context.FoodPlans
+        .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
+        .ThenInclude(fpn => fpn.Nutrient)
+        .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
+
+      if (result == null)
+      {
+        return NotFound("No food found");
+      }
+
+      return result;
+    }
+    catch (HttpRequestException ex)
+    {
+      logger.LogError($"HTTP request failed: {ex.Message}");
+      return StatusCode(503, "Service unavailable");
+    }
+    catch (JsonException ex)
+    {
+      logger.LogError($"JSON deserialization failed: {ex.Message}");
+      return BadRequest("Invalid response format");
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"An unexpected error occurred: {ex.Message}");
+      return StatusCode(500, "Internal server error");
+    }
+  }
+
   [HttpPost]
   public async Task<IActionResult> CreateFoodPlan(CreateFoodRequestModel createFoodRequestModel)
   {
