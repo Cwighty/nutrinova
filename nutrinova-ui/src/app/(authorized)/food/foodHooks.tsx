@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
+import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -119,3 +120,50 @@ export const useImportFoodMutation = () => {
     },
   });
 }
+
+
+const foodSearchKeys = {
+  all: ["foodSearchResults"] as const,
+  foodSearchResult: (fdcId: number) => [...foodSearchKeys.all, fdcId] as const,
+};
+
+const fetchFoodSearchResults = async (filterParams: FoodSearchFilterParams) => {
+  const query = new URLSearchParams();
+  query.set("foodName", filterParams.foodName);
+  query.set("filterOption", filterParams.filterOption);
+
+  const foodSearchInstance = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  if (filterParams.foodName.trim() === "") {
+    return [];
+  }
+  const response = await foodSearchInstance.get<FoodSearchResult[]>(
+    "food/search?" + query.toString(),
+  );
+  return response.data;
+}
+
+export const useGetFoodSearchResultsQuery = (filterParams: FoodSearchFilterParams) => {
+  return useQuery({
+    queryKey: [foodSearchKeys.all, filterParams],
+    queryFn: () => fetchFoodSearchResults(filterParams),
+  });
+}
+
+
+const getFoodSearchResult = (foodId: number, foods: FoodSearchResult[]) => {
+  return foods.find((food) => food.fdcId === foodId);
+}
+
+export const useGetFoodSearchResultQuery = (foodSearchFilterParams: FoodSearchFilterParams, fdcId: number) => {
+  const { data: foods, isSuccess } = useGetFoodSearchResultsQuery(foodSearchFilterParams);
+
+  return useQuery({
+    queryKey: [foodSearchKeys.foodSearchResult(fdcId), foods],
+    queryFn: () => getFoodSearchResult(fdcId, foods!),
+    enabled: isSuccess && foods !== undefined,
+  });
+};
+
