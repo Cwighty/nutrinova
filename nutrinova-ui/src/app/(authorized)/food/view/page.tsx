@@ -5,16 +5,29 @@ import React, { useState } from "react";
 import { MyFoodSearchForm } from "@/app/(authorized)/food/view/_components/MyFoodsSearchForm";
 import { MyFoodsSearchResultDataGrid } from "@/app/(authorized)/food/view/_components/MyFoodsSearchResultDataGrid";
 import { useDebounce } from "@uidotdev/usehooks";
+import { NutrientOption } from "../_models/nutrientOption";
+
+export interface searchParameters {
+  nutrientSearchTerm: NutrientOption,
+  foodSearchTerm: string,
+  comparisonOperator: string | undefined,
+  nutrientValue: number | undefined,
+}
 
 export default function MyFoodsPage() {
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const searchKeywordDebounce = useDebounce(searchKeyword, 500);
+  const [searchParameters, setSearchKeyword] = useState<searchParameters>({
+    nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
+    foodSearchTerm: "",
+    comparisonOperator: "gt",
+    nutrientValue: 0,
+  });
+  const searchParameterDebounce = useDebounce(searchParameters, 500);
 
   return (
     <PageContainer title={"My Foods"}>
       <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
-        <MyFoodSearchForm setSearchTerm={setSearchKeyword} />
-        <MyFoodsSearchResultDataGrid searchQuery={searchKeywordDebounce} />
+        <MyFoodSearchForm setSearchParameters={setSearchKeyword} currentSearchParameters={searchParameters} />
+        <MyFoodsSearchResultDataGrid searchQuery={searchParameterDebounce} />
       </Paper>
     </PageContainer>
   );
