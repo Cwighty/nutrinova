@@ -12,7 +12,6 @@ interface MyFoodSearchFormProps {
 }
 
 export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters }: MyFoodSearchFormProps) => {
-
   const handleSearchParemetersChange = (value: string | number | NutrientOption | null | undefined, targetProperty: string) => {
     console.log("handleSearchParemetersChange", value, targetProperty);
     setSearchParameters({

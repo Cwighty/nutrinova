@@ -22,7 +22,7 @@ export const MyFoodsSearchResultDataGrid = ({
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
 
   const handleOnRowClick = (row: GridRowParams<FoodSearchResult>) => {
-    router.push(`/food/view/${row.row.id}`);
+    router.push(`/food/view/details?foodId=${row.row.id}`);
   }
 
   if (isError) {

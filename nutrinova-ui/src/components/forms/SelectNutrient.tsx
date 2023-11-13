@@ -58,7 +58,6 @@ const SelectNutrient = ({
     _: SyntheticEvent<Element, Event>,
     value: NutrientOption | null,
   ) => {
-    console.log(value);
     setSelectedNutrient(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName));
     onSelectedNutrientChange(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName) ?? { id: -1, nutrientName: "", preferredUnit: 0 } as NutrientOption);
   };
