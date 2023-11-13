@@ -119,3 +119,10 @@ export const useImportFoodMutation = () => {
     },
   });
 }
+
+export const useGetFoodByIdQuery = (foodId: string) => {
+  return useQuery({
+    queryKey: foodKeys.foodName(foodId),
+    queryFn: () => fetchFoodsForUser(foodId),
+  });
+}
