@@ -10,23 +10,19 @@ import {
 import {
   Alert,
   Autocomplete,
-  Box,
   Grid,
   InputAdornment,
   MenuItem,
-  Select,
-  SelectChangeEvent,
   Skeleton,
   TextField,
 } from "@mui/material";
-import { ChangeEvent, ReactNode, SyntheticEvent, useState } from "react";
-import { ChangeEventHandler } from "preact/compat";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 
 interface SelectNutrientProps {
   error?: boolean;
   helperText?: string;
   canCompare?: boolean;
-  onSelectedNutrientChange: (nutrient: NutrientOption | null) => void;
+  onSelectedNutrientChange: (nutrient: NutrientOption | null | undefined) => void;
   onNutrientAmountChange: (
     amount: number | null,
     unit: UnitOption | null,
@@ -54,7 +50,7 @@ const SelectNutrient = ({
   } = useGetUnitsQuery();
 
   const [selectedNutrient, setSelectedNutrient] =
-    useState<NutrientOption | null>(null);
+    useState<NutrientOption | null | undefined>(null);
 
   const [comparisonOperator, setComparisonOperator] = useState<string>("");
 
@@ -62,8 +58,9 @@ const SelectNutrient = ({
     _: SyntheticEvent<Element, Event>,
     value: NutrientOption | null,
   ) => {
-    setSelectedNutrient(value);
-    onSelectedNutrientChange(value);
+    console.log(value);
+    setSelectedNutrient(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName));
+    onSelectedNutrientChange(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName) ?? { id: -1, nutrientName: "", preferredUnit: 0 } as NutrientOption);
   };
 
   const handleComparisonOperatorChange = (
@@ -120,7 +117,7 @@ const SelectNutrient = ({
                 value={comparisonOperator}
                 label="Comparison"
                 sx={{ ml: 2 }}
-                onChange={handleComparisonOperatorChange}
+                onChange={(e) => handleComparisonOperatorChange(e)}
               >
                 {COMPARISON_OPERATOR_OPTIONS.map((option) => (
                   <MenuItem key={option.id} value={option.abbreviation}>
@@ -137,7 +134,7 @@ const SelectNutrient = ({
               label="Amount"
               type="number"
               sx={{ ml: 2, flexGrow: 1, maxWidth: "50%" }}
-              onChange={handleNutrientAmountChange}
+              onChange={(e) => handleNutrientAmountChange(e)}
               InputProps={{
                 inputProps: { min: 0 },
                 endAdornment: (

@@ -12,7 +12,9 @@ interface MyFoodSearchFormProps {
 }
 
 export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters }: MyFoodSearchFormProps) => {
+
   const handleSearchParemetersChange = (value: string | number | NutrientOption | null | undefined, targetProperty: string) => {
+    console.log("handleSearchParemetersChange", value, targetProperty);
     setSearchParameters({
       ...currentSearchParameters,
       [targetProperty]: value,
@@ -42,9 +44,9 @@ export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters 
       />
 
       <SelectNutrient
-        onSelectedNutrientChange={() => handleSearchParemetersChange(currentSearchParameters.nutrientSearchTerm, "nutrientSearchTerm")}
-        onNutrientAmountChange={() => handleSearchParemetersChange(currentSearchParameters.nutrientValue, "nutrientValue")}
-        onComparisonOperatorChange={() => handleSearchParemetersChange(currentSearchParameters.comparisonOperator, "comparisonOperator")}
+        onSelectedNutrientChange={(n) => handleSearchParemetersChange(n, "nutrientSearchTerm")}
+        onNutrientAmountChange={(a) => handleSearchParemetersChange(a, "nutrientValue")}
+        onComparisonOperatorChange={(c) => handleSearchParemetersChange(c, "comparisonOperator")}
         canCompare={true}
       />
     </Box>
