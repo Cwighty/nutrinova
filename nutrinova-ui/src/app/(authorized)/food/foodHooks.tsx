@@ -18,6 +18,7 @@ const unitKeys = {
 const foodKeys = {
   all: ["foods"] as const,
   foodSearchParams: (foodName: string, nutrient: string, comparisonOperator: string, nutrientValue: number) => [...foodKeys.all, foodName, nutrient, nutrientValue, comparisonOperator] as const,
+  foodID: (foodId: string) => [...foodKeys.all, foodId] as const,
 };
 
 const fetchNutrients = async (): Promise<NutrientOption[]> => {
@@ -28,6 +29,15 @@ const fetchNutrients = async (): Promise<NutrientOption[]> => {
   const response = await apiClient.get("/nutrient/all-nutrients");
   return response.data as NutrientOption[];
 };
+
+const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.get(`/food/food-details/${foodId}`);
+  return response.data as FoodSearchResult;
+}
 
 const fetchFoodsForUser = async (
   foodSearchParameters: searchParameters,
@@ -133,7 +143,7 @@ export const useImportFoodMutation = () => {
 
 export const useGetFoodByIdQuery = (foodId: string) => {
   return useQuery({
-    queryKey: foodKeys.foodName(foodId),
-    queryFn: () => fetchFoodsForUser(foodId),
+    queryKey: foodKeys.foodID(foodId),
+    queryFn: () => fetchFoodById(foodId),
   });
 }

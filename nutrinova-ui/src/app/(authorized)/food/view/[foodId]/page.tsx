@@ -11,7 +11,6 @@ import {
   Button,
 } from "@mui/material";
 import React from "react";
-import CenteredSpinnerWithBackdrop from "@/components/CenteredSpinnerOverlay";
 import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
 
 interface PageProps {
@@ -21,29 +20,28 @@ interface PageProps {
 export default function Page({ searchParams }: PageProps) {
   const foodId = searchParams["foodId"] as string;
 
-  const {} = useGetFoodByIdQuery(foodId);
+  const { data } = useGetFoodByIdQuery(foodId);
 
   return (
     <>
-      {importFoodMutation.isPending && <CenteredSpinnerWithBackdrop message="Importing food..." />}
       <Card sx={{ maxWidth: 600, margin: "20px auto", padding: "20px" }}>
         <CardActions style={{ justifyContent: "flex-end" }}>
-          <Button variant="contained" color="primary" onClick={handleImport}>
-            Import
+          <Button variant="contained" color="primary">
+            Edit button here
           </Button>
         </CardActions>
         <CardContent>
           <Typography variant="h5" gutterBottom>
-            {food.description}
+            {data?.description}
           </Typography>
-          {food.brandName && (
+          {data?.brandName && (
             <Typography variant="h6" color="primary" gutterBottom>
-              {food.brandName}
+              {data?.brandName}
             </Typography>
           )}
-          {food.ingredients && (
+          {data?.ingredients && (
             <div style={{ margin: "10px 0" }}>
-              {food.ingredients.split(",").map((ingredient, index) => (
+              {data?.ingredients.split(",").map((ingredient, index) => (
                 <Chip
                   label={ingredient.trim()}
                   variant="outlined"
@@ -54,13 +52,13 @@ export default function Page({ searchParams }: PageProps) {
               ))}
             </div>
           )}
-          {food.servingSizeWithUnits && (
+          {data?.servingSizeWithUnits && (
             <Typography variant="body1" paragraph>
-              Serving Size: {parseFloat(food.servingSizeWithUnits).toFixed(2)}{" "}
+              Serving Size: {parseFloat(data?.servingSizeWithUnits).toFixed(2)}{" "}
               GRM
             </Typography>
           )}
-          {food.foodNutrients && food.foodNutrients.length > 0 && (
+          {data?.foodNutrients && data?.foodNutrients.length > 0 && (
             <>
               <Typography
                 variant="h6"
@@ -71,7 +69,7 @@ export default function Page({ searchParams }: PageProps) {
               </Typography>
               <Divider />
               <List dense>
-                {food.foodNutrients.map((nutrient) => (
+                {data?.foodNutrients.map((nutrient) => (
                   <ListItem
                     key={nutrient.nameWithAmountAndUnit}
                     style={{ padding: "8px 0" }}
