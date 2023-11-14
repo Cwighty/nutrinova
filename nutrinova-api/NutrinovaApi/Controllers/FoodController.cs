@@ -259,7 +259,7 @@ public class FoodController : ControllerBase
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
-
+      logger.LogInformation($"RetrieveFoodForUserById, {result?.Ingredients}");
       if (result == null)
       {
         return NotFound("No food found");
@@ -390,6 +390,7 @@ public class FoodController : ControllerBase
       {
         Id = Guid.NewGuid(),
         Description = deserializedResult.description,
+        Ingredients = deserializedResult.ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
         ServingSize = (decimal?)deserializedResult.servingSize,
@@ -415,6 +416,8 @@ public class FoodController : ControllerBase
           UnitId = unitId.Value,
         });
       }
+
+      foodPlan.FoodPlanNutrients = foodPlanNutrients;
 
       // Save to the database
       await context.FoodPlans.AddAsync(foodPlan);
