@@ -258,7 +258,7 @@ public class FoodController : ControllerBase
       var result = await context.FoodPlans
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
-        .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
+        .FirstOrDefaultAsync<Food>(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
       logger.LogInformation($"RetrieveFoodForUserById, {result?.Ingredients}");
       if (result == null)
       {

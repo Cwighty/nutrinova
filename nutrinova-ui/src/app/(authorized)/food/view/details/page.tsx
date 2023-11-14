@@ -39,17 +39,24 @@ export default function Page({ searchParams }: PageProps) {
               {data?.brandName}
             </Typography>
           )}
+          {data?.servingSize && (
+            <Typography variant="body1" paragraph>
+              Serving Size: {data?.servingSize}
+            </Typography>
+          )}
           {data?.ingredients && (
             <div style={{ margin: "10px 0" }}>
-              {data?.ingredients.split(",").map((ingredient, index) => (
-                <Chip
-                  label={ingredient.trim()}
-                  variant="outlined"
-                  size="small"
-                  style={{ margin: "4px" }}
-                  key={index}
-                />
-              ))}
+              {data?.ingredients
+                .split(",")
+                .map((ingredient, index) => (
+                  <Chip
+                    label={ingredient.trim()}
+                    variant="outlined"
+                    size="small"
+                    style={{ margin: "4px" }}
+                    key={index}
+                  />
+                ))}
             </div>
           )}
           {data?.servingSizeWithUnits && (
@@ -88,6 +95,15 @@ export default function Page({ searchParams }: PageProps) {
                 ))}
               </List>
             </>
+          )}
+          <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
+            Notes
+          </Typography>
+          <Divider />
+          {data?.note && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {data?.note}
+            </Typography>
           )}
         </CardContent>
       </Card>

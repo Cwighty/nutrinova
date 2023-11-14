@@ -8,6 +8,7 @@ export interface FoodSearchResult {
   servingSizeUnit: string;
   servingSizeWithUnits: string;
   foodNutrients: FoodSearchResultNutrient[];
+  note: string;
 }
 
 export interface FoodSearchResultNutrient {

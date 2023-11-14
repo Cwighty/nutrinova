@@ -11,9 +11,15 @@ interface MyFoodSearchFormProps {
   currentSearchParameters: searchParameters;
 }
 
-export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters }: MyFoodSearchFormProps) => {
-  const handleSearchParemetersChange = (value: string | number | NutrientOption | null | undefined, targetProperty: string) => {
-    console.log("handleSearchParemetersChange", value, targetProperty);
+export const MyFoodSearchForm = ({
+  setSearchParameters,
+  currentSearchParameters,
+}: MyFoodSearchFormProps) => {
+  const handleSearchParametersChange = (
+    value: string | number | NutrientOption | null | undefined,
+    targetProperty: string,
+  ) => {
+    console.log("handleSearchParametersChange", value, targetProperty);
     setSearchParameters({
       ...currentSearchParameters,
       [targetProperty]: value,
@@ -30,7 +36,9 @@ export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters 
       }}
     >
       <TextField
-        onChange={(e) => handleSearchParemetersChange(e.target.value, "foodSearchTerm")}
+        onChange={(e) =>
+          handleSearchParametersChange(e.target.value, "foodSearchTerm")
+        }
         label="Food Name"
         placeholder="Search my foods"
         InputProps={{
@@ -43,9 +51,15 @@ export const MyFoodSearchForm = ({ setSearchParameters, currentSearchParameters 
       />
 
       <SelectNutrient
-        onSelectedNutrientChange={(n) => handleSearchParemetersChange(n, "nutrientSearchTerm")}
-        onNutrientAmountChange={(a) => handleSearchParemetersChange(a, "nutrientValue")}
-        onComparisonOperatorChange={(c) => handleSearchParemetersChange(c, "comparisonOperator")}
+        onSelectedNutrientChange={(n) =>
+          handleSearchParametersChange(n, "nutrientSearchTerm")
+        }
+        onNutrientAmountChange={(a) =>
+          handleSearchParametersChange(a, "nutrientValue")
+        }
+        onComparisonOperatorChange={(c) =>
+          handleSearchParametersChange(c, "comparisonOperator")
+        }
         canCompare={true}
       />
     </Box>
