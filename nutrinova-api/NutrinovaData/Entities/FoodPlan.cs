@@ -29,5 +29,7 @@ public partial class FoodPlan
 
     public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
 
+    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
+
     public virtual Unit ServingSizeUnitNavigation { get; set; } = null!;
 }
