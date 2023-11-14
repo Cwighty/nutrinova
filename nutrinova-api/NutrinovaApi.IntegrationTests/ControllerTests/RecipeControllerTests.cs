@@ -24,26 +24,22 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
   }
 
   [Fact]
-  public async Task CreateValidRecipePlan_ShouldReturnOk()
+  public async Task CreateRecipe_ShouldReturnBadRequest_WhenNoIngredients()
   {
-    var createFoodRequestModel = new CreateFoodRequestModel
+    var createRecipeRequest = new CreateRecipeRequestModel
     {
-      Description = "Test food plan",
-      Note = "Test note",
-      FoodNutrients = new List<CreateFoodNutrientRequestModel>
-      {
-        new()
-        {
-          NutrientId = 1005,
-          Amount = 10,
-        },
-      },
+      Description = "Test recipe plan",
+      Notes = "Test note",
+      RecipeFoods = new List<CreateRecipeFoodRequestModel>(),
     };
 
-    var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
+    var response = await httpClient.PostAsJsonAsync("be/recipe", createRecipeRequest);
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+  }
 
-    var foodId = await response.Content.ReadFromJsonAsync<string>();
-
+  [Fact]
+  public async Task CreateValidRecipePlan_ShouldReturnOk()
+  {
     var createRecipeRequest = new CreateRecipeRequestModel
     {
       Description = "Test recipe plan",
@@ -52,14 +48,14 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
       {
         new()
         {
-          FoodId = Guid.Parse(foodId ?? string.Empty),
+          FoodId = TestFoodPlan.Id,
           Amount = 10,
           UnitId = 1,
         },
       },
     };
 
-    response = await httpClient.PostAsJsonAsync("be/food", createRecipeRequest);
+    var response = await httpClient.PostAsJsonAsync("be/recipe", createRecipeRequest);
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
   }
 }
