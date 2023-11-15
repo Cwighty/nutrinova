@@ -16,12 +16,15 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreateRecipeMutation } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
+import { AddFoodDialog } from "./AddFoodDialog";
 
-// const initialFood: CreateRecipeFoodRequest = {
-//   foodId: 0,
-//   amount: 0,
-//   unitId: 1,
-// };
+const initialFood: CreateRecipeFoodRequest = {
+  foodId: 0,
+  amount: 0,
+  unitId: 1,
+  name: "",
+  unitName: ""
+};
 
 export default function CreateRecipeForm() {
   const [recipeFormState, setRecipeFormState] = useState<CreateRecipeRequest>({
@@ -31,20 +34,20 @@ export default function CreateRecipeForm() {
     recipeFoods: [],
   });
 
-  // const [newFood, setNewFood] =
-  //   useState<CreateRecipeFoodRequest>({ ...initialFood });
+  const [newFood, setNewFood] =
+    useState<CreateRecipeFoodRequest>({ ...initialFood });
 
   const createRecipeMutation = useCreateRecipeMutation();
 
   const [formValid, setFormValid] = useState<boolean>(true);
 
-  // const handleAddFood = () => {
-  //   setRecipeFormState({
-  //     ...recipeFormState,
-  //     recipeFoods: [...recipeFormState.recipeFoods, newFood],
-  //   });
-  //   setNewFood({ ...initialFood });
-  // };
+  const handleAddFood = () => {
+    setRecipeFormState({
+      ...recipeFormState,
+      recipeFoods: [...recipeFormState.recipeFoods, newFood],
+    });
+    setNewFood({ ...initialFood });
+  };
 
   const handleRemoveFood = (index: number) => {
     const updatedFoods = [...recipeFormState.recipeFoods];
@@ -133,11 +136,11 @@ export default function CreateRecipeForm() {
 
         <List>
           <Box>
-            {/* <AddFoodDialog
+            <AddFoodDialog
               newFood={newFood}
               setNewFood={setNewFood}
               handleAddFood={handleAddFood}
-            /> */}
+            />
           </Box>
           {recipeFormState.recipeFoods.length === 0 && (
             <Alert severity="warning">Please add at least one food</Alert>
