@@ -1,7 +1,7 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import { useQuery } from "@tanstack/react-query";
 
-const recipetagKeys = {
+export const recipetagKeys = {
   all: ["recipetags"] as const,
 };
 
