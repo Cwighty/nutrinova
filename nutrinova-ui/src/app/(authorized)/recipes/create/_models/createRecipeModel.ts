@@ -7,6 +7,5 @@ export interface CreateRecipeRequestModel {
   notes?: string;
   recipeFoods: CreateRecipeFoodModel[];
   servingSize?: number;
-  servingSizeUnit?: UnitOption | null;
-  servingSizeUnitId?: number;
+  servingSizeUnit?: UnitOption;
 }

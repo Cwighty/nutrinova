@@ -12,6 +12,7 @@ import {
   Paper,
   Alert,
   Box,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreateRecipeMutation } from "../../recipeHooks";
@@ -19,6 +20,7 @@ import TagInput from "@/components/forms/TagInput";
 import { AddFoodDialog } from "./AddFoodDialog";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
+import SelectUnit from "@/components/forms/SelectUnit";
 
 const initialFood: CreateRecipeFoodModel = {
   foodId: "",
@@ -119,6 +121,60 @@ export default function CreateRecipeForm() {
               tags={recipeFormState.tags || []}
               setTags={(tags) => setRecipeFormState({ ...recipeFormState, tags })}
             />
+          </Grid>
+
+          {/* Serving Size */}
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Serving Size"
+              type="number"
+              value={recipeFormState.servingSize ?? ""}
+              onChange={(e) =>
+                setRecipeFormState({
+                  ...recipeFormState,
+                  servingSize: Number(e.target.value),
+                })
+              }
+              fullWidth
+              margin="normal"
+              error={
+                !formValid &&
+                recipeFormState.servingSize !== undefined &&
+                recipeFormState.servingSize <= 0
+              }
+              helperText={
+                !formValid &&
+                  recipeFormState.servingSize !== undefined &&
+                  recipeFormState.servingSize <= 0
+                  ? "Please enter a valid serving size"
+                  : ""
+              }
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <SelectUnit
+              value={recipeFormState.servingSizeUnit ? recipeFormState.servingSizeUnit : null}
+              onSelectedUnitChange={(unit) =>
+                setRecipeFormState({ ...recipeFormState, servingSizeUnit: unit, servingSizeUnitId: unit?.id ?? 0 })
+              }
+              error={
+                !formValid &&
+                recipeFormState.servingSize !== undefined &&
+                recipeFormState.servingSizeUnit === undefined
+              }
+              helperText={
+                !formValid && recipeFormState.servingSize
+                  ? "A unit must be supplied with a serving size"
+                  : ""
+              }
+            />
+          </Grid>
+
+          {/* Macro Nutrient Summary */}
+          <Grid item xs={12}>
+            <Typography variant="h6">Macro Nutrient Summary</Typography>
+            <Typography variant="body2">No foods added</Typography>
           </Grid>
 
           {/* Notes */}
