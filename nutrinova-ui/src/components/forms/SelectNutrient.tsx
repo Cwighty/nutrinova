@@ -52,7 +52,7 @@ const SelectNutrient = ({
   const [selectedNutrient, setSelectedNutrient] =
     useState<NutrientOption | null | undefined>(null);
 
-  const [comparisonOperator, setComparisonOperator] = useState<string>("");
+  const [comparisonOperator, setComparisonOperator] = useState<string>(COMPARISON_OPERATOR_OPTIONS[1].abbreviation);
 
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
@@ -92,8 +92,8 @@ const SelectNutrient = ({
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Grid container>
-          <Grid item xs={12} md={3}>
+        <Grid container columnSpacing={1} justifyContent={'flex-end'}>
+          <Grid item xs={12} md={3} >
             <Autocomplete
               options={nutrientOptions}
               getOptionLabel={(option) => option.nutrientName}
@@ -101,7 +101,7 @@ const SelectNutrient = ({
                 <TextField
                   {...params}
                   label="Nutrient"
-                  sx={{ flexGrow: 1 }}
+                  sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
                   error={error}
                   helperText={helperText}
                 />
@@ -113,9 +113,10 @@ const SelectNutrient = ({
             <Grid item xs={12} md={3}>
               <TextField
                 select
+                fullWidth
                 value={comparisonOperator}
                 label="Comparison"
-                sx={{ ml: 2 }}
+                sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
                 onChange={(e) => handleComparisonOperatorChange(e)}
               >
                 {COMPARISON_OPERATOR_OPTIONS.map((option) => (
@@ -132,7 +133,8 @@ const SelectNutrient = ({
               helperText={helperText}
               label="Amount"
               type="number"
-              sx={{ ml: 2, flexGrow: 1, maxWidth: "50%" }}
+              fullWidth
+              sx={{ flexGrow: 1 }}
               onChange={(e) => handleNutrientAmountChange(e)}
               InputProps={{
                 inputProps: { min: 0 },
