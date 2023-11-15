@@ -240,6 +240,7 @@ public partial class NutrinovaDbContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.FoodId).HasColumnName("food_id");
             entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
             entity.Property(e => e.UnitId)
@@ -291,6 +292,7 @@ public partial class NutrinovaDbContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.MealHistoryId).HasColumnName("meal_history_id");
             entity.Property(e => e.RecipeHistoryId).HasColumnName("recipe_history_id");
             entity.Property(e => e.UnitId)
@@ -454,6 +456,7 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");
@@ -473,6 +476,7 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");

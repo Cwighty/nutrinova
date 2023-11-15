@@ -80,6 +80,7 @@ CREATE TABLE
         description TEXT,
         Tags TEXT,
         Notes TEXT,
+        created_at TIMESTAMP WITH TIME ZONE not null,
         created_by uuid REFERENCES Customer(id)
     );
 
@@ -89,6 +90,7 @@ CREATE TABLE
         description TEXT,
         Tags TEXT,
         Notes TEXT,
+        created_at TIMESTAMP WITH TIME ZONE not null,
         created_by uuid REFERENCES Customer(id)
     );
 
@@ -159,6 +161,7 @@ CREATE TABLE
         Recipe_History_id UUID NOT NULL REFERENCES Recipe_History (id),
         Meal_History_id UUID NOT NULL REFERENCES Meal_History (id),
         Amount DECIMAL not null,
+        created_at TIMESTAMP WITH TIME ZONE not null,
         Unit_id serial REFERENCES Unit (id) not null
     );
 
@@ -169,6 +172,7 @@ CREATE TABLE
         Meal_History_id UUID NOT NULL REFERENCES Meal_History (id),
         food_id UUID not null REFERENCES Food_History (id),
         Amount DECIMAL,
+        created_at TIMESTAMP WITH TIME ZONE not null,
         Unit_id serial not null REFERENCES Unit (id)
     );
 
@@ -195,8 +199,8 @@ CREATE TABLE
 CREATE TABLE
     Recipe_Food (
         id UUID PRIMARY KEY,
-        Food_id UUID NOT NULL REFERENCES Food_History (id),
-        Recipe_id UUID NOT NULL REFERENCES Recipe_History (id),
+        Food_id UUID NOT NULL REFERENCES Food_Plan (id),
+        Recipe_id UUID NOT NULL REFERENCES Recipe_Plan (id),
         Amount DECIMAL not null,
         Unit_id serial not null REFERENCES Unit (id)
     );

@@ -15,9 +15,9 @@ public partial class RecipeFood
 
     public int UnitId { get; set; }
 
-    public virtual FoodHistory Food { get; set; } = null!;
+    public virtual FoodPlan Food { get; set; } = null!;
 
-    public virtual RecipeHistory Recipe { get; set; } = null!;
+    public virtual RecipePlan Recipe { get; set; } = null!;
 
     public virtual Unit Unit { get; set; } = null!;
 }

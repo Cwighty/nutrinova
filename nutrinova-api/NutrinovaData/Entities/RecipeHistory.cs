@@ -13,6 +13,8 @@ public partial class RecipeHistory
 
     public string? Notes { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public Guid? CreatedBy { get; set; }
 
     public virtual Customer? CreatedByNavigation { get; set; }
@@ -20,6 +22,4 @@ public partial class RecipeHistory
     public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
 
     public virtual ICollection<RecipeFoodHistory> RecipeFoodHistories { get; set; } = new List<RecipeFoodHistory>();
-
-    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
 }

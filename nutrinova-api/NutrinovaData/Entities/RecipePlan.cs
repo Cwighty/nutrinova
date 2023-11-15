@@ -13,7 +13,11 @@ public partial class RecipePlan
 
     public string? Notes { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public Guid? CreatedBy { get; set; }
 
     public virtual Customer? CreatedByNavigation { get; set; }
+
+    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
 }

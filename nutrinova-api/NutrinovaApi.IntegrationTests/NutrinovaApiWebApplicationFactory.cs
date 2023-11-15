@@ -48,9 +48,18 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
       Objectid = DefaultUserId,
       Email = "testuser@example.com",
     };
-
     context.Customers.Add(testCustomer);
     await context.SaveChangesAsync();
+
+    var testEntities = new List<ITestDbInitializer>
+    {
+      new TestFoodPlan(),
+    };
+
+    foreach (var testEntity in testEntities)
+    {
+      await testEntity.InitializeDbTestData(context);
+    }
   }
 
   async Task IAsyncLifetime.DisposeAsync()
