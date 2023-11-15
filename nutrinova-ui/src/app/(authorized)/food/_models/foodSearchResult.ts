@@ -1,17 +1,19 @@
 export interface FoodSearchResult {
-    fdcId: number;
-    description: string;
-    ingredients: string;
-    brandName: string;
-    servingSize: number;
-    servingSizeUnit: string;
-    servingSizeWithUnits: string;
-    foodNutrients: FoodSearchResultNutrient[];
+  fdcId: number;
+  id: string;
+  description: string;
+  ingredients: string;
+  brandName: string;
+  servingSize: number;
+  servingSizeUnit: string;
+  servingSizeWithUnits: string;
+  foodNutrients: FoodSearchResultNutrient[];
+  note: string;
 }
 
 export interface FoodSearchResultNutrient {
-    nutrientName: string;
-    nameWithAmountAndUnit: string;
-    unitName: string;
-    value: number;
+  nutrientName: string;
+  nameWithAmountAndUnit: string;
+  unitName: string;
+  value: number;
 }
