@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
@@ -61,6 +62,7 @@ public class RecipeController : ControllerBase
       Description = createRecipeRequestModel.Description,
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
+      Tags = createRecipeRequestModel.Tags?.Aggregate((a, b) => $"{a},{b}") ?? string.Empty,
       Notes = createRecipeRequestModel.Notes,
       RecipeFoods = createRecipeRequestModel.RecipeFoods.Select(rf => new RecipeFood
       {
@@ -84,5 +86,21 @@ public class RecipeController : ControllerBase
     }
 
     return Ok(new { message = "Recipe created successfully", id = foodPlan.Id });
+  }
+
+  [HttpGet("tags")]
+  public async Task<ActionResult<IEnumerable<string>>> GetRecipeTags()
+  {
+    var tags = new List<string>();
+    var recipes = await context.RecipePlans.ToListAsync();
+    foreach (var recipe in recipes)
+    {
+      if (!string.IsNullOrWhiteSpace(recipe.Tags))
+      {
+        tags.AddRange(recipe.Tags.Split(','));
+      }
+    }
+
+    return Ok(tags.Distinct());
   }
 }

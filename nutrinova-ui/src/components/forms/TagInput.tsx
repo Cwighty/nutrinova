@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Chip, TextField } from '@mui/material';
+import { Alert, Autocomplete, Chip, Skeleton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useGetRecipeTagsQuery } from './tagHooks';
 
 interface TagInputProps {
   tags: string[];
@@ -8,41 +9,41 @@ interface TagInputProps {
 }
 
 const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
-  const [inputValue, setInputValue] = useState('');
+  const { data: recipeTags, isLoading: recipeTagsLoading, isError: recipeTagsIsError } = useGetRecipeTagsQuery();
 
-  const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && inputValue) {
-      setTags([...tags, inputValue]);
-      setInputValue('');
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  };
-
-  const handleDeleteTag = (tagToDelete: string) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
-  };
-
+  if (recipeTagsLoading) {
+    return (
+      <Skeleton variant="rounded" sx={{ mt: 2 }} width={'auto'} height={40} />
+    )
+  }
+  if (recipeTagsIsError) {
+    return <Alert severity="error">Error loading recipe tags, try again later</Alert>;
+  }
   return (<>
-    <TextField
-      label="New Tag"
-      value={inputValue}
-      onChange={(e) => setInputValue(e.target.value)}
-      onKeyDown={handleAddTag}
-      variant="outlined"
-      fullWidth
-      margin="normal"
-    />
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-      {tags.map((tag, index) => (
-        <Chip
-          key={index}
-          label={tag}
-          onDelete={() => handleDeleteTag(tag)}
-          deleteIcon={<CloseIcon />}
-        />
-      ))}
-    </div>
+    {recipeTags && (
+      <Autocomplete
+        value={tags}
+        multiple
+        id="tags-filled"
+        options={recipeTags}
+        freeSolo
+        onChange={(_, value) => { setTags(value) }}
+        renderTags={(value: readonly string[]) =>
+          value.map((option: string) => (
+            <Chip variant="outlined" label={option} key={option} />
+          ))
+        }
+        renderInput={(params) => (
+          <TextField {...params}
+            label="New Tag"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+        )}
+      />
+
+    )}
   </>
   );
 };
