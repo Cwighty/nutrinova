@@ -4,11 +4,11 @@ import { Search } from "@mui/icons-material";
 import React from "react";
 import SelectNutrient from "@/components/forms/SelectNutrient";
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
-import { searchParameters } from "../page";
+import { SearchParameters } from "../page";
 
 interface MyFoodSearchFormProps {
-  setSearchParameters: (searchParameters: searchParameters) => void;
-  currentSearchParameters: searchParameters;
+  setSearchParameters: (searchParameters: SearchParameters) => void;
+  currentSearchParameters: SearchParameters;
 }
 
 export const MyFoodSearchForm = ({
@@ -58,7 +58,7 @@ export const MyFoodSearchForm = ({
           handleSearchParametersChange(a, "nutrientValue")
         }
         onComparisonOperatorChange={(c) =>
-          handleSearchParametersChange(c, "comparisonOperator")
+          handleSearchParametersChange(c as string, "comparisonOperator")
         }
         canCompare={true}
       />

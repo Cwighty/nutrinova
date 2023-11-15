@@ -17,6 +17,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { SelectFoodDataGrid } from "@/components/forms/SelectFoodDataGrid";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { ExpandCircleDown } from "@mui/icons-material";
+import { SearchParameters } from "@/app/(authorized)/food/view/page";
 
 interface Props {
   handleAddFood: () => void;
@@ -30,8 +31,13 @@ export const AddFoodDialog = ({
   setNewFood,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const searchKeywordDebounce = useDebounce(searchKeyword, 500);
+  const [searchParameters, setSearchParameters] = useState<SearchParameters>({
+    nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
+    foodSearchTerm: "",
+    comparisonOperator: "gt",
+    nutrientValue: 0,
+  });
+  const searchParameterDebounce = useDebounce(searchParameters, 500);
 
   const handleOpen = () => {
     setOpen(true);
@@ -62,8 +68,8 @@ export const AddFoodDialog = ({
               <Typography>{newFood.name === "" ? "Select a Food" : newFood.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <MyFoodSearchForm setSearchTerm={setSearchKeyword} />
-              <SelectFoodDataGrid searchQuery={searchKeywordDebounce} onFoodSelected={(food) => setNewFood({
+              <MyFoodSearchForm setSearchParameters={setSearchParameters} currentSearchParameters={searchParameters} />
+              <SelectFoodDataGrid searchQuery={searchParameterDebounce} onFoodSelected={(food) => setNewFood({
                 ...newFood,
                 foodId: food.fdcId,
                 name: food.description,

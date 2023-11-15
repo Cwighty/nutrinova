@@ -5,10 +5,10 @@ import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 import { useRouter } from "next/navigation";
-import { searchParameters } from "../page";
+import { SearchParameters } from "../page";
 
 interface MyFoodsSearchResultDataGridProps {
-  searchQuery: searchParameters;
+  searchQuery: SearchParameters;
 }
 
 export const MyFoodsSearchResultDataGrid = ({
