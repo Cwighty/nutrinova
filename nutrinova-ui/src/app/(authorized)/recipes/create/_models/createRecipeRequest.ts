@@ -1,6 +1,8 @@
-interface CreateRecipeRequest {
+import { CreateRecipeFoodModel } from "./createRecipeFoodModel";
+
+export interface CreateRecipeRequestModel {
   description?: string;
-  notes?: string;
   tags?: string[];
-  recipeFoods: CreateRecipeFoodRequest[];
+  notes?: string;
+  recipeFoods: CreateRecipeFoodModel[];
 }

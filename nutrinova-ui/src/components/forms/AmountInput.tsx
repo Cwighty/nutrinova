@@ -8,6 +8,7 @@ import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 interface AmountInputProps {
   amount: number;
   setAmount: (amount: number) => void;
+  unit: UnitOption;
   setUnit: (unit: UnitOption) => void;
 }
 
@@ -16,6 +17,7 @@ interface AmountInputProps {
 export const AmountInput = ({
   amount,
   setAmount,
+  unit,
   setUnit,
 }: AmountInputProps) => {
 
@@ -33,16 +35,20 @@ export const AmountInput = ({
             value={amount}
             onChange={handleAmountChange}
             fullWidth
+            error={amount <= 0}
+            helperText={amount <= 0 ? "Amount must be greater than 0" : ""}
             margin="normal"
           />
         </Grid>
 
         <Grid item xs={6} md={6}>
           <SelectUnit
+            value={unit}  
             onSelectedUnitChange={(unit) => {
-              setUnit(unit ?? { id: 1, description: "gram", abreviation: "g" });
-            }
-            }
+              setUnit(unit ?? { id: 0, description: "", abreviation: "" });
+            }}
+            error={unit.description === ""}
+            helperText={unit.description === "" ? "Please select a unit" : ""}
           />
         </Grid>
       </Grid>

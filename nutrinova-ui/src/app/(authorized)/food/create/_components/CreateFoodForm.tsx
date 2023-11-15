@@ -27,14 +27,14 @@ import SelectUnit from "@/components/forms/SelectUnit";
 const initialNutrient: CreateFoodNutrientRequestModel = {
   nutrientId: 0,
   amount: 0,
-  unitId: 1,
+  unitId: 0,
 };
 
 export default function CreateFoodForm() {
   const [foodFormState, setFoodFormState] = useState<CreateFoodRequestModel>({
     description: "",
     servingSize: undefined,
-    unit: 1,
+    unit: 0,
     note: "",
     foodNutrients: [],
   });
@@ -150,8 +150,8 @@ export default function CreateFoodForm() {
               }
               helperText={
                 !formValid &&
-                foodFormState.servingSize !== undefined &&
-                foodFormState.servingSize <= 0
+                  foodFormState.servingSize !== undefined &&
+                  foodFormState.servingSize <= 0
                   ? "Please enter a valid serving size"
                   : ""
               }
@@ -160,6 +160,7 @@ export default function CreateFoodForm() {
 
           <Grid item xs={12} md={3}>
             <SelectUnit
+              value={unitOptions?.find((u) => u.id === foodFormState.unit) ?? null}
               onSelectedUnitChange={(unit) =>
                 setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })
               }

@@ -1,5 +1,5 @@
-interface CreateRecipeFoodRequest {
-  foodId: number;
+export interface CreateRecipeFoodModel {
+  foodId: string;
   name: string;
   amount: number;
   unitId: number;

@@ -18,11 +18,12 @@ import { SelectFoodDataGrid } from "@/components/forms/SelectFoodDataGrid";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { ExpandCircleDown } from "@mui/icons-material";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
+import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
 
 interface Props {
   handleAddFood: () => void;
-  newFood: CreateRecipeFoodRequest;
-  setNewFood: (newFood: CreateRecipeFoodRequest) => void;
+  newFood: CreateRecipeFoodModel;
+  setNewFood: (newFood: CreateRecipeFoodModel) => void;
 }
 
 export const AddFoodDialog = ({
@@ -38,6 +39,7 @@ export const AddFoodDialog = ({
     nutrientValue: 0,
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
+  const [validFoodSelected, setValidFoodSelcted] = useState<boolean>(true);
 
   const handleOpen = () => {
     setOpen(true);
@@ -45,9 +47,27 @@ export const AddFoodDialog = ({
 
   const handleClose = () => {
     setOpen(false);
+    setNewFood({
+      foodId: "",
+      amount: 1,
+      unitId: 1,
+      name: "",
+      unitName: "Gram",
+    });
+    setValidFoodSelcted(true);
   };
 
   const submit = () => {
+    if (newFood.amount <= 0) {
+      return;
+    }
+    if (newFood.foodId === "") {
+      setValidFoodSelcted(false);
+      return;
+    }
+    if (newFood.unitId === 0) {
+      return;
+    }
     handleAddFood();
     handleClose();
   };
@@ -71,19 +91,25 @@ export const AddFoodDialog = ({
               <MyFoodSearchForm setSearchParameters={setSearchParameters} currentSearchParameters={searchParameters} />
               <SelectFoodDataGrid searchQuery={searchParameterDebounce} onFoodSelected={(food) => setNewFood({
                 ...newFood,
-                foodId: food.fdcId,
+                foodId: food.id,
                 name: food.description,
               })} />
             </AccordionDetails>
           </Accordion>
-          <AmountInput amount={newFood.amount} setAmount={(amount) => setNewFood({
-            ...newFood,
-            amount: amount,
-          })} setUnit={(unit) => setNewFood({
-            ...newFood,
-            unitId: unit.id,
-            unitName: unit.description
-          })} />
+          {validFoodSelected ? "" : <Typography fontSize={12} color="error">Please select a food</Typography>}
+
+          <AmountInput
+            amount={newFood.amount}
+            setAmount={(amount) => setNewFood({
+              ...newFood,
+              amount: amount,
+            })}
+            unit={{ id: newFood.unitId, description: newFood.unitName, abreviation: "" }}
+            setUnit={(unit) => setNewFood({
+              ...newFood,
+              unitId: unit.id,
+              unitName: unit.description
+            })} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

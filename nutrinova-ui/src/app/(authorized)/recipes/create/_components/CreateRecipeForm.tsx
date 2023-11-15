@@ -17,17 +17,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreateRecipeMutation } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
 import { AddFoodDialog } from "./AddFoodDialog";
+import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
+import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 
-const initialFood: CreateRecipeFoodRequest = {
-  foodId: 0,
-  amount: 0,
+const initialFood: CreateRecipeFoodModel = {
+  foodId: "",
+  amount: 1,
   unitId: 1,
   name: "",
-  unitName: ""
+  unitName: "Gram"
 };
 
 export default function CreateRecipeForm() {
-  const [recipeFormState, setRecipeFormState] = useState<CreateRecipeRequest>({
+  const [recipeFormState, setRecipeFormState] = useState<CreateRecipeRequestModel>({
     description: "",
     notes: "",
     tags: [],
@@ -35,7 +37,7 @@ export default function CreateRecipeForm() {
   });
 
   const [newFood, setNewFood] =
-    useState<CreateRecipeFoodRequest>({ ...initialFood });
+    useState<CreateRecipeFoodModel>({ ...initialFood });
 
   const createRecipeMutation = useCreateRecipeMutation();
 
@@ -68,6 +70,7 @@ export default function CreateRecipeForm() {
         setRecipeFormState({
           description: "",
           notes: "",
+          tags: [],
           recipeFoods: [],
         });
       },

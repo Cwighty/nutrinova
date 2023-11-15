@@ -6,13 +6,14 @@ import { Alert, Autocomplete, Skeleton, TextField } from "@mui/material";
 import { SyntheticEvent } from "react";
 
 interface SelectUnitProps {
+  value: UnitOption | null;
   useAbreviation?: boolean;
   error?: boolean;
   helperText?: string;
   onSelectedUnitChange: (unit: UnitOption | null) => void;
 }
 
-export default function SelectUnit({ onSelectedUnitChange, error, helperText, useAbreviation = false }: SelectUnitProps) {
+export default function SelectUnit({ onSelectedUnitChange, error, helperText, useAbreviation = false, value }: SelectUnitProps) {
   const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
 
   const handleSelectionChanged = (_: SyntheticEvent<Element, Event>, value: UnitOption | null) => {
@@ -31,6 +32,7 @@ export default function SelectUnit({ onSelectedUnitChange, error, helperText, us
     {unitOptions && (
 
       <Autocomplete
+        value={value}
         options={unitOptions}
         getOptionLabel={(option) => `${useAbreviation ? option.abreviation : option.description}`}
         renderOption={(props, option) => {
