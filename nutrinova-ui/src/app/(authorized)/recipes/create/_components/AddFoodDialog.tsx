@@ -1,10 +1,14 @@
 "use client";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -12,6 +16,7 @@ import { MyFoodSearchForm } from "@/app/(authorized)/food/view/_components/MyFoo
 import { useDebounce } from "@uidotdev/usehooks";
 import { SelectFoodDataGrid } from "@/components/forms/SelectFoodDataGrid";
 import { AmountInput } from "@/components/forms/AmountInput";
+import { ExpandCircleDown } from "@mui/icons-material";
 
 interface Props {
   handleAddFood: () => void;
@@ -48,12 +53,23 @@ export const AddFoodDialog = ({
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Food</DialogTitle>
         <DialogContent>
-          <MyFoodSearchForm setSearchTerm={setSearchKeyword} />
-          <SelectFoodDataGrid searchQuery={searchKeywordDebounce} onFoodSelected={(food) => setNewFood({
-            ...newFood,
-            foodId: food.fdcId,
-            name: food.description,
-          })} />
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandCircleDown />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>{newFood.name === "" ? "Select a Food" : newFood.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <MyFoodSearchForm setSearchTerm={setSearchKeyword} />
+              <SelectFoodDataGrid searchQuery={searchKeywordDebounce} onFoodSelected={(food) => setNewFood({
+                ...newFood,
+                foodId: food.fdcId,
+                name: food.description,
+              })} />
+            </AccordionDetails>
+          </Accordion>
           <AmountInput amount={newFood.amount} setAmount={(amount) => setNewFood({
             ...newFood,
             amount: amount,

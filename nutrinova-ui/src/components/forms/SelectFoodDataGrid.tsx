@@ -15,7 +15,6 @@ export const SelectFoodDataGrid = ({
   onFoodSelected,
 }: MyFoodsSearchResultDataGridProps) => {
   const columns: GridColDef[] = [
-    { field: "fdcId", headerName: "ID", minWidth: 100 },
     { field: "description", headerName: "Description", minWidth: 500 },
   ];
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
@@ -40,7 +39,7 @@ export const SelectFoodDataGrid = ({
         columns={columns}
         autoHeight
         initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
+          pagination: { paginationModel: { pageSize: 5 } },
         }}
         slots={{
           noRowsOverlay: NoFoodRowsOverlay,
