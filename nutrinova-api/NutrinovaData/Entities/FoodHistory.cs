@@ -33,7 +33,5 @@ public partial class FoodHistory
 
     public virtual ICollection<RecipeFoodHistory> RecipeFoodHistories { get; set; } = new List<RecipeFoodHistory>();
 
-    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
-
     public virtual Unit ServingSizeUnitNavigation { get; set; } = null!;
 }

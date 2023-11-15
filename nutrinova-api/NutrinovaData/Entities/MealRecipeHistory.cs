@@ -13,6 +13,8 @@ public partial class MealRecipeHistory
 
     public decimal Amount { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public int UnitId { get; set; }
 
     public virtual MealHistory MealHistory { get; set; } = null!;
