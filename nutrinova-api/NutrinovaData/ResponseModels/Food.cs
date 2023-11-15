@@ -10,6 +10,8 @@ public class Food
 
     public string ingredients { get; set; }
 
+    public string note { get; set; }
+
     public string dataType { get; set; }
 
     public string publishedDate { get; set; }

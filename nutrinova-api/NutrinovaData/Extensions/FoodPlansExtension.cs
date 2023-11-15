@@ -17,10 +17,13 @@ public static class FoodPlansExtension
     {
       fdcId = foodPlan.Fdcid ?? 0,
       description = foodPlan.Description,
+      note = foodPlan.Note ?? string.Empty,
       brandName = foodPlan.BrandName ?? string.Empty,
       ingredients = foodPlan.Ingredients ?? string.Empty,
       servingSize = (double)(foodPlan.ServingSize ?? 0),
-      servingSizeUnit = foodPlan.ServingSizeUnit,
+
+      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abreviation,
+      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abreviation}",
       foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
     };
   }

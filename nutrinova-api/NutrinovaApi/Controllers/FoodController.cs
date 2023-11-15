@@ -241,7 +241,7 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("food-details/{foodId}")]
-  public async Task<ActionResult<FoodPlan>> RetrieveFoodForUserById(
+  public async Task<ActionResult<Food>> RetrieveFoodForUserById(
     string? foodId = null)
   {
     try
@@ -256,16 +256,17 @@ public class FoodController : ControllerBase
       }
 
       var result = await context.FoodPlans
+        .Include(fp => fp.ServingSizeUnitNavigation)
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
-        .FirstOrDefaultAsync<Food>(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
+        .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
       logger.LogInformation($"RetrieveFoodForUserById, {result?.Ingredients}");
       if (result == null)
       {
         return NotFound("No food found");
       }
 
-      return result;
+      return result.ToFood();
     }
     catch (HttpRequestException ex)
     {

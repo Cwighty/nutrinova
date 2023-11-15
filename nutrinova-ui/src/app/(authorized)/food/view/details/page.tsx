@@ -39,11 +39,6 @@ export default function Page({ searchParams }: PageProps) {
               {data?.brandName}
             </Typography>
           )}
-          {data?.servingSize && (
-            <Typography variant="body1" paragraph>
-              Serving Size: {data?.servingSize}
-            </Typography>
-          )}
           {data?.ingredients && (
             <div style={{ margin: "10px 0" }}>
               {data?.ingredients
@@ -61,8 +56,8 @@ export default function Page({ searchParams }: PageProps) {
           )}
           {data?.servingSizeWithUnits && (
             <Typography variant="body1" paragraph>
-              Serving Size: {parseFloat(data?.servingSizeWithUnits).toFixed(2)}{" "}
-              GRM
+              Serving Size: {data?.servingSize.toFixed(2)} {data?.servingSizeUnit}
+
             </Typography>
           )}
           {data?.foodNutrients && data?.foodNutrients.length > 0 && (
