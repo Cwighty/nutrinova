@@ -1,6 +1,7 @@
 "use client";
 
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
+import { COMPARISON_OPERATOR_OPTIONS } from "@/app/(authorized)/food/_models/comparisonOperatorOptions";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import {
   useGetNutrientsQuery,
@@ -9,24 +10,34 @@ import {
 import {
   Alert,
   Autocomplete,
-  Box,
+  Grid,
   InputAdornment,
+  MenuItem,
   Skeleton,
   TextField,
 } from "@mui/material";
-import React, { SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 
 interface SelectNutrientProps {
   error?: boolean;
   helperText?: string;
-  onSelectedNutrientChange: (nutrient: NutrientOption | null) => void;
+  canCompare?: boolean;
+  onSelectedNutrientChange: (nutrient: NutrientOption | null | undefined) => void;
   onNutrientAmountChange: (
     amount: number | null,
     unit: UnitOption | null,
   ) => void;
+  onComparisonOperatorChange: (comparisonOperator: string) => void;
 }
 
-const SelectNutrient = (inputProps: SelectNutrientProps) => {
+const SelectNutrient = ({
+  error,
+  helperText,
+  canCompare = false,
+  onComparisonOperatorChange,
+  onNutrientAmountChange,
+  onSelectedNutrientChange,
+}: SelectNutrientProps) => {
   const {
     data: nutrientOptions,
     isLoading: nutrientOptionsLoading,
@@ -39,24 +50,33 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   } = useGetUnitsQuery();
 
   const [selectedNutrient, setSelectedNutrient] =
-    useState<NutrientOption | null>(null);
+    useState<NutrientOption | null | undefined>(null);
+
+  const [comparisonOperator, setComparisonOperator] = useState<string>(COMPARISON_OPERATOR_OPTIONS[1].abbreviation);
 
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
     value: NutrientOption | null,
   ) => {
-    setSelectedNutrient(value);
-    inputProps.onSelectedNutrientChange(value);
+    setSelectedNutrient(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName));
+    onSelectedNutrientChange(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName) ?? { id: -1, nutrientName: "", preferredUnit: 0 } as NutrientOption);
+  };
+
+  const handleComparisonOperatorChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setComparisonOperator(event.target.value);
+    onComparisonOperatorChange(event.target.value);
   };
 
   const handleNutrientAmountChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const newAmount = parseFloat(event.target.value) ?? null;
     const newUnit =
       unitOptions?.find((u) => u.id === selectedNutrient?.preferredUnit) ??
       null;
-    inputProps.onNutrientAmountChange(newAmount, newUnit);
+    onNutrientAmountChange(newAmount, newUnit);
   };
 
   if (nutrientOptionsLoading || unitOptionsLoading) {
@@ -72,48 +92,63 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Box display={"flex"} alignItems={"center"}>
-          <Autocomplete
-            options={nutrientOptions}
-            getOptionLabel={(option) => `${option.id} ${option.nutrientName}`}
-            sx={{ flexGrow: 1 }}
-            renderOption={(props, option) => {
-              return (
-                <li {...props} key={option.id}>
-                  {option.nutrientName}
-                </li>
-              );
-            }}
-            renderInput={(params) => (
+        <Grid container columnSpacing={1} justifyContent={'flex-end'}>
+          <Grid item xs={12} md={3} >
+            <Autocomplete
+              options={nutrientOptions}
+              getOptionLabel={(option) => option.nutrientName}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Nutrient"
+                  sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+                  error={error}
+                  helperText={helperText}
+                />
+              )}
+              onChange={handleNutrientSelectionChange}
+            />
+          </Grid>
+          {canCompare && (
+            <Grid item xs={12} md={3}>
               <TextField
-                {...params}
-                label="Nutrient"
-                sx={{ flexGrow: 1 }}
-                error={inputProps.error}
-                helperText={inputProps.helperText}
-              />
-            )}
-            onChange={handleNutrientSelectionChange}
-          />
-          <TextField
-            error={inputProps.error}
-            helperText={inputProps.helperText}
-            label="Amount"
-            type="number"
-            sx={{ width: "50%", ml: 2 }}
-            onChange={handleNutrientAmountChange}
-            InputProps={{
-              inputProps: { min: 0 },
-              endAdornment: (
-                <InputAdornment position="end">
-                  {unitOptions.find(
-                    (u) => u.id === selectedNutrient?.preferredUnit,
-                  )?.abreviation ?? ""}
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
+                select
+                fullWidth
+                value={comparisonOperator}
+                label="Comparison"
+                sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+                onChange={(e) => handleComparisonOperatorChange(e)}
+              >
+                {COMPARISON_OPERATOR_OPTIONS.map((option) => (
+                  <MenuItem key={option.id} value={option.abbreviation}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          )}
+          <Grid item xs={12} md={3}>
+            <TextField
+              error={error}
+              helperText={helperText}
+              label="Amount"
+              type="number"
+              fullWidth
+              sx={{ flexGrow: 1 }}
+              onChange={(e) => handleNutrientAmountChange(e)}
+              InputProps={{
+                inputProps: { min: 0 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {unitOptions.find(
+                      (u) => u.id === selectedNutrient?.preferredUnit,
+                    )?.abreviation ?? ""}
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
       )}
     </>
   );

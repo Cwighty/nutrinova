@@ -1,27 +1,29 @@
 "use client";
 import { Box, InputAdornment, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import React, { useState } from "react";
+import React from "react";
 import SelectNutrient from "@/components/forms/SelectNutrient";
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
+import { searchParameters } from "../page";
 
 interface MyFoodSearchFormProps {
-  setSearchTerm: (searchTerm: string) => void;
+  setSearchParameters: (searchParameters: searchParameters) => void;
+  currentSearchParameters: searchParameters;
 }
 
-export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedNutrient, setSelectedNutrient] =
-    useState<NutrientOption | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-
-  const handleNutrientSelectionChange = (nutrient: NutrientOption | null) => {
-    setSelectedNutrient(nutrient);
-  };
-
-  const handleNutrientAmountChange = (amount: number | null) => {
-    setSelectedAmount(amount);
+export const MyFoodSearchForm = ({
+  setSearchParameters,
+  currentSearchParameters,
+}: MyFoodSearchFormProps) => {
+  const handleSearchParametersChange = (
+    value: string | number | NutrientOption | null | undefined,
+    targetProperty: string,
+  ) => {
+    console.log("handleSearchParametersChange", value, targetProperty);
+    setSearchParameters({
+      ...currentSearchParameters,
+      [targetProperty]: value,
+    });
   };
 
   return (
@@ -34,7 +36,9 @@ export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
       }}
     >
       <TextField
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) =>
+          handleSearchParametersChange(e.target.value, "foodSearchTerm")
+        }
         label="Food Name"
         placeholder="Search my foods"
         InputProps={{
@@ -47,8 +51,16 @@ export const MyFoodSearchForm = ({ setSearchTerm }: MyFoodSearchFormProps) => {
       />
 
       <SelectNutrient
-        onSelectedNutrientChange={handleNutrientSelectionChange}
-        onNutrientAmountChange={handleNutrientAmountChange}
+        onSelectedNutrientChange={(n) =>
+          handleSearchParametersChange(n, "nutrientSearchTerm")
+        }
+        onNutrientAmountChange={(a) =>
+          handleSearchParametersChange(a, "nutrientValue")
+        }
+        onComparisonOperatorChange={(c) =>
+          handleSearchParametersChange(c, "comparisonOperator")
+        }
+        canCompare={true}
       />
     </Box>
   );

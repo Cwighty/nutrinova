@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
+import { searchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
 
 const nutrientKeys = {
@@ -17,7 +18,8 @@ const unitKeys = {
 
 const foodKeys = {
   all: ["foods"] as const,
-  foodName: (foodName: string) => [...foodKeys.all, foodName] as const,
+  foodSearchParams: (foodName: string, nutrient: string, comparisonOperator: string, nutrientValue: number) => [...foodKeys.all, foodName, nutrient, nutrientValue, comparisonOperator] as const,
+  foodID: (foodId: string) => [...foodKeys.all, foodId] as const,
 };
 
 const fetchNutrients = async (): Promise<NutrientOption[]> => {
@@ -29,15 +31,29 @@ const fetchNutrients = async (): Promise<NutrientOption[]> => {
   return response.data as NutrientOption[];
 };
 
+const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.get(`/food/food-details/${foodId}`);
+  return response.data as FoodSearchResult;
+}
+
 const fetchFoodsForUser = async (
-  foodName: string,
+  foodSearchParameters: searchParameters,
 ): Promise<FoodSearchResult[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
   });
+
   const response = await apiClient.get(
-    "/food/all-foods?filterOption=" + foodName,
+    `/food/all-foods?filterOption=${foodSearchParameters.foodSearchTerm}
+    &nutrientFilterValue=${foodSearchParameters?.nutrientValue ?? 0}
+    &nutrientFilterOperator=${foodSearchParameters?.comparisonOperator ?? ""}
+    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.nutrientName ?? ""}
+    `
   );
   return response.data as FoodSearchResult[];
 };
@@ -49,10 +65,15 @@ export const useGetNutrientsQuery = () => {
   });
 };
 
-export const useGetAllFoodForUserQuery = (foodName: string) => {
+export const useGetAllFoodForUserQuery = (foodSearchParameters: searchParameters) => {
   return useQuery({
-    queryKey: foodKeys.foodName(foodName),
-    queryFn: () => fetchFoodsForUser(foodName),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: foodKeys.foodSearchParams(
+      foodSearchParameters.foodSearchTerm,
+      foodSearchParameters.nutrientSearchTerm.nutrientName,
+      foodSearchParameters?.comparisonOperator ?? "",
+      foodSearchParameters?.nutrientValue ?? 0),
+    queryFn: () => fetchFoodsForUser(foodSearchParameters),
   });
 };
 
@@ -121,6 +142,12 @@ export const useImportFoodMutation = () => {
   });
 }
 
+export const useGetFoodByIdQuery = (foodId: string) => {
+  return useQuery({
+    queryKey: foodKeys.foodID(foodId),
+    queryFn: () => fetchFoodById(foodId),
+  });
+}
 
 const foodSearchKeys = {
   all: ["foodSearchResults"] as const,

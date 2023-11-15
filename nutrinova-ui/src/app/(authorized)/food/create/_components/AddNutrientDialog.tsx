@@ -58,8 +58,7 @@ export const AddNutrientDialog = ({
                 amount: newAmount ?? 0,
                 unitId: newUnit?.id ?? 0,
               });
-            }}
-          />
+            }} onComparisonOperatorChange={() => { }} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
