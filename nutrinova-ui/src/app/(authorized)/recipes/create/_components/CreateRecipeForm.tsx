@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreateRecipeMutation } from "../../recipeHooks";
+import TagInput from "@/components/forms/TagInput";
 
 // const initialFood: CreateRecipeFoodRequest = {
 //   foodId: 0,
@@ -26,6 +27,7 @@ export default function CreateRecipeForm() {
   const [recipeFormState, setRecipeFormState] = useState<CreateRecipeRequest>({
     description: "",
     notes: "",
+    tags: [],
     recipeFoods: [],
   });
 
@@ -106,6 +108,12 @@ export default function CreateRecipeForm() {
             />
           </Grid>
 
+          <Grid item xs={12} md={6}>
+            <TagInput
+              tags={recipeFormState.tags || []}
+              setTags={(tags) => setRecipeFormState({ ...recipeFormState, tags })}
+            />
+          </Grid>
 
           {/* Notes */}
           <Grid item xs={12} height={170}>
