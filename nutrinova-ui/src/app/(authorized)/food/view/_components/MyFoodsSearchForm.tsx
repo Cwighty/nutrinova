@@ -58,7 +58,7 @@ export const MyFoodSearchForm = ({
           handleSearchParametersChange(a, "nutrientValue")
         }
         onComparisonOperatorChange={(c) =>
-          handleSearchParametersChange(c as string, "comparisonOperator")
+          handleSearchParametersChange(c, "comparisonOperator")
         }
         canCompare={true}
       />

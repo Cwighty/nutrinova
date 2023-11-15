@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import { Alert, Autocomplete, Chip, Skeleton, TextField } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { useGetRecipeTagsQuery } from './tagHooks';
 
 interface TagInputProps {
