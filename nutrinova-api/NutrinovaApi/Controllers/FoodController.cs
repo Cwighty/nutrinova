@@ -151,7 +151,7 @@ public class FoodController : ControllerBase
 
       if (customer?.Id is null)
       {
-        return NotFound("Couldn't find the user id");
+        return Unauthorized();
       }
 
       if (nutrientFilterValue < 0)
@@ -252,7 +252,7 @@ public class FoodController : ControllerBase
 
       if (customer?.Id is null)
       {
-        return NotFound("Couldn't find the user id");
+        return Unauthorized();
       }
 
       var result = await context.FoodPlans
@@ -449,6 +449,99 @@ public class FoodController : ControllerBase
       logger.LogError($"An unexpected error occurred: {ex.Message}");
       return StatusCode(500, "Internal server error");
     }
+  }
+
+  [HttpPut]
+  public async Task<IActionResult> EditFoodPlan(EditFoodRequestModel editFoodRequestModel)
+  {
+    // Validate the input
+    if (editFoodRequestModel == null)
+    {
+      return BadRequest("Invalid food plan data for editing");
+    }
+
+    if (string.IsNullOrWhiteSpace(editFoodRequestModel.Description))
+    {
+      return BadRequest("Description is required");
+    }
+
+    if (editFoodRequestModel.ServingSize <= 0)
+    {
+      return BadRequest("Serving size must be greater than 0");
+    }
+
+    if (editFoodRequestModel.FoodNutrients == null || !editFoodRequestModel.FoodNutrients.Any())
+    {
+      return BadRequest("At least one nutrient is required");
+    }
+
+    if (editFoodRequestModel.FoodNutrients.Any(n => n.Amount <= 0))
+    {
+      return BadRequest("Nutrient amounts must be greater than 0");
+    }
+
+    var userObjectId = User.GetObjectIdFromClaims();
+
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    var foodPlan = await context.FoodPlans
+      .Include(fp => fp.FoodPlanNutrients)
+      .ThenInclude(fpn => fpn.Nutrient)
+      .FirstOrDefaultAsync(fp => fp.Id.ToString() == editFoodRequestModel.Id);
+
+    if (foodPlan == null)
+    {
+      return NotFound("No food found");
+    }
+
+    if (editFoodRequestModel.Id == null)
+    {
+      return BadRequest("Edit food Id is required");
+    }
+
+    var foodPlanNutrients = await context.FoodPlanNutrients.Where(fpn => fpn.FoodplanId == foodPlan.Id).ToListAsync();
+    try
+    {
+      context.RemoveRange(foodPlanNutrients);
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed remove association in FoodPlanNutrients: {ex.Message}");
+    }
+
+    // update food plan
+    foodPlan.Description = editFoodRequestModel.Description;
+    foodPlan.ServingSize = editFoodRequestModel.ServingSize;
+    foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
+    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
+    foodPlan.Note = editFoodRequestModel.Note;
+    foodPlan.BrandName = editFoodRequestModel.BrandName;
+    foodPlan.Ingredients = editFoodRequestModel.Ingredients;
+    foodPlan.FoodPlanNutrients = editFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
+    {
+      Id = Guid.NewGuid(),
+      NutrientId = n.NutrientId,
+      Amount = n.Amount,
+      UnitId = n.UnitId,
+    }).ToList();
+
+    // Save to the database
+    try
+    {
+      await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed to save to the database: {ex.Message}");
+      return StatusCode(500, "Failed to save to the database");
+    }
+
+    return Ok(new { message = "Food created successfully", id = foodPlan.Id });
   }
 
   private int? GetUnitId(string unitAbbreviation)

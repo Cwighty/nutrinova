@@ -16,11 +16,12 @@ public static class FoodPlansExtension
     return new Food()
     {
       fdcId = foodPlan.Fdcid ?? 0,
+      id = foodPlan.Id.ToString(),
       description = foodPlan.Description,
       note = foodPlan.Note ?? string.Empty,
       brandName = foodPlan.BrandName ?? string.Empty,
       ingredients = foodPlan.Ingredients ?? string.Empty,
-      servingSize = (double)(foodPlan.ServingSize ?? 0),
+      servingSize = foodPlan.ServingSize ?? 0,
 
       servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abreviation,
       servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abreviation}",
