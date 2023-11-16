@@ -191,7 +191,7 @@ public class FoodController : ControllerBase
                      fp.FoodPlanNutrients.Any(fpn =>
                        fpn.Nutrient.NutrientName != null &&
                        fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
-                       NumberComparsionViaOperatorString(
+                       NumberComparisonViaOperatorString(
                          decimal.ToDouble(fpn.Amount),
                          nutrientFilterValue,
                          nutrientFilterOperator)))
@@ -215,7 +215,7 @@ public class FoodController : ControllerBase
       return StatusCode(500, "Internal server error");
     }
 
-    bool NumberComparsionViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
+    bool NumberComparisonViaOperatorString(double? leftOperand, double rightOperand, string operatorString)
     {
       if (leftOperand == null)
       {
@@ -451,12 +451,12 @@ public class FoodController : ControllerBase
     }
   }
 
-  private int? GetUnitId(string unitAbreviation)
+  private int? GetUnitId(string unitAbbreviation)
   {
-    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbreviation) || EF.Functions.ILike(u.Description, unitAbreviation));
+    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
     if (unit == null)
     {
-      logger.LogError($"Failed to find unit with abbreviation {unitAbreviation}, skipping");
+      logger.LogError($"Failed to find unit with abbreviation {unitAbbreviation}, skipping");
       return null;
     }
 
