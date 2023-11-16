@@ -1,29 +1,24 @@
 "use client";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
-import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
-import { useRouter } from "next/navigation";
-import { SearchParameters } from "../page";
+import { SearchParameters } from "@/app/(authorized)/food/view/page";
 
 interface MyFoodsSearchResultDataGridProps {
   searchQuery: SearchParameters;
+  onFoodSelected: (food: FoodSearchResult) => void;
 }
 
-export const MyFoodsSearchResultDataGrid = ({
+export const SelectFoodDataGrid = ({
   searchQuery,
+  onFoodSelected,
 }: MyFoodsSearchResultDataGridProps) => {
-  const router = useRouter();
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", minWidth: 100 },
     { field: "description", headerName: "Description", minWidth: 500 },
   ];
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
-
-  const handleOnRowClick = (row: GridRowParams<FoodSearchResult>) => {
-    router.push(`/food/view/details?foodId=${row.row.id}`);
-  }
 
   if (isError) {
     return <Alert severity="error">Error loading foods</Alert>;
@@ -44,12 +39,14 @@ export const MyFoodsSearchResultDataGrid = ({
         rows={data ?? []}
         columns={columns}
         autoHeight
-        onRowClick={handleOnRowClick}
         initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
+          pagination: { paginationModel: { pageSize: 5 } },
         }}
         slots={{
           noRowsOverlay: NoFoodRowsOverlay,
+        }}
+        onCellClick={(params) => {
+          onFoodSelected(params.row as FoodSearchResult);
         }}
       />
     </Box>

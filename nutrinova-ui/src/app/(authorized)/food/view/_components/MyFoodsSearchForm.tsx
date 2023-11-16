@@ -3,12 +3,13 @@ import { Box, InputAdornment, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import React from "react";
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
-import { searchParameters } from "../page";
+import { SearchParameters } from "../page";
 import NutrientFilterOptions from "@/components/forms/NutrientFilterOptions";
 
+
 interface MyFoodSearchFormProps {
-  setSearchParameters: (searchParameters: searchParameters) => void;
-  currentSearchParameters: searchParameters;
+  setSearchParameters: (searchParameters: SearchParameters) => void;
+  currentSearchParameters: SearchParameters;
 }
 
 export const MyFoodSearchForm = ({

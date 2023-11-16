@@ -7,7 +7,7 @@ import { MyFoodsSearchResultDataGrid } from "@/app/(authorized)/food/view/_compo
 import { useDebounce } from "@uidotdev/usehooks";
 import { NutrientOption } from "../_models/nutrientOption";
 
-export interface searchParameters {
+export interface SearchParameters {
   nutrientSearchTerm: NutrientOption,
   foodSearchTerm: string,
   comparisonOperator: string | undefined,
@@ -15,7 +15,7 @@ export interface searchParameters {
 }
 
 export default function MyFoodsPage() {
-  const [searchParameters, setSearchParameters] = useState<searchParameters>({
+  const [searchParameters, setSearchParameters] = useState<SearchParameters>({
     nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
     foodSearchTerm: "",
     comparisonOperator: "gt",

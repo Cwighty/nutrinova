@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
-import { searchParameters } from "./view/page";
+import { SearchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
 
 const nutrientKeys = {
@@ -41,7 +41,7 @@ const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
 }
 
 const fetchFoodsForUser = async (
-  foodSearchParameters: searchParameters,
+  foodSearchParameters: SearchParameters,
 ): Promise<FoodSearchResult[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
@@ -65,7 +65,7 @@ export const useGetNutrientsQuery = () => {
   });
 };
 
-export const useGetAllFoodForUserQuery = (foodSearchParameters: searchParameters) => {
+export const useGetAllFoodForUserQuery = (foodSearchParameters: SearchParameters) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: foodKeys.foodSearchParams(
