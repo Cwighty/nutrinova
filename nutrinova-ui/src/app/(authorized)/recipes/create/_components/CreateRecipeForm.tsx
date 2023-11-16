@@ -1,63 +1,25 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Button,
-  TextField,
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Grid,
-  Paper,
-  Alert,
-  Box,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Button, TextField, Grid, Paper, Box } from "@mui/material";
 import { useCreateRecipeMutation } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
-import { AddFoodDialog } from "./AddFoodDialog";
-import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
-import SelectUnit from "@/components/forms/SelectUnit";
 import { NutrientTotalsSummary } from "./NutrientTotalsSummary";
-
-const initialFood: CreateRecipeFoodModel = {
-  foodId: "",
-  amount: 1,
-  unitId: 1,
-  name: "",
-  unitName: "Gram"
-};
+import { ServingSizeUnitField } from "./ServingSizeUnitField";
+import { RecipeFoodList } from "./RecipeFoodList";
 
 export default function CreateRecipeForm() {
-  const [recipeFormState, setRecipeFormState] = useState<CreateRecipeRequestModel>({
-    description: "",
-    notes: "",
-    tags: [],
-    recipeFoods: [],
-  });
-
-  const [newFood, setNewFood] =
-    useState<CreateRecipeFoodModel>({ ...initialFood });
+  const [recipeFormState, setRecipeFormState] =
+    useState<CreateRecipeRequestModel>({
+      description: "",
+      notes: "",
+      tags: [],
+      recipeFoods: [],
+    });
 
   const createRecipeMutation = useCreateRecipeMutation();
 
   const [formValid, setFormValid] = useState<boolean>(true);
-
-  const handleAddFood = () => {
-    setRecipeFormState({
-      ...recipeFormState,
-      recipeFoods: [...recipeFormState.recipeFoods, newFood],
-    });
-    setNewFood({ ...initialFood });
-  };
-
-  const handleRemoveFood = (index: number) => {
-    const updatedFoods = [...recipeFormState.recipeFoods];
-    updatedFoods.splice(index, 1);
-    setRecipeFormState({ ...recipeFormState, recipeFoods: updatedFoods });
-  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -119,57 +81,17 @@ export default function CreateRecipeForm() {
           <Grid item xs={12} md={6}>
             <TagInput
               tags={recipeFormState.tags || []}
-              setTags={(tags) => setRecipeFormState({ ...recipeFormState, tags })}
-            />
-          </Grid>
-
-          {/* Serving Size */}
-          <Grid item xs={12} md={6}>
-            <TextField
-              label="Serving Size"
-              type="number"
-              value={recipeFormState.servingSize ?? ""}
-              onChange={(e) =>
-                setRecipeFormState({
-                  ...recipeFormState,
-                  servingSize: Number(e.target.value),
-                })
-              }
-              fullWidth
-              margin="normal"
-              error={
-                !formValid &&
-                recipeFormState.servingSize !== undefined &&
-                recipeFormState.servingSize <= 0
-              }
-              helperText={
-                !formValid &&
-                  recipeFormState.servingSize !== undefined &&
-                  recipeFormState.servingSize <= 0
-                  ? "Please enter a valid serving size"
-                  : ""
+              setTags={(tags) =>
+                setRecipeFormState({ ...recipeFormState, tags })
               }
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <SelectUnit
-              value={recipeFormState.servingSizeUnit ? recipeFormState.servingSizeUnit : null}
-              onSelectedUnitChange={(unit) =>
-                setRecipeFormState({ ...recipeFormState, servingSizeUnit: unit, servingSizeUnitId: unit?.id ?? 0 })
-              }
-              error={
-                !formValid &&
-                recipeFormState.servingSize !== undefined &&
-                recipeFormState.servingSizeUnit === undefined
-              }
-              helperText={
-                !formValid && recipeFormState.servingSize
-                  ? "A unit must be supplied with a serving size"
-                  : ""
-              }
-            />
-          </Grid>
+          <ServingSizeUnitField
+            recipeFormState={recipeFormState}
+            setRecipeFormState={setRecipeFormState}
+            formValid={formValid}
+          />
 
           {/* Notes */}
           <Grid item xs={12} height={170}>
@@ -179,7 +101,10 @@ export default function CreateRecipeForm() {
               rows={4}
               value={recipeFormState.notes}
               onChange={(e) =>
-                setRecipeFormState({ ...recipeFormState, notes: e.target.value })
+                setRecipeFormState({
+                  ...recipeFormState,
+                  notes: e.target.value,
+                })
               }
               fullWidth
               margin="normal"
@@ -190,40 +115,13 @@ export default function CreateRecipeForm() {
           <Grid item xs={12}>
             <NutrientTotalsSummary recipeFoods={recipeFormState.recipeFoods} />
           </Grid>
-
         </Grid>
 
-        <List>
-          <Box>
-            <AddFoodDialog
-              newFood={newFood}
-              setNewFood={setNewFood}
-              handleAddFood={handleAddFood}
-            />
-          </Box>
-          {recipeFormState.recipeFoods.length === 0 && (
-            <Alert severity="warning">Please add at least one food</Alert>
-          )}
-          {recipeFormState.recipeFoods.map((food, index) => (
-            <ListItem key={index} divider>
-              <ListItemText
-                primary={
-                  food.name
-                }
-                secondary={`${food.amount} ${food.unitName}`}
-              />
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleRemoveFood(index)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+        <RecipeFoodList
+          recipeFormState={recipeFormState}
+          setRecipeFormState={setRecipeFormState}
+        />
+
         <Box display="flex" justifyContent="flex-end">
           <Button type="submit" variant="contained" color="primary">
             Create
