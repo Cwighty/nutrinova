@@ -9,6 +9,7 @@ import {
   Chip,
   CardActions,
   Button,
+  Box,
 } from "@mui/material";
 import React from "react";
 import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
@@ -24,23 +25,25 @@ export default function Page({ searchParams }: PageProps) {
 
   return (
     <>
-      <Card sx={{ maxWidth: 600, margin: "20px auto", padding: "20px" }}>
-        <CardActions style={{ justifyContent: "flex-end" }}>
-          <Button variant="contained" color="primary">
-            Edit button here
-          </Button>
-        </CardActions>
+      <Card sx={{ maxWidth: 600, my: 1, mx: "auto", p: 1.25 }}>
         <CardContent>
-          <Typography variant="h5" gutterBottom>
-            {data?.description}
-          </Typography>
-          {data?.brandName && (
-            <Typography variant="h6" color="primary" gutterBottom>
-              {data?.brandName}
-            </Typography>
-          )}
+          <Box display="flex" justifyContent="space-between" alignItems="start">
+            <Box>
+              <Typography variant="h5" gutterBottom>
+                {data?.description}
+              </Typography>
+              {data?.brandName && (
+                <Typography variant="h6" color="primary" gutterBottom>
+                  {data?.brandName}
+                </Typography>
+              )}
+            </Box>
+            <Button variant="contained" color="primary">
+              Edit
+            </Button>
+          </Box>
           {data?.ingredients && (
-            <div style={{ margin: "10px 0" }}>
+            <Box sx={{ mt: 1.25 }}>
               {data?.ingredients
                 .split(",")
                 .map((ingredient, index) => (
@@ -48,25 +51,21 @@ export default function Page({ searchParams }: PageProps) {
                     label={ingredient.trim()}
                     variant="outlined"
                     size="small"
-                    style={{ margin: "4px" }}
+                    sx={{ m: 0.5 }}
                     key={index}
                   />
                 ))}
-            </div>
+            </Box>
           )}
           {data?.servingSizeWithUnits && (
-            <Typography variant="body1" paragraph>
-              Serving Size: {data?.servingSize.toFixed(2)} {data?.servingSizeUnit}
-
+            <Typography variant="body1" paragraph sx={{ my: 1.5 }}>
+              Serving Size: {data?.servingSize.toFixed(2)}{" "}
+              {data?.servingSizeUnit}
             </Typography>
           )}
           {data?.foodNutrients && data?.foodNutrients.length > 0 && (
             <>
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ marginTop: "20px" }}
-              >
+              <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
                 Nutrients
               </Typography>
               <Divider />
@@ -74,7 +73,7 @@ export default function Page({ searchParams }: PageProps) {
                 {data?.foodNutrients.map((nutrient) => (
                   <ListItem
                     key={nutrient.nameWithAmountAndUnit}
-                    style={{ padding: "8px 0" }}
+                    sx={{ py: 0.5 }}
                     divider
                   >
                     <Typography variant="body2">
@@ -82,7 +81,7 @@ export default function Page({ searchParams }: PageProps) {
                     </Typography>
                     <Typography
                       variant="body2"
-                      style={{ marginLeft: "auto", fontWeight: "bold" }}
+                      sx={{ ml: "auto", fontWeight: "bold" }}
                     >
                       {nutrient.value} {nutrient.unitName}
                     </Typography>
