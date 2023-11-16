@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
@@ -56,13 +57,20 @@ public class RecipeController : ControllerBase
       return Unauthorized();
     }
 
-    var foodPlan = new RecipePlan
+    var tags = string.Empty;
+
+    if (!createRecipeRequestModel.Tags.IsNullOrEmpty())
+    {
+      tags = createRecipeRequestModel.Tags?.Aggregate((a, b) => $"{a},{b}");
+    }
+
+    var recipePlan = new RecipePlan
     {
       Id = Guid.NewGuid(),
       Description = createRecipeRequestModel.Description,
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
-      Tags = createRecipeRequestModel.Tags?.Aggregate((a, b) => $"{a},{b}") ?? string.Empty,
+      Tags = tags,
       Notes = createRecipeRequestModel.Notes,
       RecipeFoods = createRecipeRequestModel.RecipeFoods.Select(rf => new RecipeFood
       {
@@ -74,7 +82,7 @@ public class RecipeController : ControllerBase
     };
 
     // Save to the database
-    await context.RecipePlans.AddAsync(foodPlan);
+    await context.RecipePlans.AddAsync(recipePlan);
     try
     {
       await context.SaveChangesAsync();
@@ -85,7 +93,7 @@ public class RecipeController : ControllerBase
       return StatusCode(500, "Failed to save recipe to the database");
     }
 
-    return Ok(new { message = "Recipe created successfully", id = foodPlan.Id });
+    return Ok(new { message = "Recipe created successfully", id = recipePlan.Id });
   }
 
   [HttpGet("tags")]
@@ -128,5 +136,36 @@ public class RecipeController : ControllerBase
 
     var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     return Ok(summaries);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<RecipePlan>> GetRecipe(Guid id)
+  {
+    var recipe = await context.RecipePlans
+      .Include(r => r.RecipeFoods)
+      .ThenInclude(rf => rf.Food)
+      .ThenInclude(f => f.FoodPlanNutrients)
+      .ThenInclude(fn => fn.Nutrient)
+      .FirstOrDefaultAsync(r => r.Id == id);
+
+    if (recipe == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(recipe);
+  }
+
+  [HttpGet]
+  public async Task<ActionResult<IEnumerable<RecipePlan>>> GetRecipes()
+  {
+    var recipes = await context.RecipePlans
+      .Include(r => r.RecipeFoods)
+      .ThenInclude(rf => rf.Food)
+      .ThenInclude(f => f.FoodPlanNutrients)
+      .ThenInclude(fn => fn.Nutrient)
+      .ToListAsync();
+
+    return Ok(recipes);
   }
 }

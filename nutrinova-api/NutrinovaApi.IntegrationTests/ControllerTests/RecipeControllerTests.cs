@@ -1,4 +1,5 @@
 using System.Net;
+using NutrinovaApi.IntegrationTests.TestEntities;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -57,5 +58,26 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
 
     var response = await httpClient.PostAsJsonAsync("be/recipe", createRecipeRequest);
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task GetRecipes_ShouldReturnOk()
+  {
+    var response = await httpClient.GetAsync("be/recipe");
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task GetRecipe_ShouldReturnOk()
+  {
+    var response = await httpClient.GetAsync($"be/recipe/{TestRecipePlan.Id}");
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task GetRecipe_ShouldReturnNotFound()
+  {
+    var response = await httpClient.GetAsync($"be/recipe/{Guid.NewGuid()}");
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
   }
 }
