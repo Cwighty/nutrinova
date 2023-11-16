@@ -1,27 +1,26 @@
 using NutrinovaData.Entities;
 
-public static class FoodTotaler
+public static class RecipeFoodTotaler
 {
-    public static List<NutrientSummary> GetNutrientSummaries(List<FoodPlan> foodPlans)
+    public static List<NutrientSummary> GetNutrientSummaries(List<RecipeFood> recipeFoods)
     {
         var nutrientSummaries = new Dictionary<int, NutrientSummary>();
-        foreach (var foodPlan in foodPlans)
+        foreach (var recipeFood in recipeFoods)
         {
-            var food = foodPlan;
-            foreach (var nutrient in food.FoodPlanNutrients)
+            foreach (var nutrient in recipeFood.Food.FoodPlanNutrients)
             {
                 if (!nutrientSummaries.ContainsKey(nutrient.NutrientId))
                 {
                     nutrientSummaries.Add(nutrient.NutrientId, new NutrientSummary
                     {
                         Name = nutrient.Nutrient.NutrientName,
-                        Amount = nutrient.Amount,
+                        Amount = nutrient.Amount * recipeFood.Amount, // TODO: Convert to correct unit
                         Unit = nutrient.Unit,
                     });
                 }
                 else
                 {
-                    nutrientSummaries[nutrient.NutrientId].Amount += nutrient.Amount;
+                    nutrientSummaries[nutrient.NutrientId].Amount += nutrient.Amount * recipeFood.Amount; // TODO: Convert to correct unit
                 }
             }
         }

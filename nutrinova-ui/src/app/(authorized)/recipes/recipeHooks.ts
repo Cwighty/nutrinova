@@ -1,8 +1,14 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { CreateRecipeRequestModel } from "./create/_models/createRecipeRequest";
 import { recipetagKeys } from "@/components/forms/tagHooks";
+import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
+
+export const recipeKeys = {
+  all: "recipes",
+  summaries: "recipeSummaries",
+};
 
 const createRecipe = async (recipe: CreateRecipeRequestModel): Promise<boolean> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
@@ -29,3 +35,18 @@ export const useCreateRecipeMutation = () => {
   });
 };
 
+const getRecipeNutrientSummary = async (recipe: CreateRecipeRequestModel): Promise<RecipeNutrientSummary[]> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.post<RecipeNutrientSummary[]>("/recipe/summarize", recipe);
+  return response.data;
+}
+
+export const useRecipeSummaryQuery = (recipe: CreateRecipeRequestModel) => {
+  return useQuery({
+    queryKey: [recipeKeys.summaries, recipe.recipeFoods],
+    queryFn: () => getRecipeNutrientSummary(recipe),
+  });
+}

@@ -103,4 +103,25 @@ public class RecipeController : ControllerBase
 
     return Ok(tags.Distinct());
   }
+
+  [HttpPost("summarize")]
+  public ActionResult<IEnumerable<NutrientSummary>> SummarizeRecipeNutrients(List<CreateRecipeFoodRequestModel> tentativeRecipeFoods)
+  {
+    if (tentativeRecipeFoods == null || !tentativeRecipeFoods.Any())
+    {
+      return BadRequest("Invalid recipe food data");
+    }
+
+    var recipeFoods = tentativeRecipeFoods.Select(rf => new RecipeFood
+    {
+      FoodId = rf.FoodId,
+      Food = context.FoodPlans.FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
+      Amount = rf.Amount,
+      UnitId = rf.UnitId,
+      Unit = context.Units.FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
+    }).ToList();
+
+    var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
+    return Ok(summaries);
+  }
 }
