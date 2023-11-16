@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { CreateRecipeRequestModel } from "./create/_models/createRecipeRequest";
 import { recipetagKeys } from "@/components/forms/tagHooks";
 import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
+import { CreateRecipeFoodModel } from "./create/_models/createRecipeFoodModel";
 
 export const recipeKeys = {
   all: "recipes",
@@ -35,18 +36,21 @@ export const useCreateRecipeMutation = () => {
   });
 };
 
-const getRecipeNutrientSummary = async (recipe: CreateRecipeRequestModel): Promise<RecipeNutrientSummary[]> => {
+const getRecipeNutrientSummary = async (recipeFoods: CreateRecipeFoodModel[]): Promise<RecipeNutrientSummary[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
   });
-  const response = await apiClient.post<RecipeNutrientSummary[]>("/recipe/summarize", recipe);
+  if (recipeFoods.length === 0) {
+    return [];
+  }
+  const response = await apiClient.post<RecipeNutrientSummary[]>("/recipe/summarize", recipeFoods);
   return response.data;
 }
 
-export const useRecipeSummaryQuery = (recipe: CreateRecipeRequestModel) => {
+export const useRecipeSummaryQuery = (recipeFoods: CreateRecipeFoodModel[]) => {
   return useQuery({
-    queryKey: [recipeKeys.summaries, recipe.recipeFoods],
-    queryFn: () => getRecipeNutrientSummary(recipe),
+    queryKey: [recipeKeys.summaries, recipeFoods],
+    queryFn: () => getRecipeNutrientSummary(recipeFoods),
   });
 }

@@ -13,14 +13,17 @@ import {
   Alert,
   Box,
   Typography,
+  Skeleton,
+  LinearProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useCreateRecipeMutation } from "../../recipeHooks";
+import { useCreateRecipeMutation, useRecipeSummaryQuery } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
 import { AddFoodDialog } from "./AddFoodDialog";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import SelectUnit from "@/components/forms/SelectUnit";
+import { RecipeNutrientSummary } from "../_models/recipeNutrientSummary";
 
 const initialFood: CreateRecipeFoodModel = {
   foodId: "",
@@ -42,6 +45,7 @@ export default function CreateRecipeForm() {
     useState<CreateRecipeFoodModel>({ ...initialFood });
 
   const createRecipeMutation = useCreateRecipeMutation();
+  const { data: recipeNutrientSummary, isLoading: recipeNutrientSummaryIsLoading } = useRecipeSummaryQuery(recipeFormState.recipeFoods);
 
   const [formValid, setFormValid] = useState<boolean>(true);
 
@@ -173,8 +177,15 @@ export default function CreateRecipeForm() {
 
           {/* Macro Nutrient Summary */}
           <Grid item xs={12}>
-            <Typography variant="h6">Macro Nutrient Summary</Typography>
-            <Typography variant="body2">No foods added</Typography>
+            <Typography variant="h6">Nutrient Totals</Typography>
+            {recipeNutrientSummaryIsLoading && <LinearProgress />}
+            {recipeNutrientSummary && recipeNutrientSummary.length === 0 && <Typography variant="caption">No foods added</Typography>}
+            {recipeNutrientSummary &&
+              recipeNutrientSummary.map((nutrient: RecipeNutrientSummary) => (
+                <Typography key={nutrient.name} variant="button">
+                  {nutrient.name}: {nutrient.amount} {nutrient.unit.abreviation}
+                </Typography>
+              ))}
           </Grid>
 
           {/* Notes */}

@@ -105,21 +105,26 @@ public class RecipeController : ControllerBase
   }
 
   [HttpPost("summarize")]
-  public ActionResult<IEnumerable<NutrientSummary>> SummarizeRecipeNutrients(List<CreateRecipeFoodRequestModel> tentativeRecipeFoods)
+  public ActionResult<IEnumerable<NutrientSummary>> SummarizeRecipeNutrients(IEnumerable<CreateRecipeFoodRequestModel> tentativeRecipeFoods)
   {
     if (tentativeRecipeFoods == null || !tentativeRecipeFoods.Any())
     {
-      return BadRequest("Invalid recipe food data");
+      return BadRequest("At least one food ingredient is required");
     }
 
     var recipeFoods = tentativeRecipeFoods.Select(rf => new RecipeFood
     {
       FoodId = rf.FoodId,
-      Food = context.FoodPlans.FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
+      Food = context.FoodPlans
+        .Include(f => f.FoodPlanNutrients)
+        .ThenInclude(fn => fn.Nutrient)
+        .FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
       Amount = rf.Amount,
       UnitId = rf.UnitId,
       Unit = context.Units.FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
+
+    Console.WriteLine($"Recipe foods: {recipeFoods.FirstOrDefault()?.Food.Description}");
 
     var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     return Ok(summaries);
