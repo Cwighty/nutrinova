@@ -499,8 +499,25 @@ public class FoodController : ControllerBase
       return NotFound("No food found");
     }
 
+    if (editFoodRequestModel.Id == null)
+    {
+      return BadRequest("Edit food Id is required");
+    }
+
+    var foodPlanNutrients = await context.FoodPlanNutrients.Where(fpn => fpn.FoodplanId == foodPlan.Id).ToListAsync();
+    try
+    {
+      context.RemoveRange(foodPlanNutrients);
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed remove association in FoodPlanNutrients: {ex.Message}");
+    }
+
+    // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize;
+    foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
     foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
@@ -512,12 +529,10 @@ public class FoodController : ControllerBase
       Amount = n.Amount,
       UnitId = n.UnitId,
     }).ToList();
-    var foodPlanNutrients = await context.FoodPlanNutrients.Where(fpn => fpn.FoodplanId == foodPlan.Id).ToListAsync();
 
     // Save to the database
     try
     {
-      context.RemoveRange(foodPlanNutrients);
       await context.SaveChangesAsync();
     }
     catch (Exception ex)

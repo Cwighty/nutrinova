@@ -1,5 +1,6 @@
 using System.Net;
 using NutrinovaData.FlattenedResponseModels;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -135,7 +136,7 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       },
     };
 
-    var res = await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+    await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
     var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
 
     var editFood = new EditFoodRequestModel
@@ -160,6 +161,14 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     var resFoodEdit = await httpClient.PutAsJsonAsync("be/food", editFood);
 
     // Assert
+    var newEditFood = await httpClient.GetFromJsonAsync<Food>("be/food/food-details/" + editFood.Id);
     Assert.Equal(HttpStatusCode.OK, resFoodEdit.StatusCode);
+    Assert.Equal("Edited", newEditFood?.description);
+    Assert.Equal("Edited", newEditFood?.note);
+    Assert.Equal("Edited", newEditFood?.brandName);
+    Assert.Equal("Edited", newEditFood?.ingredients);
+    Assert.Equal(10, newEditFood?.servingSize);
+    Assert.Equal("G", newEditFood?.servingSizeUnit);
+    Assert.Equal("10 G", newEditFood?.servingSizeWithUnits);
   }
 }
