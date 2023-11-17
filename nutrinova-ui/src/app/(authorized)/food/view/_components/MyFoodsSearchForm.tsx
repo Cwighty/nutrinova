@@ -9,11 +9,13 @@ import NutrientFilterOptions from "@/components/forms/NutrientFilterOptions";
 interface MyFoodSearchFormProps {
   setSearchParameters: (searchParameters: SearchParameters) => void;
   currentSearchParameters: SearchParameters;
+  modal?: boolean;
 }
 
 export const MyFoodSearchForm = ({
   setSearchParameters,
   currentSearchParameters,
+  modal,
 }: MyFoodSearchFormProps) => {
   const handleSearchParametersChange = (
     value: string | number | NutrientOption | null | undefined,
@@ -50,6 +52,7 @@ export const MyFoodSearchForm = ({
       />
 
       <NutrientFilterOptions
+        modal={modal}
         onSelectedNutrientChange={(n) =>
           handleSearchParametersChange(n, "nutrientSearchTerm")
         }
