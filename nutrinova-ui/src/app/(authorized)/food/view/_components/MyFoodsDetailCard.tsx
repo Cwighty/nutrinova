@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
+import { useRouter } from "next/navigation";
 
 interface MyFoodsDetailCardProps {
   foodId: string;
@@ -19,6 +20,7 @@ interface MyFoodsDetailCardProps {
 export const MyFoodsDetailCard = ({ foodId }: MyFoodsDetailCardProps) => {
   const { data } = useGetFoodByIdQuery(foodId);
 
+  const router = useRouter();
   return (
     <Card sx={{ my: 1, p: 1.25 }}>
       <CardContent>
@@ -33,7 +35,7 @@ export const MyFoodsDetailCard = ({ foodId }: MyFoodsDetailCardProps) => {
               </Typography>
             )}
           </Box>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={() => router.push("/food/edit?foodId=" + foodId)}>
             Edit
           </Button>
         </Box>
