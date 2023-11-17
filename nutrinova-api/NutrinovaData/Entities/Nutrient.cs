@@ -7,9 +7,13 @@ public partial class Nutrient
 {
     public int Id { get; set; }
 
-    public string NutrientName { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
     public int PreferredUnit { get; set; }
+
+    public int CategoryId { get; set; }
+
+    public virtual NutrientCategory Category { get; set; } = null!;
 
     public virtual ICollection<FoodHistoryNutrient> FoodHistoryNutrients { get; set; } = new List<FoodHistoryNutrient>();
 

@@ -21,10 +21,12 @@ import { ChangeEvent, SyntheticEvent, useState } from "react";
 interface NutrientOptionProps {
   error?: boolean;
   helperText?: string;
-  onSelectedNutrientChange: (nutrient: NutrientOption | null | undefined) => void;
+  onSelectedNutrientChange: (
+    nutrient: NutrientOption | null | undefined
+  ) => void;
   onNutrientAmountChange: (
     amount: number | null,
-    unit: UnitOption | null,
+    unit: UnitOption | null
   ) => void;
   onComparisonOperatorChange: (comparisonOperator: string) => void;
 }
@@ -47,32 +49,40 @@ const SelectNutrient = ({
     isError: unitOptionsIsError,
   } = useGetUnitsQuery();
 
-  const [selectedNutrient, setSelectedNutrient] =
-    useState<NutrientOption | null | undefined>(null);
+  const [selectedNutrient, setSelectedNutrient] = useState<
+    NutrientOption | null | undefined
+  >(null);
 
-  const [comparisonOperator, setComparisonOperator] = useState<string>(COMPARISON_OPERATOR_OPTIONS[1].abbreviation);
+  const [comparisonOperator, setComparisonOperator] = useState<string>(
+    COMPARISON_OPERATOR_OPTIONS[1].abbreviation
+  );
 
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
-    value: NutrientOption | null,
+    value: NutrientOption | null
   ) => {
-    setSelectedNutrient(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName));
-    onSelectedNutrientChange(nutrientOptions?.find(n => n.nutrientName === value?.nutrientName) ?? { id: -1, nutrientName: "", preferredUnit: 0 } as NutrientOption);
+    setSelectedNutrient(
+      nutrientOptions?.find((n) => n.description === value?.description)
+    );
+    onSelectedNutrientChange(
+      nutrientOptions?.find((n) => n.description === value?.description) ??
+        ({ id: -1, description: "", preferredUnitId: 0 } as NutrientOption)
+    );
   };
 
   const handleComparisonOperatorChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setComparisonOperator(event.target.value);
     onComparisonOperatorChange(event.target.value);
   };
 
   const handleNutrientAmountChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newAmount = parseFloat(event.target.value) ?? null;
     const newUnit =
-      unitOptions?.find((u) => u.id === selectedNutrient?.preferredUnit) ??
+      unitOptions?.find((u) => u.id === selectedNutrient?.preferredUnitId) ??
       null;
     onNutrientAmountChange(newAmount, newUnit);
   };
@@ -90,11 +100,11 @@ const SelectNutrient = ({
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Grid container columnSpacing={1} justifyContent={'flex-end'}>
-          <Grid item xs={12} md={3} >
+        <Grid container columnSpacing={1} justifyContent={"flex-end"}>
+          <Grid item xs={12} md={3}>
             <Autocomplete
               options={nutrientOptions}
-              getOptionLabel={(option) => option.nutrientName}
+              getOptionLabel={(option) => option.description}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -139,8 +149,8 @@ const SelectNutrient = ({
                 endAdornment: (
                   <InputAdornment position="end">
                     {unitOptions.find(
-                      (u) => u.id === selectedNutrient?.preferredUnit,
-                    )?.abreviation ?? ""}
+                      (u) => u.id === selectedNutrient?.preferredUnitId
+                    )?.abbreviation ?? ""}
                   </InputAdornment>
                 ),
               }}

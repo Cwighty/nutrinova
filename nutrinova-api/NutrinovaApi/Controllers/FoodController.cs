@@ -189,8 +189,8 @@ public class FoodController : ControllerBase
       result = result
         .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
                      fp.FoodPlanNutrients.Any(fpn =>
-                       fpn.Nutrient.NutrientName != null &&
-                       fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
+                       fpn.Nutrient.Description != null &&
+                       fpn.Nutrient.Description.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
                        NumberComparisonViaOperatorString(
                          decimal.ToDouble(fpn.Amount),
                          nutrientFilterValue,
@@ -546,7 +546,7 @@ public class FoodController : ControllerBase
 
   private int? GetUnitId(string unitAbbreviation)
   {
-    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
+    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abbreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
     if (unit == null)
     {
       logger.LogError($"Failed to find unit with abbreviation {unitAbbreviation}, skipping");

@@ -23,8 +23,8 @@ public static class FoodPlansExtension
       ingredients = foodPlan.Ingredients ?? string.Empty,
       servingSize = foodPlan.ServingSize ?? 0,
 
-      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abreviation,
-      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abreviation}",
+      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
+      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",
       foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
     };
   }

@@ -13,7 +13,7 @@ public static class RecipeFoodTotaler
                 {
                     nutrientSummaries.Add(nutrient.NutrientId, new NutrientSummary
                     {
-                        Name = nutrient.Nutrient.NutrientName,
+                        Name = nutrient.Nutrient.Description,
                         Amount = nutrient.Amount * recipeFood.Amount, // TODO: Convert to correct unit
                         Unit = nutrient.Unit,
                     });

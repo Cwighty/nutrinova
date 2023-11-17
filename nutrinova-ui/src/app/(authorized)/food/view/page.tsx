@@ -8,15 +8,15 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { NutrientOption } from "../_models/nutrientOption";
 
 export interface SearchParameters {
-  nutrientSearchTerm: NutrientOption,
-  foodSearchTerm: string,
-  comparisonOperator: string | undefined,
-  nutrientValue: number | undefined,
+  nutrientSearchTerm: NutrientOption;
+  foodSearchTerm: string;
+  comparisonOperator: string | undefined;
+  nutrientValue: number | undefined;
 }
 
 export default function MyFoodsPage() {
   const [searchParameters, setSearchParameters] = useState<SearchParameters>({
-    nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
+    nutrientSearchTerm: { id: 0, description: "", preferredUnitId: 0 },
     foodSearchTerm: "",
     comparisonOperator: "gt",
     nutrientValue: 0,
@@ -26,7 +26,10 @@ export default function MyFoodsPage() {
   return (
     <PageContainer title={"My Foods"}>
       <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
-        <MyFoodSearchForm setSearchParameters={setSearchParameters} currentSearchParameters={searchParameters} />
+        <MyFoodSearchForm
+          setSearchParameters={setSearchParameters}
+          currentSearchParameters={searchParameters}
+        />
         <MyFoodsSearchResultDataGrid searchQuery={searchParameterDebounce} />
       </Paper>
     </PageContainer>

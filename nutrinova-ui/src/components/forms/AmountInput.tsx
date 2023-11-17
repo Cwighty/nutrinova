@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
 import { Grid, TextField } from "@mui/material";
 import SelectUnit from "./SelectUnit";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
-
 
 interface AmountInputProps {
   amount: number;
@@ -12,18 +11,15 @@ interface AmountInputProps {
   setUnit: (unit: UnitOption) => void;
 }
 
-
-
 export const AmountInput = ({
   amount,
   setAmount,
   unit,
   setUnit,
 }: AmountInputProps) => {
-
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
-  }
+  };
 
   return (
     <>
@@ -45,7 +41,7 @@ export const AmountInput = ({
           <SelectUnit
             value={unit}
             onSelectedUnitChange={(unit) => {
-              setUnit(unit ?? { id: 0, description: "", abreviation: "" });
+              setUnit(unit ?? { id: 0, description: "", abbreviation: "" });
             }}
             error={unit.description === ""}
             helperText={unit.description === "" ? "Please select a unit" : ""}
@@ -54,4 +50,4 @@ export const AmountInput = ({
       </Grid>
     </>
   );
-}
+};

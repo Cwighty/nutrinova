@@ -150,8 +150,8 @@ export default function CreateFoodForm() {
               }
               helperText={
                 !formValid &&
-                  foodFormState.servingSize !== undefined &&
-                  foodFormState.servingSize <= 0
+                foodFormState.servingSize !== undefined &&
+                foodFormState.servingSize <= 0
                   ? "Please enter a valid serving size"
                   : ""
               }
@@ -160,7 +160,9 @@ export default function CreateFoodForm() {
 
           <Grid item xs={12} md={3}>
             <SelectUnit
-              value={unitOptions?.find((u) => u.id === foodFormState.unit) ?? null}
+              value={
+                unitOptions?.find((u) => u.id === foodFormState.unit) ?? null
+              }
               onSelectedUnitChange={(unit) =>
                 setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })
               }
@@ -209,11 +211,12 @@ export default function CreateFoodForm() {
               <ListItemText
                 primary={
                   nutrientOptions?.find((n) => n.id === nutrient.nutrientId)
-                    ?.nutrientName
+                    ?.description
                 }
-                secondary={`${nutrient.amount} ${unitOptions?.find(
-                  (u) => u.id === nutrient.unitId,
-                )?.description}`}
+                secondary={`${nutrient.amount} ${
+                  unitOptions?.find((u) => u.id === nutrient.unitId)
+                    ?.description
+                }`}
               />
               <ListItemSecondaryAction>
                 <IconButton
