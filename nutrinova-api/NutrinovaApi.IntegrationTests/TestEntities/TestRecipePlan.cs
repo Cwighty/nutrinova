@@ -4,7 +4,7 @@ namespace NutrinovaApi.IntegrationTests.TestEntities;
 
 public class TestRecipePlan : ITestDbInitializer
 {
-  public static Guid Id { get; } = Guid.Parse("00000000-0000-0000-0000-000000000002");
+  public static Guid Id { get; } = Guid.NewGuid();
 
   public static RecipePlan CreateTestRecipePlan()
   {
@@ -17,17 +17,18 @@ public class TestRecipePlan : ITestDbInitializer
       {
         new()
         {
+          Id = Guid.NewGuid(),
           FoodId = TestFoodPlan.Id,
           Amount = 10,
-          UnitId = 1000,
+          UnitId = 1,
         },
       },
     };
   }
 
-  public Task InitializeDbTestData(NutrinovaDbContext context)
+  public async Task InitializeDbTestData(NutrinovaDbContext context)
   {
-    context.RecipePlans.Add(CreateTestRecipePlan());
-    return context.SaveChangesAsync();
+    await context.RecipePlans.AddAsync(CreateTestRecipePlan());
+    await context.SaveChangesAsync();
   }
 }

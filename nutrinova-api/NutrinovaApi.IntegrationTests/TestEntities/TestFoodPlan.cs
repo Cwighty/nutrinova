@@ -2,7 +2,7 @@ using NutrinovaData.Entities;
 
 public class TestFoodPlan : ITestDbInitializer
 {
-    public static Guid Id { get; } = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid Id { get; } = Guid.NewGuid();
 
     public static FoodPlan CreateTestFood()
     {
@@ -24,7 +24,7 @@ public class TestFoodPlan : ITestDbInitializer
 
     public async Task InitializeDbTestData(NutrinovaDbContext context)
     {
-        context.FoodPlans.Add(CreateTestFood());
+        await context.FoodPlans.AddAsync(CreateTestFood());
         await context.SaveChangesAsync();
     }
 }
