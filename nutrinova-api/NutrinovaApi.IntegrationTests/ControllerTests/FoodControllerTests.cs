@@ -1,5 +1,6 @@
 using System.Net;
 using NutrinovaData.FlattenedResponseModels;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -113,5 +114,61 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
     Assert.Equal(HttpStatusCode.OK, resFoodPlanFilter_Just_Note.StatusCode);
     Assert.Equal(2, (await resFoodPlanFilter_Just_Note.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
+  }
+
+  [Fact]
+  public async Task Edit_Food_Plan()
+  {
+    var customerID = Guid.Empty.ToString();
+    var testFoodPlan = new CreateFoodRequestModel
+    {
+      Description = "Edit",
+      Note = "Edit",
+      ServingSize = 1,
+      Unit = 0,
+      FoodNutrients = new List<CreateFoodNutrientRequestModel>
+      {
+        new()
+        {
+          NutrientId = 1002,
+          Amount = 10,
+        },
+      },
+    };
+
+    await httpClient.GetAsync($"be/Customer/exists?id={customerID}");
+    var resFoodCreation = await httpClient.PostAsJsonAsync("be/food", testFoodPlan);
+
+    var editFood = new EditFoodRequestModel
+    {
+      Id = (await resFoodCreation.Content.ReadFromJsonAsync<FlattenedFood>())?.Id,
+      Description = "Edited",
+      Note = "Edited",
+      BrandName = "Edited",
+      Ingredients = "Edited",
+      ServingSize = 10,
+      Unit = 1,
+      FoodNutrients = new List<EditFoodNutrientRequestModel>
+      {
+        new()
+        {
+          NutrientId = 1002,
+          Amount = 10,
+        },
+      },
+    };
+
+    var resFoodEdit = await httpClient.PutAsJsonAsync("be/food", editFood);
+
+    // Assert
+    var newEditFood = await httpClient.GetFromJsonAsync<Food>("be/food/food-details/" + editFood.Id);
+    Assert.Equal(HttpStatusCode.OK, resFoodEdit.StatusCode);
+    Assert.Equal("Edited", newEditFood?.description);
+    Assert.Equal("Edited", newEditFood?.note);
+    Assert.Equal("Edited", newEditFood?.brandName);
+    Assert.Equal("Edited", newEditFood?.ingredients);
+    Assert.Equal(10, newEditFood?.servingSize);
+    Assert.Equal("G", newEditFood?.servingSizeUnit);
+    Assert.Equal("10 G", newEditFood?.servingSizeWithUnits);
   }
 }

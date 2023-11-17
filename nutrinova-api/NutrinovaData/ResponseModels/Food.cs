@@ -6,6 +6,8 @@ public class Food
 {
     public int fdcId { get; set; }
 
+    public string? id { get; set; }
+
     public string description { get; set; }
 
     public string ingredients { get; set; }
@@ -20,7 +22,7 @@ public class Food
 
     public string brandName { get; set; }
 
-    public double servingSize { get; set; }
+    public decimal servingSize { get; set; }
 
     public string servingSizeUnit { get; set; }
 
