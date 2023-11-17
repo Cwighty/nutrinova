@@ -1,7 +1,8 @@
+import { CreateRecipeRequestModel } from "@/app/(authorized)/recipes/create/_models/createRecipeRequest";
 import { UnitOption } from "../../_models/unitOption";
 import { EditFoodNutrientRequestModel } from "./editFoodNutrientRequest";
 
-export interface EditFoodRequestModel{
+export interface EditFoodRequestModel extends CreateRecipeRequestModel {
   description?: string;
   servingSize?: number;
   brand?: string;
