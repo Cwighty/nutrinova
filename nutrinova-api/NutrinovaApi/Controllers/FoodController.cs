@@ -338,12 +338,21 @@ public class FoodController : ControllerBase
       ServingSize = createFoodRequestModel.ServingSize.Value,
       ServingSizeUnit = createFoodRequestModel.Unit ?? 0,
       Note = createFoodRequestModel.Note,
-      FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
+      FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n =>
       {
-        Id = Guid.NewGuid(),
-        NutrientId = n.NutrientId,
-        Amount = n.Amount,
-        UnitId = n.UnitId,
+        var nutrient = context.Nutrients.FirstOrDefault(nu => nu.Id == n.NutrientId);
+        if (nutrient == null)
+        {
+          throw new InvalidOperationException("Nutrient does not exist");
+        }
+
+        return new FoodPlanNutrient
+        {
+          Id = Guid.NewGuid(),
+          NutrientId = n.NutrientId,
+          Amount = n.Amount,
+          UnitId = nutrient.PreferredUnit,
+        };
       }).ToList(),
     };
 
@@ -522,17 +531,25 @@ public class FoodController : ControllerBase
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
-    foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
     foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
     foodPlan.Ingredients = editFoodRequestModel.Ingredients;
-    foodPlan.FoodPlanNutrients = editFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
+    foodPlan.FoodPlanNutrients = editFoodRequestModel.FoodNutrients.Select(n =>
     {
-      Id = Guid.NewGuid(),
-      NutrientId = n.NutrientId,
-      Amount = n.Amount,
-      UnitId = n.UnitId,
+      var nutrient = context.Nutrients.FirstOrDefault(nu => nu.Id == n.NutrientId);
+      if (nutrient == null)
+      {
+        throw new InvalidOperationException("Nutrient does not exist");
+      }
+
+      return new FoodPlanNutrient
+      {
+        Id = Guid.NewGuid(),
+        NutrientId = n.NutrientId,
+        Amount = n.Amount,
+        UnitId = nutrient.PreferredUnit,
+      };
     }).ToList();
 
     // Save to the database
