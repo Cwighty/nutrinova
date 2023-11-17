@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using DotNet.Testcontainers.Builders;
 using NutrinovaApi.IntegrationTests.TestEntities;
 
 namespace NutrinovaApi.IntegrationTests;
