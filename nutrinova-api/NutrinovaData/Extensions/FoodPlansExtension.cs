@@ -21,7 +21,7 @@ public static class FoodPlansExtension
       note = foodPlan.Note ?? string.Empty,
       brandName = foodPlan.BrandName ?? string.Empty,
       ingredients = foodPlan.Ingredients ?? string.Empty,
-      servingSize = foodPlan.ServingSize ?? 0,
+      servingSize = foodPlan.ServingSize,
 
       servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
       servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",

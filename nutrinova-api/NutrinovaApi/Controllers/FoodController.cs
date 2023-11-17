@@ -299,9 +299,14 @@ public class FoodController : ControllerBase
       return BadRequest("Description is required");
     }
 
-    if (createFoodRequestModel.ServingSize <= 0)
+    if (!createFoodRequestModel.ServingSize.HasValue || createFoodRequestModel.ServingSize <= 0)
     {
       return BadRequest("Serving size must be greater than 0");
+    }
+
+    if (createFoodRequestModel.Unit == null)
+    {
+      return BadRequest("Serving size unit is required");
     }
 
     if (createFoodRequestModel.FoodNutrients == null || !createFoodRequestModel.FoodNutrients.Any())
@@ -330,7 +335,7 @@ public class FoodController : ControllerBase
       Description = createFoodRequestModel.Description,
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
-      ServingSize = createFoodRequestModel.ServingSize,
+      ServingSize = createFoodRequestModel.ServingSize.Value,
       ServingSizeUnit = createFoodRequestModel.Unit ?? 0,
       Note = createFoodRequestModel.Note,
       FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
@@ -394,8 +399,8 @@ public class FoodController : ControllerBase
         Ingredients = deserializedResult.ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
-        ServingSize = (decimal?)deserializedResult.servingSize,
-        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 0 : 0,
+        ServingSize = deserializedResult.servingSize,
+        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 1 : 1, // default to 100 grams
         Note = deserializedResult.ingredients,
       };
 
@@ -465,7 +470,7 @@ public class FoodController : ControllerBase
       return BadRequest("Description is required");
     }
 
-    if (editFoodRequestModel.ServingSize <= 0)
+    if (!editFoodRequestModel.ServingSize.HasValue || editFoodRequestModel.ServingSize <= 0)
     {
       return BadRequest("Serving size must be greater than 0");
     }
@@ -516,7 +521,7 @@ public class FoodController : ControllerBase
 
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
-    foodPlan.ServingSize = editFoodRequestModel.ServingSize;
+    foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
     foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
     foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;

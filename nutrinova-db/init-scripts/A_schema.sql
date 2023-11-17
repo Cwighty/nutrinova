@@ -65,11 +65,9 @@ CREATE TABLE
         ingredients TEXT null,
         created_by uuid REFERENCES Customer(id),
         created_at TIMESTAMP WITH TIME ZONE not null,
-        serving_size DECIMAL null,
-        serving_size_unit serial REFERENCES Unit(id),
-        note TEXT null,
-        CONSTRAINT if_serving_size_then_unit_is_not_null 
-        CHECK ( ( serving_size is null ) OR (serving_size_unit IS NOT NULL) ) 
+        serving_size DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
+        note TEXT null
         );
 
 CREATE TABLE
@@ -81,11 +79,9 @@ CREATE TABLE
         ingredients TEXT null,
         created_by uuid REFERENCES Customer(id),
         created_at TIMESTAMP WITH TIME ZONE not null,
-        serving_size DECIMAL null,
-        serving_size_unit serial REFERENCES Unit(id),
-        note TEXT null,
-        CONSTRAINT if_serving_size_then_unit_is_not_null 
-        CHECK ( (serving_size is null) OR (serving_size_unit IS NOT NULL) ) 
+        serving_size DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
+        note TEXT null
     );
 
 CREATE TABLE

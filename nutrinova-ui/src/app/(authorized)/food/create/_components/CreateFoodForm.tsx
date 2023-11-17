@@ -91,15 +91,15 @@ export default function CreateFoodForm() {
     if (foodFormState.description === "") {
       return false;
     }
-    if (
-      foodFormState.servingSize !== undefined &&
-      foodFormState.servingSize <= 0
-    ) {
-      if (foodFormState.unit === 0) {
-        return false;
-      }
+    if (foodFormState.servingSize == undefined) {
+      return false;
     }
-
+    if (foodFormState.servingSize <= 0) {
+      return false;
+    }
+    if (foodFormState.unit === 0) {
+      return false;
+    }
     return true;
   };
 
@@ -145,13 +145,13 @@ export default function CreateFoodForm() {
               margin="normal"
               error={
                 !formValid &&
-                foodFormState.servingSize !== undefined &&
-                foodFormState.servingSize <= 0
+                (foodFormState.servingSize == undefined ||
+                  foodFormState.servingSize <= 0)
               }
               helperText={
                 !formValid &&
-                foodFormState.servingSize !== undefined &&
-                foodFormState.servingSize <= 0
+                (foodFormState.servingSize == undefined ||
+                  foodFormState.servingSize <= 0)
                   ? "Please enter a valid serving size"
                   : ""
               }
@@ -166,13 +166,9 @@ export default function CreateFoodForm() {
               onSelectedUnitChange={(unit) =>
                 setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })
               }
-              error={
-                !formValid &&
-                foodFormState.servingSize !== undefined &&
-                foodFormState.unit === undefined
-              }
+              error={!formValid && foodFormState.unit === undefined}
               helperText={
-                !formValid && foodFormState.servingSize
+                !formValid && foodFormState.unit === undefined
                   ? "A unit must be supplied with a serving size"
                   : ""
               }
