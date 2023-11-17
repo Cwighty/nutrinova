@@ -1,4 +1,4 @@
-import { ServingSizeUnitField } from '@/app/(authorized)/recipes/create/_components/ServingSizeUnitField'
+import { SelectNutrientWithUnitState, ServingSizeUnitField } from '@/app/(authorized)/recipes/create/_components/ServingSizeUnitField'
 import TagInput from '@/components/forms/TagInput'
 import { Box, TextField } from '@mui/material'
 import React from 'react'
@@ -28,6 +28,18 @@ export const EditFoodForm = ({ foodId }: Props) => {
     note: food?.note || '',
   })
 
+  if (foodIsLoading) {
+    return <div>Loading...</div>
+  }
+
+  const handleSelectNutrientUpdate = ({ servingSize, servingSizeUnit, servingSizeUnitId }: SelectNutrientWithUnitState) => {
+    setEditFoodForm({
+      ...editFoodFormState,
+      servingSize,
+      servingSizeUnit,
+      servingSizeUnitId,
+    });
+  }
   return (
     <Box>
       <TextField
@@ -58,7 +70,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
       />
       {/* Ingredients */}
       <TagInput
-        tags={editFoodFormState.ingredients || []}
+        tags={editFoodFormState?.ingredients || []}
         setTags={(ingredients) => {
           setEditFoodForm({
             ...editFoodFormState,
@@ -69,7 +81,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
       />
       <ServingSizeUnitField
         formState={editFoodFormState}
-        setFormState={setEditFoodForm}
+        setFormState={handleSelectNutrientUpdate}
         formValid={false} />
       {/* Serving Size */}
       {/* Nutrients */}

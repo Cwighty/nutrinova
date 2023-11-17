@@ -1,10 +1,16 @@
 import SelectUnit from "@/components/forms/SelectUnit";
 import { Grid, TextField } from "@mui/material";
-import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
-import { EditFoodRequestModel } from "../../../food/edit/_models/editFoodRequest";
+import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+
+export interface SelectNutrientWithUnitState {
+  servingSize?: number;
+  servingSizeUnit?: UnitOption | null;
+  servingSizeUnitId?: number;
+}
+
 interface ServingSizeUnitFieldProps {
-  formState: CreateRecipeRequestModel | EditFoodRequestModel;
-  setFormState: (recipeForm: CreateRecipeRequestModel | EditFoodRequestModel) => void;
+  formState: SelectNutrientWithUnitState;
+  setFormState: (recipeForm: SelectNutrientWithUnitState) => void;
   formValid: boolean;
 }
 

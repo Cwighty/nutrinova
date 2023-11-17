@@ -1,8 +1,8 @@
-import { CreateRecipeRequestModel } from "@/app/(authorized)/recipes/create/_models/createRecipeRequest";
+import { SelectNutrientWithUnitState } from "@/app/(authorized)/recipes/create/_components/ServingSizeUnitField";
 import { UnitOption } from "../../_models/unitOption";
 import { EditFoodNutrientRequestModel } from "./editFoodNutrientRequest";
 
-export interface EditFoodRequestModel extends CreateRecipeRequestModel {
+export interface EditFoodRequestModel extends SelectNutrientWithUnitState {
   description?: string;
   servingSize?: number;
   brand?: string;
