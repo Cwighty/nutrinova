@@ -88,8 +88,8 @@ export default function CreateRecipeForm() {
           </Grid>
 
           <ServingSizeUnitField
-            recipeFormState={recipeFormState}
-            setRecipeFormState={setRecipeFormState}
+            formState={recipeFormState}
+            setFormState={setRecipeFormState}
             formValid={formValid}
           />
 

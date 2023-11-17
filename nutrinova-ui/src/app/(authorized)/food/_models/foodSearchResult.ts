@@ -16,4 +16,6 @@ export interface FoodSearchResultNutrient {
   nameWithAmountAndUnit: string;
   unitName: string;
   value: number;
+  nutrientId: number;
+  unitId: number;
 }

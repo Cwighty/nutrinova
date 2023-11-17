@@ -1,11 +1,13 @@
+import { UnitOption } from "../../_models/unitOption";
 import { EditFoodNutrientRequestModel } from "./editFoodNutrientRequest";
 
-export interface EditFoodRequestModel {
+export interface EditFoodRequestModel{
   description?: string;
   servingSize?: number;
   brand?: string;
-  ingredients?: string;
-  unit?: number;
+  servingSizeUnit?: UnitOption | null;
+  ingredients?: string[];
+  servingSizeUnitId?: number;
   note?: string;
   foodNutrients: EditFoodNutrientRequestModel[];
 }
