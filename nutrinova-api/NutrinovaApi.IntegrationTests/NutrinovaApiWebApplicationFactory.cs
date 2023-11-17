@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using NutrinovaApi.IntegrationTests.TestEntities;
 using NutrinovaData.Entities;
 
 namespace NutrinovaApi.IntegrationTests;
@@ -54,6 +55,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
     var testEntities = new List<ITestDbInitializer>
     {
       new TestFoodPlan(),
+      new TestRecipePlan(),
     };
 
     foreach (var testEntity in testEntities)
