@@ -1,13 +1,9 @@
 export interface Recipe {
   id: string;
   description: string;
-  tags: string[];
+  tags: string;
   notes: string;
   recipeFoods: RecipeFood[];
-  servingSize: number;
-  servingSizeUnit: UnitOption;
-  servingSizeWithUnits: string;
-  recipeNutrients: RecipeNutrientSummary[];
 }
 
 export interface RecipeFood {
@@ -16,16 +12,12 @@ export interface RecipeFood {
   amount: number;
   unitId: number;
   unitName: string;
+  food: Food;
 }
 
-export interface RecipeNutrientSummary {
-  name: string;
-  amount: number;
-  unit: UnitOption;
-}
-
-export interface UnitOption {
-  id: number;
-  name: string;
-  abbreviation: string;
+export interface Food {
+  id: string;
+  description: string;
+  tags: string[];
+  notes: string;
 }
