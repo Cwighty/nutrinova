@@ -1,5 +1,5 @@
 import { PageContainer } from "@/components/PageContainer";
-import { MyRecipesSearchResultDataGrid } from "@/app/(authorized)/recipes/view/_components/MyRecipesSearchResultDataGrid";
+import { RecipeSearch } from "@/app/(authorized)/food/view/_components/RecipeSearch";
 
 export const metadata = {
   title: "My Recipes",
@@ -9,7 +9,7 @@ export const metadata = {
 export default function ViewRecipesPage() {
   return (
     <PageContainer title={"My Recipes"}>
-      <MyRecipesSearchResultDataGrid />
+      <RecipeSearch />
     </PageContainer>
   );
 }

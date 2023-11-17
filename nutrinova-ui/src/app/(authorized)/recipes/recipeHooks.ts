@@ -69,7 +69,6 @@ const getAllRecipes = async (): Promise<Recipe[]> => {
     origin: "client",
   });
   const response = await apiClient.get("/recipe");
-  console.log(response.data);
   return response.data as Recipe[];
 };
 
