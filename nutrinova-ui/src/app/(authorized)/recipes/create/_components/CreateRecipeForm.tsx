@@ -28,7 +28,6 @@ export default function CreateRecipeForm() {
       return;
     }
     setFormValid(true);
-    console.log(recipeFormState);
     createRecipeMutation.mutate(recipeFormState, {
       onSuccess: () => {
         setRecipeFormState({

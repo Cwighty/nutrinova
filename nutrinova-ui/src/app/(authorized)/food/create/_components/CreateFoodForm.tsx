@@ -70,7 +70,6 @@ export default function CreateFoodForm() {
       return;
     }
     setFormValid(true);
-    console.log(foodFormState);
     createFoodMutation.mutate(foodFormState, {
       onSuccess: () => {
         setFoodFormState({
@@ -150,8 +149,8 @@ export default function CreateFoodForm() {
               }
               helperText={
                 !formValid &&
-                  foodFormState.servingSize !== undefined &&
-                  foodFormState.servingSize <= 0
+                foodFormState.servingSize !== undefined &&
+                foodFormState.servingSize <= 0
                   ? "Please enter a valid serving size"
                   : ""
               }
@@ -160,7 +159,9 @@ export default function CreateFoodForm() {
 
           <Grid item xs={12} md={3}>
             <SelectUnit
-              value={unitOptions?.find((u) => u.id === foodFormState.unit) ?? null}
+              value={
+                unitOptions?.find((u) => u.id === foodFormState.unit) ?? null
+              }
               onSelectedUnitChange={(unit) =>
                 setFoodFormState({ ...foodFormState, unit: unit?.id ?? 0 })
               }
