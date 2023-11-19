@@ -29,7 +29,7 @@ interface NutrientOptionProps {
   onComparisonOperatorChange: (comparisonOperator: string) => void;
 }
 
-const SelectNutrient = ({
+const SelectNutrientWithFilter = ({
   error,
   helperText,
   onComparisonOperatorChange,
@@ -152,4 +152,4 @@ const SelectNutrient = ({
   );
 };
 
-export default SelectNutrient;
+export default SelectNutrientWithFilter;
