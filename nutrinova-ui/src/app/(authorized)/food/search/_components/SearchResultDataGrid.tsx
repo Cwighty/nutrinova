@@ -49,7 +49,7 @@ export default function SearchResultDataGrid({
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           slots={{
-            noRowsOverlay: NoFoodRowsOverlay,
+            noRowsOverlay: () => NoFoodRowsOverlay(filterParams.foodName),
           }}
         />
       )}
