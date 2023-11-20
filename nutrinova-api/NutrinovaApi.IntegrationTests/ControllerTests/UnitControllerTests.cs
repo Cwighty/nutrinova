@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NutrinovaData.Entities;
 
 namespace NutrinovaApi.IntegrationTests;
 
