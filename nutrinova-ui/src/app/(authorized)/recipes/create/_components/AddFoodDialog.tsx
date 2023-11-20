@@ -19,7 +19,6 @@ import { AmountInput } from "@/components/forms/AmountInput";
 import { ExpandCircleDown } from "@mui/icons-material";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
-import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
 
 interface Props {
   handleAddFood: () => void;
