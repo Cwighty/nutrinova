@@ -455,6 +455,7 @@ public class FoodController : ControllerBase
   public async Task<IActionResult> EditFoodPlan(EditFoodRequestModel editFoodRequestModel)
   {
     // Validate the input
+    logger.LogInformation($"EditFoodPlan, {editFoodRequestModel?.Id} {editFoodRequestModel?.Description} {editFoodRequestModel?.ServingSize} {editFoodRequestModel?.Unit} {editFoodRequestModel?.Note}  {editFoodRequestModel?.BrandName} {editFoodRequestModel?.Ingredients}   {editFoodRequestModel?.FoodNutrients} {editFoodRequestModel?.FoodNutrients?.Count} {editFoodRequestModel?.FoodNutrients?[0]?.NutrientId} {editFoodRequestModel?.Unit} {editFoodRequestModel?.FoodNutrients?[0]?.Amount} {editFoodRequestModel?.FoodNutrients?[0]?.UnitId}");
     if (editFoodRequestModel == null)
     {
       return BadRequest("Invalid food plan data for editing");
@@ -518,7 +519,8 @@ public class FoodController : ControllerBase
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize;
     foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
-    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
+    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit.Id;
+    foodPlan.ServingSizeUnitNavigation = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
     foodPlan.Ingredients = editFoodRequestModel.Ingredients;

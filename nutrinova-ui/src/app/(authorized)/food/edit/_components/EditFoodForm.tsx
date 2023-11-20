@@ -4,8 +4,9 @@ import TagInput from '@/components/forms/TagInput'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { EditFoodRequestModel } from '../_models/editFoodRequest'
-import { useGetFoodByIdQuery, useGetUnitsQuery } from "../../foodHooks";
+import { useEditFoodMutation, useGetFoodByIdQuery, useGetUnitsQuery } from "../../foodHooks";
 import { EditNutrientListItem } from './EditNutrientListItem'
+import toast from 'react-hot-toast'
 
 interface Props {
   foodId: string
@@ -17,11 +18,14 @@ export const EditFoodForm = ({ foodId }: Props) => {
 
   const { data: food, isLoading: foodIsLoading } = useGetFoodByIdQuery(foodId);
   const { data: unitOptions } = useGetUnitsQuery();
+  const editFoodMutation = useEditFoodMutation();
+
   const [isValid, setIsValid] = useState<boolean>(false);
 
   const [editFoodFormState, setEditFoodForm] = React.useState<EditFoodRequestModel>({
+    id: foodId,
     description: food?.description || '',
-    brand: food?.brandName || '',
+    brandName: food?.brandName || '',
     ingredients: food?.ingredients?.split(',') || [],
     servingSize: food?.servingSize || 0,
     servingSizeUnit: unitOptions?.find(u => u.abreviation === food?.servingSizeUnit) || null,
@@ -73,6 +77,11 @@ export const EditFoodForm = ({ foodId }: Props) => {
 
   const handleSubmit = () => {
     console.log(editFoodFormState)
+    editFoodMutation.mutate(editFoodFormState, {
+      onSuccess: () => {
+        toast.success("Food Updated")
+      },
+    });
   }
 
   const handleNutrientDelete = (nutrientId: number) => {
@@ -124,11 +133,11 @@ export const EditFoodForm = ({ foodId }: Props) => {
             fullWidth
             label="Brand"
             variant="outlined"
-            value={editFoodFormState.brand}
+            value={editFoodFormState.brandName}
             onChange={(e) => {
               setEditFoodForm({
                 ...editFoodFormState,
-                brand: e.target.value,
+                brandName: e.target.value,
               });
             }}
           />

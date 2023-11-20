@@ -7,6 +7,7 @@ import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
 import { SearchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
+import { EditFoodRequestModel } from "./edit/_models/editFoodRequest";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -76,6 +77,22 @@ export const useGetAllFoodForUserQuery = (foodSearchParameters: SearchParameters
     queryFn: () => fetchFoodsForUser(foodSearchParameters),
   });
 };
+
+const updateFood = async (food: EditFoodRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {
+      "Content-Type": "application/json",
+    },
+    origin: "client",
+  });
+
+  const response = await apiClient.put("/food", {
+    ...food,
+    ingredients: food.ingredients?.toString(),
+    Unit: food.servingSizeUnit,
+  });
+  return response.status === 200;
+}
 
 const fetchUnits = async (): Promise<UnitOption[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
@@ -194,3 +211,11 @@ export const useGetFoodSearchResultQuery = (foodSearchFilterParams: FoodSearchFi
   });
 };
 
+export const useEditFoodMutation = () => {
+  return useMutation({
+    mutationFn: (food: EditFoodRequestModel) => updateFood(food),
+    onSuccess: () => {
+      toast.success("Food edited successfully");
+    }
+  });
+}
