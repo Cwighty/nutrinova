@@ -11,5 +11,5 @@ export interface EditFoodRequestModel extends SelectNutrientWithUnitState {
   ingredients?: string[] ;
   servingSizeUnitId?: number;
   note?: string;
-  foodNutrients: EditFoodNutrientRequestModel[] | undefined;
+  foodNutrients?: EditFoodNutrientRequestModel[];
 }

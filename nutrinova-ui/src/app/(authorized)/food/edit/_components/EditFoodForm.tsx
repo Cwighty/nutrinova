@@ -65,6 +65,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
           if (n.nutrientId === nutrientId) {
             return {
               ...n,
+              unitId: n.unitId,
               amount: amount
             }
           }
