@@ -49,7 +49,7 @@ export const MyFoodsSearchResultDataGrid = ({
           pagination: { paginationModel: { pageSize: 10 } },
         }}
         slots={{
-          noRowsOverlay: NoFoodRowsOverlay,
+          noRowsOverlay: () => NoFoodRowsOverlay(searchQuery.foodSearchTerm),
         }}
       />
     </Box>

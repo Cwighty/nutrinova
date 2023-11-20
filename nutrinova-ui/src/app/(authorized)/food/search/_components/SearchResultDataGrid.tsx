@@ -15,39 +15,44 @@ export default function SearchResultDataGrid({
   filterParams,
 }: SearchResultDataGridProps) {
   const router = useRouter();
-  const { data: rows, isLoading, isError } = useGetFoodSearchResultsQuery(filterParams);
+  const {
+    data: rows,
+    isLoading,
+    isError,
+  } = useGetFoodSearchResultsQuery(filterParams);
   const columns: GridColDef[] = [
     { field: "fdcId", headerName: "ID", width: 100 },
     { field: "description", headerName: "Description", width: 500 },
   ];
   const handleRowClick = (row: GridRowParams<FoodSearchResult>) => {
-    console.log(row.id);
-    router.push(`/food/search/detail?fdcid=${row.id}&foodName=${filterParams.foodName}&filterOption=${filterParams.filterOption}`);
-    console.log('should have pushed');
+    router.push(
+      `/food/search/detail?fdcid=${row.id}&foodName=${filterParams.foodName}&filterOption=${filterParams.filterOption}`,
+    );
   };
 
-  return (<>
-    {isLoading &&
-      <Skeleton variant="rectangular" width="100%" height={200} />
-    }
-    {isError &&
-      <Alert severity="error">An error occurred while fetching data.</Alert>
-    }
-    {rows && (
-      <DataGrid
-        getRowId={(row: FoodSearchResult) => row.fdcId}
-        rows={rows}
-        columns={columns}
-        onRowDoubleClick={handleRowClick}
-        autoHeight
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
-        }}
-        slots={{
-          noRowsOverlay: NoFoodRowsOverlay,
-        }}
-      />)
-    }
-  </>
+  return (
+    <>
+      {isLoading && (
+        <Skeleton variant="rectangular" width="100%" height={200} />
+      )}
+      {isError && (
+        <Alert severity="error">An error occurred while fetching data.</Alert>
+      )}
+      {rows && (
+        <DataGrid
+          getRowId={(row: FoodSearchResult) => row.fdcId}
+          rows={rows}
+          columns={columns}
+          onRowDoubleClick={handleRowClick}
+          autoHeight
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          slots={{
+            noRowsOverlay: () => NoFoodRowsOverlay(filterParams.foodName),
+          }}
+        />
+      )}
+    </>
   );
 }

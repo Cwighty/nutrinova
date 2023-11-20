@@ -70,7 +70,6 @@ export default function CreateFoodForm() {
       return;
     }
     setFormValid(true);
-    console.log(foodFormState);
     createFoodMutation.mutate(foodFormState, {
       onSuccess: () => {
         setFoodFormState({

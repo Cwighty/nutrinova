@@ -21,7 +21,7 @@ INSERT INTO unit (description, abbreviation, category_id) VALUES
   ('Milliliter', 'ML', 2),
   ('Teaspoon', 'TSP', 2),
   ('Tablespoon', 'TBSP', 2),
-  ('Cup', 'C', 2),
+  ('Cup', 'Cup', 2),
   ('Fluid Ounce', 'FL OZ', 2), -- Often used in the U.S.
   ('Pint', 'PT', 2),  -- Used for larger volumes
   ('Quart', 'QT', 2), -- Larger than a pint

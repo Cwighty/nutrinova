@@ -15,13 +15,13 @@ public static class RecipeFoodTotaler
           nutrientSummaries.Add(nutrient.NutrientId, new NutrientSummary
           {
             Name = nutrient.Nutrient.Description,
-            Amount = nutrient.Amount * UnitConverter.Convert(recipeFood.Amount, recipeFood.Unit, nutrient.Unit),
+            Amount = nutrient.Amount * UnitConverter.Convert(recipeFood.Amount, recipeFood.Unit, recipeFood.Food.ServingSizeUnitNavigation),
             Unit = nutrient.Unit,
           });
         }
         else
         {
-          nutrientSummaries[nutrient.NutrientId].Amount += nutrient.Amount * UnitConverter.Convert(recipeFood.Amount, recipeFood.Unit, nutrient.Unit);
+          nutrientSummaries[nutrient.NutrientId].Amount += nutrient.Amount * UnitConverter.Convert(recipeFood.Amount, recipeFood.Unit, recipeFood.Food.ServingSizeUnitNavigation);
         }
       }
     }

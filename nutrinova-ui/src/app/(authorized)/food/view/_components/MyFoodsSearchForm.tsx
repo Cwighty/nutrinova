@@ -6,7 +6,6 @@ import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
 import { SearchParameters } from "../page";
 import NutrientFilterOptions from "@/components/forms/NutrientFilterOptions";
 
-
 interface MyFoodSearchFormProps {
   setSearchParameters: (searchParameters: SearchParameters) => void;
   currentSearchParameters: SearchParameters;
@@ -20,7 +19,6 @@ export const MyFoodSearchForm = ({
     value: string | number | NutrientOption | null | undefined,
     targetProperty: string,
   ) => {
-    console.log("handleSearchParametersChange", value, targetProperty);
     setSearchParameters({
       ...currentSearchParameters,
       [targetProperty]: value,
