@@ -5,37 +5,43 @@ namespace NutrinovaData.FlattenedResponseModels;
 
 public class FlattenedFoodNutrient
 {
-    public string? NutrientName { get; set; }
+  public string? NutrientName { get; set; }
 
-    public string? NameWithAmountAndUnit { get; set; }
+  public string? NameWithAmountAndUnit { get; set; }
 
-    public string? UnitName { get; set; }
+  public string? UnitName { get; set; }
 
-    public double Value { get; set; }
+  public double Value { get; set; }
 
-    public FlattenedFoodNutrient()
-    {
-    }
+  public double? UnitId { get; set; }
 
-    public FlattenedFoodNutrient(FoodPlanNutrient fpn)
-    {
-        this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.Description}";
+  public FlattenedFoodNutrient()
+  {
+  }
 
-        this.UnitName = fpn?.Unit?.Description;
+  public FlattenedFoodNutrient(FoodPlanNutrient fpn)
+  {
+    this.NameWithAmountAndUnit = $"{fpn.Nutrient.NutrientName}: {fpn.Amount} {fpn?.Unit?.Description}";
 
-        this.Value = decimal.ToDouble(fpn?.Amount ?? 0);
+    this.UnitName = fpn?.Unit?.Description;
 
-        this.NutrientName = fpn?.Nutrient.NutrientName;
-    }
+    this.Value = decimal.ToDouble(fpn?.Amount ?? 0);
 
-    public FlattenedFoodNutrient(FoodNutrient foodNutrient)
-    {
-        this.NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
+    this.NutrientName = fpn?.Nutrient.NutrientName;
 
-        this.UnitName = foodNutrient.unitName;
+    this.UnitId = fpn?.UnitId;
+  }
 
-        this.Value = foodNutrient.value;
+  public FlattenedFoodNutrient(FoodNutrient foodNutrient)
+  {
+    this.NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
 
-        this.NutrientName = foodNutrient.nutrientName;
-    }
+    this.UnitName = foodNutrient.unitName;
+
+    this.Value = foodNutrient.value;
+
+    this.NutrientName = foodNutrient.nutrientName;
+
+    this.UnitId = foodNutrient?.unitId;
+  }
 }

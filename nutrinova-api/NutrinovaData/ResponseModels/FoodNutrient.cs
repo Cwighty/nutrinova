@@ -14,6 +14,8 @@ public class FoodNutrient
 
     public string? unitName { get; set; }
 
+    public int unitId { get; set; }
+
     public string? derivationCode { get; set; }
 
     public string? derivationDescription { get; set; }

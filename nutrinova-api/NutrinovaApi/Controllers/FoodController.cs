@@ -260,7 +260,6 @@ public class FoodController : ControllerBase
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
-      logger.LogInformation($"RetrieveFoodForUserById, {result?.Ingredients}");
       if (result == null)
       {
         return NotFound("No food found");

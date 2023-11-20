@@ -22,7 +22,7 @@ public static class FoodPlansExtension
       brandName = foodPlan.BrandName ?? string.Empty,
       ingredients = foodPlan.Ingredients ?? string.Empty,
       servingSize = foodPlan.ServingSize ?? 0,
-
+      unitId = foodPlan.ServingSizeUnit,
       servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abreviation,
       servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abreviation}",
       foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
