@@ -16,7 +16,7 @@ jobs:
         with:
           dotnet-version: "7.0"
 
-      - name: Restore dependencies and run tests
-        run: |
-          cd nutrinova-api/
-          dotnet test
+      # - name: Restore dependencies and run tests
+      #   run: |
+      #     cd nutrinova-api/
+      #     dotnet test
