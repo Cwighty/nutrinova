@@ -69,7 +69,7 @@ export function NoFoodRowsOverlay(searchTerm: string) {
           </g>
         </g>
       </svg>
-      {searchTerm && (searchTerm.trim() != "") ?
+      {searchTerm ?
         <Box sx={{ mt: 1 }}>No Foods Found for &apos;{searchTerm}&apos;</Box>
         :
         <Box sx={{ mt: 1 }}>No Foods Found</Box>

@@ -55,7 +55,7 @@ export const MyRecipesSearchResultDataGrid = ({
           pagination: { paginationModel: { pageSize: 10 } },
         }}
         slots={{
-          noRowsOverlay: NoFoodRowsOverlay,
+          noRowsOverlay: () => NoFoodRowsOverlay(searchTerm),
         }}
       />
     </Box>
