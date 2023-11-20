@@ -19,6 +19,7 @@ import { AmountInput } from "@/components/forms/AmountInput";
 import { ExpandCircleDown } from "@mui/icons-material";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
+import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
 
 interface Props {
   handleAddFood: () => void;
@@ -45,6 +46,7 @@ export const AddFoodDialog = ({
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelcted] = useState<boolean>(true);
+  // const { data: food } = useGetFoodByIdQuery(newFood.foodId);
 
   const handleOpen = () => {
     setOpen(true);
@@ -106,6 +108,7 @@ export const AddFoodDialog = ({
                     ...newFood,
                     foodId: food.id,
                     name: food.description,
+
                   })
                 }
               />
@@ -120,7 +123,6 @@ export const AddFoodDialog = ({
           )}
 
           <AmountInput
-            restrictToUnitCategory={}
             amount={newFood.amount}
             setAmount={(amount) =>
               setNewFood({

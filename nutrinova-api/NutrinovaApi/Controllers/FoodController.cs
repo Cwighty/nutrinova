@@ -256,7 +256,7 @@ public class FoodController : ControllerBase
       }
 
       var result = await context.FoodPlans
-        .Include(fp => fp.ServingSizeUnitNavigation)
+        .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);

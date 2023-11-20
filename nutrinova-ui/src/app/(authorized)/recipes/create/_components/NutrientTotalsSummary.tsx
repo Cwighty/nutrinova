@@ -24,7 +24,7 @@ export const NutrientTotalsSummary = ({
       )}
       {recipeNutrientSummary &&
         recipeNutrientSummary.map((nutrient: RecipeNutrientSummary) => (
-          <Typography key={nutrient.name} variant="button">
+          <Typography key={nutrient.name} variant="subtitle1">
             {nutrient.name}: {nutrient.amount} {nutrient.unit.abbreviation}
           </Typography>
         ))}

@@ -26,6 +26,8 @@ public class Food
 
     public string servingSizeUnit { get; set; }
 
+    public string? servingSizeUnitCategory { get; set; }
+
     public string servingSizeWithUnits { get; set; }
 
     public List<FoodNutrient> foodNutrients { get; set; }
