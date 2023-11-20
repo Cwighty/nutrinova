@@ -33,7 +33,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
       return {
         nutrientId: fn.nutrientId,
         amount: fn.value,
-        unitId: fn.unitId,
+        unitId: fn.unitId, // doens't get defined on load. Gets set in api call
         nutrientName: fn.nutrientName
       }
     }) || undefined,

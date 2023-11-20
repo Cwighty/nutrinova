@@ -265,7 +265,9 @@ public class FoodController : ControllerBase
         return NotFound("No food found");
       }
 
-      return result.ToFood();
+      var res = result.ToFood();
+      logger.LogInformation($"RetrieveFoodForUserById, {res.foodNutrients.First().unitId}");
+      return res;
     }
     catch (HttpRequestException ex)
     {
@@ -523,13 +525,21 @@ public class FoodController : ControllerBase
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
     foodPlan.Ingredients = editFoodRequestModel.Ingredients;
-    foodPlan.FoodPlanNutrients = editFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
-    {
-      Id = Guid.NewGuid(),
-      NutrientId = n.NutrientId,
-      Amount = n.Amount,
-      UnitId = n.UnitId,
-    }).ToList();
+
+    var allNutrients = await context.Nutrients.Include(n => n.PreferredUnitNavigation).ToListAsync();
+
+    foodPlan.FoodPlanNutrients = allNutrients.Join(
+      editFoodRequestModel.FoodNutrients,
+      allN => allN.Id,
+      fpn => fpn.NutrientId,
+      (nutrient, editNutrient) => new FoodPlanNutrient
+      {
+        Id = Guid.NewGuid(),
+        NutrientId = editNutrient.NutrientId,
+        Amount = editNutrient.Amount,
+        UnitId = nutrient.PreferredUnitNavigation.Id,
+      })
+    .ToList();
 
     // Save to the database
     try

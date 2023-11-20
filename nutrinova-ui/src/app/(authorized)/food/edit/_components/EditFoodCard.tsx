@@ -1,4 +1,4 @@
-
+"use client"
 import React from 'react'
 import { EditFoodForm } from './EditFoodForm'
 import { Box } from '@mui/material'

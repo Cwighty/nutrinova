@@ -3,6 +3,5 @@ import { CreateFoodNutrientRequestModel } from "../../create/_models/createFoodN
 export interface EditFoodNutrientRequestModel extends CreateFoodNutrientRequestModel {
   nutrientId: number;
   amount: number;
-  unitId: number;
   nutrientName: string;
 }
