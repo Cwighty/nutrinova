@@ -1,39 +1,72 @@
+using NutrinovaData.Entities;
+
 namespace NutrinovaData.Calculators;
 
-public class UnitConverter
+public static class UnitConverter
 {
-  private Dictionary<string, double> weightConversions = new Dictionary<string, double>
+  private static Dictionary<string, decimal> weightConversions = new Dictionary<string, decimal>
     {
-        {"g", 1}, // base unit for weight is grams
-        {"kg", 1000},
-        {"mg", 0.001},
-        {"mcg", 0.000001},
-        {"oz", 28.3495},
-        {"lb", 453.592},
+        { "g", 1 }, // base unit for weight is grams
+        { "kg", 1000 },
+        { "mg", 0.001M },
+        { "mcg", 0.000001M },
+        { "oz", 28.3495M },
+        { "lb", 453.592M },
     };
 
-  private Dictionary<string, double> volumeConversions = new Dictionary<string, double>
+  private static Dictionary<string, decimal> volumeConversions = new Dictionary<string, decimal>
     {
-        {"ml", 1}, // base unit for volume is milliliters
-        {"l", 1000},
-        {"cup", 236.588},
-        {"tbsp", 14.7868},
-        {"fl oz", 29.57353},
-        {"tsp", 4.92892},
-        {"gal", 3785.41},
-        {"pt", 473.176},
-        {"qt", 946.353}
-        // Add more volume units here
+        { "ml", 1 }, // base unit for volume is milliliters
+        { "l", 1000 },
+        { "cup", 236.588M },
+        { "tbsp", 14.7868M },
+        { "fl oz", 29.57353M },
+        { "tsp", 4.92892M },
+        { "gal", 3785.41M },
+        { "pt", 473.176M },
+        { "qt", 946.353M },
     };
 
-  private Dictionary<string, double> energyConversions = new Dictionary<string, double>
+  private static Dictionary<string, decimal> energyConversions = new Dictionary<string, decimal>
     {
-        {"kcal", 1}, // base unit for energy is kilocalories
-        {"cal", 0.001},
-        {"kJ", 0.239006}
+        { "kcal", 1 }, // base unit for energy is kilocalories
+        { "cal", 0.001M },
+        { "kJ", 0.239006M },
     };
 
-  public double Convert(double value, string fromUnit, string toUnit)
+  public static decimal Convert(decimal value, Unit fromUnit, Unit toUnit)
+  {
+    if (fromUnit.CategoryId != toUnit.CategoryId)
+    {
+      throw new ArgumentException("Units must be of the same type");
+    }
+
+    if (fromUnit.Category!.Description == "Solid")
+    {
+      return Convert(value, fromUnit.Abbreviation, toUnit.Abbreviation);
+    }
+
+    if (fromUnit.Category.Description == "Liquid")
+    {
+      return Convert(value, fromUnit.Abbreviation, toUnit.Abbreviation);
+    }
+
+    if (fromUnit.Category.Description == "Energy")
+    {
+      return value;
+    }
+
+    if (fromUnit.Category.Description == "Quantity")
+    {
+      return value;
+    }
+    else
+    {
+      throw new ArgumentException("Invalid unit category");
+    }
+  }
+
+  public static decimal Convert(decimal value, string fromUnit, string toUnit)
   {
     // Determine the type of unit and use the appropriate conversion dictionary
     var conversionDict = weightConversions.ContainsKey(fromUnit) ? weightConversions : volumeConversions;
@@ -43,7 +76,7 @@ public class UnitConverter
       throw new ArgumentException("Invalid unit");
     }
 
-    double valueInBaseUnit = value * conversionDict[fromUnit];
+    decimal valueInBaseUnit = value * conversionDict[fromUnit];
     return valueInBaseUnit / conversionDict[toUnit];
   }
 }

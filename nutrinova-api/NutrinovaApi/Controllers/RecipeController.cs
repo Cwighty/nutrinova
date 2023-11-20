@@ -129,10 +129,16 @@ public class RecipeController : ControllerBase
         .FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
       Amount = rf.Amount,
       UnitId = rf.UnitId,
-      Unit = context.Units.FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
+      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
 
-    Console.WriteLine($"Recipe foods: {recipeFoods.FirstOrDefault()?.Food.Description}");
+    foreach (var r in recipeFoods)
+    {
+      foreach (var n in r.Food.FoodPlanNutrients)
+      {
+        Console.WriteLine($"{r.Food?.Description} {r.Amount} {r.Unit?.Abbreviation} {n.Nutrient?.Description} {n.Amount} {n.Unit?.Abbreviation}");
+      }
+    }
 
     var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     return Ok(summaries);
