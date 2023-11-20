@@ -33,7 +33,12 @@ export const AddFoodDialog = ({
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchParameters, setSearchParameters] = useState<SearchParameters>({
-    nutrientSearchTerm: { id: 0, description: "", preferredUnitId: 0 },
+    nutrientSearchTerm: {
+      id: 0,
+      description: "",
+      preferredUnitId: 0,
+      category: "",
+    },
     foodSearchTerm: "",
     comparisonOperator: "gt",
     nutrientValue: 0,
@@ -115,6 +120,7 @@ export const AddFoodDialog = ({
           )}
 
           <AmountInput
+            restrictToUnitCategory={}
             amount={newFood.amount}
             setAmount={(amount) =>
               setNewFood({
@@ -126,6 +132,7 @@ export const AddFoodDialog = ({
               id: newFood.unitId,
               description: newFood.unitName,
               abbreviation: "",
+              category: "",
             }}
             setUnit={(unit) =>
               setNewFood({

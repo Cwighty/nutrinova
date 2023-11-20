@@ -9,6 +9,7 @@ interface AmountInputProps {
   setAmount: (amount: number) => void;
   unit: UnitOption;
   setUnit: (unit: UnitOption) => void;
+  restrictToUnitCategory?: string | null;
 }
 
 export const AmountInput = ({
@@ -16,6 +17,7 @@ export const AmountInput = ({
   setAmount,
   unit,
   setUnit,
+  restrictToUnitCategory = null,
 }: AmountInputProps) => {
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
@@ -40,8 +42,16 @@ export const AmountInput = ({
         <Grid item xs={6}>
           <SelectUnit
             value={unit}
+            restrictToCategory={restrictToUnitCategory}
             onSelectedUnitChange={(unit) => {
-              setUnit(unit ?? { id: 0, description: "", abbreviation: "" });
+              setUnit(
+                unit ?? {
+                  id: 0,
+                  description: "",
+                  abbreviation: "",
+                  category: "",
+                }
+              );
             }}
             error={unit.description === ""}
             helperText={unit.description === "" ? "Please select a unit" : ""}

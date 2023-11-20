@@ -10,6 +10,7 @@ interface SelectUnitProps {
   useAbbreviation?: boolean;
   error?: boolean;
   helperText?: string;
+  restrictToCategory?: string | null;
   onSelectedUnitChange: (unit: UnitOption | null) => void;
 }
 
@@ -19,6 +20,7 @@ export default function SelectUnit({
   helperText,
   useAbbreviation = false,
   value,
+  restrictToCategory = null,
 }: SelectUnitProps) {
   const {
     data: unitOptions,
@@ -26,6 +28,9 @@ export default function SelectUnit({
     isError: unitOptionsIsError,
   } = useGetUnitsQuery();
 
+  const filteredOptions = restrictToCategory === null ? unitOptions : unitOptions?.filter(
+    (option) => option.category === restrictToCategory
+  );
   const handleSelectionChanged = (
     _: SyntheticEvent<Element, Event>,
     value: UnitOption | null
@@ -50,7 +55,7 @@ export default function SelectUnit({
       {unitOptions && (
         <Autocomplete
           value={value}
-          options={unitOptions}
+          options={filteredOptions ?? []}
           groupBy={(option) => option.category}
           getOptionLabel={(option) =>
             `${useAbbreviation ? option.abbreviation : option.description}`
