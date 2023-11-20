@@ -1,6 +1,7 @@
-import { Typography, Box, Button, InputAdornment, TextField, Skeleton, Alert } from "@mui/material";
-import { EditFoodNutrientRequestModel } from "../_models/editFoodNutrientRequest"
+import { Typography, Button, InputAdornment, TextField, Skeleton, Alert, Grid } from "@mui/material";
+import { EditFoodNutrientRequestModel } from "../_models/editFoodNutrientRequest";
 import { useGetUnitsQuery } from "../../foodHooks";
+import { useState } from "react";
 
 interface EditNutrientListItemProp {
   nutrient: EditFoodNutrientRequestModel;
@@ -15,41 +16,46 @@ interface EditNutrientListItemProp {
 export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient, inputOptions }: EditNutrientListItemProp) => {
 
   const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
-
+  const [unitAmount, setUnitAmount] = useState<number | null>(nutrient.amount);
   const handleNutrientAmountChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newAmount = parseFloat(event.target.value) ?? null;
+    setUnitAmount(newAmount);
     updateNutrient(newAmount);
   }
 
   if (unitOptionsLoading) {
-    return <Skeleton variant="rounded" width={400} height={40} />;
+    return <Skeleton variant="rounded" width="100%" height={40} />;
   }
 
   if (unitOptionsIsError) {
     return <Alert severity="error">Error loading, try again later</Alert>;
   }
+
   return (
-    <>
-      <Box>
-        {unitOptions &&
-          <>
-            <Typography>{nutrient.nutrientName}</Typography>
-            <Button onClick={() => deleteNutrient()}> Delete</Button>
-            <TextField
-              error={inputOptions?.error}
-              helperText={inputOptions?.helperText}
-              label="Amount"
-              type="number"
-              sx={{ width: 140 }}
-              onChange={handleNutrientAmountChange}
-              InputProps={{
-                inputProps: { min: 0 },
-                endAdornment: <InputAdornment position="end">{unitOptions.find(u => u.id === nutrient.unitId)?.abreviation ?? ''}</InputAdornment>,
-              }}
-            />
-          </>
-        }
-      </Box>
-    </>
-  )
-}
+    <Grid container spacing={2} alignItems="center">
+      <Grid item xs={12} sm={5} md={4} lg={3}>
+        <Typography variant="subtitle1">{nutrient.nutrientName}</Typography>
+      </Grid>
+      <Grid item xs={8} sm={5} md={6} lg={7}>
+        <TextField
+          error={inputOptions?.error}
+          helperText={inputOptions?.helperText}
+          label="Amount"
+          type="number"
+          fullWidth
+          value={unitAmount ?? ''}
+          onChange={handleNutrientAmountChange}
+          InputProps={{
+            inputProps: { min: 0 },
+            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id === nutrient.unitId)?.abreviation ?? ''}</InputAdornment>,
+          }}
+        />
+      </Grid>
+      <Grid item xs={4} sm={2} md={2} lg={2}>
+        <Button variant="outlined" color="error" onClick={deleteNutrient}>
+          Delete
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
