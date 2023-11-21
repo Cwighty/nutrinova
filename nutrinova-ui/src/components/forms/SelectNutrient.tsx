@@ -9,7 +9,7 @@ import {
 import {
   Alert,
   Autocomplete,
-  Box,
+  Grid,
   InputAdornment,
   Skeleton,
   TextField,
@@ -27,19 +27,10 @@ interface SelectNutrientProps {
 }
 
 const SelectNutrient = (inputProps: SelectNutrientProps) => {
-  const {
-    data: nutrientOptions,
-    isLoading: nutrientOptionsLoading,
-    isError: nutrientOptionsIsError,
-  } = useGetNutrientsQuery();
-  const {
-    data: unitOptions,
-    isLoading: unitOptionsLoading,
-    isError: unitOptionsIsError,
-  } = useGetUnitsQuery();
+  const { data: nutrientOptions, isLoading: nutrientOptionsLoading, isError: nutrientOptionsIsError } = useGetNutrientsQuery();
+  const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
 
-  const [selectedNutrient, setSelectedNutrient] =
-    useState<NutrientOption | null>(null);
+  const [selectedNutrient, setSelectedNutrient] = useState<NutrientOption | null>(null);
 
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
@@ -72,7 +63,8 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Box display={"flex"} alignItems={"center"} p={2}>
+        <Grid container columnSpacing={1} justifyContent={"flex-end"}>
+          <Grid item xs={12} md={6}>
           <Autocomplete
             options={nutrientOptions}
             groupBy={(option) => option.category}
@@ -88,19 +80,22 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
               <TextField
                 {...params}
                 label="Nutrient"
-                sx={{ width: 300 }}
+                sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
                 error={inputProps.error}
                 helperText={inputProps.helperText}
               />
             )}
             onChange={handleNutrientSelectionChange}
           />
+          </Grid>
+          <Grid item xs={12} md={6}>
           <TextField
             error={inputProps.error}
             helperText={inputProps.helperText}
             label="Amount"
             type="number"
-            sx={{ width: 140 }}
+            fullWidth
+            sx={{ flexGrow: 1 }}
             onChange={handleNutrientAmountChange}
             InputProps={{
               inputProps: { min: 0 },
@@ -113,7 +108,8 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
               ),
             }}
           />
-        </Box>
+          </Grid>
+        </Grid>
       )}
     </>
   );

@@ -29,6 +29,7 @@ interface NutrientOptionProps {
     unit: UnitOption | null
   ) => void;
   onComparisonOperatorChange: (comparisonOperator: string) => void;
+  modal?: boolean;
 }
 
 const SelectNutrientWithFilter = ({
@@ -37,6 +38,7 @@ const SelectNutrientWithFilter = ({
   onComparisonOperatorChange,
   onNutrientAmountChange,
   onSelectedNutrientChange,
+  modal,
 }: NutrientOptionProps) => {
   const {
     data: nutrientOptions,
@@ -54,7 +56,7 @@ const SelectNutrientWithFilter = ({
   >(null);
 
   const [comparisonOperator, setComparisonOperator] = useState<string>(
-    COMPARISON_OPERATOR_OPTIONS[1].abbreviation
+    COMPARISON_OPERATOR_OPTIONS[1].abbreviation,
   );
 
   const handleNutrientSelectionChange = (
@@ -100,8 +102,8 @@ const SelectNutrientWithFilter = ({
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Grid container columnSpacing={1} justifyContent={"flex-end"}>
-          <Grid item xs={12} md={3}>
+        <Grid container columnSpacing={1} justifyContent={"flex-end"} gap={2}>
+          <Grid item xs={12} md={modal ? 12 : 3}>
             <Autocomplete
               options={nutrientOptions}
               getOptionLabel={(option) => option.description}
@@ -109,7 +111,7 @@ const SelectNutrientWithFilter = ({
                 <TextField
                   {...params}
                   label="Nutrient"
-                  sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+                  sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
                   error={error}
                   helperText={helperText}
                 />
@@ -118,13 +120,13 @@ const SelectNutrientWithFilter = ({
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={modal ? 12 : 3}>
             <TextField
               select
               fullWidth
               value={comparisonOperator}
               label="Comparison"
-              sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+              sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
               onChange={(e) => handleComparisonOperatorChange(e)}
             >
               {COMPARISON_OPERATOR_OPTIONS.map((option) => (
@@ -135,7 +137,7 @@ const SelectNutrientWithFilter = ({
             </TextField>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={modal ? 12 : 3}>
             <TextField
               error={error}
               helperText={helperText}

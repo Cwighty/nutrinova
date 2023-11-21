@@ -26,7 +26,7 @@ export const AmountInput = ({
   return (
     <>
       <Grid container spacing={1}>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <TextField
             label="Amount"
             type="number"
@@ -39,7 +39,7 @@ export const AmountInput = ({
           />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <SelectUnit
             value={unit}
             restrictToCategory={restrictToUnitCategory}

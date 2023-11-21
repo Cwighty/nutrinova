@@ -9,11 +9,13 @@ import NutrientFilterOptions from "@/components/forms/NutrientFilterOptions";
 interface MyFoodSearchFormProps {
   setSearchParameters: (searchParameters: SearchParameters) => void;
   currentSearchParameters: SearchParameters;
+  modal?: boolean;
 }
 
 export const MyFoodSearchForm = ({
   setSearchParameters,
   currentSearchParameters,
+  modal,
 }: MyFoodSearchFormProps) => {
   const handleSearchParametersChange = (
     value: string | number | NutrientOption | null | undefined,
@@ -29,9 +31,9 @@ export const MyFoodSearchForm = ({
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", md: "row" },
+        flexDirection: modal ? "column" : { xs: "column", md: "row" },
         justifyContent: "space-between",
-        gap: 2,
+        gap: 3,
       }}
     >
       <TextField
@@ -50,6 +52,7 @@ export const MyFoodSearchForm = ({
       />
 
       <NutrientFilterOptions
+        modal={modal}
         onSelectedNutrientChange={(n) =>
           handleSearchParametersChange(n, "nutrientSearchTerm")
         }

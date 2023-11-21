@@ -97,6 +97,7 @@ export const AddFoodDialog = ({
             </AccordionSummary>
             <AccordionDetails>
               <MyFoodSearchForm
+                modal
                 setSearchParameters={setSearchParameters}
                 currentSearchParameters={searchParameters}
               />
