@@ -62,6 +62,24 @@ public class FoodNutrientConverter : JsonConverter<FoodNutrient>
         foodNutrient.value = valueProperty.GetDouble();
       }
 
+      if (root.TryGetProperty("unit", out var unitObject) && unitObject.TryGetProperty("id", out var unitId))
+      {
+        foodNutrient.unitId = unitId.GetInt32();
+      }
+      else if (root.TryGetProperty("unitId", out var unitIdProperty))
+      {
+        foodNutrient.unitId = unitIdProperty.GetInt32();
+      }
+
+      if (root.TryGetProperty("unit", out var unit) && unit.TryGetProperty("unitCategory", out var unitCategory) && unitCategory.TryGetProperty("id", out var unitCategoryId))
+      {
+        foodNutrient.UnitCategoryId = unitCategoryId.GetDouble();
+      }
+      else if (root.TryGetProperty("unitCategoryId", out var unitCategoryIdProperty))
+      {
+        foodNutrient.UnitCategoryId = unitCategoryIdProperty.GetDouble();
+      }
+
       return foodNutrient;
     }
   }
@@ -96,6 +114,16 @@ public class FoodNutrientConverter : JsonConverter<FoodNutrient>
     if (!string.IsNullOrEmpty(value.derivationDescription))
     {
       writer.WriteString("derivationDescription", value.derivationDescription);
+    }
+
+    if (value.unitId > 0)
+    {
+      writer.WriteNumber("unitId", value.unitId);
+    }
+
+    if (value.UnitCategoryId > 0)
+    {
+      writer.WriteNumber("UnitCategoryId", (decimal)value.UnitCategoryId);
     }
 
     writer.WriteNumber("value", value.value);

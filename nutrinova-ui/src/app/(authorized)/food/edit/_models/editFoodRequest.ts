@@ -8,8 +8,9 @@ export interface EditFoodRequestModel extends SelectNutrientWithUnitState {
   servingSize?: number;
   brandName?: string;
   servingSizeUnit?: UnitOption | null;
-  ingredients?: string[] ;
+  ingredients?: string[];
   servingSizeUnitId?: number;
   note?: string;
   foodNutrients?: EditFoodNutrientRequestModel[];
+  unitCategoryId?: number;
 }

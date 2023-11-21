@@ -4,4 +4,6 @@ export interface EditFoodNutrientRequestModel extends CreateFoodNutrientRequestM
   nutrientId: number;
   amount: number;
   nutrientName: string;
+  unitId: number;
+  unitCategoryId: number;
 }

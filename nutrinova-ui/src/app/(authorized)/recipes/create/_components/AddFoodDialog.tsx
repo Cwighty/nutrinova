@@ -133,7 +133,7 @@ export const AddFoodDialog = ({
               id: newFood.unitId,
               description: newFood.unitName,
               abbreviation: "",
-              category: "",
+              categoryName: "",
             }}
             setUnit={(unit) =>
               setNewFood({

@@ -49,7 +49,7 @@ export const AmountInput = ({
                   id: 0,
                   description: "",
                   abbreviation: "",
-                  category: "",
+                  categoryName: "",
                 }
               );
             }}

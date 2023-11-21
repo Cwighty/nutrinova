@@ -22,6 +22,8 @@ public class FoodNutrient
 
     public double value { get; set; }
 
+    public double? UnitCategoryId { get; set; }
+
     public bool IsPrimaryFoodNutrient()
     {
         return nutrientName == "Total lipid (fat)" || nutrientName == "Carbohydrate, by difference" || nutrientName == "Energy" || nutrientName == "Protein";

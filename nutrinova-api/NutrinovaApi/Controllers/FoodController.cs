@@ -171,6 +171,7 @@ public class FoodController : ControllerBase
         result = await context.FoodPlans
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
           .Where(fp =>
             fp.CreatedBy == customer.Id && (
           EF.Functions.ILike(fp.Description, $"%{filterOption}%") ||
@@ -182,6 +183,7 @@ public class FoodController : ControllerBase
         result = await context.FoodPlans
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
           .Where(fp => fp.CreatedBy == customer.Id)
           .ToListAsync();
       }
@@ -266,7 +268,6 @@ public class FoodController : ControllerBase
       }
 
       var res = result.ToFood();
-      logger.LogInformation($"RetrieveFoodForUserById, {res.foodNutrients.First().unitId}");
       return res;
     }
     catch (HttpRequestException ex)
@@ -533,7 +534,7 @@ public class FoodController : ControllerBase
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
-    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
+    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit.Id;
     foodPlan.ServingSizeUnitNavigation = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;

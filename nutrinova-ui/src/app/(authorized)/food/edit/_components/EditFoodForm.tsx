@@ -14,44 +14,60 @@ interface Props {
 
 export const EditFoodForm = ({ foodId }: Props) => {
 
-
-
   const { data: food, isLoading: foodIsLoading } = useGetFoodByIdQuery(foodId);
   const { data: unitOptions } = useGetUnitsQuery();
   const editFoodMutation = useEditFoodMutation();
 
   const [isValid, setIsValid] = useState<boolean>(false);
+  const [servingSizeIsValid, setServingSizeIsValid] = useState<boolean>(false);
+  const [foodNutrientsAreValid, setFoodNutrientsAreValid] = useState<boolean>(false);
 
   const [editFoodFormState, setEditFoodForm] = React.useState<EditFoodRequestModel>({
     id: foodId,
-    description: food?.description || '',
-    brandName: food?.brandName || '',
-    ingredients: food?.ingredients?.split(',') || [],
-    servingSize: food?.servingSize || 0,
-    servingSizeUnit: unitOptions?.find(u => u.abreviation === food?.servingSizeUnit) || null,
+    description: food?.description,
+    brandName: food?.brandName,
+    ingredients: food?.ingredients?.split(','),
+    unitCategoryId: food?.unitCategoryId,
+    servingSize: food?.servingSize,
+    servingSizeUnit: unitOptions?.find(u => u.abbreviation === food?.servingSizeUnit) || null,
     foodNutrients: food?.foodNutrients?.map(fn => {
       return {
         nutrientId: fn.nutrientId,
         amount: fn.value,
-        unitId: fn.unitId, // doens't get defined on load. Gets set in api call
-        nutrientName: fn.nutrientName
+        unitId: fn.unitId, // doesn't get defined on load. Gets set in api call
+        nutrientName: fn.nutrientName,
+        unitCategoryId: fn?.categoryId,
       }
     }) || undefined,
     note: food?.note || '',
   })
 
-  const validateform = () => {
-    if (editFoodFormState.servingSize
-      && editFoodFormState.servingSize > 0
-      && editFoodFormState.servingSizeUnit) {
-      return true;
+
+
+  const validateForm = () => {
+    const validateServing = () => {
+      const isValid = editFoodFormState.servingSize
+        && editFoodFormState.servingSize > 0
+        && editFoodFormState.servingSizeUnit != null
+        && editFoodFormState.servingSizeUnit != undefined
+      setServingSizeIsValid(isValid || false);
+      return isValid;
+
     }
-    return false;
+    const validateNutrients = () => {
+
+      const isValid = editFoodFormState?.foodNutrients?.every(n => n.amount > 0) && editFoodFormState.foodNutrients.length > 0;
+      setFoodNutrientsAreValid(isValid || false);
+      return isValid;
+
+    }
+    return validateServing() && validateNutrients();
   }
-  const validateformCallback = useCallback(validateform, [editFoodFormState]);
+
+  const validateFormCallback = useCallback(validateForm, [editFoodFormState]);
   useEffect(() => {
-    setIsValid(validateformCallback());
-  }, [editFoodFormState, validateformCallback])
+    setIsValid(validateFormCallback() || false);
+  }, [editFoodFormState, validateFormCallback])
 
 
   if (foodIsLoading) {
@@ -77,12 +93,16 @@ export const EditFoodForm = ({ foodId }: Props) => {
   }
 
   const handleSubmit = () => {
-    console.log(editFoodFormState)
-    editFoodMutation.mutate(editFoodFormState, {
-      onSuccess: () => {
-        toast.success("Food Updated")
-      },
-    });
+    console.log(editFoodFormState);
+    if (!isValid) {
+      toast.error("Invalid Form");
+    } else {
+      editFoodMutation.mutate(editFoodFormState, {
+        onSuccess: () => {
+
+        },
+      });
+    }
   }
 
   const handleNutrientDelete = (nutrientId: number) => {
@@ -161,7 +181,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
           <ServingSizeUnitField
             formState={editFoodFormState}
             setFormState={handleSelectServingSizeUpdate}
-            formValid={isValid}
+            formValid={servingSizeIsValid}
           />
         </Grid>
         <Grid item xs={12} md={8}>
@@ -188,6 +208,10 @@ export const EditFoodForm = ({ foodId }: Props) => {
               nutrient={fn}
               deleteNutrient={() => handleNutrientDelete(fn.nutrientId)}
               updateNutrient={(amount: number) => handleNutrientAmountChange(fn.nutrientId, amount)}
+              inputOptions={{
+                error: !foodNutrientsAreValid,
+                helperText: !foodNutrientsAreValid ? "Nutrients must have a value greater than 0" : undefined,
+              }}
             />
           ))}
         </Grid>

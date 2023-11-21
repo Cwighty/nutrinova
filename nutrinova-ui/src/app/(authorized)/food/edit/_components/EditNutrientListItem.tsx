@@ -31,6 +31,9 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
     return <Alert severity="error">Error loading, try again later</Alert>;
   }
 
+  if (inputOptions?.error) {
+    return <Alert severity="error">{inputOptions?.helperText}</Alert>;
+  }
   return (
     <Grid container spacing={2} alignItems="center">
       <Grid item xs={12} sm={5} md={4} lg={3}>
@@ -47,7 +50,7 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
           onChange={handleNutrientAmountChange}
           InputProps={{
             inputProps: { min: 0 },
-            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id === nutrient.unitId)?.abreviation ?? ''}</InputAdornment>,
+            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id === nutrient.unitId)?.abbreviation ?? ''}</InputAdornment>,
           }}
         />
       </Grid>

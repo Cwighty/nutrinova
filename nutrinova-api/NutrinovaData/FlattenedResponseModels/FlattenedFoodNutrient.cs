@@ -15,6 +15,8 @@ public class FlattenedFoodNutrient
 
   public double? UnitId { get; set; }
 
+  public double? UnitCategoryId { get; set; }
+
   public FlattenedFoodNutrient()
   {
   }
@@ -28,6 +30,8 @@ public class FlattenedFoodNutrient
     this.NutrientName = fpn?.Nutrient.Description;
 
     this.UnitId = fpn?.UnitId;
+
+    this.UnitCategoryId = fpn?.Unit?.CategoryId;
   }
 
   public FlattenedFoodNutrient(FoodNutrient foodNutrient)
@@ -41,5 +45,7 @@ public class FlattenedFoodNutrient
     this.NutrientName = foodNutrient.nutrientName;
 
     this.UnitId = foodNutrient?.unitId;
+
+    this.UnitCategoryId = foodNutrient?.UnitCategoryId;
   }
 }
