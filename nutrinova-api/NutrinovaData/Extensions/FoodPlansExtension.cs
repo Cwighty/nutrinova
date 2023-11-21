@@ -13,6 +13,16 @@ public static class FoodPlansExtension
 
   public static Food ToFood(this FoodPlan foodPlan)
   {
+    if (foodPlan.ServingSizeUnitNavigation == null)
+    {
+      throw new Exception($"Please include {nameof(FoodPlan.ServingSizeUnitNavigation)} in the model");
+    }
+
+    if (foodPlan.ServingSizeUnitNavigation.Category == null)
+    {
+      throw new Exception($"Please include {nameof(FoodPlan.ServingSizeUnitNavigation.Category)} in the model");
+    }
+
     return new Food()
     {
       fdcId = foodPlan.Fdcid ?? 0,
@@ -21,9 +31,11 @@ public static class FoodPlansExtension
       note = foodPlan.Note ?? string.Empty,
       brandName = foodPlan.BrandName ?? string.Empty,
       ingredients = foodPlan.Ingredients ?? string.Empty,
-      servingSize = foodPlan.ServingSize ?? 0,
-      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abreviation,
-      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abreviation}",
+      servingSize = foodPlan.ServingSize,
+      servingSizeUnitCategory = foodPlan.ServingSizeUnitNavigation.Category.Description,
+
+      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
+      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",
       foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
     };
   }

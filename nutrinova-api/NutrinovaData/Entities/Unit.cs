@@ -9,7 +9,11 @@ public partial class Unit
 
     public string Description { get; set; } = null!;
 
-    public string Abreviation { get; set; } = null!;
+    public string Abbreviation { get; set; } = null!;
+
+    public int? CategoryId { get; set; }
+
+    public virtual UnitCategory? Category { get; set; }
 
     public virtual ICollection<FoodHistory> FoodHistories { get; set; } = new List<FoodHistory>();
 

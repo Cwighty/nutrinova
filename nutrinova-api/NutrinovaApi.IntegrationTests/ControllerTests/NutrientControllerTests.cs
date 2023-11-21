@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NutrinovaData.Entities;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -19,7 +18,7 @@ public class NutrientControllerTests : IClassFixture<NutrinovaApiWebApplicationF
     [Fact]
     public async Task CanRequestNutrients()
     {
-        var response = await httpClient.GetFromJsonAsync<IEnumerable<Nutrient>>("be/nutrient/all-nutrients");
+        var response = await httpClient.GetFromJsonAsync<IEnumerable<NutrientOption>>("be/nutrient/all-nutrients");
         Assert.NotNull(response);
         Assert.NotEmpty(response);
     }

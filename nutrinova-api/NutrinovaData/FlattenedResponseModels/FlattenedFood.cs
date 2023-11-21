@@ -35,7 +35,7 @@ public class FlattenedFood
     Description = fp.Description;
     Ingredients = fp.Ingredients;
     BrandName = fp.BrandName;
-    ServingSize = fp.ServingSize ?? 0;
+    ServingSize = fp.ServingSize;
     ServingSizeUnit = fp?.ServingSizeUnitNavigation?.Description;
     ServingSizeWithUnits = ServingSize + ServingSizeUnit;
     FoodNutrients = fp?.FoodPlanNutrients

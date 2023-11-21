@@ -27,6 +27,7 @@ public class Food
   public decimal servingSize { get; set; }
 
   public string servingSizeUnit { get; set; }
+  public string? servingSizeUnitCategory { get; set; }
 
   public string servingSizeWithUnits { get; set; }
 

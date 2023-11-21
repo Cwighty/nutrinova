@@ -189,8 +189,8 @@ public class FoodController : ControllerBase
       result = result
         .Where(fp => string.IsNullOrEmpty(nutrientFilter) ||
                      fp.FoodPlanNutrients.Any(fpn =>
-                       fpn.Nutrient.NutrientName != null &&
-                       fpn.Nutrient.NutrientName.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
+                       fpn.Nutrient.Description != null &&
+                       fpn.Nutrient.Description.Contains(nutrientFilter, StringComparison.OrdinalIgnoreCase) &&
                        NumberComparisonViaOperatorString(
                          decimal.ToDouble(fpn.Amount),
                          nutrientFilterValue,
@@ -256,7 +256,7 @@ public class FoodController : ControllerBase
       }
 
       var result = await context.FoodPlans
-        .Include(fp => fp.ServingSizeUnitNavigation)
+        .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
@@ -300,9 +300,14 @@ public class FoodController : ControllerBase
       return BadRequest("Description is required");
     }
 
-    if (createFoodRequestModel.ServingSize <= 0)
+    if (!createFoodRequestModel.ServingSize.HasValue || createFoodRequestModel.ServingSize <= 0)
     {
       return BadRequest("Serving size must be greater than 0");
+    }
+
+    if (createFoodRequestModel.Unit == null)
+    {
+      return BadRequest("Serving size unit is required");
     }
 
     if (createFoodRequestModel.FoodNutrients == null || !createFoodRequestModel.FoodNutrients.Any())
@@ -331,15 +336,24 @@ public class FoodController : ControllerBase
       Description = createFoodRequestModel.Description,
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
-      ServingSize = createFoodRequestModel.ServingSize,
+      ServingSize = createFoodRequestModel.ServingSize.Value,
       ServingSizeUnit = createFoodRequestModel.Unit ?? 0,
       Note = createFoodRequestModel.Note,
-      FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n => new FoodPlanNutrient
+      FoodPlanNutrients = createFoodRequestModel.FoodNutrients.Select(n =>
       {
-        Id = Guid.NewGuid(),
-        NutrientId = n.NutrientId,
-        Amount = n.Amount,
-        UnitId = n.UnitId,
+        var nutrient = context.Nutrients.FirstOrDefault(nu => nu.Id == n.NutrientId);
+        if (nutrient == null)
+        {
+          throw new InvalidOperationException("Nutrient does not exist");
+        }
+
+        return new FoodPlanNutrient
+        {
+          Id = Guid.NewGuid(),
+          NutrientId = n.NutrientId,
+          Amount = n.Amount,
+          UnitId = nutrient.PreferredUnit,
+        };
       }).ToList(),
     };
 
@@ -395,8 +409,8 @@ public class FoodController : ControllerBase
         Ingredients = deserializedResult.ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
-        ServingSize = (decimal?)deserializedResult.servingSize,
-        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 0 : 0,
+        ServingSize = deserializedResult.servingSize,
+        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 1 : 1, // default to 100 grams
         Note = deserializedResult.ingredients,
       };
 
@@ -467,7 +481,7 @@ public class FoodController : ControllerBase
       return BadRequest("Description is required");
     }
 
-    if (editFoodRequestModel.ServingSize <= 0)
+    if (!editFoodRequestModel.ServingSize.HasValue || editFoodRequestModel.ServingSize <= 0)
     {
       return BadRequest("Serving size must be greater than 0");
     }
@@ -518,9 +532,8 @@ public class FoodController : ControllerBase
 
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
-    foodPlan.ServingSize = editFoodRequestModel.ServingSize;
-    foodPlan.Id = Guid.Parse(editFoodRequestModel.Id);
-    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit.Id;
+    foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
+    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
     foodPlan.ServingSizeUnitNavigation = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
@@ -557,7 +570,7 @@ public class FoodController : ControllerBase
 
   private int? GetUnitId(string unitAbbreviation)
   {
-    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
+    var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abbreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
     if (unit == null)
     {
       logger.LogError($"Failed to find unit with abbreviation {unitAbbreviation}, skipping");

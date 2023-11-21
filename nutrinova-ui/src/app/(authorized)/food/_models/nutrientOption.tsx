@@ -1,5 +1,6 @@
 export interface NutrientOption {
-    id: number;
-    nutrientName: string;
-    preferredUnit: number;
+  id: number;
+  description: string;
+  preferredUnitId: number;
+  category: string;
 }
