@@ -28,6 +28,8 @@ const initialNutrient: CreateFoodNutrientRequestModel = {
   nutrientId: 0,
   amount: 0,
   unitId: 0,
+  nutrientName: "",
+  unitCategoryId: 0,
 };
 
 export default function CreateFoodForm() {

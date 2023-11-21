@@ -1,12 +1,14 @@
 "use client"
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '@/app/(authorized)/recipes/create/_components/ServingSizeUnitField'
 import TagInput from '@/components/forms/TagInput'
-import { Box, Button, Grid, TextField } from '@mui/material'
+import { Alert, Box, Button, Grid, TextField } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { EditFoodRequestModel } from '../_models/editFoodRequest'
 import { useEditFoodMutation, useGetFoodByIdQuery, useGetUnitsQuery } from "../../foodHooks";
 import { EditNutrientListItem } from './EditNutrientListItem'
 import toast from 'react-hot-toast'
+import { AddNutrientDialog } from '../../create/_components/AddNutrientDialog'
+import { EditFoodNutrientRequestModel } from '../_models/editFoodNutrientRequest'
 
 interface Props {
   foodId: string
@@ -21,6 +23,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [servingSizeIsValid, setServingSizeIsValid] = useState<boolean>(false);
   const [foodNutrientsAreValid, setFoodNutrientsAreValid] = useState<boolean>(false);
+  const [newNutrient, setNewNutrient] = useState<EditFoodNutrientRequestModel>({ nutrientId: 0, amount: 0, unitId: 0, nutrientName: '', unitCategoryId: 0 });
 
   const [editFoodFormState, setEditFoodForm] = React.useState<EditFoodRequestModel>({
     id: foodId,
@@ -38,10 +41,29 @@ export const EditFoodForm = ({ foodId }: Props) => {
         nutrientName: fn.nutrientName,
         unitCategoryId: fn?.categoryId,
       }
-    }) || undefined,
+    }) || [],
     note: food?.note || '',
   })
 
+
+  const handleAddNutrient = () => {
+    if (newNutrient.amount <= 0) {
+      toast.error("Nutrient amount must be greater than 0");
+      return;
+    }
+    if (newNutrient.nutrientName == "") {
+      toast.error("Nutrient must be selected");
+      return;
+    }
+    const newNutrientList = editFoodFormState?.foodNutrients !== undefined
+      ? [...editFoodFormState.foodNutrients, newNutrient]
+      : [newNutrient]
+    setEditFoodForm({
+      ...editFoodFormState,
+      foodNutrients: newNutrientList,
+    });
+    setNewNutrient({ nutrientId: 0, amount: 0, unitId: 0, nutrientName: '', unitCategoryId: 0 });
+  }
 
 
   const validateForm = () => {
@@ -202,6 +224,8 @@ export const EditFoodForm = ({ foodId }: Props) => {
         </Grid>
         {/* Nutrients */}
         <Grid item xs={12}>
+          <AddNutrientDialog handleAddNutrient={handleAddNutrient} newNutrient={newNutrient} setNewNutrient={(newNutrient) => setNewNutrient(newNutrient)} />
+          {(editFoodFormState.foodNutrients?.length === 0) && <Alert severity='warning'> Foods need at least one nutrient </Alert>}
           {editFoodFormState.foodNutrients?.map((fn, index) => (
             <EditNutrientListItem
               key={index}

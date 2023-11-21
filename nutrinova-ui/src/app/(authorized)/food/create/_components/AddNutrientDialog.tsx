@@ -50,6 +50,7 @@ export const AddNutrientDialog = ({
                 setNewNutrient({
                   ...newNutrient,
                   nutrientId: selectedNutrient.id,
+                  nutrientName: selectedNutrient.description,
                 });
             }}
             onNutrientAmountChange={(newAmount, newUnit) => {
