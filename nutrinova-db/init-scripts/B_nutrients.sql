@@ -1,548 +1,82 @@
 SET
     search_path TO public;
 
-INSERT INTO unit (id, description, abreviation) VALUES
-     (1, 'Gram', 'G'),
-     (2, 'Milligram', 'MG'),
-     (3, 'Microgram', 'UG'),
-     (4, 'UI', 'UI'),
-     (5, 'Milliliter', 'ML'),
-     (6, 'Liter', 'L'),
-     (7, 'Ounce', 'OZ'),
-     (8, 'Pound', 'LB'),
-     (9, 'Kilogram', 'KG'),
-     (10, 'Teaspoon', 'TSP'),
-     (11, 'Calorie', 'KCAL'),
-     (12, 'PH', 'PH'),
-     (13, 'UMOT_T', 'UMOT_T'),
-     (14, 'Specific Gravity', 'SP_GR'),
-     (15, 'Calorie', 'kJ'),
-     (16, 'MCG_RE', 'MCG_RE'),
-     (17, 'MG_ATE', 'MG_ATE'),
-     (18, 'UMOL_TE', 'UMOL_TE'),
-     (19, 'MG_GAE', 'MG_GAE');
+INSERT INTO Unit_Category (description) VALUES
+  ('Solid'),
+  ('Liquid'),
+  ('Quantity'),
+  ('Energy');
+
+INSERT INTO unit (description, abbreviation, category_id) VALUES
+  -- Mass Units
+  ('Gram', 'G', 1),
+  ('Kilogram', 'KG', 1),
+  ('Milligram', 'MG', 1),
+  ('Microgram', 'mcg', 1),
+  ('Ounce', 'OZ', 1),
+  ('Pound', 'LB', 1),
+
+  -- Volume Units
+  ('Liter', 'L', 2),
+  ('Milliliter', 'ML', 2),
+  ('Teaspoon', 'TSP', 2),
+  ('Tablespoon', 'TBSP', 2),
+  ('Cup', 'Cup', 2),
+  ('Fluid Ounce', 'FL OZ', 2), -- Often used in the U.S.
+  ('Pint', 'PT', 2),  -- Used for larger volumes
+  ('Quart', 'QT', 2), -- Larger than a pint
+  ('Gallon', 'GAL', 2), -- Used for very large volumes
+
+  -- Quantity Units
+  ('Piece', 'PC', 3),
+  ('Items', 'qty', 3),
+
+  -- Energy Units
+  ('Calorie', 'KCAL', 4);
 
 
+INSERT INTO Nutrient_Category (id, description) VALUES
+  (1, 'Macronutrients'),
+  (2, 'Vitamins'),
+  (3, 'Minerals'),
+  (4, 'Other Components'),
+  (5, 'Energy');
 
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2047,'Energy (Atwater General Factors)',11),
-	 (2048,'Energy (Atwater Specific Factors)',11),
-	 (1001,'Solids',1),
-	 (1002,'Nitrogen',1),
-	 (1003,'Protein',1),
-	 (1004,'Total lipid (fat)',1),
-	 (1005,'Carbohydrate, by difference',1),
-	 (1006,'Fiber, crude (DO NOT USE - Archived)',1),
-	 (1007,'Ash',1),
-	 (1008,'Energy',11);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1009,'Starch',1),
-	 (1010,'Sucrose',1),
-	 (1011,'Glucose',1),
-	 (1012,'Fructose',1),
-	 (1013,'Lactose',1),
-	 (1014,'Maltose',1),
-	 (1015,'Amylose',1),
-	 (1016,'Amylopectin',1),
-	 (1017,'Pectin',1),
-	 (1018,'Alcohol, ethyl',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1019,'Pentosan',1),
-	 (1020,'Pentoses',1),
-	 (1021,'Hemicellulose',1),
-	 (1022,'Cellulose',1),
-	 (1023,'pH',12),
-	 (1024,'Specific Gravity', 14),
-	 (1025,'Organic acids',1),
-	 (1026,'Acetic acid',2),
-	 (1027,'Aconitic acid',2),
-	 (1028,'Benzoic acid',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1029,'Chelidonic acid',2),
-	 (1030,'Chlorogenic acid',2),
-	 (1031,'Cinnamic acid',2),
-	 (1032,'Citric acid',2),
-	 (1033,'Fumaric acid',2),
-	 (1034,'Galacturonic acid',2),
-	 (1035,'Gallic acid',2),
-	 (1036,'Glycolic acid',2),
-	 (1037,'Isocitric acid',2),
-	 (1038,'Lactic acid',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1039,'Malic acid',2),
-	 (1040,'Oxaloacetic acid',2),
-	 (1041,'Oxalic acid',2),
-	 (1042,'Phytic acid',2),
-	 (1043,'Pyruvic acid',2),
-	 (1044,'Quinic acid',2),
-	 (1045,'Salicylic acid',2),
-	 (1046,'Succinic acid',2),
-	 (1047,'Tartaric acid',2),
-	 (1048,'Ursolic acid',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1049,'Solids, non-fat',1),
-	 (1050,'Carbohydrate, by summation',1),
-	 (1051,'Water',1),
-	 (1052,'Adjusted Nitrogen',1),
-	 (1053,'Adjusted Protein',1),
-	 (1054,'Piperine',1),
-	 (1055,'Mannitol',1),
-	 (1056,'Sorbitol',1),
-	 (1057,'Caffeine',2),
-	 (1058,'Theobromine',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1059,'Nitrates',2),
-	 (1060,'Nitrites',2),
-	 (1061,'Nitrosamine,total',2),
-	 (1062,'Energy',15),
-	 (1063,'Sugars, Total NLEA',1),
-	 (1064,'Solids, soluble',1),
-	 (1065,'Glycogen',1),
-	 (1066,'Fiber, neutral detergent (DO NOT USE - Archived)',1),
-	 (1067,'Reducing sugars',1),
-	 (1068,'Beta-glucans',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1069,'Oligosaccharides',1),
-	 (1070,'Nonstarch polysaccharides',1),
-	 (1071,'Resistant starch',1),
-	 (1072,'Carbohydrate, other',1),
-	 (1073,'Arabinose',1),
-	 (1074,'Xylose',1),
-	 (1075,'Galactose',1),
-	 (1076,'Raffinose',1),
-	 (1077,'Stachyose',1),
-	 (1078,'Xylitol',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1079,'Fiber, total dietary',1),
-	 (1080,'Lignin',1),
-	 (1081,'Ribose',1),
-	 (1082,'Fiber, soluble',1),
-	 (1083,'Theophylline',2),
-	 (1084,'Fiber, insoluble',1),
-	 (1085,'Total fat (NLEA)',1),
-	 (1086,'Total sugar alcohols',1),
-	 (1087,'Calcium, Ca',2),
-	 (1088,'Chlorine, Cl',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1089,'Iron, Fe',2),
-	 (1090,'Magnesium, Mg',2),
-	 (1091,'Phosphorus, P',2),
-	 (1092,'Potassium, K',2),
-	 (1093,'Sodium, Na',2),
-	 (1094,'Sulfur, S',2),
-	 (1095,'Zinc, Zn',2),
-	 (1096,'Chromium, Cr',3),
-	 (1097,'Cobalt, Co',3),
-	 (1098,'Copper, Cu',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1099,'Fluoride, F',3),
-	 (1100,'Iodine, I',3),
-	 (1101,'Manganese, Mn',2),
-	 (1102,'Molybdenum, Mo',3),
-	 (1103,'Selenium, Se',3),
-	 (1104,'Vitamin A, IU',4),
-	 (1105,'Retinol',3),
-	 (1106,'Vitamin A, RAE',3),
-	 (1107,'Carotene, beta',3),
-	 (1108,'Carotene, alpha',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1109,'Vitamin E (alpha-tocopherol)',2),
-	 (1110,'Vitamin D (D2 + D3), International Units',4),
-	 (1111,'Vitamin D2 (ergocalciferol)',3),
-	 (1112,'Vitamin D3 (cholecalciferol)',3),
-	 (1113,'25-hydroxycholecalciferol',3),
-	 (1114,'Vitamin D (D2 + D3)',3),
-	 (1115,'25-hydroxyergocalciferol',3),
-	 (1116,'Phytoene',3),
-	 (1117,'Phytofluene',3),
-	 (1118,'Carotene, gamma',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1119,'Zeaxanthin',3),
-	 (1120,'Cryptoxanthin, beta',3),
-	 (1121,'Lutein',3),
-	 (1122,'Lycopene',3),
-	 (1123,'Lutein + zeaxanthin',3),
-	 (1124,'Vitamin E (label entry primarily)',4),
-	 (1125,'Tocopherol, beta',2),
-	 (1126,'Tocopherol, gamma',2),
-	 (1127,'Tocopherol, delta',2),
-	 (1128,'Tocotrienol, alpha',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1129,'Tocotrienol, beta',2),
-	 (1130,'Tocotrienol, gamma',2),
-	 (1131,'Tocotrienol, delta',2),
-	 (1132,'Aluminum, Al',3),
-	 (1133,'Antimony, Sb',3),
-	 (1134,'Arsenic, As',3),
-	 (1135,'Barium, Ba',3),
-	 (1136,'Beryllium, Be',3),
-	 (1137,'Boron, B',3),
-	 (1138,'Bromine, Br',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1139,'Cadmium, Cd',3),
-	 (1140,'Gold, Au',3),
-	 (1141,'Iron, heme',2),
-	 (1142,'Iron, non-heme',2),
-	 (1143,'Lead, Pb',3),
-	 (1144,'Lithium, Li',3),
-	 (1145,'Mercury, Hg',3),
-	 (1146,'Nickel, Ni',3),
-	 (1147,'Rubidium, Rb',3),
-	 (1148,'Fluoride - DO NOT USE; use 313',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1149,'Salt, NaCl',2),
-	 (1150,'Silicon, Si',3),
-	 (1151,'Silver, Ag',3),
-	 (1152,'Strontium, Sr',3),
-	 (1153,'Tin, Sn',3),
-	 (1154,'Titanium, Ti',3),
-	 (1155,'Vanadium, V',3),
-	 (1156,'Vitamin A, RE',16),
-	 (1157,'Carotene',16),
-	 (1158,'Vitamin E',17);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1159,'cis-beta-Carotene',3),
-	 (1160,'cis-Lycopene',3),
-	 (1161,'cis-Lutein/Zeaxanthin',3),
-	 (1162,'Vitamin C, total ascorbic acid',2),
-	 (1163,'Vitamin C, reduced ascorbic acid',2),
-	 (1164,'Vitamin C, dehydro ascorbic acid',2),
-	 (1165,'Thiamin',2),
-	 (1166,'Riboflavin',2),
-	 (1167,'Niacin',2),
-	 (1168,'Niacin from tryptophan, determined',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1169,'Niacin equivalent N406 +N407',2),
-	 (1170,'Pantothenic acid',2),
-	 (1171,'Vitamin B-6, pyridoxine, alcohol form',2),
-	 (1172,'Vitamin B-6, pyridoxal, aldehyde form',2),
-	 (1173,'Vitamin B-6, pyridoxamine, amine form',2),
-	 (1174,'Vitamin B-6, N411 + N412 +N413',2),
-	 (1175,'Vitamin B-6',2),
-	 (1176,'Biotin',3),
-	 (1177,'Folate, total',3),
-	 (1178,'Vitamin B-12',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1179,'Folate, free',3),
-	 (1180,'Choline, total',2),
-	 (1181,'Inositol',2),
-	 (1182,'Inositol phosphate',2),
-	 (1183,'Vitamin K (Menaquinone-4)',3),
-	 (1184,'Vitamin K (Dihydrophylloquinone)',3),
-	 (1185,'Vitamin K (phylloquinone)',3),
-	 (1186,'Folic acid',3),
-	 (1187,'Folate, food',3),
-	 (1188,'5-methyl tetrahydrofolate (5-MTHF)',3);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1189,'Folate, not 5-MTHF',3),
-	 (1190,'Folate, DFE',3),
-	 (1191,'10-Formyl folic acid (10HCOFA)',3),
-	 (1192,'5-Formyltetrahydrofolic acid (5-HCOH4',3),
-	 (1193,'Tetrahydrofolic acid (THF)',3),
-	 (1194,'Choline, free',2),
-	 (1195,'Choline, from phosphocholine',2),
-	 (1196,'Choline, from phosphotidyl choline',2),
-	 (1197,'Choline, from glycerophosphocholine',2),
-	 (1198,'Betaine',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1199,'Choline, from sphingomyelin',2),
-	 (1200,'p-Hydroxy benzoic acid',2),
-	 (1201,'Caffeic acid',2),
-	 (1202,'p-Coumaric acid',2),
-	 (1203,'Ellagic acid',2),
-	 (1204,'Ferrulic acid',2),
-	 (1205,'Gentisic acid',2),
-	 (1206,'Tyrosol',2),
-	 (1207,'Vanillic acid',2),
-	 (1208,'Phenolic acids, total',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1209,'Polyphenols, total',2),
-	 (1210,'Tryptophan',1),
-	 (1211,'Threonine',1),
-	 (1212,'Isoleucine',1),
-	 (1213,'Leucine',1),
-	 (1214,'Lysine',1),
-	 (1215,'Methionine',1),
-	 (1216,'Cystine',1),
-	 (1217,'Phenylalanine',1),
-	 (1218,'Tyrosine',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1219,'Valine',1),
-	 (1220,'Arginine',1),
-	 (1221,'Histidine',1),
-	 (1222,'Alanine',1),
-	 (1223,'Aspartic acid',1),
-	 (1224,'Glutamic acid',1),
-	 (1225,'Glycine',1),
-	 (1226,'Proline',1),
-	 (1227,'Serine',1),
-	 (1228,'Hydroxyproline',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1229,'Cysteine and methionine(sulfer containig AA)',1),
-	 (1230,'Phenylalanine and tyrosine (aromatic  AA)',1),
-	 (1231,'Asparagine',1),
-	 (1232,'Cysteine',1),
-	 (1233,'Glutamine',1),
-	 (1234,'Taurine',1),
-	 (1235,'Sugars, added',1),
-	 (1236,'Sugars, intrinsic',1),
-	 (1237,'Calcium, added',2),
-	 (1238,'Iron, added',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1239,'Calcium, intrinsic',2),
-	 (1240,'Iron, intrinsic',2),
-	 (1241,'Vitamin C, added',2),
-	 (1242,'Vitamin E, added',2),
-	 (1243,'Thiamin, added',2),
-	 (1244,'Riboflavin, added',2),
-	 (1245,'Niacin, added',2),
-	 (1246,'Vitamin B-12, added',3),
-	 (1247,'Vitamin C, intrinsic',2),
-	 (1248,'Vitamin E, intrinsic',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1249,'Thiamin, intrinsic',2),
-	 (1250,'Riboflavin, intrinsic',2),
-	 (1251,'Niacin, intrinsic',2),
-	 (1252,'Vitamin B-12, intrinsic',3),
-	 (1253,'Cholesterol',2),
-	 (1254,'Glycerides',1),
-	 (1255,'Phospholipids',1),
-	 (1256,'Glycolipids',1),
-	 (1257,'Fatty acids, total trans',1),
-	 (1258,'Fatty acids, total saturated',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1259,'SFA 4:0',1),
-	 (1260,'SFA 6:0',1),
-	 (1261,'SFA 8:0',1),
-	 (1262,'SFA 10:0',1),
-	 (1263,'SFA 12:0',1),
-	 (1264,'SFA 14:0',1),
-	 (1265,'SFA 16:0',1),
-	 (1266,'SFA 18:0',1),
-	 (1267,'SFA 20:0',1),
-	 (1268,'MUFA 18:1',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1269,'PUFA 18:2',1),
-	 (1270,'PUFA 18:3',1),
-	 (1271,'PUFA 20:4',1),
-	 (1272,'PUFA 22:6 n-3 (DHA)',1),
-	 (1273,'SFA 22:0',1),
-	 (1274,'MUFA 14:1',1),
-	 (1275,'MUFA 16:1',1),
-	 (1276,'PUFA 18:4',1),
-	 (1277,'MUFA 20:1',1),
-	 (1278,'PUFA 20:5 n-3 (EPA)',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1279,'MUFA 22:1',1),
-	 (1280,'PUFA 22:5 n-3 (DPA)',1),
-	 (1281,'TFA 14:1 t',1),
-	 (1283,'Phytosterols',2),
-	 (1284,'Ergosterol',2),
-	 (1285,'Stigmasterol',2),
-	 (1286,'Campesterol',2),
-	 (1287,'Brassicasterol',2),
-	 (1288,'Beta-sitosterol',2),
-	 (1289,'Campestanol',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1290,'Unsaponifiable matter (lipids)',1),
-	 (1291,'Fatty acids, other than 607-615, 617-621, 624-632, 652-654, 686-689)',1),
-	 (1292,'Fatty acids, total monounsaturated',1),
-	 (1293,'Fatty acids, total polyunsaturated',1),
-	 (1294,'Beta-sitostanol',2),
-	 (1295,'Delta-7-avenasterol',2),
-	 (1296,'Delta-5-avenasterol',2),
-	 (1297,'Alpha-spinasterol',2),
-	 (1298,'Phytosterols, other',2),
-	 (1299,'SFA 15:0',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1300,'SFA 17:0',1),
-	 (1301,'SFA 24:0',1),
-	 (1302,'Wax Esters(Total Wax)',1),
-	 (1303,'TFA 16:1 t',1),
-	 (1304,'TFA 18:1 t',1),
-	 (1305,'TFA 22:1 t',1),
-	 (1306,'TFA 18:2 t not further defined',1),
-	 (1307,'PUFA 18:2 i',1),
-	 (1308,'PUFA 18:2 t,c',1),
-	 (1309,'PUFA 18:2 c,t',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1310,'TFA 18:2 t,t',1),
-	 (1311,'PUFA 18:2 CLAs',1),
-	 (1312,'MUFA 24:1 c',1),
-	 (1313,'PUFA 20:2 n-6 c,c',1),
-	 (1314,'MUFA 16:1 c',1),
-	 (1315,'MUFA 18:1 c',1),
-	 (1316,'PUFA 18:2 n-6 c,c',1),
-	 (1317,'MUFA 22:1 c',1),
-	 (1318,'Fatty acids, saturated, other',1),
-	 (1319,'Fatty acids, monounsat., other',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1320,'Fatty acids, polyunsat., other',1),
-	 (1321,'PUFA 18:3 n-6 c,c,c',1),
-	 (1322,'SFA 19:0',1),
-	 (1323,'MUFA 17:1',1),
-	 (1324,'PUFA 16:2',1),
-	 (1325,'PUFA 20:3',1),
-	 (1326,'Fatty acids, total sat., NLEA',1),
-	 (1327,'Fatty acids, total monounsat., NLEA',1),
-	 (1328,'Fatty acids, total polyunsat., NLEA',1),
-	 (1329,'Fatty acids, total trans-monoenoic',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1330,'Fatty acids, total trans-dienoic',1),
-	 (1331,'Fatty acids, total trans-polyenoic',1),
-	 (1332,'SFA 13:0',1),
-	 (1333,'MUFA 15:1',1),
-	 (1334,'PUFA 22:2',1),
-	 (1335,'SFA 11:0',1),
-	 (1336,'ORAC, Hydrophyllic',18),
-	 (1337,'ORAC, Lipophillic',18),
-	 (1338,'ORAC, Total',18),
-	 (1339,'Total Phenolics',19);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1340,'Daidzein',2),
-	 (1341,'Genistein',2),
-	 (1342,'Glycitein',2),
-	 (1343,'Isoflavones',2),
-	 (1344,'Biochanin A',2),
-	 (1345,'Formononetin',2),
-	 (1346,'Coumestrol',2),
-	 (1347,'Flavonoids, total',2),
-	 (1348,'Anthocyanidins',2),
-	 (1349,'Cyanidin',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1350,'Proanthocyanidin (dimer-A linkage)',2),
-	 (1351,'Proanthocyanidin monomers',2),
-	 (1352,'Proanthocyanidin dimers',2),
-	 (1353,'Proanthocyanidin trimers',2),
-	 (1354,'Proanthocyanidin 4-6mers',2),
-	 (1355,'Proanthocyanidin 7-10mers',2),
-	 (1356,'Proanthocyanidin polymers (>10mers)',2),
-	 (1357,'Delphinidin',2),
-	 (1358,'Malvidin',2),
-	 (1359,'Pelargonidin',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1360,'Peonidin',2),
-	 (1361,'Petunidin',2),
-	 (1362,'Flavans, total',2),
-	 (1363,'Catechins, total',2),
-	 (1364,'Catechin',2),
-	 (1365,'Epigallocatechin',2),
-	 (1366,'Epicatechin',2),
-	 (1367,'Epicatechin-3-gallate',2),
-	 (1368,'Epigallocatechin-3-gallate',2),
-	 (1369,'Procyanidins, total',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1370,'Theaflavins',2),
-	 (1371,'Thearubigins',2),
-	 (1372,'Flavanones, total',2),
-	 (1373,'Eriodictyol',2),
-	 (1374,'Hesperetin',2),
-	 (1375,'Isosakuranetin',2),
-	 (1376,'Liquiritigenin',2),
-	 (1377,'Naringenin',2),
-	 (1378,'Flavones, total',2),
-	 (1379,'Apigenin',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1380,'Chrysoeriol',2),
-	 (1381,'Diosmetin',2),
-	 (1382,'Luteolin',2),
-	 (1383,'Nobiletin',2),
-	 (1384,'Sinensetin',2),
-	 (1385,'Tangeretin',2),
-	 (1386,'Flavonols, total',2),
-	 (1387,'Isorhamnetin',2),
-	 (1388,'Kaempferol',2),
-	 (1389,'Limocitrin',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1390,'Myricetin',2),
-	 (1391,'Quercetin',2),
-	 (1392,'Theogallin',2),
-	 (1393,'Theaflavin -3,3'' -digallate',2),
-	 (1394,'Theaflavin -3'' -gallate',2),
-	 (1395,'Theaflavin -3 -gallate',2),
-	 (1396,'(+) -Gallo catechin',2),
-	 (1397,'(+)-Catechin 3-gallate',2),
-	 (1398,'(+)-Gallocatechin 3-gallate',2),
-	 (1399,'Mannose',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1400,'Triose',1),
-	 (1401,'Tetrose',1),
-	 (1402,'Other Saccharides',1),
-	 (1403,'Inulin',1),
-	 (1404,'PUFA 18:3 n-3 c,c,c (ALA)',1),
-	 (1405,'PUFA 20:3 n-3',1),
-	 (1406,'PUFA 20:4 n-6',1),
-	 (1407,'PUFA 20:4 n-3',1),
-	 (1408,'PUFA 2:4 n-6',1),
-	 (1409,'PUFA 18:3i',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (1410,'PUFA 21:5',1),
-	 (1411,'PUFA 22:4',1),
-	 (1412,'MUFA 18:1-11 t (18:1t n-7)',1),
-	 (1413,'MUFA 18:1-11 c (18:1c n-7)',1),
-	 (1414,'PUFA 20:3 n-9',1),
-	 (2000,'Sugars, Total',1),
-	 (2003,'SFA 5:0',1),
-	 (2004,'SFA 7:0',1),
-	 (2005,'SFA 9:0',1),
-	 (2006,'SFA 21:0',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2007,'SFA 23:0',1),
-	 (2008,'MUFA 12:1',1),
-	 (2009,'MUFA 14:1 c',1),
-	 (2010,'MUFA 17:1 c',1),
-	 (2011,'TFA 17:1 t',1),
-	 (2012,'MUFA 20:1 c',1),
-	 (2013,'TFA 20:1 t',1),
-	 (2014,'MUFA 22:1 n-9',1),
-	 (2015,'MUFA 22:1 n-11',1),
-	 (2016,'PUFA 18:2 c',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2017,'TFA 18:2 t',1),
-	 (2018,'PUFA 18:3 c',1),
-	 (2019,'TFA 18:3 t',1),
-	 (2020,'PUFA 20:3 c',1),
-	 (2021,'PUFA 22:3',1),
-	 (2022,'PUFA 20:4c',1),
-	 (2023,'PUFA 20:5c',1),
-	 (2024,'PUFA 22:5 c',1),
-	 (2025,'PUFA 22:6 c',1),
-	 (2026,'PUFA 20:2 c',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2027,'Proximate',1),
-	 (2028,'trans-beta-Carotene',3),
-	 (2029,'trans-Lycopene',3),
-	 (2032,'Cryptoxanthin, alpha',3),
-	 (2033,'Total dietary fiber (AOAC 2011.25)',1),
-	 (2034,'Insoluble dietary fiber (IDF)',1),
-	 (2035,'Soluble dietary fiber (SDFP+SDFS)',1),
-	 (2036,'Soluble dietary fiber (SDFP)',1),
-	 (2037,'Soluble dietary fiber (SDFS)',1),
-	 (2038,'High Molecular Weight Dietary Fiber (HMWDF)',1);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2039,'Carbohydrates',1),
-	 (2040,'Other carotenoids',3),
-	 (2041,'Tocopherols and tocotrienols',2),
-	 (2042,'Amino acids',1),
-	 (2043,'Minerals',2),
-	 (2044,'Lipids',1),
-	 (2045,'Proximates',1),
-	 (2046,'Vitamins and Other Components',1),
-	 (2055,'Total Tocopherols',2),
-	 (2054,'Total Tocotrienols',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2053,'Stigmastadiene',2),
-	 (2052,'Delta-7-Stigmastenol',2),
-	 (2049,'Daidzin',2),
-	 (2050,'Genistin',2),
-	 (2051,'Glycitin',2),
-	 (2057,'Ergothioneine',2),
-	 (2058,'Beta-glucan',1),
-	 (2059,'Vitamin D4',3),
-	 (2060,'Ergosta-7-enol',2),
-	 (2061,' Ergosta-7,22-dienol',2);
-INSERT INTO nutrient (id,nutrient_name,preferred_unit) VALUES
-	 (2062,' Ergosta-5,7-dienol',2),
-	 (2063,'Verbascose',1),
-	 (2064,'Oligosaccharides',2),
-	 (2065,'Low Molecular Weight Dietary Fiber (LMWDF)',1);
+
+INSERT INTO nutrient (description, preferred_unit, category_id) VALUES 
+  -- Energy
+  ('Energy (Calories)', 18, 5),
+
+  -- Macronutrients
+  ('Protein', 1, 1),
+  ('Total Fat', 1, 1),
+  ('Carbohydrate', 1, 1),
+  ('Dietary Fiber', 1, 1),
+  ('Sugars', 1, 1),
+  ('Saturated Fat', 1, 1),
+  ('Trans Fat', 1, 1),
+  ('Cholesterol', 1, 1),
+  
+  -- Vitamins
+  ('Vitamin A', 4, 2),
+  ('Vitamin C', 4, 2),
+  ('Vitamin D', 4, 2),
+  ('Vitamin E', 4, 2),
+  ('Vitamin K', 4, 2),
+  ('Vitamin B6', 4, 2),
+  ('Vitamin B12', 4, 2),
+  ('Folate', 4, 2),
+  
+  -- Minerals
+  ('Calcium', 3, 3),
+  ('Iron', 3, 3),
+  ('Magnesium', 3, 3),
+  ('Potassium', 3, 3),
+  ('Sodium', 3, 3),
+  ('Zinc', 3, 3),
+  
+  -- Other Components
+  ('Water', 7, 4),
+  ('Caffeine', 4, 4),
+  ('Alcohol', 7, 4);
+

@@ -2,11 +2,12 @@ import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFact
 import { NutrientOption } from "./_models/nutrientOption";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { UnitOption } from "./_models/unitOption";
+import { UnitCategory, UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
 import { SearchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
+import { EditFoodRequestModel } from "./edit/_models/editFoodRequest";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -18,7 +19,19 @@ const unitKeys = {
 
 const foodKeys = {
   all: ["foods"] as const,
-  foodSearchParams: (foodName: string, nutrient: string, comparisonOperator: string, nutrientValue: number) => [...foodKeys.all, foodName, nutrient, nutrientValue, comparisonOperator] as const,
+  foodSearchParams: (
+    foodName: string,
+    nutrient: string,
+    comparisonOperator: string,
+    nutrientValue: number
+  ) =>
+    [
+      ...foodKeys.all,
+      foodName,
+      nutrient,
+      nutrientValue,
+      comparisonOperator,
+    ] as const,
   foodID: (foodId: string) => [...foodKeys.all, foodId] as const,
 };
 
@@ -37,11 +50,12 @@ const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
     origin: "client",
   });
   const response = await apiClient.get(`/food/food-details/${foodId}`);
+  console.log("here is the incoming food", response.data);
   return response.data as FoodSearchResult;
-}
+};
 
 const fetchFoodsForUser = async (
-  foodSearchParameters: SearchParameters,
+  foodSearchParameters: SearchParameters
 ): Promise<FoodSearchResult[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
@@ -52,7 +66,8 @@ const fetchFoodsForUser = async (
     `/food/all-foods?filterOption=${foodSearchParameters.foodSearchTerm}
     &nutrientFilterValue=${foodSearchParameters?.nutrientValue ?? 0}
     &nutrientFilterOperator=${foodSearchParameters?.comparisonOperator ?? ""}
-    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.nutrientName ?? ""}
+    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.description ?? ""
+    }
     `
   );
   return response.data as FoodSearchResult[];
@@ -65,17 +80,41 @@ export const useGetNutrientsQuery = () => {
   });
 };
 
-export const useGetAllFoodForUserQuery = (foodSearchParameters: SearchParameters) => {
+export const useGetAllFoodForUserQuery = (
+  foodSearchParameters: SearchParameters
+) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: foodKeys.foodSearchParams(
       foodSearchParameters.foodSearchTerm,
-      foodSearchParameters.nutrientSearchTerm.nutrientName,
+      foodSearchParameters.nutrientSearchTerm.description,
       foodSearchParameters?.comparisonOperator ?? "",
-      foodSearchParameters?.nutrientValue ?? 0),
+      foodSearchParameters?.nutrientValue ?? 0
+    ),
     queryFn: () => fetchFoodsForUser(foodSearchParameters),
   });
 };
+
+const updateFood = async (food: EditFoodRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {
+    },
+    origin: "client",
+  });
+  const outGoingRequest = {
+    ...food,
+    ingredients: food.ingredients?.toString(),
+    Unit: {
+      ...food.servingSizeUnit, unitCategoryId: food.unitCategoryId, category: {
+        id: food.unitCategoryId,
+        description: food.servingSizeUnit?.category || ""
+      } as UnitCategory
+    } as UnitOption,
+  }
+  console.log("here is the outgoing request", outGoingRequest);
+  const response = await apiClient.put("/food", outGoingRequest);
+  return response.status === 200;
+}
 
 const fetchUnits = async (): Promise<UnitOption[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
@@ -125,9 +164,11 @@ const importFood = async (fdcId: number): Promise<ImportFoodResponse> => {
     additionalHeaders: {},
     origin: "client",
   });
-  const response = await apiClient.post<ImportFoodResponse>(`/food/import/${fdcId}`);
-  return response.data
-}
+  const response = await apiClient.post<ImportFoodResponse>(
+    `/food/import/${fdcId}`
+  );
+  return response.data;
+};
 
 export const useImportFoodMutation = () => {
   return useMutation({
@@ -140,14 +181,14 @@ export const useImportFoodMutation = () => {
       console.error(error);
     },
   });
-}
+};
 
 export const useGetFoodByIdQuery = (foodId: string) => {
   return useQuery({
     queryKey: foodKeys.foodID(foodId),
     queryFn: () => fetchFoodById(foodId),
   });
-}
+};
 
 const foodSearchKeys = {
   all: ["foodSearchResults"] as const,
@@ -167,25 +208,31 @@ const fetchFoodSearchResults = async (filterParams: FoodSearchFilterParams) => {
     return [];
   }
   const response = await foodSearchInstance.get<FoodSearchResult[]>(
-    "food/search?" + query.toString(),
+    "food/search?" + query.toString()
   );
   return response.data;
-}
+};
 
-export const useGetFoodSearchResultsQuery = (filterParams: FoodSearchFilterParams) => {
+export const useGetFoodSearchResultsQuery = (
+  filterParams: FoodSearchFilterParams
+) => {
   return useQuery({
     queryKey: [foodSearchKeys.all, filterParams],
     queryFn: () => fetchFoodSearchResults(filterParams),
   });
-}
-
+};
 
 const getFoodSearchResult = (foodId: number, foods: FoodSearchResult[]) => {
   return foods.find((food) => food.fdcId === foodId);
-}
+};
 
-export const useGetFoodSearchResultQuery = (foodSearchFilterParams: FoodSearchFilterParams, fdcId: number) => {
-  const { data: foods, isSuccess } = useGetFoodSearchResultsQuery(foodSearchFilterParams);
+export const useGetFoodSearchResultQuery = (
+  foodSearchFilterParams: FoodSearchFilterParams,
+  fdcId: number
+) => {
+  const { data: foods, isSuccess } = useGetFoodSearchResultsQuery(
+    foodSearchFilterParams
+  );
 
   return useQuery({
     queryKey: [foodSearchKeys.foodSearchResult(fdcId), foods],
@@ -194,3 +241,11 @@ export const useGetFoodSearchResultQuery = (foodSearchFilterParams: FoodSearchFi
   });
 };
 
+export const useEditFoodMutation = () => {
+  return useMutation({
+    mutationFn: (food: EditFoodRequestModel) => updateFood(food),
+    onSuccess: () => {
+      toast.success("Food edited successfully");
+    }
+  });
+}

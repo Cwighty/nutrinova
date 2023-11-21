@@ -19,7 +19,7 @@ public partial class FoodPlan
 
     public DateTime CreatedAt { get; set; }
 
-    public decimal? ServingSize { get; set; }
+    public decimal ServingSize { get; set; }
 
     public int ServingSizeUnit { get; set; }
 

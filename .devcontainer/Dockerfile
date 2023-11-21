@@ -15,7 +15,7 @@ RUN dnf -y install \
     npm i -g n && \
     n 20
 
-RUN dotnet tool install --global dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 7.0.0
   
 RUN groupadd --gid 1000 developer \
     && useradd --uid 1000 --gid 1000 -m developer \

@@ -124,15 +124,14 @@ public class RecipeController : ControllerBase
     {
       FoodId = rf.FoodId,
       Food = context.FoodPlans
-        .Include(f => f.FoodPlanNutrients)
-        .ThenInclude(fn => fn.Nutrient)
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Nutrient)
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
+        .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
         .FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
       Amount = rf.Amount,
       UnitId = rf.UnitId,
-      Unit = context.Units.FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
+      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
-
-    Console.WriteLine($"Recipe foods: {recipeFoods.FirstOrDefault()?.Food.Description}");
 
     var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     return Ok(summaries);

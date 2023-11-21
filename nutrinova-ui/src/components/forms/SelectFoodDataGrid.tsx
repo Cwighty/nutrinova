@@ -43,7 +43,7 @@ export const SelectFoodDataGrid = ({
           pagination: { paginationModel: { pageSize: 5 } },
         }}
         slots={{
-          noRowsOverlay: NoFoodRowsOverlay,
+          noRowsOverlay: () => NoFoodRowsOverlay(searchQuery.foodSearchTerm),
         }}
         onCellClick={(params) => {
           onFoodSelected(params.row as FoodSearchResult);

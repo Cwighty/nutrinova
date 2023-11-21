@@ -9,19 +9,33 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE
     );
 
+CREATE TABLE 
+    Unit_Category (
+        id serial PRIMARY KEY,
+        description TEXT NOT NULL
+    );
+
 CREATE TABLE
     Unit (
         id serial PRIMARY KEY, 
         description TEXT NOT NULL, 
-        abreviation TEXT NOT NULL
+        abbreviation TEXT NOT NULL,
+        category_id int REFERENCES Unit_Category (id)
         );
+
+-- Nutrient Category Table
+CREATE TABLE Nutrient_Category (
+    id serial PRIMARY KEY,
+    description TEXT NOT NULL
+);
 
 -- Nutrient Table
 CREATE TABLE
     Nutrient (
         id serial PRIMARY KEY,
-        Nutrient_Name TEXT NOT NULL,
-        Preferred_Unit serial Not null references Unit (id)
+        description TEXT NOT NULL,
+        Preferred_Unit serial Not null references Unit (id),
+        category_id serial REFERENCES Nutrient_Category (id)
     );
 
 -- Modules Table
@@ -51,11 +65,9 @@ CREATE TABLE
         ingredients TEXT null,
         created_by uuid REFERENCES Customer(id),
         created_at TIMESTAMP WITH TIME ZONE not null,
-        serving_size DECIMAL null,
-        serving_size_unit serial REFERENCES Unit(id),
-        note TEXT null,
-        CONSTRAINT if_serving_size_then_unit_is_not_null 
-        CHECK ( ( serving_size is null ) OR (serving_size_unit IS NOT NULL) ) 
+        serving_size DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
+        note TEXT null
         );
 
 CREATE TABLE
@@ -67,11 +79,9 @@ CREATE TABLE
         ingredients TEXT null,
         created_by uuid REFERENCES Customer(id),
         created_at TIMESTAMP WITH TIME ZONE not null,
-        serving_size DECIMAL null,
-        serving_size_unit serial REFERENCES Unit(id),
-        note TEXT null,
-        CONSTRAINT if_serving_size_then_unit_is_not_null 
-        CHECK ( (serving_size is null) OR (serving_size_unit IS NOT NULL) ) 
+        serving_size DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
+        note TEXT null
     );
 
 CREATE TABLE

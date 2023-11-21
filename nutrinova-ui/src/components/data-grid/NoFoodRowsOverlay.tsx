@@ -27,7 +27,7 @@ const StyledGridOverlay = styled("div")(({ theme }) => ({
   },
 }));
 
-export function NoFoodRowsOverlay() {
+export function NoFoodRowsOverlay(searchTerm: string) {
   return (
     <StyledGridOverlay>
       <svg
@@ -69,7 +69,11 @@ export function NoFoodRowsOverlay() {
           </g>
         </g>
       </svg>
-      <Box sx={{ mt: 1 }}>No Foods Found</Box>
+      {searchTerm ?
+        <Box sx={{ mt: 1 }}>No Foods Found for &apos;{searchTerm}&apos;</Box>
+        :
+        <Box sx={{ mt: 1 }}>No Foods Found</Box>
+      }
     </StyledGridOverlay>
   );
 }

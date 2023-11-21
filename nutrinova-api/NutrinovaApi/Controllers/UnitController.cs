@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NutrinovaData;
-using NutrinovaData.Entities;
 
 namespace NutrinovaApi.Controllers;
 
@@ -19,13 +18,20 @@ public class UnitController : ControllerBase
     }
 
     [HttpGet("all-units")]
-    public async Task<ActionResult<IEnumerable<Unit>>> RetrieveAllUnits()
+    public async Task<ActionResult<IEnumerable<UnitOption>>> RetrieveAllUnits()
     {
         try
         {
             logger.LogInformation("Retrieving all units...");
-            var res = await context.Units.ToListAsync();
-            return Ok(res);
+            var res = await context.Units.Include(u => u.Category).ToListAsync();
+            var options = res.Select(u => new UnitOption()
+            {
+                Id = u.Id,
+                Description = u.Description,
+                Abbreviation = u.Abbreviation,
+                Category = u.Category?.Description ?? string.Empty,
+            });
+            return Ok(options);
         }
         catch (Exception e)
         {

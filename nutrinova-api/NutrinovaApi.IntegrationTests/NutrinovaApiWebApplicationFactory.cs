@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using NutrinovaApi.IntegrationTests.TestEntities;
-using NutrinovaData.Entities;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -29,10 +28,12 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
        .WithPassword("Strong_password_123!")
        .WithResourceMapping(new DirectoryInfo(directory), "/docker-entrypoint-initdb.d")
        .WithBindMount(directory, "/docker-entrypoint-initdb.d")
+       .WithCleanUp(true)
+       .WithAutoRemove(true)
        .Build();
   }
 
-  public string DefaultUserId { get; set; } = Guid.Empty.ToString();
+  public string DefaultUserId { get; set; } = TestCustomer.ObjectId;
 
   public async Task InitializeAsync()
   {
@@ -43,17 +44,10 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
     optionsBuilder.UseNpgsql(_dbContainer.GetConnectionString());
 
     using var context = new NutrinovaDbContext(optionsBuilder.Options);
-    var testCustomer = new Customer
-    {
-      Id = Guid.Parse(DefaultUserId),
-      Objectid = DefaultUserId,
-      Email = "testuser@example.com",
-    };
-    context.Customers.Add(testCustomer);
-    await context.SaveChangesAsync();
 
     var testEntities = new List<ITestDbInitializer>
     {
+      new TestCustomer(),
       new TestFoodPlan(),
       new TestRecipePlan(),
     };
