@@ -5,7 +5,7 @@ import { useCreateRecipeMutation } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import { NutrientTotalsSummary } from "./NutrientTotalsSummary";
-import { ServingSizeUnitField } from "./ServingSizeUnitField";
+import { SelectNutrientWithUnitState, ServingSizeUnitField } from "./ServingSizeUnitField";
 import { RecipeFoodList } from "./RecipeFoodList";
 
 export default function CreateRecipeForm() {
@@ -51,6 +51,16 @@ export default function CreateRecipeForm() {
     return true;
   };
 
+
+  const handleSelectNutrientUpdate = ({ servingSize, servingSizeUnit, servingSizeUnitId }: SelectNutrientWithUnitState) => { 
+    setRecipeFormState({
+      ...recipeFormState,
+      servingSize,
+      servingSizeUnit,
+      servingSizeUnitId,
+    });
+
+  }
   return (
     <Paper elevation={3} sx={{ padding: 2 }}>
       <form onSubmit={handleSubmit}>
@@ -87,8 +97,8 @@ export default function CreateRecipeForm() {
           </Grid>
 
           <ServingSizeUnitField
-            recipeFormState={recipeFormState}
-            setRecipeFormState={setRecipeFormState}
+            formState={recipeFormState}
+            setFormState={handleSelectNutrientUpdate}
             formValid={formValid}
           />
 

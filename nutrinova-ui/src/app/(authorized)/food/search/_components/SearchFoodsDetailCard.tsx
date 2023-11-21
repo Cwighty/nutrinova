@@ -39,7 +39,7 @@ export const SearchFoodsDetailCard = ({
   const handleImport = () => {
     importFoodMutation.mutate(food!.fdcId, {
       onSuccess: (response: ImportFoodResponse) => {
-        router.push("/food/" + response.id + "/edit");
+        router.push("/food/edit?foodId=" + response.id);
       },
     });
   };

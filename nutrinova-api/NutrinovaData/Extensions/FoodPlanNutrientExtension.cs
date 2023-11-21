@@ -17,6 +17,7 @@ public static class FoodPlanNutrientExtension
     {
       nutrientId = foodPlanNutrient.NutrientId,
       nutrientName = foodPlanNutrient.Nutrient.Description,
+      unitId = foodPlanNutrient.Nutrient.PreferredUnit,
 
       // nutrientNumber = foodPlanNutrient.Nutrient.,
       // unitName = foodPlanNutrient.Nutrient.PreferredUnitNavigation.Abreviation,

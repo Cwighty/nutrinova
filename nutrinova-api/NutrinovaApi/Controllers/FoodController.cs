@@ -171,6 +171,7 @@ public class FoodController : ControllerBase
         result = await context.FoodPlans
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
           .Where(fp =>
             fp.CreatedBy == customer.Id && (
           EF.Functions.ILike(fp.Description, $"%{filterOption}%") ||
@@ -182,6 +183,7 @@ public class FoodController : ControllerBase
         result = await context.FoodPlans
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
           .Where(fp => fp.CreatedBy == customer.Id)
           .ToListAsync();
       }
@@ -260,13 +262,13 @@ public class FoodController : ControllerBase
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
         .ThenInclude(fpn => fpn.Nutrient)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
-      logger.LogInformation($"RetrieveFoodForUserById, {result?.Ingredients}");
       if (result == null)
       {
         return NotFound("No food found");
       }
 
-      return result.ToFood();
+      var res = result.ToFood();
+      return res;
     }
     catch (HttpRequestException ex)
     {
@@ -469,6 +471,7 @@ public class FoodController : ControllerBase
   public async Task<IActionResult> EditFoodPlan(EditFoodRequestModel editFoodRequestModel)
   {
     // Validate the input
+    logger.LogInformation($"EditFoodPlan, {editFoodRequestModel?.Id} {editFoodRequestModel?.Description} {editFoodRequestModel?.ServingSize} {editFoodRequestModel?.Unit} {editFoodRequestModel?.Note}  {editFoodRequestModel?.BrandName} {editFoodRequestModel?.Ingredients}   {editFoodRequestModel?.FoodNutrients} {editFoodRequestModel?.FoodNutrients?.Count} {editFoodRequestModel?.FoodNutrients?[0]?.NutrientId} {editFoodRequestModel?.Unit} {editFoodRequestModel?.FoodNutrients?[0]?.Amount} {editFoodRequestModel?.FoodNutrients?[0]?.UnitId}");
     if (editFoodRequestModel == null)
     {
       return BadRequest("Invalid food plan data for editing");
@@ -531,26 +534,26 @@ public class FoodController : ControllerBase
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
-    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit;
+    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit.Id;
+    foodPlan.ServingSizeUnitNavigation = editFoodRequestModel.Unit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
     foodPlan.Ingredients = editFoodRequestModel.Ingredients;
-    foodPlan.FoodPlanNutrients = editFoodRequestModel.FoodNutrients.Select(n =>
-    {
-      var nutrient = context.Nutrients.FirstOrDefault(nu => nu.Id == n.NutrientId);
-      if (nutrient == null)
-      {
-        throw new InvalidOperationException("Nutrient does not exist");
-      }
 
-      return new FoodPlanNutrient
+    var allNutrients = await context.Nutrients.Include(n => n.PreferredUnitNavigation).ToListAsync();
+
+    foodPlan.FoodPlanNutrients = allNutrients.Join(
+      editFoodRequestModel.FoodNutrients,
+      allN => allN.Id,
+      fpn => fpn.NutrientId,
+      (nutrient, editNutrient) => new FoodPlanNutrient
       {
         Id = Guid.NewGuid(),
-        NutrientId = n.NutrientId,
-        Amount = n.Amount,
-        UnitId = nutrient.PreferredUnit,
-      };
-    }).ToList();
+        NutrientId = editNutrient.NutrientId,
+        Amount = editNutrient.Amount,
+        UnitId = nutrient.PreferredUnitNavigation.Id,
+      })
+    .ToList();
 
     // Save to the database
     try

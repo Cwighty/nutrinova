@@ -2,11 +2,12 @@ import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFact
 import { NutrientOption } from "./_models/nutrientOption";
 import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { UnitOption } from "./_models/unitOption";
+import { UnitCategory, UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
 import toast from "react-hot-toast";
 import { SearchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
+import { EditFoodRequestModel } from "./edit/_models/editFoodRequest";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -49,6 +50,7 @@ const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
     origin: "client",
   });
   const response = await apiClient.get(`/food/food-details/${foodId}`);
+  console.log("here is the incoming food", response.data);
   return response.data as FoodSearchResult;
 };
 
@@ -64,8 +66,7 @@ const fetchFoodsForUser = async (
     `/food/all-foods?filterOption=${foodSearchParameters.foodSearchTerm}
     &nutrientFilterValue=${foodSearchParameters?.nutrientValue ?? 0}
     &nutrientFilterOperator=${foodSearchParameters?.comparisonOperator ?? ""}
-    &nutrientFilter=${
-      foodSearchParameters?.nutrientSearchTerm?.description ?? ""
+    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.description ?? ""
     }
     `
   );
@@ -93,6 +94,27 @@ export const useGetAllFoodForUserQuery = (
     queryFn: () => fetchFoodsForUser(foodSearchParameters),
   });
 };
+
+const updateFood = async (food: EditFoodRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {
+    },
+    origin: "client",
+  });
+  const outGoingRequest = {
+    ...food,
+    ingredients: food.ingredients?.toString(),
+    Unit: {
+      ...food.servingSizeUnit, unitCategoryId: food.unitCategoryId, category: {
+        id: food.unitCategoryId,
+        description: food.servingSizeUnit?.category || ""
+      } as UnitCategory
+    } as UnitOption,
+  }
+  console.log("here is the outgoing request", outGoingRequest);
+  const response = await apiClient.put("/food", outGoingRequest);
+  return response.status === 200;
+}
 
 const fetchUnits = async (): Promise<UnitOption[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
@@ -218,3 +240,12 @@ export const useGetFoodSearchResultQuery = (
     enabled: isSuccess && foods !== undefined,
   });
 };
+
+export const useEditFoodMutation = () => {
+  return useMutation({
+    mutationFn: (food: EditFoodRequestModel) => updateFood(food),
+    onSuccess: () => {
+      toast.success("Food edited successfully");
+    }
+  });
+}

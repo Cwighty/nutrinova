@@ -49,7 +49,13 @@ export const AmountInput = ({
                   id: 0,
                   description: "",
                   abbreviation: "",
-                  category: "",
+                  categoryName: "",
+                  categoryId: 0,
+                  // this will need to be changed
+                  category: {
+                    id: 0,
+                    description: "",
+                  },
                 }
               );
             }}

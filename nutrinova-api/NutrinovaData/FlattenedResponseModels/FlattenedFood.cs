@@ -14,6 +14,8 @@ public class FlattenedFood
 
   public string? Ingredients { get; set; }
 
+  public double? UnitCategoryId { get; set; }
+
   public string? BrandName { get; set; }
 
   public decimal? ServingSize { get; set; }
@@ -36,6 +38,7 @@ public class FlattenedFood
     Ingredients = fp.Ingredients;
     BrandName = fp.BrandName;
     ServingSize = fp.ServingSize;
+    this.UnitCategoryId = fp.ServingSizeUnitNavigation.CategoryId;
     ServingSizeUnit = fp?.ServingSizeUnitNavigation?.Description;
     ServingSizeWithUnits = ServingSize + ServingSizeUnit;
     FoodNutrients = fp?.FoodPlanNutrients
@@ -52,6 +55,7 @@ public class FlattenedFood
     this.BrandName = food?.brandName;
     this.ServingSize = food?.servingSize;
     this.ServingSizeUnit = food?.servingSizeUnit;
+    this.UnitCategoryId = food?.UnitCategoryId;
     this.ServingSizeWithUnits = $"{food?.servingSize} {food?.servingSizeUnit}";
     if (onlyPrimaryNutrients)
     {

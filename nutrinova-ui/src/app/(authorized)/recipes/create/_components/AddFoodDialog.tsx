@@ -44,7 +44,7 @@ export const AddFoodDialog = ({
     nutrientValue: 0,
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
-  const [validFoodSelected, setValidFoodSelcted] = useState<boolean>(true);
+  const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
   // const { data: food } = useGetFoodByIdQuery(newFood.foodId);
 
   const handleOpen = () => {
@@ -60,7 +60,7 @@ export const AddFoodDialog = ({
       name: "",
       unitName: "Gram",
     });
-    setValidFoodSelcted(true);
+    setValidFoodSelected(true);
   };
 
   const submit = () => {
@@ -68,7 +68,7 @@ export const AddFoodDialog = ({
       return;
     }
     if (newFood.foodId === "") {
-      setValidFoodSelcted(false);
+      setValidFoodSelected(false);
       return;
     }
     if (newFood.unitId === 0) {
@@ -107,7 +107,6 @@ export const AddFoodDialog = ({
                     ...newFood,
                     foodId: food.id,
                     name: food.description,
-
                   })
                 }
               />
@@ -133,7 +132,13 @@ export const AddFoodDialog = ({
               id: newFood.unitId,
               description: newFood.unitName,
               abbreviation: "",
-              category: "",
+              categoryName: "",
+              categoryId: newFood.unitId,
+              // this will need to be changed
+              category: {
+                id: newFood.unitId,
+                description: "",
+              },
             }}
             setUnit={(unit) =>
               setNewFood({

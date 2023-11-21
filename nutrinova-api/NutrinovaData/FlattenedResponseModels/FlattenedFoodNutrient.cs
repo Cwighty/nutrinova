@@ -5,37 +5,47 @@ namespace NutrinovaData.FlattenedResponseModels;
 
 public class FlattenedFoodNutrient
 {
-    public string? NutrientName { get; set; }
+  public string? NutrientName { get; set; }
 
-    public string? NameWithAmountAndUnit { get; set; }
+  public string? NameWithAmountAndUnit { get; set; }
 
-    public string? UnitName { get; set; }
+  public string? UnitName { get; set; }
 
-    public double Value { get; set; }
+  public double Value { get; set; }
 
-    public FlattenedFoodNutrient()
-    {
-    }
+  public double? UnitId { get; set; }
 
-    public FlattenedFoodNutrient(FoodPlanNutrient fpn)
-    {
-        this.NameWithAmountAndUnit = $"{fpn.Nutrient.Description}: {fpn.Amount} {fpn?.Unit?.Description}";
+  public double? UnitCategoryId { get; set; }
 
-        this.UnitName = fpn?.Unit?.Description;
+  public FlattenedFoodNutrient()
+  {
+  }
 
-        this.Value = decimal.ToDouble(fpn?.Amount ?? 0);
+  public FlattenedFoodNutrient(FoodPlanNutrient fpn)
+  {
+    this.NameWithAmountAndUnit = $"{fpn.Nutrient.Description}: {fpn.Amount} {fpn?.Unit?.Description}";
 
-        this.NutrientName = fpn?.Nutrient.Description;
-    }
+    this.UnitName = fpn?.Unit?.Description;
 
-    public FlattenedFoodNutrient(FoodNutrient foodNutrient)
-    {
-        this.NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
+    this.NutrientName = fpn?.Nutrient.Description;
 
-        this.UnitName = foodNutrient.unitName;
+    this.UnitId = fpn?.UnitId;
 
-        this.Value = foodNutrient.value;
+    this.UnitCategoryId = fpn?.Unit?.CategoryId;
+  }
 
-        this.NutrientName = foodNutrient.nutrientName;
-    }
+  public FlattenedFoodNutrient(FoodNutrient foodNutrient)
+  {
+    this.NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
+
+    this.UnitName = foodNutrient.unitName;
+
+    this.Value = foodNutrient.value;
+
+    this.NutrientName = foodNutrient.nutrientName;
+
+    this.UnitId = foodNutrient?.unitId;
+
+    this.UnitCategoryId = foodNutrient?.UnitCategoryId;
+  }
 }

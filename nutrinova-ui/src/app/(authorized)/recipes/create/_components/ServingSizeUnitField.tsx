@@ -1,14 +1,20 @@
 import SelectUnit from "@/components/forms/SelectUnit";
 import { Grid, TextField } from "@mui/material";
-import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
+import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 
-interface ServingSizeUnitFieldProps {
-    recipeFormState: CreateRecipeRequestModel;
-    setRecipeFormState: (recipeForm : CreateRecipeRequestModel) => void;
-    formValid: boolean;
+export interface SelectNutrientWithUnitState {
+  servingSize?: number;
+  servingSizeUnit?: UnitOption | null;
+  servingSizeUnitId?: number;
 }
 
-export const ServingSizeUnitField = ({ recipeFormState, setRecipeFormState, formValid } : ServingSizeUnitFieldProps) => {
+interface ServingSizeUnitFieldProps {
+  formState: SelectNutrientWithUnitState;
+  setFormState: (recipeForm: SelectNutrientWithUnitState) => void;
+  formValid: boolean;
+}
+
+export const ServingSizeUnitField = ({ formState, setFormState, formValid }: ServingSizeUnitFieldProps) => {
   return (
     <>
       {/* Serving Size */}
@@ -16,10 +22,10 @@ export const ServingSizeUnitField = ({ recipeFormState, setRecipeFormState, form
         <TextField
           label="Serving Size"
           type="number"
-          value={recipeFormState.servingSize ?? ""}
+          value={formState.servingSize ?? ""}
           onChange={(e) =>
-            setRecipeFormState({
-              ...recipeFormState,
+            setFormState({
+              ...formState,
               servingSize: Number(e.target.value),
             })
           }
@@ -27,13 +33,13 @@ export const ServingSizeUnitField = ({ recipeFormState, setRecipeFormState, form
           margin="normal"
           error={
             !formValid &&
-            recipeFormState.servingSize !== undefined &&
-            recipeFormState.servingSize <= 0
+            formState.servingSize !== undefined &&
+            formState.servingSize <= 0
           }
           helperText={
             !formValid &&
-            recipeFormState.servingSize !== undefined &&
-            recipeFormState.servingSize <= 0
+              formState.servingSize !== undefined &&
+              formState.servingSize <= 0
               ? "Please enter a valid serving size"
               : ""
           }
@@ -43,24 +49,24 @@ export const ServingSizeUnitField = ({ recipeFormState, setRecipeFormState, form
       <Grid item xs={12} md={6}>
         <SelectUnit
           value={
-            recipeFormState.servingSizeUnit
-              ? recipeFormState.servingSizeUnit
+            formState.servingSizeUnit
+              ? formState.servingSizeUnit
               : null
           }
           onSelectedUnitChange={(unit) =>
-            setRecipeFormState({
-              ...recipeFormState,
+            setFormState({
+              ...formState,
               servingSizeUnit: unit,
               servingSizeUnitId: unit?.id ?? 0,
             })
           }
           error={
             !formValid &&
-            recipeFormState.servingSize !== undefined &&
-            recipeFormState.servingSizeUnit === undefined
+            formState.servingSize !== undefined &&
+            formState.servingSizeUnit === undefined
           }
           helperText={
-            !formValid && recipeFormState.servingSize
+            !formValid && formState.servingSize
               ? "A unit must be supplied with a serving size"
               : ""
           }
