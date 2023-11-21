@@ -33,13 +33,19 @@ export const AddFoodDialog = ({
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchParameters, setSearchParameters] = useState<SearchParameters>({
-    nutrientSearchTerm: { id: 0, nutrientName: "", preferredUnit: 0 },
+    nutrientSearchTerm: {
+      id: 0,
+      description: "",
+      preferredUnitId: 0,
+      category: "",
+    },
     foodSearchTerm: "",
     comparisonOperator: "gt",
     nutrientValue: 0,
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelcted] = useState<boolean>(true);
+  // const { data: food } = useGetFoodByIdQuery(newFood.foodId);
 
   const handleOpen = () => {
     setOpen(true);
@@ -85,31 +91,58 @@ export const AddFoodDialog = ({
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>{newFood.name === "" ? "Select a Food" : newFood.name}</Typography>
+              <Typography>
+                {newFood.name === "" ? "Select a Food" : newFood.name}
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <MyFoodSearchForm setSearchParameters={setSearchParameters} currentSearchParameters={searchParameters} />
-              <SelectFoodDataGrid searchQuery={searchParameterDebounce} onFoodSelected={(food) => setNewFood({
-                ...newFood,
-                foodId: food.id,
-                name: food.description,
-              })} />
+              <MyFoodSearchForm
+                setSearchParameters={setSearchParameters}
+                currentSearchParameters={searchParameters}
+              />
+              <SelectFoodDataGrid
+                searchQuery={searchParameterDebounce}
+                onFoodSelected={(food) =>
+                  setNewFood({
+                    ...newFood,
+                    foodId: food.id,
+                    name: food.description,
+
+                  })
+                }
+              />
             </AccordionDetails>
           </Accordion>
-          {validFoodSelected ? "" : <Typography fontSize={12} color="error">Please select a food</Typography>}
+          {validFoodSelected ? (
+            ""
+          ) : (
+            <Typography fontSize={12} color="error">
+              Please select a food
+            </Typography>
+          )}
 
           <AmountInput
             amount={newFood.amount}
-            setAmount={(amount) => setNewFood({
-              ...newFood,
-              amount: amount,
-            })}
-            unit={{ id: newFood.unitId, description: newFood.unitName, abreviation: "" }}
-            setUnit={(unit) => setNewFood({
-              ...newFood,
-              unitId: unit.id,
-              unitName: unit.description
-            })} />
+            setAmount={(amount) =>
+              setNewFood({
+                ...newFood,
+                amount: amount,
+              })
+            }
+            unit={{
+              id: newFood.unitId,
+              description: newFood.unitName,
+              abbreviation: "",
+              category: "",
+            }}
+            setUnit={(unit) =>
+              setNewFood({
+                ...newFood,
+                unitId: unit.id,
+                unitName: unit.description,
+              })
+            }
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

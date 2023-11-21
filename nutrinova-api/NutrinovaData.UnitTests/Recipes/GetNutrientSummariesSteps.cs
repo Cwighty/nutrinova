@@ -11,12 +11,12 @@ public class GetNutrientSummariesSteps
   [Given(@"I have a food item with (.*) of (.*) (.*)")]
   public void GivenIHaveAFoodItemWith(string nutrientName, int nutrientAmount, string unit)
   {
-    nutrient = new Nutrient { NutrientName = nutrientName };
+    nutrient = new Nutrient { Description = nutrientName };
     var foodNutrient = new FoodPlanNutrient
     {
       NutrientId = 1, // Assuming a unique ID for each nutrient
       Amount = nutrientAmount,
-      Unit = new() { Description = unit, Abreviation = unit },
+      Unit = new() { Description = unit, Abbreviation = unit },
       Nutrient = nutrient,
     };
     var recipeFood = new RecipeFood
@@ -51,6 +51,6 @@ public class GetNutrientSummariesSteps
     var nutrientSummary = result.FirstOrDefault(n => n.Name == nutrientName);
     Assert.IsNotNull(nutrientSummary);
     Assert.That(nutrientSummary.Amount, Is.EqualTo(expectedAmount));
-    Assert.That(nutrientSummary.Unit?.Abreviation, Is.EqualTo(unit));
+    Assert.That(nutrientSummary.Unit?.Abbreviation, Is.EqualTo(unit));
   }
 }

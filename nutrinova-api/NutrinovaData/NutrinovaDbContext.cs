@@ -36,6 +36,8 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<Nutrient> Nutrients { get; set; }
 
+    public virtual DbSet<NutrientCategory> NutrientCategories { get; set; }
+
     public virtual DbSet<Patient> Patients { get; set; }
 
     public virtual DbSet<RecipeFood> RecipeFoods { get; set; }
@@ -49,6 +51,8 @@ public partial class NutrinovaDbContext : DbContext
     public virtual DbSet<ReportedIssue> ReportedIssues { get; set; }
 
     public virtual DbSet<Unit> Units { get; set; }
+
+    public virtual DbSet<UnitCategory> UnitCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -335,15 +339,33 @@ public partial class NutrinovaDbContext : DbContext
             entity.ToTable("nutrient");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.NutrientName).HasColumnName("nutrient_name");
+            entity.Property(e => e.CategoryId)
+                .HasDefaultValueSql("nextval('nutrient_category_id_seq1'::regclass)")
+                .HasColumnName("category_id");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.PreferredUnit)
                 .ValueGeneratedOnAdd()
                 .HasColumnName("preferred_unit");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Nutrients)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("nutrient_category_id_fkey");
 
             entity.HasOne(d => d.PreferredUnitNavigation).WithMany(p => p.Nutrients)
                 .HasForeignKey(d => d.PreferredUnit)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("nutrient_preferred_unit_fkey");
+        });
+
+        modelBuilder.Entity<NutrientCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("nutrient_category_pkey");
+
+            entity.ToTable("nutrient_category");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Description).HasColumnName("description");
         });
 
         modelBuilder.Entity<Patient>(entity =>
@@ -512,7 +534,22 @@ public partial class NutrinovaDbContext : DbContext
             entity.ToTable("unit");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Abreviation).HasColumnName("abreviation");
+            entity.Property(e => e.Abbreviation).HasColumnName("abbreviation");
+            entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.Description).HasColumnName("description");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Units)
+                .HasForeignKey(d => d.CategoryId)
+                .HasConstraintName("unit_category_id_fkey");
+        });
+
+        modelBuilder.Entity<UnitCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("unit_category_pkey");
+
+            entity.ToTable("unit_category");
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
         });
 

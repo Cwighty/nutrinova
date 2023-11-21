@@ -6,6 +6,7 @@ export interface FoodSearchResult {
   brandName: string;
   servingSize: number;
   servingSizeUnit: string;
+  servingSizeUnitCategory?: string;
   servingSizeWithUnits: string;
   foodNutrients: FoodSearchResultNutrient[];
   note: string;

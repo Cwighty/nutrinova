@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NutrinovaData;
-using NutrinovaData.Entities;
 
 namespace NutrinovaApi.Controllers;
 
@@ -19,13 +18,20 @@ public class NutrientController : ControllerBase
     }
 
     [HttpGet("all-nutrients")]
-    public async Task<ActionResult<IEnumerable<Nutrient>>> RetrieveAllNutrients()
+    public async Task<ActionResult<IEnumerable<NutrientOption>>> RetrieveAllNutrients()
     {
         try
         {
             logger.LogInformation("Retrieving all nutrients...");
-            var res = await context.Nutrients.ToListAsync();
-            return Ok(res);
+            var res = await context.Nutrients.Include(n => n.Category).ToListAsync();
+            var options = res.Select(n => new NutrientOption()
+            {
+                Id = n.Id,
+                Description = n.Description,
+                Category = n.Category.Description ?? string.Empty,
+                PreferredUnitId = n.PreferredUnit,
+            });
+            return Ok(options);
         }
         catch (Exception e)
         {

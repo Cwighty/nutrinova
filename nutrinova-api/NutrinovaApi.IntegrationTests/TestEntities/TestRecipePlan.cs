@@ -13,6 +13,8 @@ public class TestRecipePlan : ITestDbInitializer
       Id = Id,
       Description = "Test recipe plan",
       Notes = "Test notes",
+      CreatedBy = TestCustomer.Id,
+      CreatedAt = DateTime.UtcNow,
       RecipeFoods = new List<RecipeFood>
       {
         new()
