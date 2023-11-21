@@ -102,7 +102,7 @@ const SelectNutrient = ({
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Grid container columnSpacing={1} justifyContent={"flex-end"}>
+        <Grid container columnSpacing={1} justifyContent={"flex-end"} gap={2}>
           <Grid item xs={12} md={modal ? 12 : 3}>
             <Autocomplete
               options={nutrientOptions}
@@ -111,7 +111,7 @@ const SelectNutrient = ({
                 <TextField
                   {...params}
                   label="Nutrient"
-                  sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+                  sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
                   error={error}
                   helperText={helperText}
                 />
@@ -126,7 +126,7 @@ const SelectNutrient = ({
               fullWidth
               value={comparisonOperator}
               label="Comparison"
-              sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+              sx={{ flexGrow: 1, mb: { xs: 1, md: 0 } }}
               onChange={(e) => handleComparisonOperatorChange(e)}
             >
               {COMPARISON_OPERATOR_OPTIONS.map((option) => (

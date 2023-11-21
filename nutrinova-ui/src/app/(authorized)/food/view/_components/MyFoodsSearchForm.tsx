@@ -31,9 +31,9 @@ export const MyFoodSearchForm = ({
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", md: "row" },
+        flexDirection: modal ? "column" : { xs: "column", md: "row" },
         justifyContent: "space-between",
-        gap: 2,
+        gap: 3,
       }}
     >
       <TextField
