@@ -49,9 +49,6 @@ const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
     additionalHeaders: {},
     origin: "client",
   });
-  if (foodId === "") {
-    return {} as FoodSearchResult;
-  }
   const response = await apiClient.get(`/food/food-details/${foodId}`);
   console.log("here is the incoming food", response.data);
   return response.data as FoodSearchResult;
