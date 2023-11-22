@@ -3,8 +3,10 @@ using System.Web;
 using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
+using NutrinovaData.Calculators;
 using NutrinovaData.Entities;
 using NutrinovaData.Extensions;
+using NutrinovaData.Features.Nutrients;
 using NutrinovaData.FlattenedResponseModels;
 using NutrinovaData.ResponseModels;
 
@@ -19,6 +21,8 @@ public class FoodController : ControllerBase
   private readonly ILogger<FoodController> logger;
   private readonly IConfiguration configuration;
   private readonly NutrinovaDbContext context;
+  private readonly INutrientMatcher nutrientMatcher;
+
   private readonly HttpClient httpClient;
 
   public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
@@ -26,7 +30,12 @@ public class FoodController : ControllerBase
     this.logger = logger;
     this.configuration = configuration;
     this.context = context;
-
+    this.nutrientMatcher = new CosineDistanceNutrientMatcher(context.Nutrients.Select(n => new NutrientOption
+    {
+      Id = n.Id,
+      Description = n.Description,
+      PreferredUnitId = n.PreferredUnit,
+    }).ToList());
     this.httpClient = new HttpClient()
     {
       BaseAddress = new Uri("https://api.nal.usda.gov/fdc/v1/"),
@@ -390,6 +399,8 @@ public class FoodController : ControllerBase
         return StatusCode((int)result.StatusCode);
       }
 
+      Console.WriteLine($"ImportFood, {await result.Content.ReadAsStringAsync()}");
+
       var deserializedResult = await result.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
       {
         PropertyNameCaseInsensitive = true,
@@ -412,28 +423,48 @@ public class FoodController : ControllerBase
         Ingredients = deserializedResult.ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
-        ServingSize = deserializedResult.servingSize,
-        ServingSizeUnit = deserializedResult.servingSizeUnit != null ? GetUnitId(deserializedResult.servingSizeUnit) ?? 1 : 1, // default to 100 grams
+        ServingSize = deserializedResult.servingSize == 0 ? 100 : deserializedResult.servingSize,
+        ServingSizeUnit = GetUnit(deserializedResult.servingSizeUnit)?.Id ?? 1, // default to 100 grams
         Note = deserializedResult.ingredients,
       };
 
       var foodPlanNutrients = new List<FoodPlanNutrient>();
       foreach (var nutrient in deserializedResult.foodNutrients)
       {
-        var unitId = nutrient.unitName != null ? GetUnitId(nutrient.unitName) : null;
-        if (unitId == null)
+        NutrientOption? nutrientOption = null;
+        UnitOption? unit = null;
+        try
+        {
+          nutrientOption = nutrientMatcher.FindClosestMatch(nutrient.nutrientName ?? string.Empty);
+          unit = GetUnit(nutrient.unitName ?? string.Empty);
+        }
+        catch (Exception ex)
+        {
+          logger.LogError($"Failed to match nutrient {nutrient}: {ex.Message}");
+        }
+
+        if (nutrientOption == null || unit == null)
         {
           // only take nutrients with units that we are tracking
+          Console.WriteLine($"Skipping nutrient {nutrient.nutrientName} {nutrient.unitName}");
           continue;
         }
 
-        foodPlanNutrients.Add(new FoodPlanNutrient
+        var preferredUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == nutrientOption.PreferredUnitId);
+        var fromUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == unit.Id);
+        var newAmount = UnitConverter.Convert((decimal)nutrient.value, fromUnit!, preferredUnit!);
+
+        var importedNutrient = new FoodPlanNutrient
         {
           Id = Guid.NewGuid(),
-          NutrientId = nutrient.nutrientId,
-          Amount = (decimal)nutrient.value,
-          UnitId = unitId.Value,
-        });
+          NutrientId = nutrientOption.Id,
+          Amount = newAmount,
+          UnitId = nutrientOption.PreferredUnitId,
+        };
+
+        Console.WriteLine($"Imported nutrient: {importedNutrient.NutrientId} {importedNutrient.Amount} {importedNutrient.UnitId}");
+
+        foodPlanNutrients.Add(importedNutrient);
       }
 
       foodPlan.FoodPlanNutrients = foodPlanNutrients;
@@ -571,7 +602,7 @@ public class FoodController : ControllerBase
     return Ok(new { message = "Food created successfully", id = foodPlan.Id });
   }
 
-  private int? GetUnitId(string unitAbbreviation)
+  private UnitOption? GetUnit(string unitAbbreviation)
   {
     var unit = context.Units.FirstOrDefault(u => EF.Functions.ILike(u.Abbreviation, unitAbbreviation) || EF.Functions.ILike(u.Description, unitAbbreviation));
     if (unit == null)
@@ -580,6 +611,11 @@ public class FoodController : ControllerBase
       return null;
     }
 
-    return unit.Id;
+    return new UnitOption
+    {
+      Id = unit.Id,
+      Abbreviation = unit.Abbreviation,
+      Description = unit.Description,
+    };
   }
 }
