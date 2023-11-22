@@ -172,6 +172,7 @@ public class FoodController : ControllerBase
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
           .ThenInclude(n => n.PreferredUnitNavigation)
+          .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
           .Where(fp =>
             fp.CreatedBy == customer.Id && (
           EF.Functions.ILike(fp.Description, $"%{filterOption}%") ||
@@ -184,6 +185,7 @@ public class FoodController : ControllerBase
           .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
           .ThenInclude(fpn => fpn.Nutrient)
           .ThenInclude(n => n.PreferredUnitNavigation)
+          .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
           .Where(fp => fp.CreatedBy == customer.Id)
           .ToListAsync();
       }

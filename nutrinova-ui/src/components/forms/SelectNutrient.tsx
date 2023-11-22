@@ -65,49 +65,49 @@ const SelectNutrient = (inputProps: SelectNutrientProps) => {
       {nutrientOptions && unitOptions && (
         <Grid container columnSpacing={1} justifyContent={"flex-end"}>
           <Grid item xs={12} md={6}>
-          <Autocomplete
-            options={nutrientOptions}
-            groupBy={(option) => option.category}
-            getOptionLabel={(option) => `${option.description}`}
-            renderOption={(props, option) => {
-              return (
-                <li {...props} key={option.id}>
-                  {option.description}
-                </li>
-              );
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Nutrient"
-                sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
-                error={inputProps.error}
-                helperText={inputProps.helperText}
-              />
-            )}
-            onChange={handleNutrientSelectionChange}
-          />
+            <Autocomplete
+              options={nutrientOptions}
+              groupBy={(option) => option.categoryName}
+              getOptionLabel={(option) => `${option.description}`}
+              renderOption={(props, option) => {
+                return (
+                  <li {...props} key={option.id}>
+                    {option.description}
+                  </li>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Nutrient"
+                  sx={{ flexGrow: 1, mb: { xs: 2, md: 0 } }}
+                  error={inputProps.error}
+                  helperText={inputProps.helperText}
+                />
+              )}
+              onChange={handleNutrientSelectionChange}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-          <TextField
-            error={inputProps.error}
-            helperText={inputProps.helperText}
-            label="Amount"
-            type="number"
-            fullWidth
-            sx={{ flexGrow: 1 }}
-            onChange={handleNutrientAmountChange}
-            InputProps={{
-              inputProps: { min: 0 },
-              endAdornment: (
-                <InputAdornment position="end">
-                  {unitOptions.find(
-                    (u) => u.id === selectedNutrient?.preferredUnitId
-                  )?.abbreviation ?? ""}
-                </InputAdornment>
-              ),
-            }}
-          />
+            <TextField
+              error={inputProps.error}
+              helperText={inputProps.helperText}
+              label="Amount"
+              type="number"
+              fullWidth
+              sx={{ flexGrow: 1 }}
+              onChange={handleNutrientAmountChange}
+              InputProps={{
+                inputProps: { min: 0 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {unitOptions.find(
+                      (u) => u.id === selectedNutrient?.preferredUnitId
+                    )?.abbreviation ?? ""}
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
         </Grid>
       )}

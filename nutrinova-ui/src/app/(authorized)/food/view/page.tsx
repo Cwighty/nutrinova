@@ -18,7 +18,7 @@ export default function MyFoodsPage() {
   const [searchParameters, setSearchParameters] = useState<SearchParameters>({
     nutrientSearchTerm: {
       id: 0, description: "", preferredUnitId: 0,
-      category: ""
+      categoryName: ""
     },
     foodSearchTerm: "",
     comparisonOperator: "gt",
