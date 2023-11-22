@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace NutrinovaData.UnitTests.Recipes
+namespace NutrinovaData.UnitTests.Features.Recipes
 {
     using TechTalk.SpecFlow;
     using System;
@@ -35,8 +35,8 @@ namespace NutrinovaData.UnitTests.Recipes
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Recipes", "GetNutrientSummaries", "    In order to provide accurate nutritional information\n    As a nutritionist\n  " +
-                    "  I want to get nutrient summaries for a list of recipe foods", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features/Recipes", "GetNutrientSummaries", "    In order to provide accurate nutritional information\r\n    As a nutritionist\r\n" +
+                    "    I want to get nutrient summaries for a list of recipe foods", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
