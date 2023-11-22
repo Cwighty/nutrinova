@@ -19,6 +19,7 @@ import { AmountInput } from "@/components/forms/AmountInput";
 import { ExpandCircleDown } from "@mui/icons-material";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
+import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
 
 interface Props {
   handleAddFood: () => void;
@@ -37,7 +38,7 @@ export const AddFoodDialog = ({
       id: 0,
       description: "",
       preferredUnitId: 0,
-      category: "",
+      categoryName: "",
     },
     foodSearchTerm: "",
     comparisonOperator: "gt",
@@ -45,7 +46,8 @@ export const AddFoodDialog = ({
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
-  // const { data: food } = useGetFoodByIdQuery(newFood.foodId);
+  const { data: food } = useGetFoodByIdQuery(newFood.foodId);
+  console.log(food?.servingSizeUnitCategory)
 
   const handleOpen = () => {
     setOpen(true);
@@ -122,6 +124,7 @@ export const AddFoodDialog = ({
           )}
 
           <AmountInput
+            restrictToUnitCategory={food?.servingSizeUnitCategory}
             amount={newFood.amount}
             setAmount={(amount) =>
               setNewFood({
