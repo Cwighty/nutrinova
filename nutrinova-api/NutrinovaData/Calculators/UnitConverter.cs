@@ -16,7 +16,7 @@ public static class UnitConverter
 
   private static Dictionary<string, decimal> volumeConversions = new Dictionary<string, decimal>
     {
-        { "mililiter", 1 }, // base unit for volume is milliliters
+        { "milliliter", 1 }, // base unit for volume is milliliters
         { "liter", 1000 },
         { "cup", 236.588M },
         { "tablespoon", 14.7868M },
