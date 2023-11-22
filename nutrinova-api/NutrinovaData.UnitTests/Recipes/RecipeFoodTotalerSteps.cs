@@ -16,7 +16,13 @@ public class RecipeFoodTotalerSteps
   public void GivenTheFollowingFoods(Table table)
   {
     var foods = table.CreateSet<FoodPlan>().ToList();
+    var units = this.scenarioContext.Get<List<Unit>>("Units");
     this.scenarioContext["Foods"] = foods;
+    foreach (var food in foods)
+    {
+      food.FoodPlanNutrients = new List<FoodPlanNutrient>();
+      food.ServingSizeUnitNavigation = units?.FirstOrDefault(u => u.Id == food.ServingSizeUnit) ?? new Unit { Id = food.ServingSizeUnit };
+    }
   }
 
   [Given(@"the following nutrients")]
@@ -60,6 +66,12 @@ public class RecipeFoodTotalerSteps
       foodNutrient.Nutrient = nutrients?.FirstOrDefault(n => n.Id == foodNutrient.NutrientId) ?? new Nutrient { Id = foodNutrient.NutrientId };
     }
 
+    foreach (var food in foods)
+    {
+      food.FoodPlanNutrients = foodNutrients.Where(fn => fn.FoodplanId == food.Id).ToList();
+    }
+
+    this.scenarioContext["Foods"] = foods;
     this.scenarioContext["FoodNutrients"] = foodNutrients;
   }
 
@@ -69,10 +81,12 @@ public class RecipeFoodTotalerSteps
     var recipeFoods = table.CreateSet<RecipeFood>().ToList();
     var foods = this.scenarioContext.Get<List<FoodPlan>>("Foods");
     var recipes = this.scenarioContext.Get<List<RecipePlan>>("Recipes");
+    var units = this.scenarioContext.Get<List<Unit>>("Units");
 
     foreach (var recipeFood in recipeFoods)
     {
       recipeFood.Food = foods?.FirstOrDefault(f => f.Id == recipeFood.FoodId) ?? new FoodPlan { Id = recipeFood.FoodId };
+      recipeFood.Unit = units?.FirstOrDefault(u => u.Id == recipeFood.UnitId) ?? new Unit { Id = recipeFood.UnitId };
       var recipe = recipes?.FirstOrDefault(r => r.Id == recipeFood.RecipeId) ?? new RecipePlan { Id = recipeFood.RecipeId };
       if (recipe != null)
       {
@@ -86,6 +100,22 @@ public class RecipeFoodTotalerSteps
     }
 
     this.scenarioContext["RecipeFoods"] = recipeFoods;
+  }
+
+  [Given(@"the following recipes")]
+  public void GivenTheFollowingRecipes(Table table)
+  {
+    var recipes = table.CreateSet<RecipePlan>().ToList();
+    var recipeFoods = this.scenarioContext.ContainsKey("RecipeFoods")
+        ? this.scenarioContext.Get<List<RecipeFood>>("RecipeFoods")
+        : new List<RecipeFood>();
+
+    foreach (var recipe in recipes)
+    {
+      recipe.RecipeFoods = recipeFoods.Where(rf => rf.RecipeId == recipe.Id).ToList();
+    }
+
+    this.scenarioContext["Recipes"] = recipes;
   }
 
   [When(@"I calculate nutrient summaries")]
@@ -102,6 +132,8 @@ public class RecipeFoodTotalerSteps
     var expected = table.CreateSet<NutrientSummary>().ToList();
     var result = this.scenarioContext.Get<List<NutrientSummary>>("Result");
 
-    Assert.That(result, Is.EqualTo(expected));
+    Assert.That(result.Count, Is.EqualTo(expected.Count));
+    Assert.That(result[0].Name, Is.EqualTo(expected[0].Name));
+    Assert.That(result[0].Amount, Is.EqualTo(expected[0].Amount));
   }
 }

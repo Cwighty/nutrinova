@@ -35,8 +35,8 @@ namespace NutrinovaData.UnitTests.Recipes
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\r\n    As a nutrition analyst\r\n    " +
-                    "I want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\n    As a nutrition analyst\n    I " +
+                    "want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -94,58 +94,62 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
                 TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                            "FoodId",
+                            "Id",
                             "Description"});
                 table1.AddRow(new string[] {
                             "1",
-                            "Apple"});
-#line 8
- testRunner.Given("the following foods", ((string)(null)), table1, "Given ");
-#line hidden
-                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                            "NutrientId",
-                            "Description"});
-                table2.AddRow(new string[] {
-                            "1",
-                            "Vitamin C"});
-                table2.AddRow(new string[] {
-                            "2",
-                            "Potassium"});
-#line 11
- testRunner.And("the following nutrients", ((string)(null)), table2, "And ");
-#line hidden
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
-                            "UnitCategoryId",
-                            "Description"});
-                table3.AddRow(new string[] {
-                            "1",
                             "Solid"});
-                table3.AddRow(new string[] {
+                table1.AddRow(new string[] {
                             "2",
                             "Liquid"});
-                table3.AddRow(new string[] {
+                table1.AddRow(new string[] {
                             "3",
                             "Quantity"});
-#line 15
- testRunner.And("the following Unit Categories", ((string)(null)), table3, "And ");
+#line 8
+ testRunner.Given("the following Unit Categories", ((string)(null)), table1, "Given ");
 #line hidden
-                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
-                            "UnitId",
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
                             "Description",
-                            "UnitCategoryId"});
-                table4.AddRow(new string[] {
+                            "CategoryId"});
+                table2.AddRow(new string[] {
                             "1",
                             "gram",
                             "1"});
-                table4.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "2",
                             "milliliter",
                             "2"});
-#line 20
- testRunner.And("the following units", ((string)(null)), table4, "And ");
+#line 13
+ testRunner.And("the following units", ((string)(null)), table2, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description"});
+                table3.AddRow(new string[] {
+                            "1",
+                            "Vitamin C"});
+                table3.AddRow(new string[] {
+                            "2",
+                            "Potassium"});
+#line 17
+ testRunner.And("the following nutrients", ((string)(null)), table3, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description",
+                            "ServingSize",
+                            "ServingSizeUnit"});
+                table4.AddRow(new string[] {
+                            "1",
+                            "Apple",
+                            "10",
+                            "1"});
+#line 21
+ testRunner.And("the following foods", ((string)(null)), table4, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
-                            "FoodId",
+                            "FoodplanId",
                             "NutrientId",
                             "Amount",
                             "UnitId"});
@@ -163,7 +167,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.And("the following food nutrients", ((string)(null)), table5, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
-                            "RecipeId",
+                            "Id",
                             "Description"});
                 table6.AddRow(new string[] {
                             "1",
@@ -193,19 +197,147 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.When("I calculate nutrient summaries", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
-                            "NutrientId",
                             "Name",
                             "Amount"});
                 table8.AddRow(new string[] {
-                            "101",
                             "Vitamin C",
                             "20"});
                 table8.AddRow(new string[] {
-                            "102",
                             "Potassium",
                             "15"});
 #line 36
  testRunner.Then("the nutrient summaries should be", ((string)(null)), table8, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Cant convert across unit categories")]
+        public void CantConvertAcrossUnitCategories()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cant convert across unit categories", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 41
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description"});
+                table9.AddRow(new string[] {
+                            "1",
+                            "Solid"});
+                table9.AddRow(new string[] {
+                            "2",
+                            "Liquid"});
+                table9.AddRow(new string[] {
+                            "3",
+                            "Quantity"});
+#line 42
+ testRunner.Given("the following Unit Categories", ((string)(null)), table9, "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description",
+                            "CategoryId"});
+                table10.AddRow(new string[] {
+                            "1",
+                            "gram",
+                            "1"});
+                table10.AddRow(new string[] {
+                            "2",
+                            "milliliter",
+                            "2"});
+#line 47
+ testRunner.And("the following units", ((string)(null)), table10, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description"});
+                table11.AddRow(new string[] {
+                            "1",
+                            "Vitamin C"});
+                table11.AddRow(new string[] {
+                            "2",
+                            "Potassium"});
+#line 51
+ testRunner.And("the following nutrients", ((string)(null)), table11, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description",
+                            "ServingSize",
+                            "ServingSizeUnit"});
+                table12.AddRow(new string[] {
+                            "1",
+                            "Apple",
+                            "10",
+                            "2"});
+#line 55
+ testRunner.And("the following foods", ((string)(null)), table12, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                            "FoodplanId",
+                            "NutrientId",
+                            "Amount",
+                            "UnitId"});
+                table13.AddRow(new string[] {
+                            "1",
+                            "1",
+                            "10",
+                            "1"});
+                table13.AddRow(new string[] {
+                            "1",
+                            "2",
+                            "5",
+                            "1"});
+#line 58
+ testRunner.And("the following food nutrients", ((string)(null)), table13, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Description"});
+                table14.AddRow(new string[] {
+                            "1",
+                            "Apple Pie"});
+#line 62
+ testRunner.And("the following recipes", ((string)(null)), table14, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                            "RecipeId",
+                            "FoodId",
+                            "Amount",
+                            "UnitId"});
+                table15.AddRow(new string[] {
+                            "1",
+                            "1",
+                            "2",
+                            "1"});
+#line 65
+ testRunner.And("the following recipe foods", ((string)(null)), table15, "And ");
+#line hidden
+#line 68
+ testRunner.When("I calculate nutrient summaries", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Name",
+                            "Amount"});
+                table16.AddRow(new string[] {
+                            "Vitamin C",
+                            "20"});
+                table16.AddRow(new string[] {
+                            "Potassium",
+                            "15"});
+#line 69
+ testRunner.Then("the nutrient summaries should be", ((string)(null)), table16, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
