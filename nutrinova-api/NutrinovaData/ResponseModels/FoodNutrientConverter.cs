@@ -32,12 +32,10 @@ public class FoodNutrientConverter : JsonConverter<FoodNutrient>
 
       if (root.TryGetProperty("nutrient", out _) && nutrientObject.TryGetProperty("unitName", out var unitName))
       {
-        Console.WriteLine("-------------------" + unitName.GetString());
         foodNutrient.unitName = unitName.GetString();
       }
       else if (root.TryGetProperty("nutrient:unitName", out var unitNameProperty))
       {
-        Console.WriteLine(unitNameProperty.GetString() + "---------------");
         foodNutrient.unitName = unitNameProperty.GetString();
       }
 
