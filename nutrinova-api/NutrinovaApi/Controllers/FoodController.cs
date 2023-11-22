@@ -3,7 +3,6 @@ using System.Web;
 using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
-using NutrinovaData.Calculators;
 using NutrinovaData.Entities;
 using NutrinovaData.Extensions;
 using NutrinovaData.Features.Nutrients;
@@ -21,16 +20,20 @@ public class FoodController : ControllerBase
   private readonly ILogger<FoodController> logger;
   private readonly IConfiguration configuration;
   private readonly NutrinovaDbContext context;
+  private readonly IFoodNutrientMapper foodNutrientMapper;
+
   private readonly INutrientMatcher nutrientMatcher;
 
   private readonly HttpClient httpClient;
 
-  public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context)
+  public FoodController(ILogger<FoodController> logger, IConfiguration configuration, NutrinovaDbContext context, IFoodNutrientMapper foodNutrientMapper, INutrientMatcher nutrientMatcher)
   {
     this.logger = logger;
     this.configuration = configuration;
     this.context = context;
-    this.nutrientMatcher = new CosineDistanceNutrientMatcher(context.Nutrients.Select(n => new NutrientOption
+    this.foodNutrientMapper = foodNutrientMapper;
+    this.nutrientMatcher = nutrientMatcher;
+    this.nutrientMatcher.SetExistingNutrients(context.Nutrients.Select(n => new NutrientOption
     {
       Id = n.Id,
       Description = n.Description,
@@ -271,7 +274,7 @@ public class FoodController : ControllerBase
       var result = await context.FoodPlans
         .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
-        .ThenInclude(fpn => fpn.Nutrient)
+        .ThenInclude(fpn => fpn.Nutrient).ThenInclude(n => n.PreferredUnitNavigation).ThenInclude(u => u.Category)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
       if (result == null)
       {
@@ -290,11 +293,6 @@ public class FoodController : ControllerBase
     {
       logger.LogError($"JSON deserialization failed: {ex.Message}");
       return BadRequest("Invalid response format");
-    }
-    catch (Exception ex)
-    {
-      logger.LogError($"An unexpected error occurred: {ex.Message}");
-      return StatusCode(500, "Internal server error");
     }
   }
 
@@ -428,45 +426,7 @@ public class FoodController : ControllerBase
         Note = deserializedResult.ingredients,
       };
 
-      var foodPlanNutrients = new List<FoodPlanNutrient>();
-      foreach (var nutrient in deserializedResult.foodNutrients)
-      {
-        NutrientOption? nutrientOption = null;
-        UnitOption? unit = null;
-        try
-        {
-          nutrientOption = nutrientMatcher.FindClosestMatch(nutrient.nutrientName ?? string.Empty);
-          unit = GetUnit(nutrient.unitName ?? string.Empty);
-        }
-        catch (Exception ex)
-        {
-          logger.LogError($"Failed to match nutrient {nutrient}: {ex.Message}");
-        }
-
-        if (nutrientOption == null || unit == null)
-        {
-          // only take nutrients with units that we are tracking
-          Console.WriteLine($"Skipping nutrient {nutrient.nutrientName} {nutrient.unitName}");
-          continue;
-        }
-
-        var preferredUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == nutrientOption.PreferredUnitId);
-        var fromUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == unit.Id);
-        var newAmount = UnitConverter.Convert((decimal)nutrient.value, fromUnit!, preferredUnit!);
-
-        var importedNutrient = new FoodPlanNutrient
-        {
-          Id = Guid.NewGuid(),
-          NutrientId = nutrientOption.Id,
-          Amount = newAmount,
-          UnitId = nutrientOption.PreferredUnitId,
-        };
-
-        Console.WriteLine($"Imported nutrient: {importedNutrient.NutrientId} {importedNutrient.Amount} {importedNutrient.UnitId}");
-
-        foodPlanNutrients.Add(importedNutrient);
-      }
-
+      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserializedResult.foodNutrients);
       foodPlan.FoodPlanNutrients = foodPlanNutrients;
 
       // Save to the database
@@ -492,11 +452,6 @@ public class FoodController : ControllerBase
     {
       logger.LogError($"JSON deserialization failed: {ex.Message}");
       return BadRequest("Invalid response format");
-    }
-    catch (Exception ex)
-    {
-      logger.LogError($"An unexpected error occurred: {ex.Message}");
-      return StatusCode(500, "Internal server error");
     }
   }
 

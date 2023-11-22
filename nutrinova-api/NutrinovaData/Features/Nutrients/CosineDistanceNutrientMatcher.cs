@@ -3,14 +3,9 @@ using NutrinovaData.Features.Nutrients;
 
 public class CosineDistanceNutrientMatcher : INutrientMatcher
 {
-  public List<NutrientOption> ExistingNutrients { get; }
+  public List<NutrientOption> ExistingNutrients { get; private set; } = new List<NutrientOption>();
 
   private List<string> ignoreWords = new List<string> { "total", "vitamin" };
-
-  public CosineDistanceNutrientMatcher(List<NutrientOption> existingOptions)
-  {
-    ExistingNutrients = existingOptions;
-  }
 
   public NutrientOption FindClosestMatch(string newNutrient)
   {
@@ -48,6 +43,11 @@ public class CosineDistanceNutrientMatcher : INutrientMatcher
     }
 
     return closestMatch;
+  }
+
+  public void SetExistingNutrients(List<NutrientOption> existingNutrients)
+  {
+    ExistingNutrients = existingNutrients;
   }
 
   private List<string> Tokenize(string text)

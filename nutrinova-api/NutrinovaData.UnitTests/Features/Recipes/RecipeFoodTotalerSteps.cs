@@ -1,4 +1,6 @@
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Recipes;
+using NutrinovaData.Features.Units;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -10,6 +12,14 @@ public class RecipeFoodTotalerSteps
   public RecipeFoodTotalerSteps(ScenarioContext scenarioContext)
   {
     this.scenarioContext = scenarioContext;
+  }
+
+  [Given(@"a recipe food totaler")]
+  public void GivenARecipeFoodTotaler()
+  {
+    var unitConverter = new UnitConverter();
+    var recipeFoodTotaler = new RecipeFoodTotaler(unitConverter);
+    this.scenarioContext["RecipeFoodTotaler"] = recipeFoodTotaler;
   }
 
   [Given(@"the following foods")]
@@ -121,8 +131,9 @@ public class RecipeFoodTotalerSteps
   [When(@"I calculate nutrient summaries")]
   public void WhenICalculateNutrientSummaries()
   {
+    var recipeFoodTotaler = this.scenarioContext.Get<RecipeFoodTotaler>("RecipeFoodTotaler");
     var recipeFoods = this.scenarioContext.Get<List<RecipeFood>>("RecipeFoods");
-    var result = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
+    var result = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     this.scenarioContext["Result"] = result;
   }
 

@@ -24,7 +24,8 @@ public class NutrientMatcherSteps
   public void GivenWeAreTrackingTheseNutrientsInOurSystem(Table table)
   {
     var options = table.CreateSet<NutrientOption>().ToList();
-    var matcher = new CosineDistanceNutrientMatcher(options);
+    var matcher = new CosineDistanceNutrientMatcher();
+    matcher.SetExistingNutrients(options);
     scenarioContext.Add("NutrientMatcher", matcher);
   }
 

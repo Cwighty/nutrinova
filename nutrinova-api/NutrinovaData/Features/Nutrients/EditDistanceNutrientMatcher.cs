@@ -2,12 +2,7 @@ namespace NutrinovaData.Features.Nutrients;
 
 public class EditDistanceNutrientMatcher : INutrientMatcher
 {
-  public List<NutrientOption> ExistingNutrients { get; }
-
-  public EditDistanceNutrientMatcher(List<NutrientOption> existingNutrients)
-  {
-    this.ExistingNutrients = existingNutrients;
-  }
+  public List<NutrientOption> ExistingNutrients { get; private set; } = new List<NutrientOption>();
 
   public NutrientOption FindClosestMatch(string newNutrient)
   {
@@ -35,6 +30,11 @@ public class EditDistanceNutrientMatcher : INutrientMatcher
     }
 
     return closestMatch;
+  }
+
+  public void SetExistingNutrients(List<NutrientOption> existingNutrients)
+  {
+    ExistingNutrients = existingNutrients;
   }
 
   private int EditDistance(string a, string b)

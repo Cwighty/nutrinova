@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaApi.Controllers;
 
@@ -13,11 +14,13 @@ public class RecipeController : ControllerBase
 {
   private readonly ILogger<RecipeController> logger;
   private readonly NutrinovaDbContext context;
+  private readonly IRecipeFoodTotaler recipeFoodTotaler;
 
-  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context)
+  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler)
   {
     this.logger = logger;
     this.context = context;
+    this.recipeFoodTotaler = recipeFoodTotaler;
   }
 
   [HttpPost]
@@ -133,7 +136,7 @@ public class RecipeController : ControllerBase
       Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
 
-    var summaries = RecipeFoodTotaler.GetNutrientSummaries(recipeFoods);
+    var summaries = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
     return Ok(summaries);
   }
 

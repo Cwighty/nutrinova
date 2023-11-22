@@ -1,8 +1,8 @@
 using NutrinovaData.Entities;
 
-namespace NutrinovaData.Calculators;
+namespace NutrinovaData.Features.Units;
 
-public static class UnitConverter
+public class UnitConverter : IUnitConverter
 {
   private static Dictionary<string, decimal> weightConversions = new Dictionary<string, decimal>
     {
@@ -34,7 +34,7 @@ public static class UnitConverter
         { "kJ", 0.239006M },
     };
 
-  public static decimal Convert(decimal value, Unit fromUnit, Unit toUnit)
+  public decimal Convert(decimal value, Unit fromUnit, Unit toUnit)
   {
     if (fromUnit == null || toUnit == null)
     {
@@ -76,7 +76,7 @@ public static class UnitConverter
     }
   }
 
-  public static decimal Convert(decimal value, string fromUnit, string toUnit)
+  public decimal Convert(decimal value, string fromUnit, string toUnit)
   {
     fromUnit = fromUnit.ToLower();
     toUnit = toUnit.ToLower();
