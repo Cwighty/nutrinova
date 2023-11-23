@@ -3,6 +3,9 @@ using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NutrinovaData;
+using NutrinovaData.Features.Nutrients;
+using NutrinovaData.Features.Recipes;
+using NutrinovaData.Features.Units;
 
 namespace NutrinovaApi;
 
@@ -65,6 +68,11 @@ public class Program
       options.EnableDetailedErrors();
       options.EnableSensitiveDataLogging();
     });
+
+    builder.Services.AddScoped<INutrientMatcher, CosineDistanceNutrientMatcher>();
+    builder.Services.AddScoped<IUnitConverter, UnitConverter>();
+    builder.Services.AddScoped<IRecipeFoodTotaler, RecipeFoodTotaler>();
+    builder.Services.AddScoped<IFoodNutrientMapper, NutrientImporter>();
 
     var app = builder.Build();
 

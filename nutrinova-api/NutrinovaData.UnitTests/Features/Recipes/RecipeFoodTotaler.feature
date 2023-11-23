@@ -5,7 +5,8 @@ Feature: RecipeFoodTotaler
 
 @GetNutrientSummaries
 Scenario: Total nutrients from a list of recipe foods
-	Given the following Unit Categories
+  Given a recipe food totaler
+	And the following Unit Categories
 		| Id | Description |
 		| 1              | Solid       |
 		| 2              | Liquid      |
