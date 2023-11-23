@@ -2,7 +2,7 @@
 import { Paper } from "@mui/material";
 import { PageContainer } from "@/components/PageContainer";
 import React from "react";
-import { EditFoodCard } from "./_components/EditFoodCard";
+import { EditFoodForm } from "./_components/EditFoodForm";
 
 interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -14,7 +14,7 @@ export default function Page({ searchParams }: PageProps) {
   return (
     <PageContainer title={"Edit Food"}>
       <Paper elevation={3} sx={{ p: 2, maxWidth: "90vw" }}>
-        <EditFoodCard foodId={foodId} />
+        <EditFoodForm foodId={foodId} />
       </Paper>
     </PageContainer>
   );

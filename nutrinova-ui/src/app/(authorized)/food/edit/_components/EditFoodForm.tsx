@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '@/app/(authorized)/recipes/create/_components/ServingSizeUnitField'
 import TagInput from '@/components/forms/TagInput'
 import { Alert, Box, Button, Grid, TextField } from '@mui/material'
@@ -16,7 +16,7 @@ interface Props {
 
 export const EditFoodForm = ({ foodId }: Props) => {
 
-  const { data: food, isLoading: foodIsLoading } = useGetFoodByIdQuery(foodId);
+  const { data: food, isLoading: foodIsLoading, isFetching } = useGetFoodByIdQuery(foodId);
   const { data: unitOptions } = useGetUnitsQuery();
   const editFoodMutation = useEditFoodMutation();
 
@@ -26,7 +26,7 @@ export const EditFoodForm = ({ foodId }: Props) => {
   const [newNutrient, setNewNutrient] = useState<EditFoodNutrientRequestModel>({ nutrientId: 0, amount: 0, unitId: 0, nutrientName: '', unitCategoryId: 0 });
 
   const [editFoodFormState, setEditFoodForm] = React.useState<EditFoodRequestModel>({
-    id: foodId,
+    id: "",
     description: food?.description,
     brandName: food?.brandName,
     ingredients: food?.ingredients?.split(','),
@@ -44,7 +44,6 @@ export const EditFoodForm = ({ foodId }: Props) => {
     }) || [],
     note: food?.note || '',
   })
-
 
   const handleAddNutrient = () => {
     if (newNutrient.amount <= 0) {
@@ -91,9 +90,32 @@ export const EditFoodForm = ({ foodId }: Props) => {
     setIsValid(validateFormCallback() || false);
   }, [editFoodFormState, validateFormCallback])
 
-
-  if (foodIsLoading) {
+  if (foodIsLoading || isFetching) {
     return <div>Loading...</div>
+  }
+
+  if (food?.id !== editFoodFormState.id) {
+    setEditFoodForm(
+      {
+        id: foodId,
+        description: food?.description,
+        brandName: food?.brandName,
+        ingredients: food?.ingredients?.split(','),
+        unitCategoryId: food?.unitCategoryId,
+        servingSize: food?.servingSize,
+        servingSizeUnit: unitOptions?.find(u => u.abbreviation === food?.servingSizeUnit) || null,
+        foodNutrients: food?.foodNutrients?.map(fn => {
+          return {
+            nutrientId: fn.nutrientId,
+            amount: fn.value,
+            unitId: fn.unitId, // doesn't get defined on load. Gets set in api call
+            nutrientName: fn.nutrientName,
+            unitCategoryId: fn?.categoryId,
+          }
+        }) || [],
+        note: food?.note || '',
+      }
+    )
   }
 
   const handleNutrientAmountChange = (nutrientId: number, amount: number) => {
