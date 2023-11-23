@@ -32,4 +32,8 @@ public partial class Unit
     public virtual ICollection<RecipeFoodHistory> RecipeFoodHistories { get; set; } = new List<RecipeFoodHistory>();
 
     public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
+
+    public virtual ICollection<RecipeHistory> RecipeHistories { get; set; } = new List<RecipeHistory>();
+
+    public virtual ICollection<RecipePlan> RecipePlans { get; set; } = new List<RecipePlan>();
 }
