@@ -221,7 +221,14 @@ public class RecipeController : ControllerBase
     recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
     recipePlan.Amount = editRecipeRequest.Amount;
     recipePlan.ServingSizeUnit = editRecipeRequest.UnitId;
-    recipePlan.ServingSizeUnitNavigation = editRecipeRequest.ServingsUnit;
+    recipePlan.ServingSizeUnitNavigation = new Unit
+    {
+      Id = editRecipeRequest.UnitId,
+      CategoryId = editRecipeRequest.ServingsUnit.CategoryId,
+      Description = editRecipeRequest.ServingsUnit.Description,
+      Abbreviation = editRecipeRequest.ServingsUnit.Abbreviation,
+      Category = await context.UnitCategories.FirstOrDefaultAsync(uc => uc.Id == editRecipeRequest.ServingsUnit.CategoryId),
+    };
 
     try
     {

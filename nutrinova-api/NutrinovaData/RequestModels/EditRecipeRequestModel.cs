@@ -1,5 +1,3 @@
-using NutrinovaData.Entities;
-
 public class EditRecipeRequestModel
 {
   public Guid? Id { get; set; }
@@ -14,7 +12,7 @@ public class EditRecipeRequestModel
 
   public int UnitId { get; set; }
 
-  public Unit ServingsUnit { get; set; } = null!;
+  public UnitRequestModel ServingsUnit { get; set; } = null!;
 
   public List<EditFoodRequestModel> RecipeFoods { get; set; } = new List<EditFoodRequestModel>();
 }

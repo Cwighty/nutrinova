@@ -89,14 +89,14 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
       Id = TestRecipePlan.Id,
       Description = "Test recipe plan",
       Note = "Test note",
-      ServingsUnit = new NutrinovaData.Entities.Unit
+      ServingsUnit = new UnitRequestModel
       {
         Id = 1,
-        Category = new NutrinovaData.Entities.UnitCategory { Id = 1 },
         CategoryId = 1,
         Description = "Gram",
         Abbreviation = "G",
       },
+      UnitId = 1,
       Tags = new List<string> { "Test tag", "another test tag" },
       RecipeFoods = new List<EditFoodRequestModel>
       {
