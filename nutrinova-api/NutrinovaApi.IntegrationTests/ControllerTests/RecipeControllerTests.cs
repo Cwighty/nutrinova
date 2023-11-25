@@ -88,7 +88,15 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
     {
       Id = TestRecipePlan.Id,
       Description = "Test recipe plan",
-      Notes = "Test note",
+      Note = "Test note",
+      ServingsUnit = new NutrinovaData.Entities.Unit
+      {
+        Id = 1,
+        Category = new NutrinovaData.Entities.UnitCategory { Id = 1 },
+        CategoryId = 1,
+        Description = "Gram",
+        Abbreviation = "G",
+      },
       Tags = new List<string> { "Test tag", "another test tag" },
       RecipeFoods = new List<EditFoodRequestModel>
       {
@@ -96,11 +104,28 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
         {
           Id = TestFoodPlan.Id,
           ServingSize = 10,
-          Unit = new NutrinovaData.Entities.Unit { Id = 1 },
+          FoodNutrients = new List<EditFoodNutrientRequestModel>
+          {
+            new()
+            {
+              NutrientId = 1,
+              Amount = 10,
+              UnitCategoryId = 1,
+              UnitId = 1,
+            },
+          },
+          Unit = new NutrinovaData.Entities.Unit
+          {
+            Id = 1,
+            Category = new NutrinovaData.Entities.UnitCategory { Id = 1 },
+            CategoryId = 1,
+            Description = "Gram",
+            Abbreviation = "G",
+          },
         },
       },
     };
     var response = await httpClient.PutAsJsonAsync($"be/recipe", recipe);
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
   }
 }

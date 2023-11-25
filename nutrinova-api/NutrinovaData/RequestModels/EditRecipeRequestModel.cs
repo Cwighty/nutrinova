@@ -6,7 +6,7 @@ public class EditRecipeRequestModel
 
   public string? Description { get; set; }
 
-  public string? Notes { get; set; }
+  public string? Note { get; set; }
 
   public List<string>? Tags { get; set; }
 

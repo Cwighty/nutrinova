@@ -171,30 +171,87 @@ public class RecipeController : ControllerBase
     return Ok(recipes);
   }
 
-  /*
-    [HttpPut]
-    public async Task<ActionResult> EditRecipes(EditRecipeRequestModel editRecipeRequest)
+  [HttpPut]
+  public async Task<ActionResult> EditRecipes(EditRecipeRequestModel editRecipeRequest)
+  {
+    if (editRecipeRequest == null)
     {
-      if (editRecipeRequest == null)
-      {
-        return BadRequest("Invalid recipe data");
-      }
+      return BadRequest("Invalid recipe data");
+    }
 
-      if (string.IsNullOrWhiteSpace(editRecipeRequest.Description))
-      {
-        return BadRequest("Description is required");
-      }
+    if (string.IsNullOrWhiteSpace(editRecipeRequest.Description))
+    {
+      return BadRequest("Description is required");
+    }
 
-      if (editRecipeRequest.RecipeFoods == null || !editRecipeRequest.RecipeFoods.Any())
-      {
-        return BadRequest("At least one food is required");
-      }
+    if (editRecipeRequest.RecipeFoods == null || !editRecipeRequest.RecipeFoods.Any())
+    {
+      return BadRequest("At least one food is required");
+    }
 
-      if (editRecipeRequest.RecipeFoods.Any(f => f.ServingSize <= 0))
-      {
-        return BadRequest("Food/Ingredient amounts must be greater than 0");
-      }
+    if (editRecipeRequest.RecipeFoods.Any(f => f.ServingSize <= 0))
+    {
+      return BadRequest("Food/Ingredient amounts must be greater than 0");
+    }
 
-      return Ok(recipes);
-    } */
+    var userObjectId = User.GetObjectIdFromClaims();
+
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    var recipePlan = await context.RecipePlans
+      .Include(r => r.RecipeFoods)
+      .ThenInclude(rf => rf.Food)
+      .ThenInclude(f => f.FoodPlanNutrients)
+      .ThenInclude(fn => fn.Nutrient)
+      .Include(r => r.ServingSizeUnitNavigation)
+      .FirstOrDefaultAsync(r => r.Id == editRecipeRequest.Id);
+
+    if (recipePlan == null)
+    {
+      return NotFound("Recipe not found");
+    }
+
+    recipePlan.Description = editRecipeRequest.Description;
+    recipePlan.Notes = editRecipeRequest.Note;
+    recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
+    recipePlan.Amount = editRecipeRequest.Amount;
+    recipePlan.ServingSizeUnit = editRecipeRequest.UnitId;
+    recipePlan.ServingSizeUnitNavigation = editRecipeRequest.ServingsUnit;
+
+    try
+    {
+      // delete all existing recipe foods
+      context.RecipeFoods.RemoveRange(recipePlan.RecipeFoods);
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed to delete recipe foods: {ex.Message}");
+      return StatusCode(500, "Failed to delete recipe foods");
+    }
+
+    recipePlan.RecipeFoods = editRecipeRequest.RecipeFoods.Select(rf => new RecipeFood
+    {
+      Id = rf.Id ?? Guid.NewGuid(),
+      FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
+      Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
+      UnitId = rf.Unit.Id,
+    }).ToList();
+
+    try
+    {
+      await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed to save recipe to the database: {ex.Message}");
+      return StatusCode(500, "Failed to save recipe to the database");
+    }
+
+    return Ok(recipePlan);
+  }
 }
