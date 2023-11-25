@@ -1,5 +1,6 @@
 using System.Net;
 using NutrinovaData.FlattenedResponseModels;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -123,20 +124,29 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     Assert.Equal(3, (await resFoodPlanFilter_Just_Note.Content.ReadFromJsonAsync<List<FlattenedFood>>())?.Count);
   }
 
-  /*
-    [Fact]
-    public async Task Edit_Food_Plan()
+  [Fact]
+  public async Task Edit_Food_Plan()
+  {
+    var editFood = new EditFoodRequestModel
     {
-      var editFood = new EditFoodRequestModel
+      Id = TestFoodPlan.Id,
+      Description = "Edited",
+      Note = "Edited",
+      BrandName = "Edited",
+      Ingredients = "Edited",
+      ServingSize = 10,
+      Unit = new NutrinovaData.Entities.Unit
       {
-        Id = TestFoodPlan.Id.ToString(),
-        Description = "Edited",
-        Note = "Edited",
-        BrandName = "Edited",
-        Ingredients = "Edited",
-        ServingSize = 10,
-        Unit = 1,
-        FoodNutrients = new List<EditFoodNutrientRequestModel>
+        Id = 1,
+        Description = "G",
+        CategoryId = 1,
+        Category = new NutrinovaData.Entities.UnitCategory
+        {
+          Id = 1,
+          Description = "Weight",
+        },
+      },
+      FoodNutrients = new List<EditFoodNutrientRequestModel>
         {
           new()
           {
@@ -144,19 +154,19 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
             Amount = 10,
           },
         },
-      };
+    };
 
-      var resFoodEdit = await httpClient.PutAsJsonAsync("be/food", editFood);
+    var resFoodEdit = await httpClient.PutAsJsonAsync("be/food", editFood);
 
-      // Assert
-      var newEditFood = await httpClient.GetFromJsonAsync<Food>("be/food/food-details/" + editFood.Id);
-      Assert.Equal(HttpStatusCode.OK, resFoodEdit.StatusCode);
-      Assert.Equal("Edited", newEditFood?.description);
-      Assert.Equal("Edited", newEditFood?.note);
-      Assert.Equal("Edited", newEditFood?.brandName);
-      Assert.Equal("Edited", newEditFood?.ingredients);
-      Assert.Equal(10, newEditFood?.servingSize);
-      Assert.Equal("G", newEditFood?.servingSizeUnit);
-      Assert.Equal("10 G", newEditFood?.servingSizeWithUnits);
-    } */
+    // Assert
+    var newEditFood = await httpClient.GetFromJsonAsync<Food>("be/food/food-details/" + editFood.Id);
+    Assert.Equal(HttpStatusCode.OK, resFoodEdit.StatusCode);
+    Assert.Equal("Edited", newEditFood?.description);
+    Assert.Equal("Edited", newEditFood?.note);
+    Assert.Equal("Edited", newEditFood?.brandName);
+    Assert.Equal("Edited", newEditFood?.ingredients);
+    Assert.Equal(10, newEditFood?.servingSize);
+    Assert.Equal("G", newEditFood?.servingSizeUnit);
+    Assert.Equal("10 G", newEditFood?.servingSizeWithUnits);
+  }
 }

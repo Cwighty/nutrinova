@@ -80,4 +80,27 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
     var response = await httpClient.GetAsync($"be/recipe/{Guid.NewGuid()}");
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
   }
+
+  [Fact]
+  public async Task EditRecipe_ShouldReturnNotFound()
+  {
+    var recipe = new EditRecipeRequestModel
+    {
+      Id = TestRecipePlan.Id,
+      Description = "Test recipe plan",
+      Notes = "Test note",
+      Tags = new List<string> { "Test tag", "another test tag" },
+      RecipeFoods = new List<EditFoodRequestModel>
+      {
+        new()
+        {
+          Id = TestFoodPlan.Id,
+          ServingSize = 10,
+          Unit = new NutrinovaData.Entities.Unit { Id = 1 },
+        },
+      },
+    };
+    var response = await httpClient.PutAsJsonAsync($"be/recipe", recipe);
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
 }

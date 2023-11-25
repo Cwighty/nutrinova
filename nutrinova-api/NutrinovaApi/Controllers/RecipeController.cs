@@ -170,4 +170,31 @@ public class RecipeController : ControllerBase
 
     return Ok(recipes);
   }
+
+  /*
+    [HttpPut]
+    public async Task<ActionResult> EditRecipes(EditRecipeRequestModel editRecipeRequest)
+    {
+      if (editRecipeRequest == null)
+      {
+        return BadRequest("Invalid recipe data");
+      }
+
+      if (string.IsNullOrWhiteSpace(editRecipeRequest.Description))
+      {
+        return BadRequest("Description is required");
+      }
+
+      if (editRecipeRequest.RecipeFoods == null || !editRecipeRequest.RecipeFoods.Any())
+      {
+        return BadRequest("At least one food is required");
+      }
+
+      if (editRecipeRequest.RecipeFoods.Any(f => f.ServingSize <= 0))
+      {
+        return BadRequest("Food/Ingredient amounts must be greater than 0");
+      }
+
+      return Ok(recipes);
+    } */
 }

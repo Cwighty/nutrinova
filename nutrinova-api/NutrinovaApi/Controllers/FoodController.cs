@@ -497,7 +497,7 @@ public class FoodController : ControllerBase
     var foodPlan = await context.FoodPlans
       .Include(fp => fp.FoodPlanNutrients)
       .ThenInclude(fpn => fpn.Nutrient)
-      .FirstOrDefaultAsync(fp => fp.Id.ToString() == editFoodRequestModel.Id);
+      .FirstOrDefaultAsync(fp => fp.Id == editFoodRequestModel.Id);
 
     if (foodPlan == null)
     {
