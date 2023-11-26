@@ -5,9 +5,12 @@ import { ArrowCircleRight } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import customerService, { Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
+import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
+import { Patient } from '@/app/(authorized)/patients/_models/patient';
 
 const Welcome = () => {
   const router = useRouter();
+  const createPatientMutation = useCreatePatientMutation();
 
   const handleSingleUser = async () => {
     const session = await getSession();
@@ -32,6 +35,13 @@ const Welcome = () => {
     if (!created) {
       throw new Error('Failed to create customer');
     }
+
+    const patient: Patient = {
+      firstname: session.user.name.split(' ')[0],
+      lastname: session.user.name.split(' ')[1] ?? '',
+    }
+    createPatientMutation.mutate(patient);
+
     router.push('/dashboard');
   }
 

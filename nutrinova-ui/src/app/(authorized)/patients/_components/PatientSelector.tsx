@@ -1,14 +1,15 @@
-import { Tooltip, IconButton, Avatar, Menu, MenuItem, Typography, Dialog, DialogContent, DialogTitle } from "@mui/material";
-import React, { useState } from "react";
-import { useGetAllPatientsQuery } from "../patientHooks";
-import { AddCircleOutline } from "@mui/icons-material";
-import CreatePatientForm from "./CreatePatientForm";
+import { Tooltip, IconButton, Avatar, Menu, MenuItem, Typography, Divider } from "@mui/material";
+import React, { useContext } from "react";
+import { PatientContext } from "@/components/providers/PatientProvider";
+import { Patient } from "../_models/patient";
+import { useRouter } from "next/navigation";
+import { Settings } from "@mui/icons-material";
 
 export const PatientSelector = () => {
+  const router = useRouter();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [open, setOpen] = useState(false);
 
-  const { data: patients, isLoading: patientsAreLoading } = useGetAllPatientsQuery();
+  const { patients, selectedPatient, setSelectedPatient, isLoading, isError } = useContext(PatientContext);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -18,11 +19,25 @@ export const PatientSelector = () => {
     setAnchorElUser(null);
   };
 
+  const handleSelectPatient = (patient: Patient) => {
+    setSelectedPatient(patient);
+    handleCloseUserMenu();
+  }
+
+  const stringAvatar = (name: string) => {
+    return {
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0] ?? ""}`,
+    };
+  }
+
+  const patientName = `${selectedPatient?.firstname} ${selectedPatient?.lastname}`;
+
   return (
     <>
-      <Tooltip title="Open settings">
+      <Typography variant="button" sx={{ mx: 2 }}>{selectedPatient ? patientName : <></>}</Typography>
+      <Tooltip title="Select a patient to care for">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt="Remy Sharp" />
+          {selectedPatient ? <Avatar {...stringAvatar(patientName)} /> : <Avatar />}
         </IconButton>
       </Tooltip>
       <Menu
@@ -41,22 +56,23 @@ export const PatientSelector = () => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {patientsAreLoading && <MenuItem><Typography textAlign="center">Loading...</Typography></MenuItem>}
+        {isLoading && <MenuItem><Typography textAlign="center">Loading...</Typography></MenuItem>}
+        {isError && <MenuItem><Typography textAlign="center">Error loading patients</Typography></MenuItem>}
         {patients?.map((p) => (
           <MenuItem key={p.id} onClick={handleCloseUserMenu}>
-            <Typography textAlign="center">{p.firstname} {p.lastname}</Typography>
+            <Typography textAlign="center" onClick={() => handleSelectPatient(p)}>{p.firstname} {p.lastname}</Typography>
           </MenuItem>
         ))}
+        <Divider />
         <MenuItem>
-          <Typography onClick={() => setOpen(true)}> <AddCircleOutline /></Typography>
+          <Settings sx={{ mr: 1 }} />
+          <Typography textAlign="center" onClick={() => {
+            router.push("/patients")
+            handleCloseUserMenu()
+          }
+          }>Manage Patients </Typography>
         </MenuItem>
       </Menu>
-      <Dialog open={open} >
-        <DialogTitle>Add Patient</DialogTitle>
-        <DialogContent>
-          <CreatePatientForm />
-        </DialogContent>
-      </Dialog>
     </>
   );
 

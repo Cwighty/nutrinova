@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { PageContainer } from "@/components/PageContainer";
+import { PatientContextPageContainer } from "@/components/PatientContextPageContainer";
 
 export const metadata = {
   title: "View Meals",
@@ -7,8 +7,8 @@ export const metadata = {
 
 export default function ViewMealsPage() {
   return (
-    <PageContainer title={metadata.title}>
+    <PatientContextPageContainer title={metadata.title}>
       <Typography variant={"h3"}>View Meals</Typography>
-    </PageContainer>
+    </PatientContextPageContainer>
   );
 }

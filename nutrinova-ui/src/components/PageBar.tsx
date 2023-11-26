@@ -14,9 +14,10 @@ import { PatientSelector } from "@/app/(authorized)/patients/_components/Patient
 
 export interface PageBarProps {
   title: string;
+  isPatientContext?: boolean;
 }
 
-export default function PageBar({ title }: PageBarProps) {
+export default function PageBar({ title, isPatientContext = false }: PageBarProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -31,9 +32,11 @@ export default function PageBar({ title }: PageBarProps) {
             <IconButton onClick={toggleTheme} sx={{ mr: 2 }}>
               {theme === "dark" ? <WbSunny /> : <DarkMode />}
             </IconButton>
-            <Tooltip title="Select a Patient">
-              <PatientSelector />
-            </Tooltip>
+            {isPatientContext && (
+              <Tooltip title="Select a Patient">
+                <PatientSelector />
+              </Tooltip>
+            )}
           </Box>
         </Toolbar>
       </Container>
