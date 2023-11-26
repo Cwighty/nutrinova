@@ -1,7 +1,6 @@
 "use client";
 import {
   AppBar,
-  Avatar,
   Box,
   Container,
   IconButton,
@@ -11,6 +10,7 @@ import {
 } from "@mui/material";
 import { DarkMode, WbSunny } from "@mui/icons-material";
 import { useTheme } from "@/context/ThemeContext";
+import { PatientSelector } from "@/app/(authorized)/patients/_components/PatientSelector";
 
 export interface PageBarProps {
   title: string;
@@ -32,9 +32,7 @@ export default function PageBar({ title }: PageBarProps) {
               {theme === "dark" ? <WbSunny /> : <DarkMode />}
             </IconButton>
             <Tooltip title="Select a Patient">
-              <IconButton sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
+              <PatientSelector />
             </Tooltip>
           </Box>
         </Toolbar>

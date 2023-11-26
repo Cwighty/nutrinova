@@ -34,6 +34,7 @@ const Welcome = () => {
     }
     router.push('/dashboard');
   }
+
   return (
     <Container>
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
@@ -45,7 +46,7 @@ const Welcome = () => {
       </Typography>
       <Grid container spacing={4} justifyContent="center" alignItems="center">
         <Grid item xs={12}>
-          <Box component="img" src="/single-multiple.png" alt="Self Care" sx={{ width: '100%', height: 'auto', mb: 4, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+          <Box component="img" src="/single-multiple.png" alt="Self Care" sx={{ width: '80%', height: 'auto', mb: 4, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
         </Grid>
 
         <Grid item xs={12} sm={10}>
