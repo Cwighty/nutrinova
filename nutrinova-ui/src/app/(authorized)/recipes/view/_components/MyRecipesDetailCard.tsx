@@ -38,7 +38,7 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h4">{recipe?.description}</Typography>
-      <Button variant="contained" color="primary" onClick={() => router.push("/food/edit?foodId=" + recipeId)}>
+      <Button variant="contained" color="primary" onClick={() => router.push("/recipes/edit?recipeId=" + recipeId)}>
         Edit
       </Button>
       <Box
