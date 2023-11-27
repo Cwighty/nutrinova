@@ -4,6 +4,7 @@ import {
   Typography,
   Chip,
   List,
+  Button,
   ListItem,
   ListItemText,
   Box,
@@ -12,12 +13,14 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-
 interface MyRecipesDetailCardProps {
   recipeId: string;
 }
+import { useRouter } from "next/navigation";
 
 export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
+
+  const router = useRouter();
   const { data: recipe, isLoading, isError } = useGetRecipeByIdQuery(recipeId);
 
   if (isError) {
@@ -35,6 +38,9 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h4">{recipe?.description}</Typography>
+      <Button variant="contained" color="primary" onClick={() => router.push("/food/edit?foodId=" + recipeId)}>
+        Edit
+      </Button>
       <Box
         sx={{
           display: "flex",
