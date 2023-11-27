@@ -90,6 +90,8 @@ CREATE TABLE
         description TEXT,
         Tags TEXT,
         Notes TEXT,
+        Amount DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
         created_at TIMESTAMP WITH TIME ZONE not null,
         created_by uuid REFERENCES Customer(id)
     );
@@ -100,6 +102,8 @@ CREATE TABLE
         description TEXT,
         Tags TEXT,
         Notes TEXT,
+        Amount DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
         created_at TIMESTAMP WITH TIME ZONE not null,
         created_by uuid REFERENCES Customer(id)
     );

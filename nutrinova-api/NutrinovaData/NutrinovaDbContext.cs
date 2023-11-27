@@ -478,15 +478,24 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.ServingSizeUnit)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("serving_size_unit");
             entity.Property(e => e.Tags).HasColumnName("tags");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.RecipeHistories)
                 .HasForeignKey(d => d.CreatedBy)
                 .HasConstraintName("recipe_history_created_by_fkey");
+
+            entity.HasOne(d => d.ServingSizeUnitNavigation).WithMany(p => p.RecipeHistories)
+                .HasForeignKey(d => d.ServingSizeUnit)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("recipe_history_serving_size_unit_fkey");
         });
 
         modelBuilder.Entity<RecipePlan>(entity =>
@@ -498,15 +507,24 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.ServingSizeUnit)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("serving_size_unit");
             entity.Property(e => e.Tags).HasColumnName("tags");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.RecipePlans)
                 .HasForeignKey(d => d.CreatedBy)
                 .HasConstraintName("recipe_plan_created_by_fkey");
+
+            entity.HasOne(d => d.ServingSizeUnitNavigation).WithMany(p => p.RecipePlans)
+                .HasForeignKey(d => d.ServingSizeUnit)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("recipe_plan_serving_size_unit_fkey");
         });
 
         modelBuilder.Entity<ReportedIssue>(entity =>
