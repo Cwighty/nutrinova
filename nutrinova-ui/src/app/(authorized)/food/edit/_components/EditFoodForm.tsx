@@ -80,7 +80,6 @@ export const EditFoodForm = ({ foodId }: Props) => {
       const isValid = editFoodFormState?.foodNutrients?.every(n => n.amount > 0) && editFoodFormState.foodNutrients.length > 0;
       setFoodNutrientsAreValid(isValid || false);
       return isValid;
-
     }
     return validateServing() && validateNutrients();
   }

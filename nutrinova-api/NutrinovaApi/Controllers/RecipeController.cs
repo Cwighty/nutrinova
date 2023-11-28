@@ -148,6 +148,8 @@ public class RecipeController : ControllerBase
       .ThenInclude(rf => rf.Food)
       .ThenInclude(f => f.FoodPlanNutrients)
       .ThenInclude(fn => fn.Nutrient)
+      .Include(n => n.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
       .FirstOrDefaultAsync(r => r.Id == id);
 
     if (recipe == null)
