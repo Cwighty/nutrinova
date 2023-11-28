@@ -6,10 +6,12 @@ import { recipetagKeys } from "@/components/forms/tagHooks";
 import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
 import { CreateRecipeFoodModel } from "./create/_models/createRecipeFoodModel";
 import { Recipe } from "@/app/(authorized)/recipes/create/_models/recipe";
+import { EditRecipeRequestModel } from "./edit/_models/EditRecipeRequestModel";
 
 export const recipeKeys = {
   all: "recipes",
   summaries: "recipeSummaries",
+  recipeID: (recipeId: string) => [recipeKeys.all, recipeId],
 };
 
 const createRecipe = async (
@@ -88,9 +90,28 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
   return response.data as Recipe;
 };
 
+const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.put(`/recipe`, recipe);
+  console.log("here is the response", response.data, response.status);
+  return response.status === 200;
+}
+
 export const useGetRecipeByIdQuery = (recipeId: string) => {
   return useQuery({
-    queryKey: [recipeKeys.all, recipeId],
+    queryKey: recipeKeys.recipeID(recipeId),
     queryFn: () => getRecipeById(recipeId),
   });
 };
+
+export const useEditRecipeMutation = () => {
+  return useMutation({
+    mutationFn: (recipe: EditRecipeRequestModel) => updateRecipe(recipe),
+    onSuccess: () => {
+      toast.success("Recipe updated successfully");
+    }
+  })
+}

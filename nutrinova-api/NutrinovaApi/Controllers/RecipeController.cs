@@ -219,7 +219,7 @@ public class RecipeController : ControllerBase
     }
 
     recipePlan.Description = editRecipeRequest.Description;
-    recipePlan.Notes = editRecipeRequest.Note;
+    recipePlan.Notes = editRecipeRequest.Notes;
     recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
     recipePlan.Amount = editRecipeRequest.Amount;
     recipePlan.ServingSizeUnit = editRecipeRequest.UnitId;

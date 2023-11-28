@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { useGetRecipeByIdQuery } from '../../recipeHooks';
+import { useEditRecipeMutation, useGetRecipeByIdQuery } from '../../recipeHooks';
 import { Box, Button, Grid, TextField } from '@mui/material';
 import TagInput from '@/components/forms/TagInput'
 import toast from 'react-hot-toast'
@@ -19,6 +19,7 @@ interface EditRecipeFormProps {
 export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   const { data: recipe, isLoading, isFetching } = useGetRecipeByIdQuery(recipeId);
   const { data: unitOptions } = useGetUnitsQuery();
+  const editRecipeMutation = useEditRecipeMutation();
 
   const [editRecipeFormState, setEditRecipeForm] = React.useState<EditRecipeRequestModel>({
     id: '',
@@ -76,7 +77,11 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       toast.error("Invalid Form");
     } else {
       toast.success("Form Submitted");
-      console.log(editRecipeFormState);
+      editRecipeMutation.mutate(editRecipeFormState, {
+        onSuccess: () => {
+
+        },
+      });
     }
   }
 
@@ -91,19 +96,20 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
 
   const validateForm = () => {
     const validateServing = () => {
-      const isValid = editRecipeFormState?.amount
+      const isValidServing = editRecipeFormState?.amount
         && editRecipeFormState?.amount > 0
-        && editRecipeFormState.amount != null
-        && editRecipeFormState.amount != undefined
-      setServingSizeIsValid(isValid || false);
-      return isValid;
-
+        && editRecipeFormState.amount !== null
+        && editRecipeFormState.amount !== undefined
+        && editRecipeFormState?.servingSizeUnitId !== undefined
+        && editRecipeFormState?.servingSizeUnitId > -1
+      setServingSizeIsValid(isValidServing || false);
+      return isValidServing;
     }
     const validateFoods = () => {
 
-      const isValid = editRecipeFormState?.recipeFoods?.every(n => n.servingSize > 0) && editRecipeFormState.recipeFoods.length > 0;
-      setFoodRecipesAreValid(isValid || false);
-      return isValid;
+      const isValidFood = editRecipeFormState?.recipeFoods?.every(n => n.servingSize > 0) && editRecipeFormState.recipeFoods.length > 0;
+      setFoodRecipesAreValid(isValidFood || false);
+      return isValidFood;
 
     }
     return validateServing() && validateFoods();
@@ -136,6 +142,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   const [servingSizeIsValid, setServingSizeIsValid] = useState<boolean>(false);
 
   const validateFormCallback = useCallback(validateForm, [editRecipeFormState]);
+
   useEffect(() => {
     setIsValid(validateFormCallback() || false);
   }, [editRecipeFormState, validateFormCallback])
@@ -149,7 +156,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       id: recipe?.id || '',
       description: recipe?.description,
       tags: recipe?.tags.split(','),
-      notes: recipe?.notes,
+      notes: recipe?.notes || '',
       recipeFoods: recipe?.recipeFoods.map(rf => {
         return {
           id: rf.foodId,
@@ -222,7 +229,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             onChange={(e) => {
               setEditRecipeForm({
                 ...editRecipeFormState,
-                note: e.target.value,
+                notes: e.target.value,
               });
             }}
           />

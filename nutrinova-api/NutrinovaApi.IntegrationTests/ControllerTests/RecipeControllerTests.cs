@@ -88,7 +88,7 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
     {
       Id = TestRecipePlan.Id,
       Description = "Test recipe plan",
-      Note = "Test note",
+      Notes = "Test note",
       ServingsUnit = new UnitRequestModel
       {
         Id = 1,
