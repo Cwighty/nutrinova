@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Button, TextField, Grid, Paper, Box } from "@mui/material";
 import { useCreateRecipeMutation } from "../../recipeHooks";
 import TagInput from "@/components/forms/TagInput";
@@ -7,7 +7,6 @@ import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import { NutrientTotalsSummary } from "./NutrientTotalsSummary";
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from "./ServingSizeUnitField";
 import { RecipeFoodList } from "./RecipeFoodList";
-import { NotificationContext } from "@/components/providers/NotificationProvider";
 
 export default function CreateRecipeForm() {
   const [recipeFormState, setRecipeFormState] =
@@ -19,7 +18,6 @@ export default function CreateRecipeForm() {
     });
 
   const createRecipeMutation = useCreateRecipeMutation();
-  const notificationContext = useContext(NotificationContext);
 
   const [formValid, setFormValid] = useState<boolean>(true);
 
@@ -38,7 +36,6 @@ export default function CreateRecipeForm() {
           tags: [],
           recipeFoods: [],
         });
-        notificationContext!.sendMessage("New Recipe Created : " + recipeFormState.description);
       },
     });
   };

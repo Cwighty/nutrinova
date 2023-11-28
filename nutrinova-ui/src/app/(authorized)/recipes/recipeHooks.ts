@@ -30,7 +30,6 @@ export const useCreateRecipeMutation = () => {
   return useMutation({
     mutationFn: (recipe: CreateRecipeRequestModel) => createRecipe(recipe),
     onSuccess: async () => {
-      toast.success("Recipe created successfully");
       notificationContext.sendMessage("Recipe created successfully")
       //TODO: invalidate get recipe query
       await queryClient.invalidateQueries({ queryKey: recipetagKeys.all });
