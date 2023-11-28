@@ -1,3 +1,5 @@
+using NutrinovaData.Entities;
+
 public partial class UnitRequestModel
 {
   public int Id { get; set; }
@@ -6,5 +8,7 @@ public partial class UnitRequestModel
 
   public string Abbreviation { get; set; } = null!;
 
-  public int? CategoryId { get; set; }
+  public int CategoryId { get; set; }
+
+  public UnitCategory? Category { get; set; }
 }

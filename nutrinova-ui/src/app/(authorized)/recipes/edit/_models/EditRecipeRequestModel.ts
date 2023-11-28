@@ -10,6 +10,7 @@ export interface EditRecipeRequestModel {
   note?: string;
   servingsUnit?: UnitOption | null;
   servingSizeUnitId?: number;
+  categoryId: number;
 }
 
 export interface EditRecipeFoodRequestModel {
@@ -18,5 +19,5 @@ export interface EditRecipeFoodRequestModel {
   servingSize: number;
   unitId: number;
   unitName: string;
-  unit: UnitOption | null;
+  unit?: UnitOption;
 }

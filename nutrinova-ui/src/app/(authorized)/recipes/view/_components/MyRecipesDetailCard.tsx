@@ -24,7 +24,7 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
   const { data: recipe, isLoading, isError } = useGetRecipeByIdQuery(recipeId);
 
   if (isError) {
-    return <Alert severity="error">Error loading foods</Alert>;
+    return <Alert severity="error">Error loading recipe</Alert>;
   }
 
   if (isLoading) {

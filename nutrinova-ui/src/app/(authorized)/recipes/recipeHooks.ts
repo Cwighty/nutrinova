@@ -95,6 +95,7 @@ const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> =>
     additionalHeaders: {},
     origin: "client",
   });
+  console.log("here is the recipe", recipe);
   const response = await apiClient.put(`/recipe`, recipe);
   console.log("here is the response", response.data, response.status);
   return response.status === 200;

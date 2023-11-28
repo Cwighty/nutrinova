@@ -33,12 +33,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
         unitId: rf.unitId,
         unitName: rf.unitName,
         name: rf.name,
-        unit: unitOptions?.find(u => u.id === rf.unitId) || null,
+        unit: rf.unit,
       }
     }) || [],
     amount: recipe?.amount,
-    servingsUnit: unitOptions?.find(u => u.id === recipe?.servingsSizeUnitId) || undefined,
+    servingsUnit: recipe?.unit,
     servingSizeUnitId: recipe?.servingsSizeUnitId,
+    categoryId: recipe?.unit?.categoryId || 0,
   });
 
 
@@ -63,7 +64,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
         unitId: newFood.unitId,
         unitName: newFood.unitName,
         name: newFood.name,
-        unit: unitOptions?.find(u => u.id === newFood.unitId) || null,
+        unit: unitOptions?.find(u => u.id === newFood.unitId),
       }],
     });
     setNewFood({ ...initialFood });
@@ -164,12 +165,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
           unitId: rf.unitId,
           unitName: rf.unitName,
           name: rf.food.description,
-          unit: unitOptions?.find(u => u.id === rf.unitId) || null,
+          unit: unitOptions?.find(u => u.id === rf.unitId),
         }
       }) || [],
       amount: recipe?.amount,
-      servingsUnit: unitOptions?.find(u => u.id === recipe?.servingsSizeUnitId) || undefined,
+      servingsUnit: recipe?.unit,
       servingSizeUnitId: recipe?.servingsSizeUnitId,
+      categoryId: recipe?.unit?.categoryId || 0,
     })
   }
   return (

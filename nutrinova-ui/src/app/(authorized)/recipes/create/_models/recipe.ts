@@ -18,6 +18,7 @@ export interface RecipeFood {
   unitId: number;
   unitName: string;
   food: Food;
+  unit: UnitOption;
 }
 
 export interface Food {

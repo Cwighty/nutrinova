@@ -218,6 +218,20 @@ public class RecipeController : ControllerBase
       return NotFound("Recipe not found");
     }
 
+    try
+    {
+      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => rf2.Id == rf.Id)).ToList();
+
+      // delete all existing recipe foods
+      context.RecipeFoods.RemoveRange(recipesFoodsToBeDeleted);
+      recipePlan.RecipeFoods.Clear();
+    }
+    catch (Exception ex)
+    {
+      logger.LogError($"Failed to delete recipe foods: {ex.Message}");
+      return StatusCode(500, "Failed to delete recipe foods");
+    }
+
     recipePlan.Description = editRecipeRequest.Description;
     recipePlan.Notes = editRecipeRequest.Notes;
     recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
@@ -229,26 +243,24 @@ public class RecipeController : ControllerBase
       CategoryId = editRecipeRequest.ServingsUnit.CategoryId,
       Description = editRecipeRequest.ServingsUnit.Description,
       Abbreviation = editRecipeRequest.ServingsUnit.Abbreviation,
-      Category = await context.UnitCategories.FirstOrDefaultAsync(uc => uc.Id == editRecipeRequest.ServingsUnit.CategoryId),
     };
 
-    try
-    {
-      // delete all existing recipe foods
-      context.RecipeFoods.RemoveRange(recipePlan.RecipeFoods);
-    }
-    catch (Exception ex)
-    {
-      logger.LogError($"Failed to delete recipe foods: {ex.Message}");
-      return StatusCode(500, "Failed to delete recipe foods");
-    }
+    logger.LogInformation($"Recipe plan: {editRecipeRequest.ServingsUnit.CategoryId} ");
 
-    recipePlan.RecipeFoods = editRecipeRequest.RecipeFoods.Select(rf => new RecipeFood
+    recipePlan.RecipeFoods = editRecipeRequest.RecipeFoods.Select((rf) => new RecipeFood
     {
-      Id = rf.Id ?? Guid.NewGuid(),
+      Id = Guid.NewGuid(),
+      RecipeId = recipePlan.Id,
       FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
       Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
       UnitId = rf.Unit.Id,
+      Unit = new Unit
+      {
+        Id = rf.Unit.Id,
+        CategoryId = rf.Unit.CategoryId,
+        Description = rf.Unit.Description,
+        Abbreviation = rf.Unit.Abbreviation,
+      },
     }).ToList();
 
     try
@@ -257,7 +269,7 @@ public class RecipeController : ControllerBase
     }
     catch (Exception ex)
     {
-      logger.LogError($"Failed to save recipe to the database: {ex.Message}");
+      logger.LogError($"Failed to save recipe to the database: {ex.InnerException?.Message ?? ex.Message}");
       return StatusCode(500, "Failed to save recipe to the database");
     }
 
