@@ -6,6 +6,7 @@ import { recipetagKeys } from "@/components/forms/tagHooks";
 import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
 import { CreateRecipeFoodModel } from "./create/_models/createRecipeFoodModel";
 import { Recipe } from "@/app/(authorized)/recipes/create/_models/recipe";
+import { useNotification } from "@/components/providers/NotificationProvider";
 
 export const recipeKeys = {
   all: "recipes",
@@ -25,10 +26,12 @@ const createRecipe = async (
 
 export const useCreateRecipeMutation = () => {
   const queryClient = useQueryClient();
+  const notificationContext = useNotification();
   return useMutation({
     mutationFn: (recipe: CreateRecipeRequestModel) => createRecipe(recipe),
     onSuccess: async () => {
       toast.success("Recipe created successfully");
+      notificationContext.sendMessage("Recipe created successfully")
       //TODO: invalidate get recipe query
       await queryClient.invalidateQueries({ queryKey: recipetagKeys.all });
     },
