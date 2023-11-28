@@ -23,7 +23,7 @@ export default async function RootLayout({
         <NextAuthSessionProvider session={session}>
           <QueryClientNextProvider>
             <MUIThemeProvider>
-              <NotificationProvider>
+              <NotificationProvider webSocketUrl={process.env.WEBSOCKET_URL}>
                 <PatientProvider>
                   {children}
                 </PatientProvider>

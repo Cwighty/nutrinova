@@ -18,17 +18,18 @@ export const useNotification = (): NotificationContextType => {
 
 interface NotificationProviderProps {
   children: ReactNode;
+  webSocketUrl?: string;
 }
 
 export interface NotificationMessage {
   message: string;
 }
 
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children, webSocketUrl }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const newSocket = new WebSocket((process.env.WEBSOCKET_URL ?? "ws://localhost:5000/be/") + "repeater");
+    const newSocket = new WebSocket(webSocketUrl ?? 'ws://localhost:5000/be/repeater');
     setSocket(newSocket);
 
     newSocket.onmessage = (event: MessageEvent) => {
@@ -39,7 +40,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     return () => {
       newSocket.close();
     };
-  }, []);
+  }, [webSocketUrl]);
 
   const sendMessage = (message: string) => {
     const notification: NotificationMessage = {
