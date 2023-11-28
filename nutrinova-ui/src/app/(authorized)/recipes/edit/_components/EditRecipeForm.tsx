@@ -166,7 +166,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     })
   }
   return (
-    <Box>
+    <Box sx={{ flexGrow: 1, padding: 3 }}>
       <Grid container spacing={2}>
         {/* Submit Button at the top right */}
         <Grid item xs={12} container justifyContent="flex-end">
@@ -227,13 +227,15 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             }}
           />
         </Grid>
-        <Box>
-          <AddFoodDialog
-            newFood={newFood}
-            setNewFood={setNewFood}
-            handleAddFood={handleAddFood}
-          />
-        </Box>
+        <Grid item xs={12}>
+          <Box>
+            <AddFoodDialog
+              newFood={newFood}
+              setNewFood={setNewFood}
+              handleAddFood={handleAddFood}
+            />
+          </Box>
+        </Grid>
         <Grid>
           {
             editRecipeFormState?.recipeFoods?.map((food, index) => {
