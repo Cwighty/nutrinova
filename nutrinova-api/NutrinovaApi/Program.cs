@@ -90,7 +90,7 @@ public class Program
 
     app.UseWebSockets();
 
-    app.Map("/repeater", async (context) =>
+    app.Map("/be/repeater", async (context) =>
       {
         if (context.WebSockets.IsWebSocketRequest)
         {

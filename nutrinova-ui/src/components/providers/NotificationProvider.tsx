@@ -28,7 +28,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const newSocket = new WebSocket((process.env.WEBSOCKET_URL ?? "ws://localhost:5000/") + "repeater");
+    const newSocket = new WebSocket((process.env.WEBSOCKET_URL ?? "ws://localhost:5000/be/") + "repeater");
     setSocket(newSocket);
 
     newSocket.onmessage = (event: MessageEvent) => {
