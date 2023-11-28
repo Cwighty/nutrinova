@@ -9,6 +9,8 @@ import { EditRecipeRequestModel } from '../_models/EditRecipeRequestModel';
 import { useGetUnitsQuery } from '@/app/(authorized)/food/foodHooks';
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '../../create/_components/ServingSizeUnitField';
 import { EditRecipeFoodItem } from './EditRecipeFoodItem';
+import { AddFoodDialog } from '../../create/_components/AddFoodDialog';
+import { CreateRecipeFoodModel } from '../../create/_models/createRecipeFoodModel';
 
 interface EditRecipeFormProps {
   recipeId: string;
@@ -37,6 +39,34 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     servingsUnit: unitOptions?.find(u => u.id === recipe?.servingsSizeUnitId) || undefined,
     servingSizeUnitId: recipe?.servingsSizeUnitId,
   });
+
+
+  const initialFood: CreateRecipeFoodModel = {
+    foodId: "",
+    amount: 1,
+    unitId: 1,
+    name: "",
+    unitName: "Gram",
+  };
+
+  const [newFood, setNewFood] = useState<CreateRecipeFoodModel>({
+    ...initialFood,
+  });
+
+  const handleAddFood = () => {
+    setEditRecipeForm({
+      ...editRecipeFormState,
+      recipeFoods: [...editRecipeFormState.recipeFoods, {
+        id: newFood.foodId,
+        servingSize: newFood.amount,
+        unitId: newFood.unitId,
+        unitName: newFood.unitName,
+        name: newFood.name,
+        unit: unitOptions?.find(u => u.id === newFood.unitId) || null,
+      }],
+    });
+    setNewFood({ ...initialFood });
+  };
 
   const [isValid, setIsValid] = useState<boolean>(false);
   const [recipeFoodsAreValid, setFoodRecipesAreValid] = useState<boolean>(false);
@@ -197,6 +227,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             }}
           />
         </Grid>
+        <Box>
+          <AddFoodDialog
+            newFood={newFood}
+            setNewFood={setNewFood}
+            handleAddFood={handleAddFood}
+          />
+        </Box>
         <Grid>
           {
             editRecipeFormState?.recipeFoods?.map((food, index) => {
