@@ -26,6 +26,7 @@ services:
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_BASE_URL=${KEYCLOAK_BASE_URL}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - WEBSOCKET_URL=${WEBSOCKET_URL}
 
   api:
     container_name: nutrinova-api

@@ -5,9 +5,12 @@ import { ArrowCircleRight } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import customerService, { Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
+import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
+import { Patient } from '@/app/(authorized)/patients/_models/patient';
 
 const Welcome = () => {
   const router = useRouter();
+  const createPatientMutation = useCreatePatientMutation();
 
   const handleSingleUser = async () => {
     const session = await getSession();
@@ -32,8 +35,16 @@ const Welcome = () => {
     if (!created) {
       throw new Error('Failed to create customer');
     }
+
+    const patient: Patient = {
+      firstname: session.user.name.split(' ')[0],
+      lastname: session.user.name.split(' ')[1] ?? '',
+    }
+    createPatientMutation.mutate(patient);
+
     router.push('/dashboard');
   }
+
   return (
     <Container>
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
@@ -45,7 +56,7 @@ const Welcome = () => {
       </Typography>
       <Grid container spacing={4} justifyContent="center" alignItems="center">
         <Grid item xs={12}>
-          <Box component="img" src="/single-multiple.png" alt="Self Care" sx={{ width: '100%', height: 'auto', mb: 4, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+          <Box component="img" src="/single-multiple.png" alt="Self Care" sx={{ width: '80%', height: 'auto', mb: 4, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
         </Grid>
 
         <Grid item xs={12} sm={10}>

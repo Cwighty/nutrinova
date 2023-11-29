@@ -44,3 +44,17 @@ declare module "next-auth/jwt"
   }
 
 }
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface ProcessEnv {
+      NEXTAUTH_SECRET?: string
+      KEYCLOAK_CLIENT_ID?: string
+      KEYCLOAK_CLIENT_SECRET?: string
+      KEYCLOAK_BASE_URL?: string
+      NUTRINOVA_API_URL?: string
+      WEBSOCKET_URL?: string
+    }
+  }
+}

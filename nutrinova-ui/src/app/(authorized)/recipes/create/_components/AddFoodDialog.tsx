@@ -47,7 +47,6 @@ export const AddFoodDialog = ({
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
   const { data: food } = useGetFoodByIdQuery(newFood.foodId);
-  console.log(food?.servingSizeUnitCategory)
 
   const handleOpen = () => {
     setOpen(true);
