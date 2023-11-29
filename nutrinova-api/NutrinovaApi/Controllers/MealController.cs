@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Meals;
 
 namespace NutrinovaApi.Controllers;
 
@@ -77,11 +78,8 @@ public class MealController : ControllerBase
 
     try
     {
-      var userObjectId = User.GetObjectIdFromClaims();
-
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
-
-      if (customer?.Id is null)
+      Customer? customer = await GetCustomer();
+      if (customer is null)
       {
         return Unauthorized();
       }
@@ -103,19 +101,7 @@ public class MealController : ControllerBase
           return NotFound();
         }
 
-        var foodHistory = new FoodHistory
-        {
-          Id = Guid.NewGuid(),
-          Fdcid = foodPlan.Fdcid,
-          Description = foodPlan.Description,
-          BrandName = foodPlan.BrandName,
-          Ingredients = foodPlan.Ingredients,
-          CreatedBy = customer.Id,
-          CreatedAt = DateTime.UtcNow,
-          ServingSize = foodPlan.ServingSize,
-          ServingSizeUnit = foodPlan.ServingSizeUnit,
-          Note = foodPlan.Note,
-        };
+        var foodHistory = foodPlan.ToFoodHistory(customer.Id);
 
         await context.FoodHistories.AddAsync(foodHistory);
 
@@ -141,16 +127,7 @@ public class MealController : ControllerBase
           return NotFound();
         }
 
-        var recipeHistory = new RecipeHistory
-        {
-          Id = Guid.NewGuid(),
-          Description = recipePlan.Description,
-          CreatedBy = customer.Id,
-          CreatedAt = DateTime.UtcNow,
-          Amount = recipePlan.Amount,
-          ServingSizeUnit = recipePlan.ServingSizeUnit,
-          Notes = recipePlan.Notes,
-        };
+        var recipeHistory = recipePlan.ToRecipeHistory(customer.Id);
 
         await context.RecipeHistories.AddAsync(recipeHistory);
 
@@ -184,5 +161,12 @@ public class MealController : ControllerBase
       await transaction.RollbackAsync();
       throw;
     }
+  }
+
+  private async Task<Customer?> GetCustomer()
+  {
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+    return customer;
   }
 }

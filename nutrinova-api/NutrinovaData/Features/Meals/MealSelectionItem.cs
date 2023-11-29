@@ -1,4 +1,4 @@
-namespace NutrinovaApi.Controllers;
+namespace NutrinovaData.Features.Meals;
 
 public class MealSelectionItem
 {
