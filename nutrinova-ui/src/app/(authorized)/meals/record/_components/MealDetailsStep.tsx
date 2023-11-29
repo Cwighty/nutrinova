@@ -69,7 +69,7 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setA
       </Grid>
 
       <Box component="form" onSubmit={handleSubmit}>
-        <AmountInput amount={amount} setAmount={setAmount} unit={unit ?? {} as UnitOption} setUnit={setUnit} restrictToUnitCategory={selectedFood.servingSizeUnit?.categoryName} />
+        <AmountInput amount={amount} setAmount={setAmount} unit={unit ?? {} as UnitOption} setUnit={setUnit} restrictToUnitCategory={selectedFood.servingSizeUnit?.category.description} />
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button type="submit" variant="contained">
             Record Meal
