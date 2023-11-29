@@ -89,6 +89,7 @@ public class RecipeController : ControllerBase
     try
     {
       await context.SaveChangesAsync();
+      logger.LogInformation($"Recipe plan: {recipePlan.Id} successfully saved to the database");
     }
     catch (Exception ex)
     {
@@ -144,6 +145,11 @@ public class RecipeController : ControllerBase
   public async Task<ActionResult<RecipePlan>> GetRecipe(Guid id)
   {
     var recipe = await context.RecipePlans
+      .Include(r => r.RecipeFoods)
+      .ThenInclude(rf => rf.Food)
+      .ThenInclude(f => f.FoodPlanNutrients)
+      .ThenInclude(fn => fn.Unit)
+      .ThenInclude(u => u.Category)
       .Include(r => r.RecipeFoods)
       .ThenInclude(rf => rf.Food)
       .ThenInclude(f => f.FoodPlanNutrients)
@@ -243,6 +249,11 @@ public class RecipeController : ControllerBase
       CategoryId = editRecipeRequest.ServingsUnit.CategoryId,
       Description = editRecipeRequest.ServingsUnit.Description,
       Abbreviation = editRecipeRequest.ServingsUnit.Abbreviation,
+      Category = new UnitCategory
+      {
+        Id = editRecipeRequest.ServingsUnit.CategoryId,
+        Description = editRecipeRequest.ServingsUnit?.Category?.Description ?? throw new Exception("Invalid unit category description"),
+      },
     };
 
     logger.LogInformation($"Recipe plan: {editRecipeRequest.ServingsUnit.CategoryId} ");
@@ -260,6 +271,11 @@ public class RecipeController : ControllerBase
         CategoryId = rf.Unit.CategoryId,
         Description = rf.Unit.Description,
         Abbreviation = rf.Unit.Abbreviation,
+        Category = new UnitCategory
+        {
+          Id = rf.Unit.CategoryId ?? throw new Exception("Invalid unit category description"),
+          Description = rf.Unit.Category?.Description ?? throw new Exception("Invalid unit category description"),
+        },
       },
     }).ToList();
 

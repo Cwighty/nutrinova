@@ -108,11 +108,12 @@ export const useGetRecipeByIdQuery = (recipeId: string) => {
   });
 };
 
-export const useEditRecipeMutation = () => {
+export const useEditRecipeMutation = (recipeID: string) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (recipe: EditRecipeRequestModel) => updateRecipe(recipe),
-    onSuccess: () => {
-      toast.success("Recipe updated successfully");
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: recipeKeys.recipeID(recipeID) });
     }
   })
 }

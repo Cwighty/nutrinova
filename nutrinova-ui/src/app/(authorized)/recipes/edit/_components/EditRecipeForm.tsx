@@ -19,7 +19,7 @@ interface EditRecipeFormProps {
 export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   const { data: recipe, isLoading, isFetching } = useGetRecipeByIdQuery(recipeId);
   const { data: unitOptions } = useGetUnitsQuery();
-  const editRecipeMutation = useEditRecipeMutation();
+  const editRecipeMutation = useEditRecipeMutation(recipeId);
 
   const [editRecipeFormState, setEditRecipeForm] = React.useState<EditRecipeRequestModel>({
     id: '',
@@ -80,7 +80,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       toast.success("Form Submitted");
       editRecipeMutation.mutate(editRecipeFormState, {
         onSuccess: () => {
-
+          toast.success("Recipe Updated");
         },
       });
     }
@@ -169,7 +169,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
         }
       }) || [],
       amount: recipe?.amount,
-      servingsUnit: recipe?.unit,
+      servingsUnit: unitOptions?.find(u => u.id === recipe?.servingsSizeUnitId),
       servingSizeUnitId: recipe?.servingsSizeUnitId,
       categoryId: recipe?.unit?.categoryId || 0,
     })
