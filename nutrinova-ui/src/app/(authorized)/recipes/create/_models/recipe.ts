@@ -8,17 +8,7 @@ export interface Recipe {
   amount: number;
   servingsSizeUnit: number;
   unit: UnitOption;
-  recipeFoods: RecipeFood[];
-}
-
-export interface RecipeFood {
-  foodId: string;
-  name: string;
-  amount: number;
-  unitId: number;
-  unitName: string;
-  food: Food;
-  unit: UnitOption;
+  recipeFoods: Food[];
 }
 
 export interface Food {
@@ -26,4 +16,8 @@ export interface Food {
   description: string;
   tags: string[];
   notes: string;
+  servingSize: number;
+  unitId: number;
+  unitName: string;
+  unit?: UnitOption;
 }

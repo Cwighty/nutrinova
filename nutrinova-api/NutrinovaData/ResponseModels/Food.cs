@@ -6,7 +6,7 @@ public class Food
 {
   public int fdcId { get; set; }
 
-  public string? id { get; set; }
+  public Guid? id { get; set; }
 
   public string description { get; set; }
 

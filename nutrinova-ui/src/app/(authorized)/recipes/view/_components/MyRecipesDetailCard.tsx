@@ -58,9 +58,9 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
       </Typography>
       <Divider />
       <List>
-        {recipe?.recipeFoods.map((recipeFood, index) => (
+        {recipe?.recipeFoods.map((food, index) => (
           <ListItem key={index}>
-            <ListItemText primary={recipeFood.food.description} />
+            <ListItemText primary={food.description} />
           </ListItem>
         ))}
       </List>

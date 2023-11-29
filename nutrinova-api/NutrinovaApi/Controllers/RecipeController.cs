@@ -3,7 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
 using NutrinovaData.Features.Recipes;
+using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.Controllers;
 
@@ -142,41 +144,67 @@ public class RecipeController : ControllerBase
   }
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<RecipePlan>> GetRecipe(Guid id)
+  public async Task<ActionResult<RecipeResponseModel>> GetRecipe(Guid id)
   {
     var recipe = await context.RecipePlans
       .Include(r => r.RecipeFoods)
       .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.FoodPlanNutrients)
-      .ThenInclude(fn => fn.Unit)
-      .ThenInclude(u => u.Category)
-      .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.FoodPlanNutrients)
-      .ThenInclude(fn => fn.Nutrient)
-      .Include(n => n.ServingSizeUnitNavigation)
+      .ThenInclude(f => f.ServingSizeUnitNavigation)
       .ThenInclude(u => u.Category)
       .FirstOrDefaultAsync(r => r.Id == id);
+
+    var recipeFoodNutrients = await context.RecipeFoods
+      .Include(rf => rf.Food)
+      .ThenInclude(f => f.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
+      .Include(rf => rf.Food)
+      .ThenInclude(f => f.FoodPlanNutrients)
+      .ThenInclude(fn => fn.Nutrient)
+      .ThenInclude(n => n.PreferredUnitNavigation)
+      .ThenInclude(u => u.Category)
+      .Where(rf => rf.RecipeId == id)
+      .ToListAsync();
+
+    foreach (var food in recipeFoodNutrients)
+    {
+      var foodUnit = await context.Units
+        .Include(u => u.Category)
+        .FirstOrDefaultAsync(u => u.Id == food.UnitId);
+      food.Food.ServingSizeUnitNavigation = foodUnit ?? throw new Exception("Invalid unit id");
+    }
 
     if (recipe == null)
     {
       return NotFound();
     }
 
-    return Ok(recipe);
+    var recipeUnit = await context.Units
+      .Include(u => u.Category)
+      .FirstOrDefaultAsync(u => u.Id == recipe.ServingSizeUnit);
+
+    recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid unit id");
+    recipe.RecipeFoods = recipeFoodNutrients;
+    var recipeRes = recipe.ToRecipeResponseModel();
+    return recipeRes;
   }
 
   [HttpGet]
-  public async Task<ActionResult<IEnumerable<RecipePlan>>> GetRecipes()
+  public async Task<ActionResult<IEnumerable<RecipeResponseModel>>> GetRecipes()
   {
     var recipes = await context.RecipePlans
       .Include(r => r.RecipeFoods)
       .ThenInclude(rf => rf.Food)
       .ThenInclude(f => f.FoodPlanNutrients)
       .ThenInclude(fn => fn.Nutrient)
+      .ThenInclude(n => n.PreferredUnitNavigation)
+      .Include(r => r.RecipeFoods)
+      .ThenInclude(rf => rf.Food)
+      .ThenInclude(f => f.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
       .ToListAsync();
 
-    return Ok(recipes);
+    var recipeResponseModels = recipes.Select(r => r.ToRecipeResponseModel()).ToList();
+    return recipeResponseModels;
   }
 
   [HttpPut]

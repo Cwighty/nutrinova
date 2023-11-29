@@ -28,12 +28,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     notes: recipe?.notes,
     recipeFoods: recipe?.recipeFoods.map(rf => {
       return {
-        id: rf.foodId,
-        servingSize: rf.amount,
+        id: rf.id,
+        servingSize: rf.servingSize,
         unitId: rf.unitId,
-        unitName: rf.unitName,
-        name: rf.name,
+        description: rf.description,
         unit: rf.unit,
+        unitName: rf?.unit?.description || "",
+        name: rf.description,
       }
     }) || [],
     amount: recipe?.amount,
@@ -153,25 +154,28 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   }
 
   if (recipe?.id !== editRecipeFormState?.id) {
-    setEditRecipeForm({
-      id: recipe?.id || '',
-      description: recipe?.description,
-      tags: recipe?.tags.split(','),
-      notes: recipe?.notes || '',
-      recipeFoods: recipe?.recipeFoods.map(rf => {
-        return {
-          id: rf.foodId,
-          servingSize: rf.amount,
-          unitId: rf.unitId,
-          unitName: rf.unitName,
-          name: rf.food.description,
-          unit: rf.unit,
-        }
-      }) || [],
-      amount: recipe?.amount,
-      servingsUnit: recipe?.unit,
-      servingSizeUnitId: recipe?.unit?.id,
-      categoryId: recipe?.unit?.categoryId || 0,
+    setEditRecipeForm(() => {
+      return {
+        id: recipe?.id || '',
+        description: recipe?.description,
+        tags: recipe?.tags.split(','),
+        notes: recipe?.notes || '',
+        recipeFoods: recipe?.recipeFoods.map(rf => {
+          return {
+            id: rf.id,
+            servingSize: rf.servingSize,
+            unitId: rf.unitId,
+            description: rf.description,
+            unit: rf.unit,
+            unitName: rf.unit?.description || "",
+            name: rf.description,
+          }
+        }) || [],
+        amount: recipe?.amount,
+        servingsUnit: recipe?.unit,
+        servingSizeUnitId: recipe?.unit?.id,
+        categoryId: recipe?.unit?.categoryId || 0,
+      }
     })
   }
   return (

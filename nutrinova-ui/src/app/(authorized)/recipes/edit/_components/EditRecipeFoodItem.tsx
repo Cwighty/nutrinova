@@ -34,7 +34,7 @@ export const EditRecipeFoodItem = ({ food, deleteFood, updateFood, inputOptions 
   return (
     <Grid container spacing={2} alignItems="center">
       <Grid item xs={12} sm={5} md={4} lg={3}>
-        <Typography variant="subtitle1">{food.name}</Typography>
+        <Typography variant="subtitle1">{food?.name}</Typography>
       </Grid>
       <Grid item xs={8} sm={5} md={6} lg={7}>
         <TextField
@@ -47,7 +47,7 @@ export const EditRecipeFoodItem = ({ food, deleteFood, updateFood, inputOptions 
           onChange={handleNutrientAmountChange}
           InputProps={{
             inputProps: { min: 0 },
-            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id === food.unitId)?.abbreviation ?? ''}</InputAdornment>,
+            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id = food.unitId)?.abbreviation || ""}</InputAdornment>,
           }}
         />
       </Grid>
