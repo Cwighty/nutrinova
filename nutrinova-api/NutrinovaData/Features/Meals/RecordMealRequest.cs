@@ -12,10 +12,10 @@ public class RecordMealRequest
 
   public Guid SelectedMealItemId { get; set; }
 
-  public MealType MealTypeRaw { get; set; }
+  public MealSelectionItemType MealType { get; set; }
 }
 
-public enum MealType
+public enum MealSelectionItemType
 {
   CustomFood,
   Recipe,

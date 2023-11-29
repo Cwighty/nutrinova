@@ -20,7 +20,7 @@ public class MealController : ControllerBase
     this.context = context;
   }
 
-  [HttpGet]
+  [HttpGet("searchFoodItems")]
   public async Task<ActionResult<IEnumerable<MealSelectionItem>>> SearchFoodItems(string query)
   {
     var mealSelectionItems = new List<MealSelectionItem>();
@@ -37,7 +37,7 @@ public class MealController : ControllerBase
       Description = f.Description,
       ServingSize = f.ServingSize,
       ServingSizeUnit = f.ServingSizeUnitNavigation!.Abbreviation,
-      Type = "Custom Food",
+      Type = MealSelectionItemType.CustomFood.ToString(),
     }));
 
     var recipeItems = await context.RecipePlans
@@ -52,7 +52,7 @@ public class MealController : ControllerBase
       Description = r.Description!,
       ServingSize = r.Amount,
       ServingSizeUnit = r.ServingSizeUnitNavigation!.Abbreviation,
-      Type = "Recipe",
+      Type = MealSelectionItemType.Recipe.ToString(),
     }));
 
     return Ok(mealSelectionItems);
@@ -92,7 +92,7 @@ public class MealController : ControllerBase
         Recordeddate = recordMealRequest.RecordedDate,
       };
 
-      if (recordMealRequest.MealTypeRaw == MealType.CustomFood)
+      if (recordMealRequest.MealType == MealSelectionItemType.CustomFood)
       {
         var foodPlan = await context.FoodPlans.FindAsync(recordMealRequest.SelectedMealItemId);
 
@@ -118,7 +118,7 @@ public class MealController : ControllerBase
 
         mealHistoryEntity.MealFoodHistories.Add(mealFoodHistory);
       }
-      else if (recordMealRequest.MealTypeRaw == MealType.Recipe)
+      else if (recordMealRequest.MealType == MealSelectionItemType.Recipe)
       {
         var recipePlan = await context.RecipePlans.FindAsync(recordMealRequest.SelectedMealItemId);
 
