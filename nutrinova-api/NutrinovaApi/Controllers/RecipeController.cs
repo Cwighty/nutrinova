@@ -69,6 +69,10 @@ public class RecipeController : ControllerBase
       tags = createRecipeRequestModel.Tags?.Aggregate((a, b) => $"{a},{b}");
     }
 
+    var recipeUnit = await context.Units
+      .Include(u => u.Category)
+      .FirstOrDefaultAsync(u => u.Id == createRecipeRequestModel.ServingSizeUnitId);
+
     var recipePlan = new RecipePlan
     {
       Id = Guid.NewGuid(),
@@ -76,6 +80,7 @@ public class RecipeController : ControllerBase
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
       Tags = tags,
+      ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid unit id"),
       Notes = createRecipeRequestModel.Notes,
       RecipeFoods = createRecipeRequestModel.RecipeFoods.Select(rf => new RecipeFood
       {

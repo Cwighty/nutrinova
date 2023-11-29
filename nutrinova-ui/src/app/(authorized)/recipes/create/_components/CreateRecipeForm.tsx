@@ -55,7 +55,7 @@ export default function CreateRecipeForm() {
   const handleSelectNutrientUpdate = ({ servingSize, servingSizeUnit, servingSizeUnitId }: SelectNutrientWithUnitState) => {
     setRecipeFormState({
       ...recipeFormState,
-      servingSize,
+      servingSize: servingSize,
       servingSizeUnit,
       servingSizeUnitId,
     });
