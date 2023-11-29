@@ -6,7 +6,7 @@ public class Food
 {
   public int fdcId { get; set; }
 
-  public string? id { get; set; }
+  public Guid? id { get; set; }
 
   public string description { get; set; }
 
@@ -33,6 +33,8 @@ public class Food
   public string? servingSizeUnitCategory { get; set; }
 
   public string servingSizeWithUnits { get; set; }
+
+  public UnitOption? unit { get; set; }
 
   public List<FoodNutrient> foodNutrients { get; set; }
 

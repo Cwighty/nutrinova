@@ -61,7 +61,7 @@ export default function CreateRecipeForm() {
   }: SelectNutrientWithUnitState) => {
     setRecipeFormState({
       ...recipeFormState,
-      servingSize,
+      servingSize: servingSize,
       servingSizeUnit,
       servingSizeUnitId,
     });
