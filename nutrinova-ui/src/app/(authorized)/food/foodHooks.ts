@@ -107,7 +107,7 @@ const updateFood = async (food: EditFoodRequestModel): Promise<boolean> => {
     Unit: {
       ...food.servingSizeUnit, unitCategoryId: food.unitCategoryId, category: {
         id: food.unitCategoryId,
-        description: food.servingSizeUnit?.category || ""
+        description: ""
       } as UnitCategory
     } as UnitOption,
   }
