@@ -208,6 +208,20 @@ public class RecipeController : ControllerBase
       .ThenInclude(u => u.Category)
       .ToListAsync();
 
+    foreach (var recipe in recipes)
+    {
+      var recipeUnit = await context.Units
+        .Include(u => u.Category)
+        .FirstOrDefaultAsync(u => u.Id == recipe.ServingSizeUnit);
+
+      recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid recipeUnit id");
+    }
+
+    if (recipes == null)
+    {
+      return NotFound();
+    }
+
     var recipeResponseModels = recipes.Select(r => r.ToRecipeResponseModel()).ToList();
     return recipeResponseModels;
   }
