@@ -74,7 +74,6 @@ const getAllRecipes = async (): Promise<Recipe[]> => {
     origin: "client",
   });
   const response = await apiClient.get("/recipe");
-  console.log("here is the response for all recipes", response.data);
   return response.data as Recipe[];
 };
 
@@ -91,13 +90,11 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
     origin: "client",
   });
   const response = await apiClient.get(`/recipe/${recipeId}`);
-  console.log("here is the response by id", response.data);
   const recipe = {
     ...response.data,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     unit: response.data?.unit as UnitOption,
   } as Recipe;
-  console.log("here is the response by id as recipe", recipe);
   return recipe;
 };
 
@@ -114,9 +111,7 @@ const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> =>
     }
 
   } as EditRecipeRequestModel;
-  console.log("here is the recipe", recipeRes);
   const response = await apiClient.put(`/recipe`, recipeRes);
-  console.log("here is the response", response.data, response.status);
   return response.status === 200;
 }
 

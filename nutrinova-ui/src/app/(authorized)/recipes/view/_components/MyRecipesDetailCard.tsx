@@ -31,10 +31,6 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
     return <Skeleton height={100} sx={{ m: 0 }} />;
   }
 
-  if (recipe) {
-    console.log(recipe);
-  }
-
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h4">{recipe?.description}</Typography>

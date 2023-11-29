@@ -136,7 +136,6 @@ export const EditFoodForm = ({ foodId }: Props) => {
   }
 
   const handleSubmit = () => {
-    console.log(editFoodFormState);
     if (!isValid) {
       toast.error("Invalid Form");
     } else {
