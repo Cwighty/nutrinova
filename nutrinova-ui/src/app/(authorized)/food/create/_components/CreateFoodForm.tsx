@@ -105,7 +105,7 @@ export default function CreateFoodForm() {
   };
 
   return (
-    <Paper elevation={3} sx={{ padding: 2 }}>
+    <Paper elevation={3} sx={{ p: 2 }}>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           {/* Food Name */}
@@ -120,7 +120,6 @@ export default function CreateFoodForm() {
                 })
               }
               fullWidth
-              margin="normal"
               error={!formValid && foodFormState.description === ""}
               helperText={
                 !formValid && foodFormState.description === ""
@@ -143,7 +142,6 @@ export default function CreateFoodForm() {
                 })
               }
               fullWidth
-              margin="normal"
               error={
                 !formValid &&
                 (foodFormState.servingSize == undefined ||
@@ -187,7 +185,6 @@ export default function CreateFoodForm() {
                 setFoodFormState({ ...foodFormState, note: e.target.value })
               }
               fullWidth
-              margin="normal"
             />
           </Grid>
         </Grid>
@@ -210,10 +207,9 @@ export default function CreateFoodForm() {
                   nutrientOptions?.find((n) => n.id === nutrient.nutrientId)
                     ?.description
                 }
-                secondary={`${nutrient.amount} ${
-                  unitOptions?.find((u) => u.id === nutrient.unitId)
-                    ?.description
-                }`}
+                secondary={`${nutrient.amount} ${unitOptions?.find(
+                  (u) => u.id === nutrient.unitId,
+                )?.description}`}
               />
               <ListItemSecondaryAction>
                 <IconButton

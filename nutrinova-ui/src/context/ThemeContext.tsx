@@ -35,6 +35,9 @@ export const MUIThemeProvider = ({ children }: ThemeProviderProps) => {
 
   const muiTheme = createTheme({
     palette: {
+      primary: {
+        main: "#00A895",
+      },
       mode: theme as "light" | "dark",
     },
   });
