@@ -12,5 +12,5 @@ export interface RecordMealRequest {
   recordedDate: Date; // DateOnly in C# translates to Date in TypeScript
   unitId: number;
   selectedMealItemId: string;
-  mealType: MealItemType;
+  mealSelectionType: string;
 }

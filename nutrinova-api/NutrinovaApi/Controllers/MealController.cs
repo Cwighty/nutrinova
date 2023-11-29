@@ -26,7 +26,7 @@ public class MealController : ControllerBase
     var mealSelectionItems = new List<MealSelectionItem>();
 
     var foodItems = await context.FoodPlans
-      .Include(f => f.ServingSizeUnitNavigation)
+      .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
       .Where(f => f.Description.Contains(query))
       .Take(10)
       .ToListAsync();
@@ -36,12 +36,12 @@ public class MealController : ControllerBase
       Id = f.Id,
       Description = f.Description,
       ServingSize = f.ServingSize,
-      ServingSizeUnit = f.ServingSizeUnitNavigation!.Abbreviation,
+      ServingSizeUnit = f.ServingSizeUnitNavigation.ToUnitOption(),
       Type = MealSelectionItemType.CustomFood.ToString(),
     }));
 
     var recipeItems = await context.RecipePlans
-      .Include(r => r.ServingSizeUnitNavigation)
+      .Include(r => r.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
       .Where(r => r.Description != null && r.Description.Contains(query))
       .Take(10)
       .ToListAsync();
@@ -51,7 +51,7 @@ public class MealController : ControllerBase
       Id = r.Id,
       Description = r.Description!,
       ServingSize = r.Amount,
-      ServingSizeUnit = r.ServingSizeUnitNavigation!.Abbreviation,
+      ServingSizeUnit = r.ServingSizeUnitNavigation.ToUnitOption(),
       Type = MealSelectionItemType.Recipe.ToString(),
     }));
 
@@ -89,10 +89,10 @@ public class MealController : ControllerBase
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
         Recordedby = User.Identity!.Name!,
-        Recordeddate = recordMealRequest.RecordedDate,
+        Recordeddate = DateOnly.FromDateTime(recordMealRequest.RecordedDate.Date),
       };
 
-      if (recordMealRequest.MealType == MealSelectionItemType.CustomFood)
+      if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
       {
         var foodPlan = await context.FoodPlans.FindAsync(recordMealRequest.SelectedMealItemId);
 
@@ -118,7 +118,7 @@ public class MealController : ControllerBase
 
         mealHistoryEntity.MealFoodHistories.Add(mealFoodHistory);
       }
-      else if (recordMealRequest.MealType == MealSelectionItemType.Recipe)
+      else if (recordMealRequest.MealSelectionType == MealSelectionItemType.Recipe.ToString())
       {
         var recipePlan = await context.RecipePlans.FindAsync(recordMealRequest.SelectedMealItemId);
 

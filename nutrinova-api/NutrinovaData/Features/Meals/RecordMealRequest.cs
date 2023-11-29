@@ -6,13 +6,13 @@ public class RecordMealRequest
 
   public decimal Amount { get; set; }
 
-  public DateOnly RecordedDate { get; set; }
+  public DateTime RecordedDate { get; set; }
 
   public int UnitId { get; set; }
 
   public Guid SelectedMealItemId { get; set; }
 
-  public MealSelectionItemType MealType { get; set; }
+  public string MealSelectionType { get; set; } = null!;
 }
 
 public enum MealSelectionItemType

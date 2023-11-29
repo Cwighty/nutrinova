@@ -40,6 +40,22 @@ const CustomAccordion: React.FC<{ title: string, children: ReactNode }> = ({ tit
   </Accordion>
 );
 
+const SelectableBox: React.FC<{ item: MealSelectionItem, onSelectItem: (item: MealSelectionItem) => void }> = ({ item, onSelectItem }) => (
+  <Box
+    sx={{
+      marginBottom: 0,
+      cursor: 'pointer',
+      transition: '0.2s',
+      '&:hover': {
+        transform: 'translateX(-3px)',
+      },
+    }}
+    onClick={() => onSelectItem(item)}
+  >
+    <MealSelectionItemCard item={item} />
+  </Box>
+);
+
 export const MealItemSelector: React.FC<Props> = ({
   customFoods,
   recipes,
@@ -49,20 +65,36 @@ export const MealItemSelector: React.FC<Props> = ({
   return (
     <Box>
       <CustomAccordion title="Custom Foods">
+        {customFoods.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No custom foods found.
+          </Typography>
+        )}
         {customFoods.map(item => (
-          <MealSelectionItemCard key={item.id} item={item} onSelect={() => onSelectItem(item)} />
+          <SelectableBox key={item.id} item={item} onSelectItem={onSelectItem} />
         ))}
       </CustomAccordion>
 
       <CustomAccordion title="Recipes">
+        {recipes.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No recipes found.
+          </Typography>
+        )}
         {recipes.map(item => (
-          <MealSelectionItemCard key={item.id} item={item} onSelect={() => onSelectItem(item)} />
+          <SelectableBox key={item.id} item={item} onSelectItem={onSelectItem} />
         ))}
       </CustomAccordion>
 
       <CustomAccordion title="USDA">
+        {usdaFoods.length === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No USDA foods found.
+          </Typography>
+        )
+        }
         {usdaFoods.map(item => (
-          <MealSelectionItemCard key={item.id} item={item} onSelect={() => onSelectItem(item)} />
+          <SelectableBox key={item.id} item={item} onSelectItem={onSelectItem} />
         ))}
       </CustomAccordion>
     </Box>

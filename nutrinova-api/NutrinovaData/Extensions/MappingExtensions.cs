@@ -32,4 +32,15 @@ public static class MappingExtensions
       Notes = recipePlan.Notes,
     };
   }
+
+  public static UnitOption ToUnitOption(this Unit servingSizeUnit)
+  {
+    return new UnitOption
+    {
+      Id = servingSizeUnit.Id,
+      Abbreviation = servingSizeUnit.Abbreviation,
+      CategoryName = servingSizeUnit.Category!.Description,
+      Description = servingSizeUnit.Description,
+    };
+  }
 }

@@ -11,7 +11,7 @@ public class MealSelectionItem
 
   public decimal ServingSize { get; set; }
 
-  public string? ServingSizeUnit { get; set; }
+  public UnitOption? ServingSizeUnit { get; set; }
 
   public string? Note { get; set; }
 
