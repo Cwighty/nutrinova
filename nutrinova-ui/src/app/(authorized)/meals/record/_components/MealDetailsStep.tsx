@@ -17,9 +17,10 @@ import { MealSelectionItemCard } from './MealSelectionItemCard';
 
 interface MealDetailsProps {
   selectedFood: MealSelectionItem;
+  setActiveStep: (step: number) => void;
 }
 
-export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood }) => {
+export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setActiveStep }) => {
   const [amount, setAmount] = useState<number>(0);
   const [unit, setUnit] = useState<UnitOption>({ description: "" } as UnitOption);
   const [recordedDate, setRecordedDate] = useState<Date | null>(new Date(Date.now()));
@@ -40,7 +41,14 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood }) =>
         selectedMealItemId: selectedFood.id ?? "",
         mealSelectionType: selectedFood.type,
       };
-      addMeal(recordMealRequest);
+      addMeal(recordMealRequest, {
+        onSuccess: () => {
+          setActiveStep(0);
+          setAmount(0);
+          setUnit({ description: "" } as UnitOption);
+          setRecordedDate(new Date(Date.now()));
+        },
+      });
     }
   };
 

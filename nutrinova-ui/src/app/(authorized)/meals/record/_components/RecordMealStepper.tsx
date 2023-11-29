@@ -33,9 +33,7 @@ const PageLayout: React.FC = () => {
   // A function to handle item selection
   const handleSelectItem = (item: MealSelectionItem) => {
     setSelectedItem(item);
-    // Move to the next step
     setActiveStep(prevActiveStep => prevActiveStep + 1);
-    console.log('Selected Item ID: ', selectedItem);
   };
 
   // Filtering meal items by type
@@ -74,13 +72,16 @@ const PageLayout: React.FC = () => {
 
         {activeStep === 1 && selectedItem != null && (
           <>
-            <MealDetailsStep selectedFood={selectedItem} />
+            <MealDetailsStep selectedFood={selectedItem} setActiveStep={setActiveStep} />
           </>
         )}
         <Box sx={{ marginTop: 2 }}>
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((label, index) => (
-              <Step key={label} completed={index < activeStep}>
+              <Step key={label} completed={index < activeStep} onClick={() => {
+                if (index < activeStep) setActiveStep(index)
+              }}
+                sx={{ cursor: "pointer" }}>
                 <StepLabel>{label}</StepLabel>
               </Step>
             ))}
