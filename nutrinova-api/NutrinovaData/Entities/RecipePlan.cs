@@ -24,5 +24,6 @@ public partial class RecipePlan
   public virtual Customer? CreatedByNavigation { get; set; }
 
   public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
+
   public virtual Unit ServingSizeUnitNavigation { get; set; } = null!;
 }
