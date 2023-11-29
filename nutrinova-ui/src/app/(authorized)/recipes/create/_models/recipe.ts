@@ -6,7 +6,7 @@ export interface Recipe {
   tags: string;
   notes: string;
   amount: number;
-  servingsSizeUnitId: number;
+  servingsSizeUnit: number;
   unit: UnitOption;
   recipeFoods: RecipeFood[];
 }

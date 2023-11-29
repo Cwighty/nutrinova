@@ -38,7 +38,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     }) || [],
     amount: recipe?.amount,
     servingsUnit: recipe?.unit,
-    servingSizeUnitId: recipe?.servingsSizeUnitId,
+    servingSizeUnitId: recipe?.servingsSizeUnit,
     categoryId: recipe?.unit?.categoryId || 0,
   });
 
@@ -165,12 +165,12 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
           unitId: rf.unitId,
           unitName: rf.unitName,
           name: rf.food.description,
-          unit: unitOptions?.find(u => u.id === rf.unitId),
+          unit: rf.unit,
         }
       }) || [],
       amount: recipe?.amount,
-      servingsUnit: unitOptions?.find(u => u.id === recipe?.servingsSizeUnitId),
-      servingSizeUnitId: recipe?.servingsSizeUnitId,
+      servingsUnit: recipe?.unit,
+      servingSizeUnitId: recipe?.unit?.id,
       categoryId: recipe?.unit?.categoryId || 0,
     })
   }

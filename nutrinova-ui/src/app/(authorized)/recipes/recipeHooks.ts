@@ -7,6 +7,7 @@ import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
 import { CreateRecipeFoodModel } from "./create/_models/createRecipeFoodModel";
 import { Recipe } from "@/app/(authorized)/recipes/create/_models/recipe";
 import { EditRecipeRequestModel } from "./edit/_models/EditRecipeRequestModel";
+import { UnitOption } from "../food/_models/unitOption";
 
 export const recipeKeys = {
   all: "recipes",
@@ -87,7 +88,14 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
     origin: "client",
   });
   const response = await apiClient.get(`/recipe/${recipeId}`);
-  return response.data as Recipe;
+  console.log("here is the response by id", response.data);
+  const recipe = {
+    ...response.data,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    unit: response.data?.servingSizeUnitNavigation as UnitOption,
+  } as Recipe;
+  console.log("here is the response by id as recipe", recipe);
+  return recipe;
 };
 
 const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> => {
