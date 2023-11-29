@@ -17,6 +17,7 @@ export interface Food {
   tags: string[];
   notes: string;
   servingSize: number;
+  servingSizeUnit: string;
   unitId: number;
   unitName: string;
   unit?: UnitOption;

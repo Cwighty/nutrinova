@@ -39,7 +39,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     }) || [],
     amount: recipe?.amount,
     servingsUnit: recipe?.unit,
-    servingSizeUnitId: recipe?.servingsSizeUnit,
+    unitId: recipe?.servingsSizeUnit,
     categoryId: recipe?.unit?.categoryId || 0,
   });
 
@@ -92,7 +92,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       ...editRecipeFormState,
       amount: servingSize,
       servingsUnit: servingSizeUnit,
-      servingSizeUnitId,
+      unitId: servingSizeUnitId,
     });
   }
 
@@ -102,8 +102,8 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
         && editRecipeFormState?.amount > 0
         && editRecipeFormState.amount !== null
         && editRecipeFormState.amount !== undefined
-        && editRecipeFormState?.servingSizeUnitId !== undefined
-        && editRecipeFormState?.servingSizeUnitId > -1
+        && editRecipeFormState?.unitId !== undefined
+        && editRecipeFormState?.unitId > -1
       setServingSizeIsValid(isValidServing || false);
       return isValidServing;
     }
@@ -169,11 +169,12 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             unit: rf.unit,
             unitName: rf.unit?.description || "",
             name: rf.description,
+            servingSizeUnit: rf.servingSizeUnit
           }
         }) || [],
         amount: recipe?.amount,
         servingsUnit: recipe?.unit,
-        servingSizeUnitId: recipe?.unit?.id,
+        unitId: recipe?.unit?.id,
         categoryId: recipe?.unit?.categoryId || 0,
       }
     })
@@ -218,7 +219,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             formState={{
               servingSize: editRecipeFormState.amount,
               servingSizeUnit: editRecipeFormState.servingsUnit,
-              servingSizeUnitId: editRecipeFormState.servingSizeUnitId,
+              servingSizeUnitId: editRecipeFormState.unitId,
             }}
             setFormState={handleSelectServingSizeUpdate}
             formValid={servingSizeIsValid}

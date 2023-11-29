@@ -1,5 +1,3 @@
-using NutrinovaData.Entities;
-
 public class UnitOption
 {
   public int Id { get; set; }
@@ -12,5 +10,5 @@ public class UnitOption
 
   public int CategoryId { get; set; }
 
-  public UnitCategory? Category { get; set; }
+  public UnitCategoryRequestModel? Category { get; set; }
 }

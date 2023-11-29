@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { EditRecipeFoodRequestModel } from '../_models/EditRecipeRequestModel';
-import { useGetUnitsQuery } from '@/app/(authorized)/food/foodHooks';
-import { Alert, Button, Grid, InputAdornment, Skeleton, TextField, Typography } from '@mui/material';
+import { Button, Grid, InputAdornment, TextField, Typography } from '@mui/material';
 
 interface EditRecipeFoodListItemProp {
   food: EditRecipeFoodRequestModel;
@@ -15,20 +14,11 @@ interface EditRecipeFoodListItemProp {
 
 export const EditRecipeFoodItem = ({ food, deleteFood, updateFood, inputOptions }: EditRecipeFoodListItemProp) => {
 
-  const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
   const [unitAmount, setUnitAmount] = useState<number | null>(food.servingSize);
   const handleNutrientAmountChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newAmount = parseFloat(event.target.value) ?? null;
     setUnitAmount(newAmount);
     updateFood(newAmount);
-  }
-
-  if (unitOptionsLoading) {
-    return <Skeleton variant="rounded" width="100%" height={40} />;
-  }
-
-  if (unitOptionsIsError) {
-    return <Alert severity="error">Error loading, try again later</Alert>;
   }
 
   return (
@@ -47,7 +37,7 @@ export const EditRecipeFoodItem = ({ food, deleteFood, updateFood, inputOptions 
           onChange={handleNutrientAmountChange}
           InputProps={{
             inputProps: { min: 0 },
-            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id = food.unitId)?.abbreviation || ""}</InputAdornment>,
+            endAdornment: <InputAdornment position="end">{food.unitName}</InputAdornment>,
           }}
         />
       </Grid>

@@ -34,6 +34,7 @@ public static class FoodPlansExtension
       servingSize = foodPlan.ServingSize,
       servingSizeUnitCategory = foodPlan.ServingSizeUnitNavigation.Category.Description,
       servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
+      unit = foodPlan.ServingSizeUnitNavigation.ToUnitOption(),
       servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",
       foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
     };

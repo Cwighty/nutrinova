@@ -34,6 +34,8 @@ public class Food
 
   public string servingSizeWithUnits { get; set; }
 
+  public UnitOption? unit { get; set; }
+
   public List<FoodNutrient> foodNutrients { get; set; }
 
   public FlattenedFood MakeFlattenedFood(bool onlyPrimaryNutrients = false) => new FlattenedFood(this, onlyPrimaryNutrients);

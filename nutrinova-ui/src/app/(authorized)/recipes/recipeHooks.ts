@@ -95,7 +95,7 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
   const recipe = {
     ...response.data,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    unit: response.data?.servingSizeUnitNavigation as UnitOption,
+    unit: response.data?.unit as UnitOption,
   } as Recipe;
   console.log("here is the response by id as recipe", recipe);
   return recipe;
@@ -106,8 +106,16 @@ const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> =>
     additionalHeaders: {},
     origin: "client",
   });
-  console.log("here is the recipe", recipe);
-  const response = await apiClient.put(`/recipe`, recipe);
+  const recipeRes = {
+    ...recipe,
+    servingsUnit: {
+      ...recipe.servingsUnit,
+      categoryName: recipe.servingsUnit?.category?.description,
+    }
+
+  } as EditRecipeRequestModel;
+  console.log("here is the recipe", recipeRes);
+  const response = await apiClient.put(`/recipe`, recipeRes);
   console.log("here is the response", response.data, response.status);
   return response.status === 200;
 }

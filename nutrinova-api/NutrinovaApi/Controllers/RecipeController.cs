@@ -175,7 +175,7 @@ public class RecipeController : ControllerBase
       var foodUnit = await context.Units
         .Include(u => u.Category)
         .FirstOrDefaultAsync(u => u.Id == food.UnitId);
-      food.Food.ServingSizeUnitNavigation = foodUnit ?? throw new Exception("Invalid unit id");
+      food.Food.ServingSizeUnitNavigation = foodUnit ?? throw new Exception("Invalid foodUnit id");
     }
 
     if (recipe == null)
@@ -187,7 +187,7 @@ public class RecipeController : ControllerBase
       .Include(u => u.Category)
       .FirstOrDefaultAsync(u => u.Id == recipe.ServingSizeUnit);
 
-    recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid unit id");
+    recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid recipeUnit id");
     recipe.RecipeFoods = recipeFoodNutrients;
     var recipeRes = recipe.ToRecipeResponseModel();
     return recipeRes;
@@ -271,46 +271,47 @@ public class RecipeController : ControllerBase
       return StatusCode(500, "Failed to delete recipe foods");
     }
 
+    var recipeUnit = await context.Units
+      .Include(u => u.Category)
+      .FirstOrDefaultAsync(u => u.Id == editRecipeRequest.UnitId);
+
+    if (recipeUnit == null)
+    {
+      return NotFound("Invalid unit id");
+    }
+
     recipePlan.Description = editRecipeRequest.Description;
     recipePlan.Notes = editRecipeRequest.Notes;
     recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
     recipePlan.Amount = editRecipeRequest.Amount;
     recipePlan.ServingSizeUnit = editRecipeRequest.UnitId;
-    recipePlan.ServingSizeUnitNavigation = new Unit
-    {
-      Id = editRecipeRequest.UnitId,
-      CategoryId = editRecipeRequest.ServingsUnit.CategoryId,
-      Description = editRecipeRequest.ServingsUnit.Description,
-      Abbreviation = editRecipeRequest.ServingsUnit.Abbreviation,
-      Category = new UnitCategory
-      {
-        Id = editRecipeRequest.ServingsUnit.CategoryId,
-        Description = editRecipeRequest.ServingsUnit?.Category?.Description ?? throw new Exception("Invalid unit category description"),
-      },
-    };
+    recipePlan.ServingSizeUnitNavigation = recipeUnit;
 
     logger.LogInformation($"Recipe plan: {editRecipeRequest.ServingsUnit.CategoryId} ");
 
-    recipePlan.RecipeFoods = editRecipeRequest.RecipeFoods.Select((rf) => new RecipeFood
+    foreach (var rf in editRecipeRequest.RecipeFoods)
     {
-      Id = Guid.NewGuid(),
-      RecipeId = recipePlan.Id,
-      FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
-      Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
-      UnitId = rf.Unit.Id,
-      Unit = new Unit
+      if (rf.Unit == null)
       {
-        Id = rf.Unit.Id,
-        CategoryId = rf.Unit.CategoryId,
-        Description = rf.Unit.Description,
-        Abbreviation = rf.Unit.Abbreviation,
-        Category = new UnitCategory
-        {
-          Id = rf.Unit.CategoryId ?? throw new Exception("Invalid unit category description"),
-          Description = rf.Unit.Category?.Description ?? throw new Exception("Invalid unit category description"),
-        },
-      },
-    }).ToList();
+        return BadRequest("Invalid unit");
+      }
+
+      var foodUnit = await context.Units
+        .Include(u => u.Category)
+        .FirstOrDefaultAsync(u => u.Id == rf.Unit.Id);
+
+      var recipeFood = new RecipeFood
+      {
+        Id = Guid.NewGuid(),
+        RecipeId = recipePlan.Id,
+        FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
+        Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
+        UnitId = rf?.Unit?.Id ?? throw new Exception("Invalid unit id on recipe food"),
+        Unit = foodUnit ?? throw new Exception("Invalid foodUnit on recipe food"),
+      };
+
+      recipePlan.RecipeFoods.Add(recipeFood);
+    }
 
     try
     {

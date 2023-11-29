@@ -18,7 +18,11 @@ public static class UnitExtension
       Abbreviation = unit.Abbreviation,
       CategoryName = unit?.Category?.Description ?? string.Empty,
       CategoryId = unit?.CategoryId ?? 0,
-      Category = unit?.Category,
+      Category = new UnitCategoryRequestModel
+      {
+        Id = unit?.Category?.Id ?? 0,
+        Description = unit?.Category?.Description ?? string.Empty,
+      },
     };
   }
 }

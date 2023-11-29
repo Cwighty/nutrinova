@@ -30,7 +30,11 @@ public class UnitController : ControllerBase
         Description = u.Description,
         Abbreviation = u.Abbreviation,
         CategoryName = u.Category?.Description ?? string.Empty,
-        Category = u.Category,
+        Category = new UnitCategoryRequestModel
+        {
+          Id = u.Category?.Id ?? 0,
+          Description = u.Category?.Description ?? string.Empty,
+        },
       });
       return Ok(options);
     }
