@@ -33,7 +33,7 @@ export default function SelectUnit({
   );
   const handleSelectionChanged = (
     _: SyntheticEvent<Element, Event>,
-    value: UnitOption | null
+    value: UnitOption | null,
   ) => {
     onSelectedUnitChange(value);
   };
@@ -72,7 +72,6 @@ export default function SelectUnit({
               {...params}
               label="Unit"
               fullWidth
-              margin="normal"
               error={error}
               helperText={helperText}
             />

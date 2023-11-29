@@ -14,7 +14,11 @@ interface ServingSizeUnitFieldProps {
   formValid: boolean;
 }
 
-export const ServingSizeUnitField = ({ formState, setFormState, formValid }: ServingSizeUnitFieldProps) => {
+export const ServingSizeUnitField = ({
+  formState,
+  setFormState,
+  formValid,
+}: ServingSizeUnitFieldProps) => {
   return (
     <>
       {/* Serving Size */}
@@ -30,7 +34,6 @@ export const ServingSizeUnitField = ({ formState, setFormState, formValid }: Ser
             })
           }
           fullWidth
-          margin="normal"
           error={
             !formValid &&
             formState.servingSize !== undefined &&
@@ -38,8 +41,8 @@ export const ServingSizeUnitField = ({ formState, setFormState, formValid }: Ser
           }
           helperText={
             !formValid &&
-              formState.servingSize !== undefined &&
-              formState.servingSize <= 0
+            formState.servingSize !== undefined &&
+            formState.servingSize <= 0
               ? "Please enter a valid serving size"
               : ""
           }
@@ -48,11 +51,7 @@ export const ServingSizeUnitField = ({ formState, setFormState, formValid }: Ser
 
       <Grid item xs={12} md={6}>
         <SelectUnit
-          value={
-            formState.servingSizeUnit
-              ? formState.servingSizeUnit
-              : null
-          }
+          value={formState.servingSizeUnit ? formState.servingSizeUnit : null}
           onSelectedUnitChange={(unit) =>
             setFormState({
               ...formState,
