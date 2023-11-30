@@ -11,10 +11,10 @@ import {
   Alert,
   Skeleton,
   Paper,
-  Divider,
   Stack,
   Grid,
   ListItemButton,
+  Divider,
 } from "@mui/material";
 interface MyRecipesDetailCardProps {
   recipeId: string;
@@ -59,20 +59,24 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
             <Typography variant={"h6"} sx={{ mb: 2 }}>
               Ingredients
             </Typography>
+            <Divider />
             <List disablePadding>
               {recipe?.recipeFoods.map((food, index) => (
-                <ListItem key={index} disableGutters disablePadding>
-                  <ListItemButton
-                    key="Dashboard"
-                    component={NextLinkComposed}
-                    to={{
-                      pathname: "/food/view/details",
-                      query: { foodId: food.id },
-                    }}
-                  >
-                    <ListItemText primary={food.description} />
-                  </ListItemButton>
-                </ListItem>
+                <Box key={index}>
+                  <ListItem key={index} disableGutters disablePadding>
+                    <ListItemButton
+                      key="Dashboard"
+                      component={NextLinkComposed}
+                      to={{
+                        pathname: "/food/view/details",
+                        query: { foodId: food.id },
+                      }}
+                    >
+                      <ListItemText primary={food.description} />
+                    </ListItemButton>
+                  </ListItem>
+                  <Divider />
+                </Box>
               ))}
             </List>
           </Paper>
@@ -82,20 +86,24 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
             <Typography variant={"h6"} sx={{ mb: 2 }}>
               Tags
             </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 1,
-                mt: 2,
-              }}
-            >
-              {recipe?.tags
-                .split(",")
-                .map((tag, index) => (
-                  <Chip key={index} label={tag} sx={{ boxShadow: 2 }} />
-                ))}
-            </Box>
+            {recipe?.tags === "" ? (
+              <Typography variant="body1">No tags</Typography>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 1,
+                  mt: 2,
+                }}
+              >
+                {recipe?.tags
+                  .split(",")
+                  .map((tag, index) => (
+                    <Chip key={index} label={tag} sx={{ boxShadow: 2 }} />
+                  ))}
+              </Box>
+            )}
           </Paper>
         </Grid>
       </Grid>
