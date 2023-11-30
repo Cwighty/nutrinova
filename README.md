@@ -22,7 +22,7 @@
 ### Search Foods/Ingredients (USDA API)
 
 - [x] Search and import foods from USDA API. 
-- [ ] Adjust imported foods from the USDA API.
+- [x] Adjust imported foods from the USDA API.
 
 ### Create Food (generic form input components)
 
@@ -36,52 +36,52 @@
 
 - [x] Overview list of my saved foods (all that have been imported/used before). 
 - [x] Sort and filter foods. 
-- [ ] See details about the food/ingredient. 
+- [x] See details about the food/ingredient. 
 
 ### Edit Foods/Ingredients (Custom input components)
 
-- [ ] Edit the details of a food. 
-- [ ] Changing a food should not change recorded history totals. 
+- [x] Edit the details of a food. 
+- [x] Changing a food should not change recorded history totals. 
 
 
 ## Individual/Managed Profiles
 
 ### Single Profile
 
-- [ ] Users can create a profile just for them. (Authentication)
+- [x] Users can create a profile just for them. (Authentication)
 
 # Nov 18th
 
 ### Alerts/Notification
 
-- [ ] Alerts/notifications for when to eat. (Toasts / Websockets)
+- [x] Alerts/notifications for when to eat. (Toasts / Websockets)
 
 ## Recipe (Lots of reading/writing data)
 
 ### Create Recipe  (generic form input components)
 
-- [ ] Create a recipe from stored foods. 
-- [ ] Provide food and amount. 
-- [ ] Measure foods in different ways. 
-- [ ] Write notes about a recipe.
+- [x] Create a recipe from stored foods. 
+- [x] Provide food and amount. 
+- [x] Measure foods in different ways. 
+- [x] Write notes about a recipe.
       
 # Nov 25th
 
 ### Edit Recipe
 
-- [ ] Edit the details of a recipe. 
+- [x] Edit the details of a recipe. 
 
 ### View Recipes/Details
 
-- [ ] Overview of my recipe library. 
-- [ ] Filter and sort recipes. 
+- [x] Overview of my recipe library. 
+- [x] Filter and sort recipes. 
 
 ## Meal Records/Details
 
 ### Record Meal
 
-- [ ] Record what meals have been eaten and when. 
-- [ ] Meals can consist of multiple recipes and foods. 
+- [x] Record what meals have been eaten and when. 
+- [x] Meals can consist of multiple recipes and foods. 
 
 # Dec 2
 
