@@ -36,13 +36,11 @@ export const ServingSizeUnitField = ({
           fullWidth
           error={
             !formValid &&
-            formState.servingSize !== undefined &&
-            formState.servingSize <= 0
+            (formState.servingSize === undefined || formState.servingSize <= 0)
           }
           helperText={
             !formValid &&
-            formState.servingSize !== undefined &&
-            formState.servingSize <= 0
+            (formState.servingSize === undefined || formState.servingSize <= 0)
               ? "Please enter a valid serving size"
               : ""
           }
@@ -61,11 +59,11 @@ export const ServingSizeUnitField = ({
           }
           error={
             !formValid &&
-            formState.servingSize !== undefined &&
-            formState.servingSizeUnit === undefined
+            (formState.servingSize === undefined ||
+              formState.servingSizeUnit === undefined)
           }
           helperText={
-            !formValid && formState.servingSize
+            !formValid && formState.servingSizeUnit === undefined
               ? "A unit must be supplied with a serving size"
               : ""
           }
