@@ -181,91 +181,86 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   }
   return (
     <Box sx={{ flexGrow: 1, padding: 3 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} >
         {/* Submit Button at the top right */}
-        <Grid item xs={12} container justifyContent="flex-end">
+        <Grid item xs={12} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
           <Button variant="contained" onClick={handleSubmit}>Submit</Button>
         </Grid>
-        {/* Description and Brand */}
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Description/Name"
-            variant="outlined"
-            value={editRecipeFormState.description}
-            onChange={(e) => {
-              setEditRecipeForm({
-                ...editRecipeFormState,
-                description: e.target.value,
-              });
-            }}
-          />
-        </Grid>
-        {/* Ingredients Tag Input */}
-        <Grid item xs={12}>
-          <TagInput
-            tags={editRecipeFormState?.tags || []}
-            setTags={(tags) => {
-              setEditRecipeForm({
-                ...editRecipeFormState,
-                tags,
-              });
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          {/* Assuming ServingSizeUnitField internally handles size and unit on the same line */}
-          <ServingSizeUnitField
-            formState={{
-              servingSize: editRecipeFormState.amount,
-              servingSizeUnit: editRecipeFormState.servingsUnit,
-              servingSizeUnitId: editRecipeFormState.unitId,
-            }}
-            setFormState={handleSelectServingSizeUpdate}
-            formValid={servingSizeIsValid}
-          />
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <TextField
-            fullWidth
-            label="Notes"
-            variant="outlined"
-            multiline
-            rows={4}
-            value={editRecipeFormState?.notes}
-            onChange={(e) => {
-              setEditRecipeForm({
-                ...editRecipeFormState,
-                notes: e.target.value,
-              });
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Box>
+
+        {/* Main Form - Responsive Layout */}
+        <Grid container spacing={2}>
+          {/* Left Column (becomes full width on smaller screens) */}
+          <Grid item xs={12} md={4} sx={{ paddingBottom: 2 }} justifyContent="flex-start">
+            <TextField
+              fullWidth
+              label="Description/Name"
+              variant="outlined"
+              value={editRecipeFormState.description}
+              onChange={(e) => {
+                setEditRecipeForm({
+                  ...editRecipeFormState,
+                  description: e.target.value,
+                });
+              }}
+              sx={{ marginBottom: 2 }} // Adding space below each input
+            />
+            <Box sx={{ marginBottom: 2 }}>
+              <TagInput
+                tags={editRecipeFormState?.tags || []}
+                setTags={(tags) => {
+                  setEditRecipeForm({
+                    ...editRecipeFormState,
+                    tags,
+                  });
+                }}
+              />
+            </Box>
+            <ServingSizeUnitField
+              formState={{
+                servingSize: editRecipeFormState.amount,
+                servingSizeUnit: editRecipeFormState.servingsUnit,
+                servingSizeUnitId: editRecipeFormState.unitId,
+              }}
+              setFormState={handleSelectServingSizeUpdate}
+              formValid={servingSizeIsValid}
+            />
+          </Grid>
+
+          {/* Right Column (becomes full width on smaller screens) */}
+          <Grid item xs={12} md={8} sx={{ paddingBottom: 2 }}>
+            <TextField
+              fullWidth
+              label="Notes"
+              variant="outlined"
+              multiline
+              rows={4}
+              value={editRecipeFormState?.notes}
+              onChange={(e) => {
+                setEditRecipeForm({
+                  ...editRecipeFormState,
+                  notes: e.target.value,
+                });
+              }}
+              sx={{ marginBottom: 2 }}
+            />
             <AddFoodDialog
               newFood={newFood}
               setNewFood={setNewFood}
               handleAddFood={handleAddFood}
             />
-          </Box>
-        </Grid>
-        <Grid>
-          {
-            editRecipeFormState?.recipeFoods?.map((food, index) => {
-              return (
-                <Grid item xs={12} key={index}>
-                  <EditRecipeFoodItem food={food} deleteFood={() => handleFoodDelete(food.id)} updateFood={(foodAmount: number) => handleFoodUpdate(food.id, foodAmount)}
-                    inputOptions={
-                      {
-                        helperText: "Invalid Food Amount",
-                        error: !recipeFoodsAreValid,
-                      }
-                    } />
-                </Grid>
-              )
-            }
-            )}
+            {editRecipeFormState?.recipeFoods?.map((food, index) => (
+              <EditRecipeFoodItem
+                key={index}
+                food={food}
+                deleteFood={() => handleFoodDelete(food.id)}
+                updateFood={(foodAmount: number) => handleFoodUpdate(food.id, foodAmount)}
+                inputOptions={{
+                  helperText: "Invalid Food Amount",
+                  error: !recipeFoodsAreValid,
+                }}
+              />
+            ))}
+          </Grid>
         </Grid>
       </Grid>
     </Box>
