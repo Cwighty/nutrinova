@@ -1,5 +1,5 @@
 import { PatientContextPageContainer } from "@/components/PatientContextPageContainer";
-import { Typography } from "@mui/material";
+import RecordMealStepper from "./_components/RecordMealStepper";
 
 export const metadata = {
   title: "Record Meal",
@@ -8,7 +8,7 @@ export const metadata = {
 export default function RecordMealPage() {
   return (
     <PatientContextPageContainer title={metadata.title}>
-      <Typography variant={"h3"}>Record Meal</Typography>
+      <RecordMealStepper />
     </PatientContextPageContainer>
   );
 }
