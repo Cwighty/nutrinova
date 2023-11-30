@@ -28,12 +28,9 @@ export default function SelectUnit({
     isError: unitOptionsIsError,
   } = useGetUnitsQuery();
 
-  const filteredOptions =
-    restrictToCategory === null
-      ? unitOptions
-      : unitOptions?.filter(
-          (option) => option.categoryName === restrictToCategory,
-        );
+  const filteredOptions = restrictToCategory === null ? unitOptions : unitOptions?.filter(
+    (option) => option.category.description === restrictToCategory
+  );
   const handleSelectionChanged = (
     _: SyntheticEvent<Element, Event>,
     value: UnitOption | null,
@@ -59,7 +56,7 @@ export default function SelectUnit({
         <Autocomplete
           value={value}
           options={filteredOptions ?? []}
-          groupBy={(option) => option.categoryName}
+          groupBy={(option) => option.category.description}
           getOptionLabel={(option) =>
             `${useAbbreviation ? option.abbreviation : option.description}`
           }

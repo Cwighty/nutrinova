@@ -1,18 +1,14 @@
+import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+
 export interface Recipe {
   id: string;
   description: string;
   tags: string;
   notes: string;
-  recipeFoods: RecipeFood[];
-}
-
-export interface RecipeFood {
-  foodId: string;
-  name: string;
   amount: number;
-  unitId: number;
-  unitName: string;
-  food: Food;
+  servingsSizeUnit: number;
+  unit: UnitOption;
+  recipeFoods: Food[];
 }
 
 export interface Food {
@@ -20,4 +16,9 @@ export interface Food {
   description: string;
   tags: string[];
   notes: string;
+  servingSize: number;
+  servingSizeUnit: string;
+  unitId: number;
+  unitName: string;
+  unit?: UnitOption;
 }

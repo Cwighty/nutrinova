@@ -135,7 +135,6 @@ export const AddFoodDialog = ({
               id: newFood.unitId,
               description: newFood.unitName,
               abbreviation: "",
-              categoryName: "",
               categoryId: newFood.unitId,
               // this will need to be changed
               category: {

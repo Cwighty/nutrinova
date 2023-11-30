@@ -52,7 +52,6 @@ const fetchFoodById = async (foodId: string): Promise<FoodSearchResult> => {
     origin: "client",
   });
   const response = await apiClient.get(`/food/food-details/${foodId}`);
-  console.log("here is the incoming food", response.data);
   return response.data as FoodSearchResult;
 };
 
@@ -109,11 +108,10 @@ const updateFood = async (food: EditFoodRequestModel): Promise<boolean> => {
     Unit: {
       ...food.servingSizeUnit, unitCategoryId: food.unitCategoryId, category: {
         id: food.unitCategoryId,
-        description: food.servingSizeUnit?.category || ""
+        description: ""
       } as UnitCategory
     } as UnitOption,
   }
-  console.log("here is the outgoing request", outGoingRequest);
   const response = await apiClient.put("/food", outGoingRequest);
   return response.status === 200;
 }

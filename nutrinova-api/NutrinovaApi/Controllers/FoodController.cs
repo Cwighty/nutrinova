@@ -497,7 +497,7 @@ public class FoodController : ControllerBase
     var foodPlan = await context.FoodPlans
       .Include(fp => fp.FoodPlanNutrients)
       .ThenInclude(fpn => fpn.Nutrient)
-      .FirstOrDefaultAsync(fp => fp.Id.ToString() == editFoodRequestModel.Id);
+      .FirstOrDefaultAsync(fp => fp.Id == editFoodRequestModel.Id);
 
     if (foodPlan == null)
     {
@@ -519,11 +519,23 @@ public class FoodController : ControllerBase
       logger.LogError($"Failed remove association in FoodPlanNutrients: {ex.Message}");
     }
 
+    if (editFoodRequestModel.Unit == null)
+    {
+      return BadRequest("Serving size unit is required");
+    }
+
+    var foodPlanUnit = await context.Units.FirstOrDefaultAsync(u => u.Id == editFoodRequestModel.Unit.Id);
+
+    if (foodPlanUnit == null)
+    {
+      return BadRequest("Unit does not exist");
+    }
+
     // update food plan
     foodPlan.Description = editFoodRequestModel.Description;
     foodPlan.ServingSize = editFoodRequestModel.ServingSize.Value;
-    foodPlan.ServingSizeUnit = editFoodRequestModel.Unit.Id;
-    foodPlan.ServingSizeUnitNavigation = editFoodRequestModel.Unit;
+    foodPlan.ServingSizeUnit = editFoodRequestModel?.Unit?.Id ?? throw new InvalidOperationException("Unit is required");
+    foodPlan.ServingSizeUnitNavigation = foodPlanUnit;
     foodPlan.Note = editFoodRequestModel.Note;
     foodPlan.BrandName = editFoodRequestModel.BrandName;
     foodPlan.Ingredients = editFoodRequestModel.Ingredients;

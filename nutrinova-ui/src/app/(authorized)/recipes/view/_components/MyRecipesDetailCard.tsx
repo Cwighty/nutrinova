@@ -4,6 +4,7 @@ import {
   Typography,
   Chip,
   List,
+  Button,
   ListItem,
   ListItemText,
   Box,
@@ -12,29 +13,30 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-
 interface MyRecipesDetailCardProps {
   recipeId: string;
 }
+import { useRouter } from "next/navigation";
 
 export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
+
+  const router = useRouter();
   const { data: recipe, isLoading, isError } = useGetRecipeByIdQuery(recipeId);
 
   if (isError) {
-    return <Alert severity="error">Error loading foods</Alert>;
+    return <Alert severity="error">Error loading recipe</Alert>;
   }
 
   if (isLoading) {
     return <Skeleton height={100} sx={{ m: 0 }} />;
   }
 
-  if (recipe) {
-    console.log(recipe);
-  }
-
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h4">{recipe?.description}</Typography>
+      <Button variant="contained" color="primary" onClick={() => router.push("/recipes/edit?recipeId=" + recipeId)}>
+        Edit
+      </Button>
       <Box
         sx={{
           display: "flex",
@@ -52,9 +54,9 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
       </Typography>
       <Divider />
       <List>
-        {recipe?.recipeFoods.map((recipeFood, index) => (
+        {recipe?.recipeFoods.map((food, index) => (
           <ListItem key={index}>
-            <ListItemText primary={recipeFood.food.description} />
+            <ListItemText primary={food.description} />
           </ListItem>
         ))}
       </List>

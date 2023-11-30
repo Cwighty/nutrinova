@@ -8,7 +8,7 @@ public class FlattenedFood
 {
   public int? FdcId { get; set; }
 
-  public string? Id { get; set; }
+  public Guid? Id { get; set; }
 
   public string? Description { get; set; }
 
@@ -33,7 +33,7 @@ public class FlattenedFood
   public FlattenedFood(FoodPlan fp)
   {
     FdcId = fp.Fdcid;
-    Id = fp.Id.ToString();
+    Id = fp.Id;
     Description = fp.Description;
     Ingredients = fp.Ingredients;
     BrandName = fp.BrandName;
@@ -49,7 +49,7 @@ public class FlattenedFood
   public FlattenedFood(Food food, bool onlyPrimaryNutrients)
   {
     this.FdcId = food.fdcId;
-    this.Id = food?.id ?? string.Empty;
+    this.Id = food?.id;
     this.Description = food?.description;
     this.Ingredients = food?.ingredients;
     this.BrandName = food?.brandName;

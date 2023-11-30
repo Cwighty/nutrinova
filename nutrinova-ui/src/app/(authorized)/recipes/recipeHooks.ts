@@ -6,11 +6,14 @@ import { recipetagKeys } from "@/components/forms/tagHooks";
 import { RecipeNutrientSummary } from "./create/_models/recipeNutrientSummary";
 import { CreateRecipeFoodModel } from "./create/_models/createRecipeFoodModel";
 import { Recipe } from "@/app/(authorized)/recipes/create/_models/recipe";
+import { EditRecipeRequestModel } from "./edit/_models/EditRecipeRequestModel";
+import { UnitOption } from "../food/_models/unitOption";
 import { useNotification } from "@/components/providers/NotificationProvider";
 
 export const recipeKeys = {
   all: "recipes",
   summaries: "recipeSummaries",
+  recipeID: (recipeId: string) => [recipeKeys.all, recipeId],
 };
 
 const createRecipe = async (
@@ -87,12 +90,44 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
     origin: "client",
   });
   const response = await apiClient.get(`/recipe/${recipeId}`);
-  return response.data as Recipe;
+  const recipe = {
+    ...response.data,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    unit: response.data?.unit as UnitOption,
+  } as Recipe;
+  return recipe;
 };
+
+const updateRecipe = async (recipe: EditRecipeRequestModel): Promise<boolean> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const recipeRes = {
+    ...recipe,
+    servingsUnit: {
+      ...recipe.servingsUnit,
+      categoryName: recipe.servingsUnit?.category?.description,
+    }
+
+  } as EditRecipeRequestModel;
+  const response = await apiClient.put(`/recipe`, recipeRes);
+  return response.status === 200;
+}
 
 export const useGetRecipeByIdQuery = (recipeId: string) => {
   return useQuery({
-    queryKey: [recipeKeys.all, recipeId],
+    queryKey: recipeKeys.recipeID(recipeId),
     queryFn: () => getRecipeById(recipeId),
   });
 };
+
+export const useEditRecipeMutation = (recipeID: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (recipe: EditRecipeRequestModel) => updateRecipe(recipe),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: recipeKeys.recipeID(recipeID) });
+    }
+  })
+}
