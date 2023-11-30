@@ -13,6 +13,7 @@ const PatientsPage = () => {
   const handleDelete = (patient: Patient) => {
     // TODO: how should we handle this?
     // we don't want them deleting themselves either
+    console.log("delete", patient);
   }
 
   return (
