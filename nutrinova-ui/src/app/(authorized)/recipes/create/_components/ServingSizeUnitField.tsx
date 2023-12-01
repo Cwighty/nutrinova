@@ -22,7 +22,7 @@ export const ServingSizeUnitField = ({
   return (
     <>
       {/* Serving Size */}
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6} mb={2} lg={12}>
         <TextField
           label="Serving Size"
           type="number"
@@ -40,14 +40,14 @@ export const ServingSizeUnitField = ({
           }
           helperText={
             !formValid &&
-            (formState.servingSize === undefined || formState.servingSize <= 0)
+              (formState.servingSize === undefined || formState.servingSize <= 0)
               ? "Please enter a valid serving size"
               : ""
           }
         />
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6} lg={12}>
         <SelectUnit
           value={formState.servingSizeUnit ? formState.servingSizeUnit : null}
           onSelectedUnitChange={(unit) =>
