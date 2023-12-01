@@ -259,7 +259,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
             ))}
           </Grid>
           <Grid item xs={12} container justifyContent="flex-start">
-            <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+            <Button variant="contained" onClick={handleSubmit}>Save</Button>
           </Grid>
         </Grid>
       </Grid>
