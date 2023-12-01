@@ -2,6 +2,8 @@ import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFact
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Patient } from "./_models/patient";
+import { getSession } from "next-auth/react";
+import userService from "@/services/customerService";
 
 export const patientKeys = {
   all: ['patients'],
@@ -14,6 +16,14 @@ const getAllPatients = async () => {
     additionalHeaders: {},
     origin: 'client',
   });
+  const session = await getSession();
+  if (session == null || session == undefined) {
+    return [];
+  }
+  const exists = await userService.customerExistsClient(session.user.id!) ?? false;
+  if (!exists) {
+    return [];
+  }
   const response = await apiClient.get<Patient[]>('/patient/all-patients');
   return response.data;
 };
@@ -26,7 +36,7 @@ export const useGetAllPatientsQuery = () => {
 };
 
 // Create a new patient
-const createPatient = async (patient : Patient) => {
+const createPatient = async (patient: Patient) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: 'client',

@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
 import { Container, Typography, Button, Box, Stack } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+import { signIn } from "next-auth/react";
 
 export default function LandingPage() {
-  const router = useRouter();
   const { theme } = useTheme();
 
   const logoSrc = theme === "light" ? "/atomic-black.svg" : "/atomic-white.svg";
@@ -65,14 +64,14 @@ export default function LandingPage() {
               <Stack direction="row" spacing={2} mb={4}>
                 <Button
                   variant="contained"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={async () => await signIn('oidc', { callbackUrl: '/auth/signin' })}
                   sx={{ p: 2, minWidth: "50%" }}
                 >
                   Login
                 </Button>
                 <Button
                   variant="outlined"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={async () => { await signIn('oidc', { callbackUrl: '/auth/signin' }) }}
                   sx={{ p: 2, minWidth: "50%" }}
                 >
                   Register
