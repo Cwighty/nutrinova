@@ -81,6 +81,7 @@ export const options: NextAuthOptions = {
         newToken.access_token = account.access_token;
         newToken.expires_at = Math.floor(Date.now() / 1000 + account.expires_in);
         newToken.refresh_token = account.refresh_token;
+        newToken.id_token = account.id_token;
       }
       else if (Date.now() < token.expires_at * 1000) {
         // If the access token has not expired yet, return it
@@ -114,5 +115,30 @@ export const options: NextAuthOptions = {
       };
     },
   },
+  events: {
+    signOut: ({ token }) => doFinalSignoutHandshake(token)
+  },
   pages: {}, // can route to custom signin/signout pages
 };
+
+function doFinalSignoutHandshake(jwt: JWT) {
+  const params = new URLSearchParams();
+  params.append('client_id', process.env.KEYCLOAK_CLIENT_ID ?? '');
+  params.append('client_secret', process.env.KEYCLOAK_CLIENT_SECRET ?? '');
+  params.append('refresh_token', jwt.refresh_token ?? '');
+  params.append("id_token_hint", jwt.id_token ?? '');
+
+  axios.post(
+    `${process.env.KEYCLOAK_BASE_URL}/protocol/openid-connect/logout`,
+    params.toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  ).then(() => {
+    console.log("Successfully signed out from Keycloak");
+  }).catch((error) => {
+    console.error("Could not sign out from Keycloak: ", error);
+  });
+}

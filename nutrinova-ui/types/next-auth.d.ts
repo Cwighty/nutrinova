@@ -37,6 +37,7 @@ declare module "next-auth/jwt"
     name?: string,
     picture?: string,
     sub?: string,
+    id_token?: string,
     access_token: string | undefined,
     refresh_token?: string,
     expires_at: number,

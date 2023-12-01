@@ -53,6 +53,7 @@ public class MealController : ControllerBase
       ServingSize = r.Amount,
       ServingSizeUnit = r.ServingSizeUnitNavigation.ToUnitOption(),
       Type = MealSelectionItemType.Recipe.ToString(),
+      Category = r.Category,
     }));
 
     return Ok(mealSelectionItems);
