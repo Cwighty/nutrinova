@@ -50,6 +50,12 @@ export default function CreateRecipeForm() {
     if (recipeFormState.description === "") {
       return false;
     }
+    if (recipeFormState.servingSize === undefined) {
+      return false;
+    }
+    if (recipeFormState.servingSize <= 0) {
+      return false;
+    }
 
     return true;
   };
