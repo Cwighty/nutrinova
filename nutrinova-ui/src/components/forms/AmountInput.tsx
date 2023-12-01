@@ -1,6 +1,6 @@
 "use client";
 
-import { Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import SelectUnit from "./SelectUnit";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 
@@ -24,7 +24,7 @@ export const AmountInput = ({
   };
 
   return (
-    <>
+    <Box sx={{ mt: 3 }}>
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
           <TextField
@@ -35,7 +35,6 @@ export const AmountInput = ({
             fullWidth
             error={amount <= 0}
             helperText={amount <= 0 ? "Amount must be greater than 0" : ""}
-            margin="normal"
           />
         </Grid>
 
@@ -55,7 +54,7 @@ export const AmountInput = ({
                     id: 0,
                     description: "",
                   },
-                }
+                },
               );
             }}
             error={unit.description === ""}
@@ -63,6 +62,6 @@ export const AmountInput = ({
           />
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };

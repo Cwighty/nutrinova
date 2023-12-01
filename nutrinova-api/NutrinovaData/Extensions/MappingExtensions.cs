@@ -40,7 +40,17 @@ public static class MappingExtensions
       Id = servingSizeUnit.Id,
       Abbreviation = servingSizeUnit.Abbreviation,
       CategoryName = servingSizeUnit.Category!.Description,
+      Category = servingSizeUnit.Category.ToUnitCategoryRequestModel(),
       Description = servingSizeUnit.Description,
+    };
+  }
+
+  public static UnitCategoryRequestModel ToUnitCategoryRequestModel(this UnitCategory unitCategory)
+  {
+    return new UnitCategoryRequestModel
+    {
+      Id = unitCategory.Id,
+      Description = unitCategory.Description,
     };
   }
 }
