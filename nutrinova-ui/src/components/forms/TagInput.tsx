@@ -4,9 +4,10 @@ import { useGetRecipeTagsQuery } from "./tagHooks";
 interface TagInputProps {
   tags: string[];
   setTags: (tags: string[]) => void;
+  tagLabel?: string;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
+const TagInput: React.FC<TagInputProps> = ({ tags, setTags, tagLabel = "New Tag" }) => {
   const {
     data: recipeTags,
     isLoading: recipeTagsLoading,
@@ -43,7 +44,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, setTags }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="New Tag"
+              label={tagLabel}
               variant="outlined"
               fullWidth
             />

@@ -181,12 +181,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   }
   return (
     <Box sx={{ flexGrow: 1, padding: 3 }}>
-      <Grid container spacing={2} >
-        {/* Submit Button at the top right */}
-        <Grid item xs={12} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
-          <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-        </Grid>
-
+      <Grid container spacing={2} padding={2} >
         {/* Main Form - Responsive Layout */}
         <Grid container spacing={2}>
           {/* Left Column (becomes full width on smaller screens) */}
@@ -213,6 +208,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
                     tags,
                   });
                 }}
+                tagLabel='Tags'
               />
             </Box>
             <ServingSizeUnitField
@@ -248,18 +244,22 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
               setNewFood={setNewFood}
               handleAddFood={handleAddFood}
             />
-            {editRecipeFormState?.recipeFoods?.map((food, index) => (
-              <EditRecipeFoodItem
-                key={index}
-                food={food}
-                deleteFood={() => handleFoodDelete(food.id)}
-                updateFood={(foodAmount: number) => handleFoodUpdate(food.id, foodAmount)}
-                inputOptions={{
-                  helperText: "Invalid Food Amount",
-                  error: !recipeFoodsAreValid,
-                }}
-              />
+            {editRecipeFormState?.recipeFoods?.map((food) => (
+              <Box key={food.id} sx={{ marginBottom: 2 }} >
+                <EditRecipeFoodItem
+                  food={food}
+                  deleteFood={() => handleFoodDelete(food.id)}
+                  updateFood={(foodAmount: number) => handleFoodUpdate(food.id, foodAmount)}
+                  inputOptions={{
+                    helperText: "Invalid Food Amount",
+                    error: !recipeFoodsAreValid,
+                  }}
+                />
+              </Box>
             ))}
+          </Grid>
+          <Grid item xs={12} container justifyContent="flex-start">
+            <Button variant="contained" onClick={handleSubmit}>Submit</Button>
           </Grid>
         </Grid>
       </Grid>
