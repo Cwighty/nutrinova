@@ -183,9 +183,9 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     <Box sx={{ flexGrow: 1, padding: 3 }}>
       <Grid container spacing={2} padding={2} >
         {/* Main Form - Responsive Layout */}
-        <Grid container spacing={2}>
+        <Grid container spacing={2} >
           {/* Left Column (becomes full width on smaller screens) */}
-          <Grid item xs={12} md={4} sx={{ paddingBottom: 2 }} justifyContent="flex-start">
+          <Grid item xs={12} md={5} sx={{ paddingBottom: 2 }} justifyContent="flex-start">
             <TextField
               fullWidth
               label="Description/Name"
@@ -223,13 +223,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
           </Grid>
 
           {/* Right Column (becomes full width on smaller screens) */}
-          <Grid item xs={12} md={8} sx={{ paddingBottom: 2 }}>
+          <Grid item xs={12} md={7} sx={{ paddingBottom: 2 }}>
             <TextField
               fullWidth
               label="Notes"
               variant="outlined"
               multiline
-              rows={4}
+              rows={10}
               value={editRecipeFormState?.notes}
               onChange={(e) => {
                 setEditRecipeForm({
@@ -239,13 +239,15 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
               }}
               sx={{ marginBottom: 2 }}
             />
+          </Grid>
+          <Grid sx={{ marginBottom: 2 }} xs={12} justifyContent="center" padding={2}>
             <AddFoodDialog
               newFood={newFood}
               setNewFood={setNewFood}
               handleAddFood={handleAddFood}
             />
             {editRecipeFormState?.recipeFoods?.map((food) => (
-              <Box key={food.id} sx={{ marginBottom: 2 }} >
+              <Box sx={{ marginBottom: 1 }} key={food.id}>
                 <EditRecipeFoodItem
                   food={food}
                   deleteFood={() => handleFoodDelete(food.id)}
@@ -258,7 +260,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
               </Box>
             ))}
           </Grid>
-          <Grid item xs={12} container justifyContent="flex-start">
+          <Grid item xs={12} container justifyContent="flex-end">
             <Button variant="contained" onClick={handleSubmit}>Save</Button>
           </Grid>
         </Grid>
