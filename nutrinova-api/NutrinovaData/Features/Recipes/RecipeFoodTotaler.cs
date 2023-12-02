@@ -25,7 +25,7 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
           {
             Name = nutrient.Nutrient.Description,
             Amount = nutrient.Amount * unitConverter.Convert(recipeFood.Amount, recipeFood.Unit, recipeFood.Food.ServingSizeUnitNavigation),
-            Unit = nutrient.Unit,
+            Unit = nutrient.Unit.ToUnitOption(),
           });
         }
         else

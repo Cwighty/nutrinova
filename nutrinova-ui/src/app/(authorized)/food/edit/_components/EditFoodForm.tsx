@@ -247,16 +247,18 @@ export const EditFoodForm = ({ foodId }: Props) => {
           <AddNutrientDialog handleAddNutrient={handleAddNutrient} newNutrient={newNutrient} setNewNutrient={(newNutrient) => setNewNutrient(newNutrient)} />
           {(editFoodFormState.foodNutrients?.length === 0) && <Alert severity='warning'> Foods need at least one nutrient </Alert>}
           {editFoodFormState.foodNutrients?.map((fn, index) => (
-            <EditNutrientListItem
-              key={index}
-              nutrient={fn}
-              deleteNutrient={() => handleNutrientDelete(fn.nutrientId)}
-              updateNutrient={(amount: number) => handleNutrientAmountChange(fn.nutrientId, amount)}
-              inputOptions={{
-                error: !foodNutrientsAreValid,
-                helperText: !foodNutrientsAreValid ? "Nutrients must have a value greater than 0" : undefined,
-              }}
-            />
+            <>
+              <EditNutrientListItem
+                key={index}
+                nutrient={fn}
+                deleteNutrient={() => handleNutrientDelete(fn.nutrientId)}
+                updateNutrient={(amount: number) => handleNutrientAmountChange(fn.nutrientId, amount)}
+                inputOptions={{
+                  error: !foodNutrientsAreValid,
+                  helperText: !foodNutrientsAreValid ? "Nutrients must have a value greater than 0" : undefined,
+                }}
+              />
+            </>
           ))}
         </Grid>
       </Grid>

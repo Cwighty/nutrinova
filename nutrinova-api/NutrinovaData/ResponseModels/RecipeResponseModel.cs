@@ -14,6 +14,8 @@ public class RecipeResponseModel
 
   public int ServingSizeUnit { get; set; }
 
+  public IEnumerable<NutrientSummary>? NutrientSummaries { get; set; }
+
   public virtual ICollection<Food> RecipeFoods { get; set; } = new List<Food>();
 
   public virtual UnitOption? Unit { get; set; } = null!;

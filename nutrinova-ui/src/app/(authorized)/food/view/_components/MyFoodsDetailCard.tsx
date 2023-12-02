@@ -7,6 +7,7 @@ import {
   Divider,
   List,
   ListItem,
+  Paper,
   Typography,
 } from "@mui/material";
 import React from "react";
@@ -94,15 +95,21 @@ export const MyFoodsDetailCard = ({ foodId }: MyFoodsDetailCardProps) => {
             </List>
           </>
         )}
-        <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
-          Notes
-        </Typography>
-        <Divider />
-        {data?.note && (
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            {data?.note}
+
+        <Paper elevation={6} sx={{ p: 2, my: 2 }}>
+          <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
+            Notes
           </Typography>
-        )}
+          {data?.note ? (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {data?.note}
+            </Typography>
+          ) :
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              <em>None</em>
+            </Typography>
+          }
+        </Paper>
       </CardContent>
     </Card>
   );

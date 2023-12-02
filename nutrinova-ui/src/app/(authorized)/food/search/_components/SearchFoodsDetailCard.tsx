@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { FoodSearchDetailSkeleton } from "@/components/skeletons/FoodSearchDetailSkeleton";
 import { FoodSearchFilterParams } from "@/app/(authorized)/food/_models/foodSearchFilterParams";
+import CenteredSpinnerWithBackdrop from "@/components/CenteredSpinnerOverlay";
 
 interface SearchFoodsDetailCardProps {
   searchFilterParams: FoodSearchFilterParams;
@@ -49,6 +50,7 @@ export const SearchFoodsDetailCard = ({
   }
   return (
     <Card sx={{ my: 1, p: 1.25 }}>
+      {importFoodMutation.isPending && (<CenteredSpinnerWithBackdrop message="Importing food..." />)}
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="start">
           <Box>

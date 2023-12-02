@@ -37,6 +37,20 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       toast.success(notification.message);
     };
 
+    newSocket.onclose = (event) => {
+      if (event.wasClean) {
+        console.log(`[websockets] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+      } else {
+        console.log('[websockets] Connection died');
+      }
+
+      console.log('[websockets] Reconnecting...');
+      setTimeout(() => {
+        const reconnectSocket = new WebSocket(webSocketUrl ?? 'ws://localhost:5000/be/repeater');
+        setSocket(reconnectSocket);
+      }, 5000); // Attempt to reconnect every 5 seconds
+    };
+
     return () => {
       newSocket.close();
     };

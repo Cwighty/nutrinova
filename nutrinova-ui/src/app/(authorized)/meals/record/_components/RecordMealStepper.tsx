@@ -8,10 +8,10 @@ import {
   Box,
   Paper,
   InputAdornment,
+  CircularProgress,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useSearchMealItemsQuery } from '../../mealHooks';
-import { AtomSpinner } from '@/components/atom-spinner/AtomSpinner';
 import MealItemSelector from './MealItemSelector';
 import { MealDetailsStep } from './MealDetailsStep';
 import { MealSelectionItem } from '../_models/mealSelectionItem';
@@ -49,16 +49,19 @@ const PageLayout: React.FC = () => {
             <TextField
               fullWidth
               id="search"
-              type="search"
               label="Search"
+              type='search'
               value={searchQuery}
               onChange={handleSearch}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {isFetching ? <AtomSpinner /> : <SearchIcon />}
+                    {isFetching ? <CircularProgress /> : <SearchIcon />}
                   </InputAdornment>
                 ),
+              }}
+              sx={{
+                mb: 2,
               }}
             />
             <MealItemSelector
