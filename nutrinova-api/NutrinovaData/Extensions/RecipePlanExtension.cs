@@ -19,4 +19,20 @@ public static class RecipePlanExtension
       Unit = recipePlan.ServingSizeUnitNavigation.ToUnitOption(),
     };
   }
+
+  public static RecipeResponseModel ToRecipeResponseModel(this RecipePlan recipePlan, List<NutrientSummary> nutrientSummaries)
+  {
+    return new RecipeResponseModel
+    {
+      Id = recipePlan.Id,
+      Description = recipePlan.Description,
+      Tags = recipePlan.Tags,
+      Notes = recipePlan.Notes,
+      Amount = recipePlan.Amount,
+      ServingSizeUnit = recipePlan.ServingSizeUnit,
+      RecipeFoods = recipePlan.RecipeFoods.Select(rf => rf.Food.ToFood()).ToList(),
+      NutrientSummaries = nutrientSummaries,
+      Unit = recipePlan.ServingSizeUnitNavigation.ToUnitOption(),
+    };
+  }
 }

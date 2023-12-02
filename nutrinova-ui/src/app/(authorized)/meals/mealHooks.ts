@@ -32,7 +32,6 @@ export const useSearchMealItemsQuery = (query: string) => {
   return useQuery({
     queryKey: [mealKeys.search, query],
     queryFn: () => searchMealItems(query),
-    enabled: query.length > 0,
   });
 };
 

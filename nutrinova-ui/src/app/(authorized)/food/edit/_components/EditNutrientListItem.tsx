@@ -35,8 +35,8 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
     return <Alert severity="error">{inputOptions?.helperText}</Alert>;
   }
   return (
-    <Grid container spacing={2} alignItems="center">
-      <Grid item xs={12} sm={5} md={4} lg={3}>
+    <Grid container sx={{ m: 2 }} alignItems="center">
+      <Grid item xs={12} sm={5} md={4} lg={3} sx={{ mb: 1 }}>
         <Typography variant="subtitle1">{nutrient.nutrientName}</Typography>
       </Grid>
       <Grid item xs={8} sm={5} md={6} lg={7}>
@@ -55,7 +55,7 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
         />
       </Grid>
       <Grid item xs={4} sm={2} md={2} lg={2}>
-        <Button variant="outlined" color="error" onClick={deleteNutrient}>
+        <Button variant="outlined" color="error" sx={{ ml: 2 }} onClick={deleteNutrient}>
           Delete
         </Button>
       </Grid>

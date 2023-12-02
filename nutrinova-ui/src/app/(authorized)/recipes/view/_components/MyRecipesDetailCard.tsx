@@ -111,9 +111,43 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
         <Typography variant={"h6"} sx={{ mb: 2 }}>
           Notes
         </Typography>
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          {recipe?.notes}
-        </Typography>
+        {recipe?.notes ? (
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {recipe?.notes}
+          </Typography>
+        ) :
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            <em>None</em>
+          </Typography>
+        }
+      </Paper>
+      <Paper elevation={6} sx={{ p: 2, my: 2 }}>
+        {recipe?.nutrientSummaries && recipe?.nutrientSummaries.length > 0 && (
+          <>
+            <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
+              Nutrient Summary
+            </Typography>
+            <List dense>
+              {recipe?.nutrientSummaries.map((nutrient) => (
+                <ListItem
+                  key={nutrient.name}
+                  sx={{ py: 0.5 }}
+                  divider
+                >
+                  <Typography variant="body2">
+                    {nutrient.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ ml: "auto", fontWeight: "bold" }}
+                  >
+                    {nutrient.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} {nutrient.unit.abbreviation}
+                  </Typography>
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
       </Paper>
     </Paper>
   );
