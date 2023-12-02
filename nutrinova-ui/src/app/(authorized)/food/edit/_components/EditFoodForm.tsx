@@ -1,7 +1,7 @@
 'use client'
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '@/app/(authorized)/recipes/create/_components/ServingSizeUnitField'
 import TagInput from '@/components/forms/TagInput'
-import { Alert, Box, Button, Grid, TextField } from '@mui/material'
+import { Alert, Box, Button, Divider, Grid, TextField } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { EditFoodRequestModel } from '../_models/editFoodRequest'
 import { useEditFoodMutation, useGetFoodByIdQuery, useGetUnitsQuery } from "../../foodHooks";
@@ -247,16 +247,18 @@ export const EditFoodForm = ({ foodId }: Props) => {
           <AddNutrientDialog handleAddNutrient={handleAddNutrient} newNutrient={newNutrient} setNewNutrient={(newNutrient) => setNewNutrient(newNutrient)} />
           {(editFoodFormState.foodNutrients?.length === 0) && <Alert severity='warning'> Foods need at least one nutrient </Alert>}
           {editFoodFormState.foodNutrients?.map((fn, index) => (
-            <EditNutrientListItem
-              key={index}
-              nutrient={fn}
-              deleteNutrient={() => handleNutrientDelete(fn.nutrientId)}
-              updateNutrient={(amount: number) => handleNutrientAmountChange(fn.nutrientId, amount)}
-              inputOptions={{
-                error: !foodNutrientsAreValid,
-                helperText: !foodNutrientsAreValid ? "Nutrients must have a value greater than 0" : undefined,
-              }}
-            />
+            <>
+              <EditNutrientListItem
+                key={index}
+                nutrient={fn}
+                deleteNutrient={() => handleNutrientDelete(fn.nutrientId)}
+                updateNutrient={(amount: number) => handleNutrientAmountChange(fn.nutrientId, amount)}
+                inputOptions={{
+                  error: !foodNutrientsAreValid,
+                  helperText: !foodNutrientsAreValid ? "Nutrients must have a value greater than 0" : undefined,
+                }}
+              />
+            </>
           ))}
         </Grid>
       </Grid>

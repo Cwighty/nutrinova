@@ -111,9 +111,15 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
         <Typography variant={"h6"} sx={{ mb: 2 }}>
           Notes
         </Typography>
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          {recipe?.notes}
-        </Typography>
+        {recipe?.notes ? (
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {recipe?.notes}
+          </Typography>
+        ) :
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            <em>None</em>
+          </Typography>
+        }
       </Paper>
     </Paper>
   );
