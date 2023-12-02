@@ -152,44 +152,28 @@ public class RecipeController : ControllerBase
   public async Task<ActionResult<RecipeResponseModel>> GetRecipe(Guid id)
   {
     var recipe = await context.RecipePlans
-      .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
-      .FirstOrDefaultAsync(r => r.Id == id);
-
-    var recipeFoodNutrients = await context.RecipeFoods
-      .Include(rf => rf.Food)
-      .ThenInclude(f => f.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
-      .Include(rf => rf.Food)
-      .ThenInclude(f => f.FoodPlanNutrients)
-      .ThenInclude(fn => fn.Nutrient)
-      .ThenInclude(n => n.PreferredUnitNavigation)
-      .ThenInclude(u => u.Category)
-      .Where(rf => rf.RecipeId == id)
-      .ToListAsync();
-
-    foreach (var food in recipeFoodNutrients)
-    {
-      var foodUnit = await context.Units
-        .Include(u => u.Category)
-        .FirstOrDefaultAsync(u => u.Id == food.UnitId);
-      food.Food.ServingSizeUnitNavigation = foodUnit ?? throw new Exception("Invalid foodUnit id");
-    }
+        .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+                .ThenInclude(f => f.ServingSizeUnitNavigation)
+                    .ThenInclude(u => u.Category)
+        .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+                .ThenInclude(f => f.FoodPlanNutrients)
+                    .ThenInclude(fn => fn.Nutrient)
+                        .ThenInclude(n => n.PreferredUnitNavigation)
+                            .ThenInclude(u => u.Category)
+        .Include(r => r.ServingSizeUnitNavigation)
+            .ThenInclude(u => u.Category)
+        .FirstOrDefaultAsync(r => r.Id == id);
 
     if (recipe == null)
     {
       return NotFound();
     }
 
-    var recipeUnit = await context.Units
-      .Include(u => u.Category)
-      .FirstOrDefaultAsync(u => u.Id == recipe.ServingSizeUnit);
+    var summaries = recipeFoodTotaler.GetNutrientSummaries(recipe.RecipeFoods.ToList());
 
-    recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid recipeUnit id");
-    recipe.RecipeFoods = recipeFoodNutrients;
-    var recipeRes = recipe.ToRecipeResponseModel();
+    var recipeRes = recipe.ToRecipeResponseModel(summaries);
     return recipeRes;
   }
 

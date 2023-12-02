@@ -1,4 +1,5 @@
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+import { RecipeNutrientSummary } from "./recipeNutrientSummary";
 
 export interface Recipe {
   id: string;
@@ -9,6 +10,7 @@ export interface Recipe {
   servingsSizeUnit: number;
   unit: UnitOption;
   recipeFoods: Food[];
+  nutrientSummaries: RecipeNutrientSummary[];
 }
 
 export interface Food {
