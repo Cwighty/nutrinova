@@ -63,7 +63,11 @@ export const MealItemSelector: React.FC<Props> = ({
   onSelectItem
 }) => {
   return (
-    <Box>
+    <Box
+      sx={{
+        maxHeight: 'calc(100vh - 300px)',
+        overflowY: 'auto',
+      }}>
       <CustomAccordion title="Custom Foods">
         {customFoods.length === 0 && (
           <Typography variant="body2" color="text.secondary">

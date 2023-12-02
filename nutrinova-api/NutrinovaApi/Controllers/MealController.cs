@@ -21,13 +21,13 @@ public class MealController : ControllerBase
   }
 
   [HttpGet("searchFoodItems")]
-  public async Task<ActionResult<IEnumerable<MealSelectionItem>>> SearchFoodItems(string query)
+  public async Task<ActionResult<IEnumerable<MealSelectionItem>>> SearchFoodItems(string? query)
   {
     var mealSelectionItems = new List<MealSelectionItem>();
 
     var foodItems = await context.FoodPlans
       .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
-      .Where(f => f.Description.Contains(query))
+      .Where(f => query == null || f.Description.Contains(query))
       .Take(10)
       .ToListAsync();
 
@@ -42,7 +42,7 @@ public class MealController : ControllerBase
 
     var recipeItems = await context.RecipePlans
       .Include(r => r.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
-      .Where(r => r.Description != null && r.Description.Contains(query))
+      .Where(r => query == null || (r.Description != null && r.Description.Contains(query)))
       .Take(10)
       .ToListAsync();
 
