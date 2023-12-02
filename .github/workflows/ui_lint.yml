@@ -14,5 +14,5 @@ jobs:
       - name: Lint Frontend
         run: |
           cd nutrinova-ui/
-          docker build -t nutrinova_ui_lint -f lint.Dockerfile .
+          docker build --no-cache -t nutrinova_ui_lint -f lint.Dockerfile .
           docker run -i --rm nutrinova_ui_lint
