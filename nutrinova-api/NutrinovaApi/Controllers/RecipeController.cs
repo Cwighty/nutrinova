@@ -80,6 +80,7 @@ public class RecipeController : ControllerBase
       CreatedBy = customer.Id,
       CreatedAt = DateTime.UtcNow,
       Tags = tags,
+      Amount = createRecipeRequestModel.ServingSize,
       ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid unit id"),
       Notes = createRecipeRequestModel.Notes,
       RecipeFoods = createRecipeRequestModel.RecipeFoods.Select(rf => new RecipeFood
