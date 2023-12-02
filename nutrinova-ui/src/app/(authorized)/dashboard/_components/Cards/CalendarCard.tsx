@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import GenericCard from './GenericCard';
 import { CalendarToday } from '@mui/icons-material';
