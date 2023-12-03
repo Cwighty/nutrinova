@@ -30,5 +30,5 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # RUN yarn build
 
 # If using npm comment out above and use below instead
-RUN npm ci npm@latest
+RUN npm install -g npm@latest
 RUN npm run lint 
