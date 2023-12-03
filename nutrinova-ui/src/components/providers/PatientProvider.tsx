@@ -6,6 +6,7 @@ import { useGetAllPatientsQuery } from '@/app/(authorized)/patients/patientHooks
 export interface PatientContextProps {
   patients: Patient[] | undefined;
   selectedPatient: Patient | null;
+  selectedPatientName: string;
   setSelectedPatient: (patient: Patient | null) => void;
   isLoading: boolean;
   isError: boolean;
@@ -27,6 +28,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   const contextValue = useMemo(() => ({
     patients,
     selectedPatient,
+    selectedPatientName: selectedPatient?.firstname ?? '' + ' ' + selectedPatient?.lastname ?? '',
     setSelectedPatient,
     isLoading,
     isError

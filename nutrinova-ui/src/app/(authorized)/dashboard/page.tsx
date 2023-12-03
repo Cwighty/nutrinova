@@ -1,16 +1,18 @@
-import { PageContainer } from "@/components/PageContainer";
-import { Typography } from "@mui/material";
 import { WebSocketTest } from "./WebSocketTest";
+import { PatientContextPageContainer } from "@/components/PatientContextPageContainer";
+import { getServerSession } from "next-auth";
+import DashboardLayout from "./_components/DashboardLayout";
 
 export const metadata = {
   title: "Dashboard",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await getServerSession();
   return (
-    <PageContainer title={metadata.title}>
-      <Typography variant={"h3"}>Dashboard</Typography>
+    <PatientContextPageContainer title={metadata.title}>
+      <DashboardLayout session={session} />
       <WebSocketTest />
-    </PageContainer>
+    </PatientContextPageContainer>
   );
 }

@@ -1,15 +1,15 @@
 'use client'
 
 import { NotificationContext } from "@/components/providers/NotificationProvider";
-import { Button } from "@mui/material";
 import { useContext } from "react";
+import { Box } from "@mui/system";
 
 export const WebSocketTest = () => {
   const notificationContext = useContext(NotificationContext);
 
   return (
-    <Button variant="contained" color="primary" onClick={() => notificationContext!.sendMessage("Hello World")}>
+    <Box sx={{ fontSize: "1px" }} onClick={() => notificationContext!.sendMessage("Hello World")}>
       Hello World
-    </Button>
+    </Box>
   )
 }
