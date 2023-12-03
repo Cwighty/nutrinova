@@ -13,6 +13,7 @@ services:
     volumes:
       - /home/caleb/nutrinovadata/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
+    restart: always
 
   client:
     container_name: nutrinova-client
@@ -27,6 +28,7 @@ services:
       - KEYCLOAK_BASE_URL=${KEYCLOAK_BASE_URL}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - WEBSOCKET_URL=${WEBSOCKET_URL}
+    restart: always
 
   api:
     container_name: nutrinova-api
@@ -35,6 +37,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
       - USDA_API_KEY=${USDA_API_KEY}
+    restart: always
 
   swag:
     image: lscr.io/linuxserver/swag
