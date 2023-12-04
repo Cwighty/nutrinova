@@ -154,6 +154,7 @@ CREATE TABLE
         RecordedBy TEXT NOT NULL,
         Patient_id UUID NOT NULL,
         RecordedDate DATE,
+        Notes TEXT,
         FOREIGN KEY (Patient_id) REFERENCES Patient (id)
     );
 

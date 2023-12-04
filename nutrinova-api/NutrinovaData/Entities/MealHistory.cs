@@ -13,6 +13,8 @@ public partial class MealHistory
 
   public DateOnly? Recordeddate { get; set; }
 
+  public string? Notes { get; set; }
+
   public virtual ICollection<MealFoodHistory> MealFoodHistories { get; set; } = new List<MealFoodHistory>();
 
   public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
