@@ -154,6 +154,9 @@ public class RecipeController : ControllerBase
   {
     var recipe = await context.RecipePlans
         .Include(r => r.RecipeFoods)
+            .ThenInclude(u => u.Unit)
+                .ThenInclude(u => u.Category)
+        .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Food)
                 .ThenInclude(f => f.ServingSizeUnitNavigation)
                     .ThenInclude(u => u.Category)

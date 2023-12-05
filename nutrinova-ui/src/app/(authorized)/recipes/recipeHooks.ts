@@ -95,6 +95,7 @@ const getRecipeById = async (recipeId: string): Promise<Recipe> => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     unit: response.data?.unit as UnitOption,
   } as Recipe;
+  console.log("here is the recipe", recipe);
   return recipe;
 };
 
