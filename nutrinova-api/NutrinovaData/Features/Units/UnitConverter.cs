@@ -8,7 +8,7 @@ public class UnitConverter : IUnitConverter
     {
         { "gram", 1 }, // base unit for weight is grams
         { "kilogram", 1000 },
-        { "miligram", 0.001M },
+        { "milligram", 0.001M },
         { "microgram", 0.000001M },
         { "ounce", 28.3495M },
         { "pound", 453.592M },
@@ -84,9 +84,14 @@ public class UnitConverter : IUnitConverter
     // Determine the type of unit and use the appropriate conversion dictionary
     var conversionDict = weightConversions.ContainsKey(fromUnit) ? weightConversions : volumeConversions;
 
-    if (!conversionDict.ContainsKey(fromUnit) || !conversionDict.ContainsKey(toUnit))
+    if (!conversionDict.ContainsKey(fromUnit))
     {
-      throw new ArgumentException("Invalid unit");
+      throw new ArgumentException($"Invalid unit from unit {fromUnit}");
+    }
+
+    if (!conversionDict.ContainsKey(toUnit))
+    {
+      throw new ArgumentException($"Invalid unit to unit {toUnit}");
     }
 
     decimal valueInBaseUnit = value * conversionDict[fromUnit];
