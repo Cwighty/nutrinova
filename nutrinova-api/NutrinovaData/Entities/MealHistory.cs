@@ -11,7 +11,7 @@ public partial class MealHistory
 
     public Guid PatientId { get; set; }
 
-    public DateTime? RecordedAt { get; set; }
+    public DateTime RecordedAt { get; set; }
 
     public string? Notes { get; set; }
 

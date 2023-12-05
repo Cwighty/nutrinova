@@ -139,7 +139,7 @@ public class MealController : ControllerBase
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
         RecordedBy = User.Identity!.Name!,
-        RecordedAt = recordMealRequest.RecordedDate.Date,
+        RecordedAt = recordMealRequest.RecordedAt,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
