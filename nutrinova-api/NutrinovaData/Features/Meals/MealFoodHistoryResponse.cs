@@ -1,4 +1,5 @@
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Foods;
 using NutrinovaData.ResponseModels;
 
 namespace NutrinovaData.Features.Meals;
@@ -11,7 +12,7 @@ public class MealFoodHistoryResponse
 
   public Guid FoodId { get; set; }
 
-  public decimal Amount { get; set; }
+  public decimal? Amount { get; set; }
 
-  public virtual FoodResponse FoodResponse { get; set; } = null!;
+  public virtual FoodHistoryResponse FoodResponse { get; set; } = null!;
 }

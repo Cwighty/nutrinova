@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
 using NutrinovaData.Features.Meals;
 
 namespace NutrinovaApi.Controllers;
@@ -81,8 +82,14 @@ public class MealController : ControllerBase
     }
 
     var mealHistories = await context.MealHistories
-      .Include(m => m.MealFoodHistories).ThenInclude(m => m.Food).ThenInclude(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
-      .Include(m => m.MealRecipeHistories).ThenInclude(m => m.RecipeHistory).ThenInclude(r => r.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .Include(m => m.MealFoodHistories)
+        .ThenInclude(m => m.Food)
+        .ThenInclude(f => f.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories)
+        .ThenInclude(m => m.RecipeHistory)
+        .ThenInclude(r => r.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
       .Where(m => m.Patient.CustomerId == customer.Id && m.RecordedAt >= beginDate.Date && m.RecordedAt <= endDate.Date)
       .ToListAsync();
 
@@ -99,15 +106,15 @@ public class MealController : ControllerBase
         MealHistoryId = mfh.MealHistoryId,
         FoodId = mfh.FoodId,
         Amount = mfh.Amount,
-        FoodResponse = mfh.Food,
+        FoodResponse = mfh.Food.ToFoodHistoryResponse(),
       }).ToList(),
       MealRecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new MealRecipeHistoryResponse
       {
         Id = mrh.Id,
         MealHistoryId = mrh.MealHistoryId,
-        RecipeId = mrh.RecipeId,
+        RecipeHistoryId = mrh.RecipeHistoryId,
         Amount = mrh.Amount,
-        Recipe = mrh.Recipe.ToRecipePlan(),
+        RecipeHistoryResponse = mrh.RecipeHistory.ToRecipeHistoryResponse(),
       }).ToList(),
     });
 
@@ -132,7 +139,7 @@ public class MealController : ControllerBase
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
         RecordedBy = User.Identity!.Name!,
-        RecordedDate = DateOnly.FromDateTime(recordMealRequest.RecordedDate.Date),
+        RecordedAt = recordMealRequest.RecordedDate.Date,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
