@@ -65,14 +65,15 @@ const fetchFoodsForUser = async (
     additionalHeaders: {},
     origin: "client",
   });
-
   const response = await apiClient.get(
-    `/food/all-foods?filterOption=${foodSearchParameters.foodSearchTerm}
-    &nutrientFilterValue=${foodSearchParameters?.nutrientValue ?? 0}
-    &nutrientFilterOperator=${foodSearchParameters?.comparisonOperator ?? ""}
-    &nutrientFilter=${foodSearchParameters?.nutrientSearchTerm?.description ?? ""
+    `/food/all-foods`, {
+    params: {
+      "filterOption": foodSearchParameters.foodSearchTerm,
+      "nutrientFilterValue": foodSearchParameters?.nutrientValue ?? 0,
+      "nutrientFilterOperator": foodSearchParameters?.comparisonOperator ?? "",
+      "nutrientFilter": foodSearchParameters?.nutrientSearchTerm?.description ?? ""
     }
-    `
+  }
   );
   return response.data as FoodSearchResult[];
 };

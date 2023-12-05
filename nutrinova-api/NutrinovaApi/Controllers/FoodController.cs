@@ -83,7 +83,7 @@ public class FoodController : ControllerBase
         return new List<FlattenedFood>();
       }
 
-      var simplifiedFoods = deserRes.foods.Select(f => f.MakeFlattenedFood(onlyPrimaryNutrients: true)).ToList();
+      var simplifiedFoods = deserRes.foods.Select(f => f.MakeFlattenedFood()).ToList();
       return simplifiedFoods;
     }
     catch (HttpRequestException ex)
@@ -272,9 +272,12 @@ public class FoodController : ControllerBase
       }
 
       var result = await context.FoodPlans
-        .Include(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+        .Include(fp => fp.ServingSizeUnitNavigation)
+          .ThenInclude(u => u.Category)
         .Include(fp => fp.FoodPlanNutrients) // Include the related nutrients
-        .ThenInclude(fpn => fpn.Nutrient).ThenInclude(n => n.PreferredUnitNavigation).ThenInclude(u => u.Category)
+          .ThenInclude(fpn => fpn.Nutrient)
+            .ThenInclude(n => n.PreferredUnitNavigation)
+              .ThenInclude(u => u.Category)
         .FirstOrDefaultAsync(fp => fp.CreatedBy == customer.Id && fp.Id.ToString() == foodId);
       if (result == null)
       {

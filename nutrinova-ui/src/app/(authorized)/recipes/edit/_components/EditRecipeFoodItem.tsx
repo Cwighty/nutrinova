@@ -37,7 +37,7 @@ export const EditRecipeFoodItem = ({ food, deleteFood, updateFood, inputOptions 
           onChange={handleNutrientAmountChange}
           InputProps={{
             inputProps: { min: 0 },
-            endAdornment: <InputAdornment position="end">{food.unitName}</InputAdornment>,
+            endAdornment: <InputAdornment position="end">{food.unit?.abbreviation}</InputAdornment>,
           }}
         />
       </Grid>

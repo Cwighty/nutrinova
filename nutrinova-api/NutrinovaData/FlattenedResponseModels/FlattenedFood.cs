@@ -57,18 +57,8 @@ public class FlattenedFood
     this.ServingSizeUnit = foodResponse?.servingSizeUnit;
     this.UnitCategoryId = foodResponse?.UnitCategoryId;
     this.ServingSizeWithUnits = $"{foodResponse?.servingSize} {foodResponse?.servingSizeUnit}";
-    if (onlyPrimaryNutrients)
-    {
-      this.FoodNutrients = foodResponse?.foodNutrients
-          .Where(fn => fn.IsPrimaryFoodNutrient())
-          .Select(pfn => pfn.MakeFlattenedFoodNutrient())
-          .ToList();
-    }
-    else
-    {
-      this.FoodNutrients = foodResponse?.foodNutrients
-         .Select(pfn => pfn.MakeFlattenedFoodNutrient())
-         .ToList();
-    }
+    this.FoodNutrients = foodResponse?.foodNutrients
+       .Select(pfn => pfn.MakeFlattenedFoodNutrient())
+       .ToList();
   }
 }

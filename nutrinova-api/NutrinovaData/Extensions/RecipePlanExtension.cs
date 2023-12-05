@@ -30,7 +30,7 @@ public static class RecipePlanExtension
       Notes = recipePlan.Notes,
       Amount = recipePlan.Amount,
       ServingSizeUnit = recipePlan.ServingSizeUnit,
-      RecipeFoods = recipePlan.RecipeFoods.Select(rf => rf.Food.ToFood()).ToList(),
+      RecipeFoods = recipePlan.RecipeFoods.Select(rf => rf.ToFood()).ToList(),
       NutrientSummaries = nutrientSummaries,
       Unit = recipePlan.ServingSizeUnitNavigation.ToUnitOption(),
     };

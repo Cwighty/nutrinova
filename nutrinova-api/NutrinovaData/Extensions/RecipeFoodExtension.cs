@@ -14,8 +14,9 @@ public static class RecipeFoodExtension
       ingredients = recipeFood.Food.Ingredients ?? string.Empty,
       note = recipeFood.Food.Note ?? string.Empty,
       unitId = recipeFood.UnitId,
-      servingSize = recipeFood.Food.ServingSize,
-      servingSizeUnit = recipeFood.Food.ServingSizeUnitNavigation.Abbreviation,
+      servingSize = recipeFood.Amount,
+      unit = recipeFood.Unit.ToUnitOption(),
+      servingSizeUnit = recipeFood.Unit.Abbreviation,
     };
   }
 }
