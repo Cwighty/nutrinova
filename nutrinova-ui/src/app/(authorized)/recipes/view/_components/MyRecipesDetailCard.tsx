@@ -72,7 +72,7 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
                         query: { foodId: food.id },
                       }}
                     >
-                      <ListItemText primary={food.description} />
+                      <ListItemText primary={`${food.description}: ${food.servingSize} ${food.servingSizeUnit}`} />
                     </ListItemButton>
                   </ListItem>
                   <Divider />
