@@ -278,8 +278,10 @@ public partial class NutrinovaDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.PatientId).HasColumnName("patient_id");
-            entity.Property(e => e.Recordedby).HasColumnName("recordedby");
-            entity.Property(e => e.Recordeddate).HasColumnName("recordeddate");
+            entity.Property(e => e.RecordedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("recordedat");
+            entity.Property(e => e.RecordedBy).HasColumnName("recordedby");
 
             entity.HasOne(d => d.Patient).WithMany(p => p.MealHistories)
                 .HasForeignKey(d => d.PatientId)

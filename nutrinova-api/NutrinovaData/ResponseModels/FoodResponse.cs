@@ -2,7 +2,7 @@ using NutrinovaData.FlattenedResponseModels;
 
 namespace NutrinovaData.ResponseModels;
 
-public class Food
+public class FoodResponse
 {
   public int fdcId { get; set; }
 

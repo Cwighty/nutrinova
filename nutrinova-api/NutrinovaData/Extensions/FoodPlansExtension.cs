@@ -11,7 +11,7 @@ public static class FoodPlansExtension
     return new FlattenedFood(foodPlan);
   }
 
-  public static Food ToFood(this FoodPlan foodPlan)
+  public static FoodResponse ToFood(this FoodPlan foodPlan)
   {
     if (foodPlan.ServingSizeUnitNavigation == null)
     {
@@ -23,7 +23,7 @@ public static class FoodPlansExtension
       throw new Exception($"Please include {nameof(FoodPlan.ServingSizeUnitNavigation.Category)} in the model");
     }
 
-    return new Food()
+    return new FoodResponse()
     {
       fdcId = foodPlan.Fdcid ?? 0,
       id = foodPlan.Id,

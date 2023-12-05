@@ -71,6 +71,49 @@ public class MealController : ControllerBase
     return Ok(mealHistory);
   }
 
+  [HttpGet("getMealHistory")]
+  public async Task<ActionResult<IEnumerable<MealHistoryResponse>>> GetMealHistory(DateTime beginDate, DateTime endDate)
+  {
+    Customer? customer = await GetCustomer();
+    if (customer is null)
+    {
+      return Unauthorized();
+    }
+
+    var mealHistories = await context.MealHistories
+      .Include(m => m.MealFoodHistories).ThenInclude(m => m.Food).ThenInclude(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories).ThenInclude(m => m.RecipeHistory).ThenInclude(r => r.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .Where(m => m.Patient.CustomerId == customer.Id && m.RecordedAt >= beginDate.Date && m.RecordedAt <= endDate.Date)
+      .ToListAsync();
+
+    var mealHistoryResponses = mealHistories.Select(m => new MealHistoryResponse
+    {
+      Id = m.Id,
+      PatientId = m.PatientId,
+      RecordedAt = m.RecordedAt,
+      RecordedBy = m.RecordedBy,
+      Notes = m.Notes,
+      MealFoodHistoryResponses = m.MealFoodHistories.Select(mfh => new MealFoodHistoryResponse
+      {
+        Id = mfh.Id,
+        MealHistoryId = mfh.MealHistoryId,
+        FoodId = mfh.FoodId,
+        Amount = mfh.Amount,
+        FoodResponse = mfh.Food,
+      }).ToList(),
+      MealRecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new MealRecipeHistoryResponse
+      {
+        Id = mrh.Id,
+        MealHistoryId = mrh.MealHistoryId,
+        RecipeId = mrh.RecipeId,
+        Amount = mrh.Amount,
+        Recipe = mrh.Recipe.ToRecipePlan(),
+      }).ToList(),
+    });
+
+    return Ok(mealHistoryResponses);
+  }
+
   [HttpPost]
   public async Task<ActionResult> AddMeal(RecordMealRequest recordMealRequest)
   {
@@ -88,8 +131,8 @@ public class MealController : ControllerBase
       {
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
-        Recordedby = User.Identity!.Name!,
-        Recordeddate = DateOnly.FromDateTime(recordMealRequest.RecordedDate.Date),
+        RecordedBy = User.Identity!.Name!,
+        RecordedDate = DateOnly.FromDateTime(recordMealRequest.RecordedDate.Date),
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())

@@ -5,9 +5,9 @@ namespace NutrinovaData.Extensions;
 
 public static class RecipeFoodExtension
 {
-  public static Food ToFood(this RecipeFood recipeFood)
+  public static FoodResponse ToFood(this RecipeFood recipeFood)
   {
-    return new Food
+    return new FoodResponse
     {
       id = recipeFood.FoodId,
       description = recipeFood.Food.Description,

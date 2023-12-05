@@ -118,7 +118,7 @@ public class FoodController : ControllerBase
         return StatusCode((int)res.StatusCode); // or you can return a custom error message
       }
 
-      var deserRes = await res.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
+      var deserRes = await res.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
       {
         PropertyNameCaseInsensitive = true,
       });
@@ -257,7 +257,7 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("food-details/{foodId}")]
-  public async Task<ActionResult<Food>> RetrieveFoodForUserById(
+  public async Task<ActionResult<FoodResponse>> RetrieveFoodForUserById(
     string? foodId = null)
   {
     try
@@ -399,7 +399,7 @@ public class FoodController : ControllerBase
 
       Console.WriteLine($"ImportFood, {await result.Content.ReadAsStringAsync()}");
 
-      var deserializedResult = await result.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
+      var deserializedResult = await result.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
       {
         PropertyNameCaseInsensitive = true,
       });
