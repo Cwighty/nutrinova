@@ -5,7 +5,6 @@ import { useNotification } from "@/components/providers/NotificationProvider";
 import { MealSelectionItem } from "./record/_models/mealSelectionItem";
 import { RecordMealRequest } from "./record/_models/recordMealRequest";
 import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
-import { DateTime } from "next-auth/providers/kakao";
 
 export const mealKeys = {
   all: "meals",
@@ -13,13 +12,6 @@ export const mealKeys = {
   details: "mealDetails",
 };
 
-// interface MealHistory {
-//   // Define properties based on your MealHistory entity
-// }
-
-// Define other interfaces as needed for your meal operations
-
-// Function to search for meal items
 const searchMealItems = async (query: string): Promise<MealSelectionItem[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
@@ -38,24 +30,6 @@ export const useSearchMealItemsQuery = (query: string) => {
   });
 };
 
-// // Function to get meal details by ID
-// const getMealById = async (id: string): Promise<MealHistory> => {
-//   const apiClient = await createAuthenticatedAxiosInstanceFactory({
-//     additionalHeaders: {},
-//     origin: 'client',
-//   });
-//   const response = await apiClient.get(`/meal/${id}`);
-//   return response.data;
-// };
-
-// export const useGetMealByIdQuery = (id: string) => {
-//   return useQuery({
-//     queryKey: [mealKeys.details, id],
-//     queryFn: () => getMealById(id),
-//   });
-// };
-
-// Function to add a meal
 const addMeal = async (recordMealRequest: RecordMealRequest): Promise<void> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},

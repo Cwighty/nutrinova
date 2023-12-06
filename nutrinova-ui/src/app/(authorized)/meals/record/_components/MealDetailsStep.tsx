@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { Box, Button, Typography, Grid } from "@mui/material";
 import { useAddMealMutation } from "../../mealHooks";
 import { MealSelectionItem } from "../_models/mealSelectionItem";
@@ -17,10 +17,10 @@ interface MealDetailsProps {
   setActiveStep: (step: number) => void;
 }
 
-export const MealDetailsStep: React.FC<MealDetailsProps> = ({
+export const MealDetailsStep = ({
   selectedFood,
   setActiveStep,
-}) => {
+}: MealDetailsProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [unit, setUnit] = useState<UnitOption>({
     description: "",
@@ -37,7 +37,7 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({
     " " +
     patientContext.selectedPatient?.lastname;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (recordedAt) {
       const recordMealRequest: RecordMealRequest = {

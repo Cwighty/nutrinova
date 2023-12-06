@@ -8,7 +8,6 @@ import {
   Button,
   List,
   Paper,
-  Skeleton,
   Slide,
   Typography,
 } from "@mui/material";
