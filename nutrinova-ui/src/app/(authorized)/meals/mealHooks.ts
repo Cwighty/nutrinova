@@ -1,16 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import createAuthenticatedAxiosInstanceFactory from '@/services/axiosRequestFactory';
-import { useNotification } from '@/components/providers/NotificationProvider';
-import { MealSelectionItem } from './record/_models/mealSelectionItem';
-import { RecordMealRequest } from './record/_models/recordMealRequest';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
+import { useNotification } from "@/components/providers/NotificationProvider";
+import { MealSelectionItem } from "./record/_models/mealSelectionItem";
+import { RecordMealRequest } from "./record/_models/recordMealRequest";
+import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
+import { DateTime } from "next-auth/providers/kakao";
 
 export const mealKeys = {
-  all: 'meals',
-  search: 'searchMeals',
-  details: 'mealDetails',
+  all: "meals",
+  search: "searchMeals",
+  details: "mealDetails",
 };
-
 
 // interface MealHistory {
 //   // Define properties based on your MealHistory entity
@@ -22,9 +23,11 @@ export const mealKeys = {
 const searchMealItems = async (query: string): Promise<MealSelectionItem[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
-    origin: 'client',
+    origin: "client",
   });
-  const response = await apiClient.get<MealSelectionItem[]>(`/meal/searchFoodItems?query=${query}`);
+  const response = await apiClient.get<MealSelectionItem[]>(
+    `/meal/searchFoodItems?query=${query}`,
+  );
   return response.data;
 };
 
@@ -56,9 +59,9 @@ export const useSearchMealItemsQuery = (query: string) => {
 const addMeal = async (recordMealRequest: RecordMealRequest): Promise<void> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
-    origin: 'client',
+    origin: "client",
   });
-  await apiClient.post('/meal', recordMealRequest);
+  await apiClient.post("/meal", recordMealRequest);
 };
 
 export const useAddMealMutation = () => {
@@ -68,12 +71,33 @@ export const useAddMealMutation = () => {
   return useMutation({
     mutationFn: addMeal,
     onSuccess: async () => {
-      notificationContext.sendMessage('Meal recorded successfully');
+      notificationContext.sendMessage("Meal recorded successfully");
       await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
     },
     onError: (error: Error) => {
       toast.error(`Error recording meal: ${error.message}`);
       console.error(error);
     },
+  });
+};
+
+const getMealHistory = async (
+  beginDate: Date,
+  endDate: Date,
+): Promise<Meal[]> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.get<Meal[]>("/Meal/getMealHistory", {
+    params: { beginDate, endDate },
+  });
+  return response.data;
+};
+
+export const useGetMealHistoryQuery = (startTime: Date, endTime: Date) => {
+  return useQuery({
+    queryKey: [mealKeys.all, startTime, endTime],
+    queryFn: () => getMealHistory(startTime, endTime),
   });
 };

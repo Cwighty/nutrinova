@@ -73,15 +73,6 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({
               onChange={(e: Date | null) => setRecordedAt(e)}
             />
           </LocalizationProvider>
-          {/*<TextField*/}
-          {/*  type="date"*/}
-          {/*  label="Recorded Date"*/}
-          {/*  value={recordedAt?.toJSON()?.slice(0, 10)}*/}
-          {/*  onChange={(e) => setRecordedDate(new Date(e.target.value))}*/}
-          {/*  fullWidth*/}
-          {/*  required*/}
-          {/*  helperText={!recordedAt && "Date is required"}*/}
-          {/*/>*/}
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="caption">Selected Patient</Typography>
