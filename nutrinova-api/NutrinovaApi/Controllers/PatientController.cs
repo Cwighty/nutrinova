@@ -22,7 +22,7 @@ public class PatientController : ControllerBase
     public async Task<ActionResult> GetAllPatients()
     {
         var userObjectId = User.GetObjectIdFromClaims();
-        var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
+        var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
 
         if (customer == null)
         {
@@ -41,7 +41,7 @@ public class PatientController : ControllerBase
     public async Task<ActionResult> CreatePatient([FromBody] Patient patient)
     {
         var userObjectId = User.GetObjectIdFromClaims();
-        var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
+        var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
 
         if (customer == null)
         {
@@ -62,7 +62,7 @@ public class PatientController : ControllerBase
     public async Task<ActionResult<Patient>> GetPatient(Guid id)
     {
         var userObjectId = User.GetObjectIdFromClaims();
-        var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
+        var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
 
         if (customer == null)
         {

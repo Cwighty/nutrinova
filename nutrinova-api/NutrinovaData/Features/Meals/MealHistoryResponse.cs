@@ -8,7 +8,7 @@ public class MealHistoryResponse
 {
     public Guid Id { get; set; }
 
-    public string RecordedBy { get; set; } = null!;
+    public string Recordedby { get; set; } = null!;
 
     public Guid PatientId { get; set; }
 

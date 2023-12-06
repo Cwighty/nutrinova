@@ -103,7 +103,7 @@ public class MealController : ControllerBase
       Id = m.Id,
       PatientId = m.PatientId,
       RecordedAt = m.RecordedAt,
-      RecordedBy = m.RecordedBy,
+      Recordedby = m.RecordedBy,
       Notes = m.Notes,
       FoodHistoryResponses = m.MealFoodHistories.Select(mfh => new FoodHistoryResponse
       {
@@ -243,7 +243,7 @@ public class MealController : ControllerBase
   private async Task<Customer?> GetCustomer()
   {
     var userObjectId = User.GetObjectIdFromClaims();
-    var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
+    var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
     return customer;
   }
 }

@@ -159,7 +159,7 @@ public class FoodController : ControllerBase
     {
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
 
       if (customer?.Id is null)
       {
@@ -264,7 +264,7 @@ public class FoodController : ControllerBase
     {
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
 
       if (customer?.Id is null)
       {
@@ -336,7 +336,7 @@ public class FoodController : ControllerBase
     var userObjectId = User.GetObjectIdFromClaims();
     Console.WriteLine($"User id: {userObjectId}");
 
-    var customer = context.Customers.FirstOrDefault(c => c.ObjectId == userObjectId);
+    var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
 
     if (customer == null)
     {
@@ -415,7 +415,7 @@ public class FoodController : ControllerBase
 
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
 
       var foodPlan = new FoodPlan
       {
@@ -490,7 +490,7 @@ public class FoodController : ControllerBase
 
     var userObjectId = User.GetObjectIdFromClaims();
 
-    var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
 
     if (customer == null)
     {

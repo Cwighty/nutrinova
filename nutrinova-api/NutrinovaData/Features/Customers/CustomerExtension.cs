@@ -9,7 +9,7 @@ public static class CustomerExtension
     return new CustomerResponse
     {
       Id = customer.Id,
-      ObjectId = customer.ObjectId,
+      ObjectId = customer.Objectid,
       Email = customer.Email,
       CreatedAt = customer.CreatedAt,
     };

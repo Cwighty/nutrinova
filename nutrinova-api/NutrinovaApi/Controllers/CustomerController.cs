@@ -20,7 +20,7 @@ public class CustomerController : ControllerBase
   public ActionResult<bool> UserExists([FromQuery] string id)
   {
     logger.LogInformation("Checking if user exists...");
-    var exists = context.Customers.Any(c => c.ObjectId == id);
+    var exists = context.Customers.Any(c => c.Objectid == id);
     logger.LogInformation($"User exists: {exists}");
     return exists;
   }
@@ -29,7 +29,7 @@ public class CustomerController : ControllerBase
   public async Task<IActionResult> CreateUser(Customer customer)
   {
     logger.LogInformation("Creating user...");
-    if (context.Customers.Any(c => c.ObjectId == customer.ObjectId))
+    if (context.Customers.Any(c => c.Objectid == customer.Objectid))
     {
       logger.LogInformation("User already exists");
       return BadRequest("User already exists");
