@@ -11,7 +11,7 @@ public class TestCustomer : ITestDbInitializer
         return new Customer
         {
             Id = Id,
-            Objectid = ObjectId,
+            ObjectId = ObjectId,
             Email = "test@email.com",
         };
     }

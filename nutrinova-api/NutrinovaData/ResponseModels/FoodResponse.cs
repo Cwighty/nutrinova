@@ -4,39 +4,39 @@ namespace NutrinovaData.ResponseModels;
 
 public class FoodResponse
 {
-  public int fdcId { get; set; }
+  public int FdcId { get; set; }
 
-  public Guid? id { get; set; }
+  public Guid? Id { get; set; }
 
-  public string description { get; set; }
+  public string Description { get; set; }
 
-  public string ingredients { get; set; }
+  public string Ingredients { get; set; }
 
-  public string note { get; set; }
+  public string Note { get; set; }
 
-  public string dataType { get; set; }
+  public string DataType { get; set; }
 
-  public string publishedDate { get; set; }
+  public string PublishedDate { get; set; }
 
-  public double unitId { get; set; }
+  public double UnitId { get; set; }
 
   public double UnitCategoryId { get; set; }
 
-  public string brandOwner { get; set; }
+  public string BrandOwner { get; set; }
 
-  public string brandName { get; set; }
+  public string BrandName { get; set; }
 
-  public decimal servingSize { get; set; }
+  public decimal ServingSize { get; set; }
 
-  public string servingSizeUnit { get; set; }
+  public string ServingSizeUnit { get; set; }
 
-  public string? servingSizeUnitCategory { get; set; }
+  public string? ServingSizeUnitCategory { get; set; }
 
-  public string servingSizeWithUnits { get; set; }
+  public string ServingSizeWithUnits { get; set; }
 
-  public UnitOption? unit { get; set; }
+  public UnitOption? Unit { get; set; }
 
-  public List<FoodNutrient> foodNutrients { get; set; }
+  public List<FoodNutrient> FoodNutrients { get; set; }
 
   public FlattenedFood MakeFlattenedFood() => new FlattenedFood(this);
 }

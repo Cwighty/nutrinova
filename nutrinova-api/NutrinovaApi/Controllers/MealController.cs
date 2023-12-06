@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
-using NutrinovaData.Extensions;
+using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Meals;
+using NutrinovaData.Features.Patients;
+using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaApi.Controllers;
 
@@ -12,8 +14,8 @@ namespace NutrinovaApi.Controllers;
 [Route("/be/[controller]")]
 public class MealController : ControllerBase
 {
-  private readonly ILogger<MealController> logger;
   private readonly NutrinovaDbContext context;
+  private readonly ILogger<MealController> logger;
 
   public MealController(ILogger<MealController> logger, NutrinovaDbContext context)
   {
@@ -75,7 +77,7 @@ public class MealController : ControllerBase
   [HttpGet("getMealHistory")]
   public async Task<ActionResult<IEnumerable<MealHistoryResponse>>> GetMealHistory(DateTime beginDate, DateTime endDate)
   {
-    Customer? customer = await GetCustomer();
+    var customer = await GetCustomer();
     if (customer is null)
     {
       return Unauthorized();
@@ -83,13 +85,16 @@ public class MealController : ControllerBase
 
     var mealHistories = await context.MealHistories
       .Include(m => m.MealFoodHistories)
-        .ThenInclude(m => m.Food)
-        .ThenInclude(f => f.ServingSizeUnitNavigation)
-        .ThenInclude(u => u.Category)
+      .ThenInclude(m => m.Food)
+      .ThenInclude(f => f.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
       .Include(m => m.MealRecipeHistories)
-        .ThenInclude(m => m.RecipeHistory)
-        .ThenInclude(r => r.ServingSizeUnitNavigation)
-        .ThenInclude(u => u.Category)
+      .ThenInclude(m => m.RecipeHistory)
+      .ThenInclude(r => r.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category).Include(mealHistory => mealHistory.MealRecipeHistories)
+      .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
+      .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
+      .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food).Include(mealHistory => mealHistory.Patient)
       .Where(m => m.Patient.CustomerId == customer.Id && m.RecordedAt >= beginDate.Date && m.RecordedAt <= endDate.Date)
       .ToListAsync();
 
@@ -100,22 +105,44 @@ public class MealController : ControllerBase
       RecordedAt = m.RecordedAt,
       RecordedBy = m.RecordedBy,
       Notes = m.Notes,
-      MealFoodHistoryResponses = m.MealFoodHistories.Select(mfh => new MealFoodHistoryResponse
+      FoodHistoryResponses = m.MealFoodHistories.Select(mfh => new FoodHistoryResponse
       {
         Id = mfh.Id,
-        MealHistoryId = mfh.MealHistoryId,
-        FoodId = mfh.FoodId,
-        Amount = mfh.Amount,
-        FoodResponse = mfh.Food.ToFoodHistoryResponse(),
+        Fdcid = mfh.Food.Fdcid,
+        Description = mfh.Food.Description,
+        BrandName = mfh.Food.BrandName,
+        Ingredients = mfh.Food.Ingredients,
+        CreatedBy = mfh.Food.CreatedBy,
+        CreatedAt = mfh.Food.CreatedAt,
+        ServingSize = mfh.Food.ServingSize,
+        ServingSizeUnit = mfh.Food.ServingSizeUnit,
+        Note = mfh.Food.Note,
       }).ToList(),
-      MealRecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new MealRecipeHistoryResponse
+      RecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
       {
         Id = mrh.Id,
-        MealHistoryId = mrh.MealHistoryId,
-        RecipeHistoryId = mrh.RecipeHistoryId,
-        Amount = mrh.Amount,
-        RecipeHistoryResponse = mrh.RecipeHistory.ToRecipeHistoryResponse(),
+        Description = mrh.RecipeHistory.Description,
+        Tags = mrh.RecipeHistory.Tags,
+        Notes = mrh.RecipeHistory.Notes,
+        Amount = mrh.RecipeHistory.Amount,
+        ServingSizeUnit = mrh.RecipeHistory.ServingSizeUnit,
+        CreatedAt = mrh.RecipeHistory.CreatedAt,
+        CreatedBy = mrh.RecipeHistory.CreatedBy,
+        FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
+        {
+          Id = rfh.Id,
+          Fdcid = rfh.Food.Fdcid,
+          Description = rfh.Food.Description,
+          BrandName = rfh.Food.BrandName,
+          Ingredients = rfh.Food.Ingredients,
+          CreatedBy = rfh.Food.CreatedBy,
+          CreatedAt = rfh.Food.CreatedAt,
+          ServingSize = rfh.Food.ServingSize,
+          ServingSizeUnit = rfh.Food.ServingSizeUnit,
+          Note = rfh.Food.Note,
+        }).ToList(),
       }).ToList(),
+      PatientResponse = m.Patient.ToPatientResponse(),
     });
 
     return Ok(mealHistoryResponses);
@@ -128,7 +155,7 @@ public class MealController : ControllerBase
 
     try
     {
-      Customer? customer = await GetCustomer();
+      var customer = await GetCustomer();
       if (customer is null)
       {
         return Unauthorized();
@@ -216,7 +243,7 @@ public class MealController : ControllerBase
   private async Task<Customer?> GetCustomer()
   {
     var userObjectId = User.GetObjectIdFromClaims();
-    var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+    var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
     return customer;
   }
 }

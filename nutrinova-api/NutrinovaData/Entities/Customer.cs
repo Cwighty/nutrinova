@@ -7,7 +7,7 @@ public partial class Customer
 {
     public Guid Id { get; set; }
 
-    public string Objectid { get; set; } = null!;
+    public string ObjectId { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 

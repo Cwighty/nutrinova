@@ -1,3 +1,5 @@
+using NutrinovaData.Features.Foods;
+
 namespace NutrinovaData.Features.Recipes;
 
 public class RecipeHistoryResponse
@@ -18,5 +20,5 @@ public class RecipeHistoryResponse
 
   public Guid? CreatedBy { get; set; }
 
-  public List<RecipeFoodHistoryResponse> RecipeFoodHistoryResponses { get; set; } = null!;
+  public List<FoodHistoryResponse> FoodHistoryResponses { get; set; } = null!;
 }

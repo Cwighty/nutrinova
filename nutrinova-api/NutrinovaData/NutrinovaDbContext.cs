@@ -62,14 +62,14 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.ToTable("customer");
 
-            entity.HasIndex(e => e.Objectid, "customer_objectid_key").IsUnique();
+            entity.HasIndex(e => e.ObjectId, "customer_objectid_key").IsUnique();
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Email).HasColumnName("email");
-            entity.Property(e => e.Objectid).HasColumnName("objectid");
+            entity.Property(e => e.ObjectId).HasColumnName("objectid");
         });
 
         modelBuilder.Entity<CustomerLicenseContract>(entity =>

@@ -1,4 +1,5 @@
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaData.Extensions;

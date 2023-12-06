@@ -55,7 +55,7 @@ public class RecipeController : ControllerBase
     }
 
     var userObjectId = User.GetObjectIdFromClaims();
-    var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
+    var customer = context.Customers.FirstOrDefault(c => c.ObjectId == userObjectId);
 
     if (customer == null)
     {
@@ -239,7 +239,7 @@ public class RecipeController : ControllerBase
 
     var userObjectId = User.GetObjectIdFromClaims();
 
-    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
 
     if (customer == null)
     {

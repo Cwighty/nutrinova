@@ -123,8 +123,8 @@ public class FoodController : ControllerBase
         PropertyNameCaseInsensitive = true,
       });
 
-      logger.LogInformation($"RetrieveFoodDetailById, {deserRes?.ingredients}");
-      if (deserRes?.description == null)
+      logger.LogInformation($"RetrieveFoodDetailById, {deserRes?.Ingredients}");
+      if (deserRes?.Description == null)
       {
         return NotFound("No foods found");
       }
@@ -159,7 +159,7 @@ public class FoodController : ControllerBase
     {
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
 
       if (customer?.Id is null)
       {
@@ -264,7 +264,7 @@ public class FoodController : ControllerBase
     {
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
 
       if (customer?.Id is null)
       {
@@ -336,7 +336,7 @@ public class FoodController : ControllerBase
     var userObjectId = User.GetObjectIdFromClaims();
     Console.WriteLine($"User id: {userObjectId}");
 
-    var customer = context.Customers.FirstOrDefault(c => c.Objectid == userObjectId);
+    var customer = context.Customers.FirstOrDefault(c => c.ObjectId == userObjectId);
 
     if (customer == null)
     {
@@ -407,29 +407,29 @@ public class FoodController : ControllerBase
         PropertyNameCaseInsensitive = true,
       });
 
-      logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.ingredients}");
-      if (deserializedResult?.description == null)
+      logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.Ingredients}");
+      if (deserializedResult?.Description == null)
       {
         return NotFound("No foods found");
       }
 
       var userObjectId = User.GetObjectIdFromClaims();
 
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
+      var customer = await context.Customers.FirstAsync(c => c.ObjectId == userObjectId);
 
       var foodPlan = new FoodPlan
       {
         Id = Guid.NewGuid(),
-        Description = deserializedResult.description,
-        Ingredients = deserializedResult.ingredients,
+        Description = deserializedResult.Description,
+        Ingredients = deserializedResult.Ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
-        ServingSize = deserializedResult.servingSize == 0 ? 100 : deserializedResult.servingSize,
-        ServingSizeUnit = GetUnit(deserializedResult.servingSizeUnit)?.Id ?? 1, // default to 100 grams
-        Note = deserializedResult.ingredients,
+        ServingSize = deserializedResult.ServingSize == 0 ? 100 : deserializedResult.ServingSize,
+        ServingSizeUnit = GetUnit(deserializedResult.ServingSizeUnit)?.Id ?? 1, // default to 100 grams
+        Note = deserializedResult.Ingredients,
       };
 
-      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserializedResult.foodNutrients);
+      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserializedResult.FoodNutrients);
       foodPlan.FoodPlanNutrients = foodPlanNutrients;
 
       // Save to the database
@@ -490,7 +490,7 @@ public class FoodController : ControllerBase
 
     var userObjectId = User.GetObjectIdFromClaims();
 
-    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.ObjectId == userObjectId);
 
     if (customer == null)
     {

@@ -1,7 +1,7 @@
 using NutrinovaData.Entities;
-using NutrinovaData.Features.Foods;
+using NutrinovaData.Extensions;
 
-namespace NutrinovaData.Extensions;
+namespace NutrinovaData.Features.Foods;
 
 public static class FoodHistoryExtension
 {
@@ -19,7 +19,7 @@ public static class FoodHistoryExtension
       ServingSize = foodHistory.ServingSize,
       ServingSizeUnit = foodHistory.ServingSizeUnit,
       Note = foodHistory.Note,
-      Unit = foodHistory.ServingSizeUnitNavigation.ToUnitOption(),
+      Unit = UnitExtension.ToUnitOption(foodHistory.ServingSizeUnitNavigation),
     };
   }
 }

@@ -1,7 +1,7 @@
 using NutrinovaData.Entities;
-using NutrinovaData.Features.Recipes;
+using NutrinovaData.Features.Foods;
 
-namespace NutrinovaData.Extensions;
+namespace NutrinovaData.Features.Recipes;
 
 public static class RecipeHistoryExtension
 {
@@ -11,10 +11,13 @@ public static class RecipeHistoryExtension
     {
       Id = recipeHistory.Id,
       Description = recipeHistory.Description,
+      Tags = recipeHistory.Tags,
+      Notes = recipeHistory.Notes,
+      Amount = recipeHistory.Amount,
+      ServingSizeUnit = recipeHistory.ServingSizeUnit,
       CreatedBy = recipeHistory.CreatedBy,
       CreatedAt = recipeHistory.CreatedAt,
-      Notes = recipeHistory.Notes,
-      RecipeFoodHistoryResponses = recipeHistory.RecipeFoodHistories.Select(x => x.ToRecipeFoodHistoryResponse()).ToList(),
+      FoodHistoryResponses = recipeHistory.RecipeFoodHistories.Select(x => x.Food.ToFoodHistoryResponse()).ToList(),
     };
   }
 }

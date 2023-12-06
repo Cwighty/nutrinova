@@ -1,4 +1,6 @@
-using NutrinovaData.Entities;
+using NutrinovaData.Features.Foods;
+using NutrinovaData.Features.Patients;
+using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaData.Features.Meals;
 
@@ -14,9 +16,9 @@ public class MealHistoryResponse
 
     public string? Notes { get; set; }
 
-    public virtual ICollection<MealFoodHistoryResponse> MealFoodHistoryResponses { get; set; } = new List<MealFoodHistoryResponse>();
+    public virtual ICollection<FoodHistoryResponse> FoodHistoryResponses { get; set; } = new List<FoodHistoryResponse>();
 
-    public virtual ICollection<MealRecipeHistoryResponse> MealRecipeHistoryResponses { get; set; } = new List<MealRecipeHistoryResponse>();
+    public virtual ICollection<RecipeHistoryResponse> RecipeHistoryResponses { get; set; } = new List<RecipeHistoryResponse>();
 
-    public virtual Patient Patient { get; set; } = null!;
+    public PatientResponse PatientResponse { get; set; } = null!;
 }

@@ -25,18 +25,18 @@ public static class FoodPlansExtension
 
     return new FoodResponse()
     {
-      fdcId = foodPlan.Fdcid ?? 0,
-      id = foodPlan.Id,
-      description = foodPlan.Description,
-      note = foodPlan.Note ?? string.Empty,
-      brandName = foodPlan.BrandName ?? string.Empty,
-      ingredients = foodPlan.Ingredients ?? string.Empty,
-      servingSize = foodPlan.ServingSize,
-      servingSizeUnitCategory = foodPlan.ServingSizeUnitNavigation.Category.Description,
-      servingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
-      unit = foodPlan.ServingSizeUnitNavigation.ToUnitOption(),
-      servingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",
-      foodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
+      FdcId = foodPlan.Fdcid ?? 0,
+      Id = foodPlan.Id,
+      Description = foodPlan.Description,
+      Note = foodPlan.Note ?? string.Empty,
+      BrandName = foodPlan.BrandName ?? string.Empty,
+      Ingredients = foodPlan.Ingredients ?? string.Empty,
+      ServingSize = foodPlan.ServingSize,
+      ServingSizeUnitCategory = foodPlan.ServingSizeUnitNavigation.Category.Description,
+      ServingSizeUnit = foodPlan.ServingSizeUnitNavigation.Abbreviation,
+      Unit = foodPlan.ServingSizeUnitNavigation.ToUnitOption(),
+      ServingSizeWithUnits = $"{foodPlan.ServingSize} {foodPlan.ServingSizeUnitNavigation.Abbreviation}",
+      FoodNutrients = foodPlan.FoodPlanNutrients.Select(fpn => fpn.ToFoodNutrient()).ToList(),
     };
   }
 }
