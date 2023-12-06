@@ -6,6 +6,6 @@ export interface Meal {
   patientId: string;
   recordedAt: Date;
   notes: string;
-  mealFoods: Food[];
-  mealRecipes: Recipe[];
+  foodHistoryResponses: Food[];
+  recipeHistoryResponses: Recipe[];
 }
