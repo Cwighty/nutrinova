@@ -87,45 +87,41 @@
 
 ### View Recorded Meals/Details
 
-- [ ] View a history of meals. 
+- [x] View a history of meals. 
   
 ### Edit Meal Records
 
-- [ ] Edit the amount of meal that was fed. 
+- [x] Edit the amount of meal that was fed. 
 
 ## Onboarding
 
 ### User Info
 
-- [ ] Identifying questions at initial sign-in. (Authentication)
+- [x] Identifying questions at initial sign-in. (Authentication)
   
 ### Patient Profile
 
-- [ ] Set up new profiles for each patient. (Authentication)
-- [ ] Can quick switch between patients. (generic layout components)
+- [x] Set up new profiles for each patient. (Authentication)
+- [x] Can quick switch between patients. (generic layout components)
       
 # Dec 9 (due date)
 
 ### Multi-Profile
 
-- [ ] Manage profiles for one or more individuals. (Authentication)
-- [ ] Switch between profiles without logging out. (Authentication)
-- [ ] Add a new profile for a new person. (Authentication)
-- [ ] Profile context to share patient details across flows (Client-side state stores)
-  
-### Account Settings
-
-- [ ] Access and edit account information. (Authentication)
+- [x] Manage profiles for one or more individuals. (Authentication)
+- [x] Switch between profiles without logging out. (Authentication)
+- [x] Add a new profile for a new person. (Authentication)
+- [x] Profile context to share patient details across flows (Client-side state stores)
 
 ## Dashboard (generic layout components)
 
 ### Daily Summary
 
-- [ ] Daily summary of nutritional information. 
+- [x] Daily summary of nutritional information. 
   
 ### Goals Summary
 
-- [ ] Summaries of nutritional goals. 
+- [x] Summaries of nutritional goals. 
   
 
 
