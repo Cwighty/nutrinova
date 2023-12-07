@@ -1,42 +1,49 @@
-'use client'
-import React, { useContext, useState } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  TextField
-} from '@mui/material';
-import { useAddMealMutation } from '../../mealHooks';
-import { MealSelectionItem } from '../_models/mealSelectionItem';
-import { RecordMealRequest } from '../_models/recordMealRequest';
-import { PatientContext } from '@/components/providers/PatientProvider';
-import { AmountInput } from '@/components/forms/AmountInput';
-import { UnitOption } from '@/app/(authorized)/food/_models/unitOption';
-import { MealSelectionItemCard } from './MealSelectionItemCard';
+"use client";
+import { FormEvent, useContext, useState } from "react";
+import { Box, Button, Typography, Grid } from "@mui/material";
+import { useAddMealMutation } from "../../mealHooks";
+import { MealSelectionItem } from "../_models/mealSelectionItem";
+import { RecordMealRequest } from "../_models/recordMealRequest";
+import { PatientContext } from "@/components/providers/PatientProvider";
+import { AmountInput } from "@/components/forms/AmountInput";
+import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+import { MealSelectionItemCard } from "./MealSelectionItemCard";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 interface MealDetailsProps {
   selectedFood: MealSelectionItem;
   setActiveStep: (step: number) => void;
 }
 
-export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setActiveStep }) => {
+export const MealDetailsStep = ({
+  selectedFood,
+  setActiveStep,
+}: MealDetailsProps) => {
   const [amount, setAmount] = useState<number>(0);
-  const [unit, setUnit] = useState<UnitOption>({ description: "" } as UnitOption);
-  const [recordedDate, setRecordedDate] = useState<Date | null>(new Date(Date.now()));
+  const [unit, setUnit] = useState<UnitOption>({
+    description: "",
+  } as UnitOption);
+  const [recordedAt, setRecordedAt] = useState<Date | null>(
+    new Date(Date.now()),
+  );
   const { mutate: addMeal } = useAddMealMutation();
 
   const patientContext = useContext(PatientContext);
 
-  const patientName = patientContext.selectedPatient?.firstname + " " + patientContext.selectedPatient?.lastname;
+  const patientName =
+    patientContext.selectedPatient?.firstname +
+    " " +
+    patientContext.selectedPatient?.lastname;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (recordedDate) {
+    if (recordedAt) {
       const recordMealRequest: RecordMealRequest = {
         patientId: patientContext.selectedPatient?.id as string,
         amount: amount,
-        recordedDate: recordedDate,
+        recordedAt: recordedAt,
         unitId: unit?.id ?? 0,
         selectedMealItemId: selectedFood.id ?? "",
         mealSelectionType: selectedFood.type,
@@ -46,21 +53,26 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setA
           setActiveStep(0);
           setAmount(0);
           setUnit({ description: "" } as UnitOption);
-          setRecordedDate(new Date(Date.now()));
+          setRecordedAt(new Date(Date.now()));
         },
       });
     }
   };
 
   return (
-    <Box sx={{ mx: 'auto' }}>
-
+    <Box sx={{ mx: "auto" }}>
       <Box sx={{ mb: 2 }}>
         <MealSelectionItemCard item={selectedFood} />
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          <TextField type="date" label="Recorded Date" value={recordedDate?.toJSON()?.slice(0, 10)} onChange={(e) => setRecordedDate(new Date(e.target.value))} fullWidth required helperText={!recordedDate && "Date is required"} />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateTimePicker
+              label="Recorded Date"
+              value={recordedAt}
+              onChange={(e: Date | null) => setRecordedAt(e)}
+            />
+          </LocalizationProvider>
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="caption">Selected Patient</Typography>
@@ -69,8 +81,16 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setA
       </Grid>
 
       <Box component="form" onSubmit={handleSubmit}>
-        <AmountInput amount={amount} setAmount={setAmount} unit={unit ?? {} as UnitOption} setUnit={setUnit} restrictToUnitCategory={selectedFood.servingSizeUnit?.category.description} />
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <AmountInput
+          amount={amount}
+          setAmount={setAmount}
+          unit={unit ?? ({} as UnitOption)}
+          setUnit={setUnit}
+          restrictToUnitCategory={
+            selectedFood.servingSizeUnit?.category.description
+          }
+        />
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
           <Button type="submit" variant="contained">
             Record Meal
           </Button>
@@ -79,4 +99,3 @@ export const MealDetailsStep: React.FC<MealDetailsProps> = ({ selectedFood, setA
     </Box>
   );
 };
-

@@ -24,14 +24,12 @@ export default async function RootLayout({
           <QueryClientNextProvider>
             <MUIThemeProvider>
               <NotificationProvider webSocketUrl={process.env.WEBSOCKET_URL}>
-                <PatientProvider>
-                  {children}
-                </PatientProvider>
+                <PatientProvider>{children}</PatientProvider>
               </NotificationProvider>
             </MUIThemeProvider>
           </QueryClientNextProvider>
         </NextAuthSessionProvider>
-      </body >
-    </html >
+      </body>
+    </html>
   );
 }

@@ -5,17 +5,19 @@ namespace NutrinovaData.Entities;
 
 public partial class MealHistory
 {
-  public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-  public string Recordedby { get; set; } = null!;
+    public string Recordedby { get; set; } = null!;
 
-  public Guid PatientId { get; set; }
+    public Guid PatientId { get; set; }
 
-  public DateOnly? Recordeddate { get; set; }
+    public DateTime Recordedat { get; set; }
 
-  public virtual ICollection<MealFoodHistory> MealFoodHistories { get; set; } = new List<MealFoodHistory>();
+    public string? Notes { get; set; }
 
-  public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
+    public virtual ICollection<MealFoodHistory> MealFoodHistories { get; set; } = new List<MealFoodHistory>();
 
-  public virtual Patient Patient { get; set; } = null!;
+    public virtual ICollection<MealRecipeHistory> MealRecipeHistories { get; set; } = new List<MealRecipeHistory>();
+
+    public virtual Patient Patient { get; set; } = null!;
 }

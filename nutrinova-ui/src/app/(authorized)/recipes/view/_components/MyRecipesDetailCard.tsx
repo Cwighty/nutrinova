@@ -65,14 +65,15 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
                 <Box key={index}>
                   <ListItem key={index} disableGutters disablePadding>
                     <ListItemButton
-                      key="Dashboard"
                       component={NextLinkComposed}
                       to={{
                         pathname: "/food/view/details",
                         query: { foodId: food.id },
                       }}
                     >
-                      <ListItemText primary={`${food.description}: ${food.servingSize} ${food.servingSizeUnit}`} />
+                      <ListItemText
+                        primary={`${food.description}: ${food.servingSize} ${food.servingSizeUnit}`}
+                      />
                     </ListItemButton>
                   </ListItem>
                   <Divider />
@@ -115,11 +116,11 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
           <Typography variant="body2" sx={{ mt: 1 }}>
             {recipe?.notes}
           </Typography>
-        ) :
+        ) : (
           <Typography variant="body2" sx={{ mt: 1 }}>
             <em>None</em>
           </Typography>
-        }
+        )}
       </Paper>
       <Paper elevation={6} sx={{ p: 2, my: 2 }}>
         {recipe?.nutrientSummaries && recipe?.nutrientSummaries.length > 0 && (
@@ -129,19 +130,16 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
             </Typography>
             <List dense>
               {recipe?.nutrientSummaries.map((nutrient) => (
-                <ListItem
-                  key={nutrient.name}
-                  sx={{ py: 0.5 }}
-                  divider
-                >
-                  <Typography variant="body2">
-                    {nutrient.name}
-                  </Typography>
+                <ListItem key={nutrient.name} sx={{ py: 0.5 }} divider>
+                  <Typography variant="body2">{nutrient.name}</Typography>
                   <Typography
                     variant="body2"
                     sx={{ ml: "auto", fontWeight: "bold" }}
                   >
-                    {nutrient.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} {nutrient.unit.abbreviation}
+                    {nutrient.amount.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    {nutrient.unit.abbreviation}
                   </Typography>
                 </ListItem>
               ))}
