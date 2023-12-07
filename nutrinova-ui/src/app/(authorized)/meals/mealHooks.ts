@@ -75,3 +75,19 @@ export const useGetMealHistoryQuery = (startTime: Date, endTime: Date) => {
     queryFn: () => getMealHistory(startTime, endTime),
   });
 };
+
+const getMealDetails = async (mealId: string): Promise<Meal> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.get<Meal>(`/Meal/${mealId}`);
+  return response.data;
+};
+
+export const useGetMealDetailsQuery = (mealId: string) => {
+  return useQuery({
+    queryKey: [mealKeys.details, mealId],
+    queryFn: () => getMealDetails(mealId),
+  });
+};
