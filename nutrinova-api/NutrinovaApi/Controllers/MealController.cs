@@ -89,8 +89,8 @@ public class MealController : ControllerBase
     {
       Id = mealHistory.Id,
       PatientId = mealHistory.PatientId,
-      RecordedAt = mealHistory.RecordedAt,
-      Recordedby = mealHistory.RecordedBy,
+      RecordedAt = mealHistory.Recordedat,
+      Recordedby = mealHistory.Recordedby,
       Notes = mealHistory.Notes,
       FoodHistoryResponses = mealHistory.MealFoodHistories.Select(mfh => new FoodHistoryResponse
       {
@@ -156,15 +156,15 @@ public class MealController : ControllerBase
       .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
       .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
       .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food).Include(mealHistory => mealHistory.Patient)
-      .Where(m => m.Patient.CustomerId == customer.Id && m.RecordedAt >= beginDate.Date && m.RecordedAt <= endDate.Date)
+      .Where(m => m.Patient.CustomerId == customer.Id && m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date)
       .ToListAsync();
 
     var mealHistoryResponses = mealHistories.Select(m => new MealHistoryResponse
     {
       Id = m.Id,
       PatientId = m.PatientId,
-      RecordedAt = m.RecordedAt,
-      Recordedby = m.RecordedBy,
+      RecordedAt = m.Recordedat,
+      Recordedby = m.Recordedby,
       Notes = m.Notes,
       FoodHistoryResponses = m.MealFoodHistories.Select(mfh => new FoodHistoryResponse
       {
@@ -226,8 +226,8 @@ public class MealController : ControllerBase
       {
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
-        RecordedBy = User.Identity!.Name!,
-        RecordedAt = recordMealRequest.RecordedAt,
+        Recordedby = User.Identity!.Name!,
+        Recordedat = recordMealRequest.RecordedAt,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())

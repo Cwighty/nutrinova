@@ -7,11 +7,11 @@ public partial class MealHistory
 {
     public Guid Id { get; set; }
 
-    public string RecordedBy { get; set; } = null!;
+    public string Recordedby { get; set; } = null!;
 
     public Guid PatientId { get; set; }
 
-    public DateTime RecordedAt { get; set; }
+    public DateTime Recordedat { get; set; }
 
     public string? Notes { get; set; }
 
