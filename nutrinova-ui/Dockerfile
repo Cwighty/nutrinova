@@ -24,6 +24,8 @@ RUN npm run build || { echo "Build failed, outputting logs"; for f in /root/.npm
 FROM base AS runner
 WORKDIR /app
 
+COPY --from=base /app/public ./public
+
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
