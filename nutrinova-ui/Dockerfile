@@ -16,10 +16,9 @@ RUN npm ci
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# RUN yarn build
-
 # If using npm comment out above and use below instead
 RUN npm run build || { echo "Build failed, outputting logs"; for f in /root/.npm/_logs/*; do echo "Outputting $f"; cat "$f"; done; exit 1; }
+
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -32,13 +31,8 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-
 # Set the correct permission for prerender cache
-RUN mkdir .next
 RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 
 USER nextjs
 
