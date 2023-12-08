@@ -123,7 +123,8 @@
   
 
 
-
+<details>
+      <summary>STRETCH GOALS</summary>
 # Stretch Goals
 
 ### Edit Meal Records
@@ -190,3 +191,5 @@
 ## User Feedback
 
 - [ ] Report an issue. (Toasts / global notifications or alerts)
+
+</details>
