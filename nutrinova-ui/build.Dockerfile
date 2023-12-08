@@ -32,4 +32,4 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # If using npm comment out above and use below instead
 RUN npm install -g npm@latest
-RUN npm run build
+RUN npm run build || { echo "Build failed, outputting logs"; for f in /root/.npm/_logs/*; do echo "Outputting $f"; cat "$f"; done; exit 1; }
