@@ -46,18 +46,18 @@ public class FlattenedFood
         .ToList() ?? new List<FlattenedFoodNutrient>();
   }
 
-  public FlattenedFood(Food food)
+  public FlattenedFood(FoodResponse foodResponse)
   {
-    this.FdcId = food.fdcId;
-    this.Id = food?.id;
-    this.Description = food?.description;
-    this.Ingredients = food?.ingredients;
-    this.BrandName = food?.brandName;
-    this.ServingSize = food?.servingSize;
-    this.ServingSizeUnit = food?.servingSizeUnit;
-    this.UnitCategoryId = food?.UnitCategoryId;
-    this.ServingSizeWithUnits = $"{food?.servingSize} {food?.servingSizeUnit}";
-    this.FoodNutrients = food?.foodNutrients
+    this.FdcId = foodResponse.FdcId;
+    this.Id = foodResponse?.Id;
+    this.Description = foodResponse?.Description;
+    this.Ingredients = foodResponse?.Ingredients;
+    this.BrandName = foodResponse?.BrandName;
+    this.ServingSize = foodResponse?.ServingSize;
+    this.ServingSizeUnit = foodResponse?.ServingSizeUnit;
+    this.UnitCategoryId = foodResponse?.UnitCategoryId;
+    this.ServingSizeWithUnits = $"{foodResponse?.ServingSize} {foodResponse?.ServingSizeUnit}";
+    this.FoodNutrients = foodResponse?.FoodNutrients
        .Select(pfn => pfn.MakeFlattenedFoodNutrient())
        .ToList();
   }

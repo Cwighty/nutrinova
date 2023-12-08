@@ -118,13 +118,13 @@ public class FoodController : ControllerBase
         return StatusCode((int)res.StatusCode); // or you can return a custom error message
       }
 
-      var deserRes = await res.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
+      var deserRes = await res.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
       {
         PropertyNameCaseInsensitive = true,
       });
 
-      logger.LogInformation($"RetrieveFoodDetailById, {deserRes?.ingredients}");
-      if (deserRes?.description == null)
+      logger.LogInformation($"RetrieveFoodDetailById, {deserRes?.Ingredients}");
+      if (deserRes?.Description == null)
       {
         return NotFound("No foods found");
       }
@@ -257,7 +257,7 @@ public class FoodController : ControllerBase
   }
 
   [HttpGet("food-details/{foodId}")]
-  public async Task<ActionResult<Food>> RetrieveFoodForUserById(
+  public async Task<ActionResult<FoodResponse>> RetrieveFoodForUserById(
     string? foodId = null)
   {
     try
@@ -402,13 +402,13 @@ public class FoodController : ControllerBase
 
       Console.WriteLine($"ImportFood, {await result.Content.ReadAsStringAsync()}");
 
-      var deserializedResult = await result.Content.ReadFromJsonAsync<Food>(new JsonSerializerOptions
+      var deserializedResult = await result.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
       {
         PropertyNameCaseInsensitive = true,
       });
 
-      logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.ingredients}");
-      if (deserializedResult?.description == null)
+      logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.Ingredients}");
+      if (deserializedResult?.Description == null)
       {
         return NotFound("No foods found");
       }
@@ -420,16 +420,16 @@ public class FoodController : ControllerBase
       var foodPlan = new FoodPlan
       {
         Id = Guid.NewGuid(),
-        Description = deserializedResult.description,
-        Ingredients = deserializedResult.ingredients,
+        Description = deserializedResult.Description,
+        Ingredients = deserializedResult.Ingredients,
         CreatedBy = customer.Id,
         CreatedAt = DateTime.UtcNow,
-        ServingSize = deserializedResult.servingSize == 0 ? 100 : deserializedResult.servingSize,
-        ServingSizeUnit = GetUnit(deserializedResult.servingSizeUnit)?.Id ?? 1, // default to 100 grams
-        Note = deserializedResult.ingredients,
+        ServingSize = deserializedResult.ServingSize == 0 ? 100 : deserializedResult.ServingSize,
+        ServingSizeUnit = GetUnit(deserializedResult.ServingSizeUnit)?.Id ?? 1, // default to 100 grams
+        Note = deserializedResult.Ingredients,
       };
 
-      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserializedResult.foodNutrients);
+      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserializedResult.FoodNutrients);
       foodPlan.FoodPlanNutrients = foodPlanNutrients;
 
       // Save to the database

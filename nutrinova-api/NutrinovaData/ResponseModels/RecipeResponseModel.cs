@@ -16,7 +16,7 @@ public class RecipeResponseModel
 
   public IEnumerable<NutrientSummary>? NutrientSummaries { get; set; }
 
-  public virtual ICollection<Food> RecipeFoods { get; set; } = new List<Food>();
+  public virtual ICollection<FoodResponse> RecipeFoods { get; set; } = new List<FoodResponse>();
 
   public virtual UnitOption? Unit { get; set; } = null!;
 }
