@@ -1,13 +1,14 @@
 "use client";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -16,7 +17,6 @@ import { MyFoodSearchForm } from "@/app/(authorized)/food/view/_components/MyFoo
 import { useDebounce } from "@uidotdev/usehooks";
 import { SelectFoodDataGrid } from "@/components/forms/SelectFoodDataGrid";
 import { AmountInput } from "@/components/forms/AmountInput";
-import { ExpandCircleDown } from "@mui/icons-material";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
 import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
@@ -33,6 +33,8 @@ export const AddFoodDialog = ({
   setNewFood,
 }: Props) => {
   const [open, setOpen] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = ['Select a Food', 'Select an Amount'];
   const [searchParameters, setSearchParameters] = useState<SearchParameters>({
     nutrientSearchTerm: {
       id: 0,
@@ -46,7 +48,7 @@ export const AddFoodDialog = ({
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
-  
+
   const { data: food } = useGetFoodByIdQuery(newFood.foodId);
 
   const handleOpen = () => {
@@ -63,6 +65,18 @@ export const AddFoodDialog = ({
       unitName: "Gram",
     });
     setValidFoodSelected(true);
+  };
+
+  const handleNext = () => {
+    if (activeStep === steps.length - 1) {
+      submit();
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const submit = () => {
@@ -87,17 +101,8 @@ export const AddFoodDialog = ({
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Food</DialogTitle>
         <DialogContent>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ExpandCircleDown />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>
-                {newFood.name === "" ? "Select a Food" : newFood.name}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+          {activeStep === 0 && (
+            <Box sx={{ my: 2 }}>
               <MyFoodSearchForm
                 modal
                 setSearchParameters={setSearchParameters}
@@ -113,56 +118,68 @@ export const AddFoodDialog = ({
                   })
                 }
               />
-            </AccordionDetails>
-          </Accordion>
-          {validFoodSelected ? (
-            ""
-          ) : (
-            <Typography fontSize={12} color="error">
-              Please select a food
-            </Typography>
+              {validFoodSelected ? (
+                ""
+              ) : (
+                <Typography fontSize={12} color="error">
+                  Please select a food
+                </Typography>
+              )}
+            </Box>
           )}
-
-          <AmountInput
-            restrictToUnitCategory={food?.servingSizeUnitCategory}
-            amount={newFood.amount}
-            setAmount={(amount) =>
-              setNewFood({
-                ...newFood,
-                amount: amount,
-              })
-            }
-            unit={{
-              id: newFood.unitId,
-              description: newFood.unitName,
-              abbreviation: "",
-              categoryId: newFood.unitId,
-              // this will need to be changed
-              category: {
-                id: newFood.unitId,
-                description: "",
-              },
-            }}
-            setUnit={(unit) =>
-              setNewFood({
-                ...newFood,
-                unitId: unit.id,
-                unitName: unit.description,
-              })
-            }
-          />
+          {activeStep === 1 && (
+            <>
+              <AmountInput
+                restrictToUnitCategory={food?.servingSizeUnitCategory}
+                amount={newFood.amount}
+                setAmount={(amount) =>
+                  setNewFood({
+                    ...newFood,
+                    amount: amount,
+                  })
+                }
+                unit={{
+                  id: newFood.unitId,
+                  description: newFood.unitName,
+                  abbreviation: "",
+                  categoryId: newFood.unitId,
+                  // this will need to be changed
+                  category: {
+                    id: newFood.unitId,
+                    description: "",
+                  },
+                }}
+                setUnit={(unit) =>
+                  setNewFood({
+                    ...newFood,
+                    unitId: unit.id,
+                    unitName: unit.description,
+                  })
+                }
+              />
+            </>
+          )}
+          <Box sx={{ mt: 2 }}>
+            <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 2 }}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button
-            onClick={() => {
-              submit();
-            }}
-            color="primary"
-          >
-            Add
+          {activeStep !== 0 && (
+            <Button onClick={handleBack}>
+              Back
+            </Button>
+          )}
+          <Button onClick={handleNext} color="primary" disabled={newFood.foodId == ""}>
+            {activeStep === steps.length - 1 ? 'Add' : 'Next'}
           </Button>
         </DialogActions>
       </Dialog>

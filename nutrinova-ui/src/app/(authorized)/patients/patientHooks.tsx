@@ -51,7 +51,7 @@ export const useCreatePatientMutation = () => {
     mutationFn: createPatient,
     onSuccess: async () => {
       toast.success('Patient created successfully');
-      await queryClient.invalidateQueries({ queryKey: patientKeys.all });
+      await queryClient.invalidateQueries({ queryKey: [patientKeys.all] });
     },
     onError: (error) => {
       toast.error('Error creating patient: ' + error.message);
