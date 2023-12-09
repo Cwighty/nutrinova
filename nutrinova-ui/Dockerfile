@@ -31,7 +31,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # If using npm comment out above and use below instead
 RUN npm install -g npm@latest
-RUN npm run build || { echo "Build failed, outputting logs"; for f in /root/.npm/_logs/*; do echo "Outputting $f"; cat "$f"; done; exit 1; }
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -49,6 +49,10 @@ COPY --from=builder /app/public ./public
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
