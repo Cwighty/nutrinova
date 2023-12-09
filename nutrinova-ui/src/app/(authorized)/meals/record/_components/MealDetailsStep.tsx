@@ -25,11 +25,11 @@ export const MealDetailsStep = ({
   const [unit, setUnit] = useState<UnitOption>({
     description: "",
   } as UnitOption);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [recordedAt, setRecordedAt] = useState<Date | null>(
     new Date(Date.now()),
   );
   const { mutate: addMeal } = useAddMealMutation();
-
   const patientContext = useContext(PatientContext);
 
   const patientName =
@@ -39,6 +39,13 @@ export const MealDetailsStep = ({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSubmitted(true);
+    if (amount <= 0) {
+      return;
+    }
+    if (unit.description === "") {
+      return;
+    }
     if (recordedAt) {
       const recordMealRequest: RecordMealRequest = {
         patientId: patientContext.selectedPatient?.id as string,
@@ -89,6 +96,7 @@ export const MealDetailsStep = ({
           restrictToUnitCategory={
             selectedFood.servingSizeUnit?.category.description
           }
+          submitted={submitted}
         />
         <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
           <Button type="submit" variant="contained">

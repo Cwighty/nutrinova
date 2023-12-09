@@ -43,7 +43,7 @@ export default function SearchResultDataGrid({
           getRowId={(row: FoodSearchResult) => row.fdcId}
           rows={rows}
           columns={columns}
-          onRowDoubleClick={handleRowClick}
+          onRowClick={handleRowClick}
           autoHeight
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
