@@ -5,3 +5,8 @@ npm-debug.log
 README.md
 .next
 .git
+build.Dockerfile
+lint.Dockerfile
+.env.template
+.gitignore
+README.md
