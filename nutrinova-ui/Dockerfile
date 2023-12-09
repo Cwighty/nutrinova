@@ -1,47 +1,35 @@
-FROM node:21-alpine AS base
+# Step 1: Build the Next.js app in a node.js environment
+FROM node:21 as builder
 
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# Set the working directory inside the container
 WORKDIR /app
+
+# Copy package.json and package-lock.json (or yarn.lock) to the working directory
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the app's source code
 COPY . .
-# Install dependencies based on the preferred package manager
-RUN npm install -g npm@latest
-RUN npm ci
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+# Build the Next.js app
+RUN npm run build
 
-# If using npm comment out above and use below instead
-RUN npm run build || { echo "Build failed, outputting logs"; for f in /root/.npm/_logs/*; do echo "Outputting $f"; cat "$f"; done; exit 1; }
+# Step 2: Run the Next.js app in a node.js environment
+FROM node:21
 
-
-# Production image, copy all the files and run next
-FROM base AS runner
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY --from=base /app .
+# Copy over the built app from the builder stage
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
 
-ENV NODE_ENV production
-ARG NUTRINOVA_API_URL
-ENV NUTRINOVA_API_URL=$NUTRINOVA_API_URL
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Set the correct permission for prerender cache
-RUN chown nextjs:nodejs .next
-
-USER nextjs
-
+# Expose the port the app runs on
 EXPOSE 3000
 
-ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
-
-CMD ["node", "server.js"]
+# Define the command to run the app
+CMD ["npm", "start"]
