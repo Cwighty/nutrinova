@@ -111,6 +111,11 @@ public class FoodController : ControllerBase
       string query =
         $"food/{foodId}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
 
+      foreach (var nutrient in TrackedNutrients.IDs)
+      {
+        query += $"&nutrient={nutrient}";
+      }
+
       var res = await httpClient.GetAsync($"{query}");
       if (!res.IsSuccessStatusCode)
       {
@@ -388,24 +393,75 @@ public class FoodController : ControllerBase
   [HttpPost("import/{fdcid}")]
   public async Task<ActionResult<Guid>> ImportFood(long fdcid)
   {
-    var format = "full";
+    logger.LogInformation($"Importing Food, {fdcid}");
     try
     {
-      string query = $"food/{fdcid}?api_key={HttpUtility.UrlEncode($"{configuration["USDA_API_KEY"]}")}&format={format}";
+      string query = $"food/{fdcid}?api_key={HttpUtility.UrlEncode(configuration["USDA_API_KEY"])}";
 
-      var result = await httpClient.GetAsync($"{query}");
-      if (!result.IsSuccessStatusCode)
+      foreach (var nutrient in TrackedNutrients.IDs)
       {
-        logger.LogError($"Failed to retrieve data: {result.StatusCode}");
-        return StatusCode((int)result.StatusCode);
+        query += $"&nutrient={nutrient}";
       }
 
-      Console.WriteLine($"ImportFood, {await result.Content.ReadAsStringAsync()}");
+      FoodResponse? deserializedResult = null;
+      int maxRetries = 3; // Maximum number of retries
+      int delayBetweenRetries = 1000; // Delay between retries in milliseconds
 
-      var deserializedResult = await result.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
+      for (int attempt = 0; attempt < maxRetries; attempt++)
       {
-        PropertyNameCaseInsensitive = true,
-      });
+        try
+        {
+          var result = await httpClient.GetAsync(query);
+
+          if (!result.IsSuccessStatusCode)
+          {
+            logger.LogError($"Attempt {attempt + 1}: Failed to retrieve data: {result.StatusCode}");
+
+            if (attempt < maxRetries - 1)
+            {
+              await Task.Delay(delayBetweenRetries); // Wait before retrying
+              continue;
+            }
+            else
+            {
+              return StatusCode((int)result.StatusCode); // All retries failed, return error status
+            }
+          }
+
+          deserializedResult = await result.Content.ReadFromJsonAsync<FoodResponse>(new JsonSerializerOptions
+          {
+            PropertyNameCaseInsensitive = true,
+          });
+
+          // If successful, break out of the retry loop
+          break;
+        }
+        catch (HttpRequestException ex)
+        {
+          logger.LogError($"Attempt {attempt + 1}: HTTP request failed: {ex.Message}");
+
+          if (attempt < maxRetries - 1)
+          {
+            await Task.Delay(delayBetweenRetries); // Wait before retrying
+            continue;
+          }
+          else
+          {
+            return StatusCode(503, "Service unavailable"); // All retries failed, return service unavailable
+          }
+        }
+        catch (JsonException ex)
+        {
+          logger.LogError($"JSON deserialization failed: {ex.Message}");
+          return BadRequest("Invalid response format"); // JSON error, no retry
+        }
+      }
+
+      // Check if deserializedResult is null after retries
+      if (deserializedResult == null)
+      {
+        return StatusCode(503, "Service unavailable after retries");
+      }
 
       logger.LogInformation($"RetrieveFoodDetailById, {deserializedResult?.Ingredients}");
       if (deserializedResult?.Description == null)
@@ -444,6 +500,7 @@ public class FoodController : ControllerBase
         return StatusCode(500, "Failed to import food to the database");
       }
 
+      logger.LogInformation($"Finished Importing Food, {fdcid}");
       return Ok(new { message = "Food imported successfully", id = foodPlan.Id });
     }
     catch (HttpRequestException ex)
