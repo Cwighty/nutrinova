@@ -3,7 +3,7 @@ import { Patient } from "@/app/(authorized)/patients/_models/patient";
 
 export interface Meal {
   id: string;
-  recordedBy: string;
+  recordedby: string;
   patientId: string;
   recordedAt: Date;
   notes: string;

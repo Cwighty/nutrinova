@@ -21,4 +21,6 @@ public class RecipeHistoryResponse
   public Guid? CreatedBy { get; set; }
 
   public List<FoodHistoryResponse> FoodHistoryResponses { get; set; } = null!;
+
+  public virtual UnitOption? Unit { get; set; }
 }

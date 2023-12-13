@@ -35,6 +35,7 @@ const addMeal = async (recordMealRequest: RecordMealRequest): Promise<void> => {
     additionalHeaders: {},
     origin: "client",
   });
+  recordMealRequest.recordedAt = new Date(recordMealRequest.recordedAt.setDate(recordMealRequest.recordedAt.getDate() - 1));
   await apiClient.post("/meal", recordMealRequest);
 };
 

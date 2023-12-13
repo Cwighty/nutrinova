@@ -102,7 +102,7 @@ public class MealController : ControllerBase
         CreatedBy = mfh.Food.CreatedBy,
         CreatedAt = mfh.Food.CreatedAt,
         ServingSize = mfh.Food.ServingSize,
-        ServingSizeUnit = mfh.Food.ServingSizeUnit,
+        Unit = mfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
         Note = mfh.Food.Note,
       }).ToList(),
       RecipeHistoryResponses = mealHistory.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
@@ -125,7 +125,7 @@ public class MealController : ControllerBase
           CreatedBy = rfh.Food.CreatedBy,
           CreatedAt = rfh.Food.CreatedAt,
           ServingSize = rfh.Food.ServingSize,
-          ServingSizeUnit = rfh.Food.ServingSizeUnit,
+          Unit = rfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
           Note = rfh.Food.Note,
         }).ToList(),
       }).ToList(),
@@ -152,10 +152,14 @@ public class MealController : ControllerBase
       .Include(m => m.MealRecipeHistories)
       .ThenInclude(m => m.RecipeHistory)
       .ThenInclude(r => r.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category).Include(mealHistory => mealHistory.MealRecipeHistories)
+      .ThenInclude(u => u.Category)
+      .Include(m => m.MealFoodHistories).ThenInclude(mfh => mfh.Unit).ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories).ThenInclude(mrh => mrh.Unit).ThenInclude(u => u.Category)
+      .Include(mealHistory => mealHistory.MealRecipeHistories)
       .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
       .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
-      .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food).Include(mealHistory => mealHistory.Patient)
+      .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food)
+      .Include(mealHistory => mealHistory.Patient)
       .Where(m => m.Patient.CustomerId == customer.Id && m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date)
       .ToListAsync();
 
@@ -177,6 +181,7 @@ public class MealController : ControllerBase
         CreatedAt = mfh.Food.CreatedAt,
         ServingSize = mfh.Food.ServingSize,
         ServingSizeUnit = mfh.Food.ServingSizeUnit,
+        Unit = mfh.Unit.ToUnitOption(),
         Note = mfh.Food.Note,
       }).ToList(),
       RecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
@@ -186,9 +191,9 @@ public class MealController : ControllerBase
         Tags = mrh.RecipeHistory.Tags,
         Notes = mrh.RecipeHistory.Notes,
         Amount = mrh.RecipeHistory.Amount,
-        ServingSizeUnit = mrh.RecipeHistory.ServingSizeUnit,
         CreatedAt = mrh.RecipeHistory.CreatedAt,
         CreatedBy = mrh.RecipeHistory.CreatedBy,
+        Unit = mrh.Unit.ToUnitOption(),
         FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
         {
           Id = rfh.Id,
@@ -199,7 +204,6 @@ public class MealController : ControllerBase
           CreatedBy = rfh.Food.CreatedBy,
           CreatedAt = rfh.Food.CreatedAt,
           ServingSize = rfh.Food.ServingSize,
-          ServingSizeUnit = rfh.Food.ServingSizeUnit,
           Note = rfh.Food.Note,
         }).ToList(),
       }).ToList(),
@@ -210,7 +214,7 @@ public class MealController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult> AddMeal(RecordMealRequest recordMealRequest)
+  public async Task<ActionResult> RecordMeal(RecordMealRequest recordMealRequest)
   {
     using var transaction = await context.Database.BeginTransactionAsync();
 
