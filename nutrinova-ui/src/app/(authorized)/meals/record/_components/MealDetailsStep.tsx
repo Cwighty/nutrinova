@@ -26,9 +26,7 @@ export const MealDetailsStep = ({
     description: "",
   } as UnitOption);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [recordedAt, setRecordedAt] = useState<Date | null>(
-    new Date(Date.now()),
-  );
+  const [recordedAt, setRecordedAt] = useState<Date | null>();
   const { mutate: addMeal } = useAddMealMutation();
   const patientContext = useContext(PatientContext);
 
