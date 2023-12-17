@@ -9,7 +9,7 @@ import { EditRecipeRequestModel } from '../_models/EditRecipeRequestModel';
 import { useGetUnitsQuery } from '@/app/(authorized)/food/foodHooks';
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '../../create/_components/ServingSizeUnitField';
 import { EditRecipeFoodItem } from './EditRecipeFoodItem';
-import { AddFoodDialog } from '../../create/_components/AddFoodDialog';
+import { AddFoodDialog } from '../../create/_components/AddFood/AddFoodDialog';
 import { CreateRecipeFoodModel } from '../../create/_models/createRecipeFoodModel';
 
 interface EditRecipeFormProps {

@@ -7,7 +7,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
 } from "@mui/material";
-import { AddFoodDialog } from "./AddFoodDialog";
+import { AddFoodDialog } from "./AddFood/AddFoodDialog";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import { useState } from "react";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
