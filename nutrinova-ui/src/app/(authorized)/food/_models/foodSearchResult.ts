@@ -1,3 +1,5 @@
+import { UnitOption } from "./unitOption";
+
 export interface FoodSearchResult {
   fdcId: number;
   id: string;
@@ -9,6 +11,22 @@ export interface FoodSearchResult {
   servingSizeUnitCategory?: string;
   servingSizeWithUnits: string;
   foodNutrients: FoodSearchResultNutrient[];
+  note: string;
+  unitCategoryId: number;
+}
+
+export interface FoodResponse {
+  fdcId: number;
+  id: string;
+  description: string;
+  ingredients: string;
+  brandName: string;
+  servingSize: number;
+  servingSizeUnit: string;
+  servingSizeUnitCategory?: string;
+  servingSizeWithUnits: string;
+  foodNutrients: FoodSearchResultNutrient[];
+  unit: UnitOption;
   note: string;
   unitCategoryId: number;
 }

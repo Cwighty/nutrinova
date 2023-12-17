@@ -6,9 +6,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Link,
   Step,
   StepLabel,
   Stepper,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -19,7 +21,8 @@ import { SelectFoodDataGrid } from "@/components/forms/SelectFoodDataGrid";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
-import { useGetFoodByIdQuery } from "@/app/(authorized)/food/foodHooks";
+import { useGetFoodByIdQuery, useGetUnitsQuery } from "@/app/(authorized)/food/foodHooks";
+import { SelectedRecipeFoodCard } from "./SelectedFoodCard";
 
 interface Props {
   handleAddFood: () => void;
@@ -48,9 +51,10 @@ export const AddFoodDialog = ({
   });
   const searchParameterDebounce = useDebounce(searchParameters, 500);
   const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
-
+  const [conversionRate, setConversionRate] = useState<number>(0);
   const { data: food } = useGetFoodByIdQuery(newFood.foodId);
-
+  const { data: unitOptions } = useGetUnitsQuery();
+  const newFoodUnit = unitOptions?.find(u => u.id == newFood.unitId)
   const handleOpen = () => {
     setOpen(true);
   };
@@ -65,6 +69,7 @@ export const AddFoodDialog = ({
       unitName: "Gram",
     });
     setValidFoodSelected(true);
+    setActiveStep(0)
   };
 
   const handleNext = () => {
@@ -129,8 +134,10 @@ export const AddFoodDialog = ({
           )}
           {activeStep === 1 && (
             <>
+              <Box sx={{ my: 2 }}>
+                <SelectedRecipeFoodCard item={newFood} />
+              </Box>
               <AmountInput
-                restrictToUnitCategory={food?.servingSizeUnitCategory}
                 amount={newFood.amount}
                 setAmount={(amount) =>
                   setNewFood({
@@ -143,7 +150,6 @@ export const AddFoodDialog = ({
                   description: newFood.unitName,
                   abbreviation: "",
                   categoryId: newFood.unitId,
-                  // this will need to be changed
                   category: {
                     id: newFood.unitId,
                     description: "",
@@ -157,6 +163,36 @@ export const AddFoodDialog = ({
                   })
                 }
               />
+              {food?.unit && newFoodUnit?.category.description !== food?.unit.category.description &&
+                (
+                  <Box sx={{ my: 2 }}>
+                    <Typography>
+                      This food&apos;s serving is measured in <b>{food?.unit.description}s</b>,
+                      to add <b>{newFood.unitName}s</b> of this food to your recipe we need some information:
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                      {`How many ${food?.unit.description}s are in 1 ${newFood.unitName} of '${newFood.name}'?`}
+                    </Typography>
+                    <TextField
+                      label={`${food?.unit.description}s in 1 ${newFood.unitName} of '${newFood.name}'`}
+                      type="number"
+                      value={conversionRate}
+                      onChange={(e) => setConversionRate(Number(e.target.value))}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <Typography>
+                      Need help finding out?
+                    </Typography>
+                    <Link href={`https://www.google.com/search?q=how+many+${food?.unit.description}+in+1+${newFood.unitName}+of+${newFood.name}`} target="_blank">
+                      Ask Google
+                    </Link>
+                    <br></br>
+                    <Link href="chat.openai.com" target="_blank">
+                      Ask Nova
+                    </Link>
+                  </Box>
+                )}
             </>
           )}
           <Box sx={{ mt: 2 }}>
