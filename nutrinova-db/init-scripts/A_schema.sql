@@ -68,8 +68,8 @@ CREATE TABLE
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
         note TEXT null,
-        density DECIMAL null,
-        quanity DECIMAL null
+        density DECIMAL null, -- g/ml
+        quanity DECIMAL null -- items per serving
         );
 
 CREATE TABLE

@@ -18,12 +18,14 @@ public class RecipeController : ControllerBase
   private readonly ILogger<RecipeController> logger;
   private readonly NutrinovaDbContext context;
   private readonly IRecipeFoodTotaler recipeFoodTotaler;
+  private readonly IDensityCalculator densityCalculator;
 
-  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler)
+  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler, IDensityCalculator densityCalculator)
   {
     this.logger = logger;
     this.context = context;
     this.recipeFoodTotaler = recipeFoodTotaler;
+    this.densityCalculator = densityCalculator;
   }
 
   [HttpPost]
@@ -116,9 +118,9 @@ public class RecipeController : ControllerBase
         .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
         .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
         .FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
-      Amount = rf.Amount,
-      UnitId = rf.UnitId,
-      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
+      Amount = rf.Measurement,
+      UnitId = rf.MeasurementUnitId,
+      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.MeasurementUnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
 
     var summaries = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
@@ -237,7 +239,7 @@ public class RecipeController : ControllerBase
 
     try
     {
-      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => Guid.Parse(rf2.Id!) == rf.Id)).ToList();
+      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => rf2.Id == rf.Id)).ToList();
 
       // delete all existing recipe foods
       context.RecipeFoods.RemoveRange(recipesFoodsToBeDeleted);
@@ -282,7 +284,7 @@ public class RecipeController : ControllerBase
       {
         Id = Guid.NewGuid(),
         RecipeId = recipePlan.Id,
-        FoodId = Guid.Parse(rf.Id ?? throw new Exception("Invalid food id on recipe food")),
+        FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
         Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
         UnitId = rf?.Unit?.Id ?? throw new Exception("Invalid unit id on recipe food"),
         Unit = foodUnit ?? throw new Exception("Invalid foodUnit on recipe food"),
@@ -316,42 +318,55 @@ public class RecipeController : ControllerBase
 
   private List<RecipeFood> ProcessRecipeFoodRequests(List<CreateRecipeFoodRequestModel> recipeFoodRequests)
   {
-    var recipeFoods = new List<RecipeFood>();
-    foreach (var recipeFoodRequest in recipeFoodRequests)
+    var ingredients = new List<RecipeFood>();
+    foreach (var ingredient in recipeFoodRequests)
     {
       var foodPlan = context.FoodPlans
         .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Nutrient)
         .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
         .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
-        .FirstOrDefault(f => f.Id == recipeFoodRequest.FoodId);
+        .FirstOrDefault(f => f.Id == ingredient.FoodId);
 
       if (foodPlan == null)
       {
         throw new Exception("Invalid food id");
       }
 
-      var foodUnit = context.Units
+      var measurementUnit = context.Units
         .Include(u => u.Category)
-        .FirstOrDefault(u => u.Id == recipeFoodRequest.UnitId);
+        .FirstOrDefault(u => u.Id == ingredient.MeasurementUnitId);
 
-      if (foodUnit == null)
+      var foodUnit = foodPlan.ServingSizeUnitNavigation;
+
+      if (measurementUnit == null || measurementUnit.Category == null)
       {
-        throw new Exception("Invalid unit id");
+        throw new Exception($"Invalid measurement unit id {ingredient.MeasurementUnitId}");
       }
 
+      if (foodUnit == null || foodUnit.Category == null)
+      {
+        throw new Exception("Invalid food unit");
+      }
+
+      if (measurementUnit.Category.Description != foodUnit.Category.Description && ingredient.FoodServingsPerMeasurement == null)
+      {
+        throw new Exception("Food servings per measurement is required for any ingredient that has a different unit category than the food serving unit");
+      }
+
+      var density = densityCalculator.CalculateDensity(ingredient.FoodServingsPerMeasurement, foodUnit, measurementUnit);
+
+      foodPlan.Density = density;
       var recipeFood = new RecipeFood
       {
         Id = Guid.NewGuid(),
-        FoodId = recipeFoodRequest.FoodId,
         Food = foodPlan,
-        Amount = recipeFoodRequest.Amount,
-        UnitId = recipeFoodRequest.UnitId,
-        Unit = foodUnit,
+        Amount = ingredient.Measurement,
+        UnitId = ingredient.MeasurementUnitId,
       };
 
-      recipeFoods.Add(recipeFood);
+      ingredients.Add(recipeFood);
     }
 
-    return recipeFoods;
+    return ingredients;
   }
 }

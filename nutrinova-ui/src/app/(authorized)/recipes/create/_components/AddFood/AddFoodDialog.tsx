@@ -33,13 +33,12 @@ export const AddFoodDialog = ({
   const steps = ['Select a Food', 'Select an Amount'];
 
   const [validFoodSelected, setValidFoodSelected] = useState<boolean>(true);
-  const [conversionRateRequired, setConversionRateRequired] = useState<boolean>(false);
-  const [conversionRate, setConversionRate] = useState<number>(0);
+  const [servingsPerMeasurementRequired, setServingsPerMeasurementRequired] = useState<boolean>(false);
 
   const nextStepDisabled = (
     (activeStep == 0 && newFood.foodId == "")
-    || (activeStep == 1 && conversionRateRequired && conversionRate <= 0)
-    || (activeStep == 1 && newFood.amount <= 0)
+    || (activeStep == 1 && servingsPerMeasurementRequired && (newFood.foodServingsPerMeasurement === null || newFood.foodServingsPerMeasurement <= 0))
+    || (activeStep == 1 && newFood.measurement <= 0)
   )
 
   const handleOpen = () => {
@@ -50,10 +49,11 @@ export const AddFoodDialog = ({
     setOpen(false);
     setNewFood({
       foodId: "",
-      amount: 1,
-      unitId: 1,
+      measurement: 1,
+      measurementUnitId: 1,
       name: "",
-      unitName: "Gram",
+      measurementUnitName: "Gram",
+      foodServingsPerMeasurement: null,
     });
     setValidFoodSelected(true);
     setActiveStep(0)
@@ -72,17 +72,17 @@ export const AddFoodDialog = ({
   };
 
   const submit = () => {
-    if (newFood.amount <= 0) {
+    if (newFood.measurement <= 0) {
       return;
     }
     if (newFood.foodId === "") {
       setValidFoodSelected(false);
       return;
     }
-    if (newFood.unitId === 0) {
+    if (newFood.measurementUnitId === 0) {
       return;
     }
-    if (conversionRateRequired && conversionRate <= 0) {
+    if (servingsPerMeasurementRequired && (newFood.foodServingsPerMeasurement === null || newFood.foodServingsPerMeasurement <= 0)) {
       return;
     }
     handleAddFood();
@@ -111,9 +111,7 @@ export const AddFoodDialog = ({
             <SelectAmountStep
               newFood={newFood}
               setNewFood={setNewFood}
-              conversionRate={conversionRate}
-              setConversionRate={setConversionRate}
-              setConversionRateRequired={setConversionRateRequired} />
+              setConversionRateRequired={setServingsPerMeasurementRequired} />
           )}
 
           <Box sx={{ mt: 2 }}>

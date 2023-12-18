@@ -20,10 +20,10 @@ interface RecipeFoodListProps {
 
 const initialFood: CreateRecipeFoodModel = {
   foodId: "",
-  amount: 1,
-  unitId: 1,
+  measurement: 1,
+  measurementUnitId: 1,
   name: "",
-  unitName: "Gram",
+  measurementUnitName: "Gram",
 };
 
 export const RecipeFoodList = ({
@@ -64,7 +64,7 @@ export const RecipeFoodList = ({
         <ListItem key={index} divider>
           <ListItemText
             primary={food.name}
-            secondary={`${food.amount} ${food.unitName}`}
+            secondary={`${food.measurement} ${food.measurementUnitName}`}
           />
           <ListItemSecondaryAction>
             <IconButton

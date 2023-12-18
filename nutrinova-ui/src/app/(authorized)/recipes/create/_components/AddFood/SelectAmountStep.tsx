@@ -9,21 +9,17 @@ import { useGetFoodByIdQuery, useGetUnitsQuery } from '@/app/(authorized)/food/f
 interface SelectAmountStepProps {
   newFood: CreateRecipeFoodModel;
   setNewFood: (newFood: CreateRecipeFoodModel) => void;
-  conversionRate: number;
-  setConversionRate: (rate: number) => void;
   setConversionRateRequired: (required: boolean) => void;
 }
 
 export const SelectAmountStep: React.FC<SelectAmountStepProps> = ({
   newFood,
   setNewFood,
-  conversionRate,
-  setConversionRate,
   setConversionRateRequired
 }) => {
   const { data: food } = useGetFoodByIdQuery(newFood.foodId);
   const { data: unitOptions } = useGetUnitsQuery();
-  const newFoodUnit = unitOptions?.find(u => u.id === newFood.unitId);
+  const newFoodUnit = unitOptions?.find(u => u.id === newFood.measurementUnitId);
 
   const requireConversionRate = (food?.unit && newFoodUnit?.category.description !== food?.unit.category.description) ?? false;
 
@@ -38,46 +34,46 @@ export const SelectAmountStep: React.FC<SelectAmountStepProps> = ({
         <SelectedRecipeFoodCard item={newFood} />
       </Box>
       <AmountInput
-        amount={newFood.amount}
+        amount={newFood.measurement}
         setAmount={(amount) =>
           setNewFood({
             ...newFood,
-            amount: amount,
+            measurement: amount,
           })
         }
         unit={{
-          id: newFood.unitId,
-          description: newFood.unitName,
+          id: newFood.measurementUnitId,
+          description: newFood.measurementUnitName,
           abbreviation: "",
-          categoryId: newFood.unitId,
+          categoryId: newFood.measurementUnitId,
           category: {
-            id: newFood.unitId,
+            id: newFood.measurementUnitId,
             description: "",
           },
         }}
         setUnit={(unit) =>
           setNewFood({
             ...newFood,
-            unitId: unit.id,
-            unitName: unit.description,
+            measurementUnitId: unit.id,
+            measurementUnitName: unit.description,
           })
         }
       />
-      {requireConversionRate && newFood.unitId &&
+      {requireConversionRate && newFood.measurementUnitId &&
         (
           <Box sx={{ my: 2 }}>
             <Typography>
               This food&apos;s serving is measured in <b>{food?.unit.description}s</b>,
-              to add <b>{newFood.unitName}s</b> of this food to your recipe we need some information:
+              to add <b>{newFood.measurementUnitName}s</b> of this food to your recipe we need some information:
             </Typography>
             <Typography sx={{ mt: 2 }}>
-              {`How many ${food?.unit.description}s are in 1 ${newFood.unitName} of '${newFood.name}'?`}
+              {`How many ${food?.unit.description}s are in 1 ${newFood.measurementUnitName} of '${newFood.name}'?`}
             </Typography>
             <TextField
-              label={`${food?.unit.description}s in 1 ${newFood.unitName} of '${newFood.name}'`}
+              label={`${food?.unit.description}s in 1 ${newFood.measurementUnitName} of '${newFood.name}'`}
               type="number"
-              value={conversionRate}
-              onChange={(e) => setConversionRate(Number(e.target.value))}
+              value={newFood.foodServingsPerMeasurement || ""}
+              onChange={(e) => setNewFood({ ...newFood, foodServingsPerMeasurement: Number(e.target.value) })}
               fullWidth
               margin="normal"
               required
@@ -85,7 +81,7 @@ export const SelectAmountStep: React.FC<SelectAmountStepProps> = ({
             <Typography>
               Need help finding out?
             </Typography>
-            <Link href={`https://www.google.com/search?q=how+many+${food?.unit.description}+in+1+${newFood.unitName}+of+${newFood.name}`} target="_blank">
+            <Link href={`https://www.google.com/search?q=how+many+${food?.unit.description}+in+1+${newFood.measurementUnitName}+of+${newFood.name}`} target="_blank">
               Ask Google
             </Link>
             <br></br>

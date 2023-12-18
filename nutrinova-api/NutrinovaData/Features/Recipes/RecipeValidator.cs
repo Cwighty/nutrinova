@@ -23,12 +23,12 @@ public class RecipeValidator
     }
     else
     {
-      if (createRecipeRequestModel.RecipeFoods.Any(f => f.Amount <= 0))
+      if (createRecipeRequestModel.RecipeFoods.Any(f => f.Measurement < 0))
       {
         errorMessages.Add("Food/Ingredient amounts must be greater than 0");
       }
 
-      if (createRecipeRequestModel.RecipeFoods.Any(f => f.UnitId <= 0))
+      if (createRecipeRequestModel.RecipeFoods.Any(f => f.MeasurementUnitId < 0))
       {
         errorMessages.Add("Food/Ingredient units are required with every food amount");
       }
