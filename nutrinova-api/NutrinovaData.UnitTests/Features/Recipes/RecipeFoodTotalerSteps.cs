@@ -76,7 +76,7 @@ public class RecipeFoodTotalerSteps
       foodNutrient.Nutrient = nutrients?.FirstOrDefault(n => n.Id == foodNutrient.NutrientId) ?? new Nutrient { Id = foodNutrient.NutrientId };
     }
 
-    foreach (var food in foods)
+    foreach (var food in foods!)
     {
       food.FoodPlanNutrients = foodNutrients.Where(fn => fn.FoodplanId == food.Id).ToList();
     }

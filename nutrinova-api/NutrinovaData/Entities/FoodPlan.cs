@@ -25,6 +25,10 @@ public partial class FoodPlan
 
     public string? Note { get; set; }
 
+    public decimal? Density { get; set; }
+
+    public decimal? Quanity { get; set; }
+
     public virtual Customer? CreatedByNavigation { get; set; }
 
     public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();

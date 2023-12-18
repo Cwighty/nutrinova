@@ -67,7 +67,9 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE not null,
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
-        note TEXT null
+        note TEXT null,
+        density DECIMAL null,
+        quanity DECIMAL null
         );
 
 CREATE TABLE
@@ -81,7 +83,9 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE not null,
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
-        note TEXT null
+        note TEXT null,
+        density DECIMAL null,
+        quanity DECIMAL null
     );
 
 CREATE TABLE

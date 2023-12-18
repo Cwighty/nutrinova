@@ -99,10 +99,12 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Density).HasColumnName("density");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
             entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.Quanity).HasColumnName("quanity");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
             entity.Property(e => e.ServingSizeUnit)
                 .ValueGeneratedOnAdd()
@@ -164,10 +166,12 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Density).HasColumnName("density");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
             entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.Quanity).HasColumnName("quanity");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
             entity.Property(e => e.ServingSizeUnit)
                 .ValueGeneratedOnAdd()

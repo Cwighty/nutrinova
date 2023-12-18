@@ -28,30 +28,12 @@ public class RecipeController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> CreateRecipe(CreateRecipeRequestModel createRecipeRequestModel)
   {
-    // Validate the input
-    if (createRecipeRequestModel == null)
-    {
-      return BadRequest("Invalid food plan data");
-    }
+    var validator = new RecipeValidator();
+    var validationErrors = validator.Validate(createRecipeRequestModel);
 
-    if (string.IsNullOrWhiteSpace(createRecipeRequestModel.Description))
+    if (validationErrors.Any())
     {
-      return BadRequest("Description is required");
-    }
-
-    if (createRecipeRequestModel.RecipeFoods == null || !createRecipeRequestModel.RecipeFoods.Any())
-    {
-      return BadRequest("At least one food ingredient is required");
-    }
-
-    if (createRecipeRequestModel.RecipeFoods.Any(f => f.Amount <= 0))
-    {
-      return BadRequest("Food/Ingredient amounts must be greater than 0");
-    }
-
-    if (createRecipeRequestModel.RecipeFoods.Any(f => f.UnitId <= 0))
-    {
-      return BadRequest("Food/Ingredient units are required with every food amount");
+      return BadRequest(validationErrors);
     }
 
     var userObjectId = User.GetObjectIdFromClaims();
@@ -62,14 +44,11 @@ public class RecipeController : ControllerBase
       return Unauthorized();
     }
 
-    var tags = string.Empty;
+    // Build the recipe plan
 
-    if (!createRecipeRequestModel.Tags.IsNullOrEmpty())
-    {
-      tags = createRecipeRequestModel.Tags?.Aggregate((a, b) => $"{a},{b}");
-    }
+    var tags = FormatTags(createRecipeRequestModel.Tags);
 
-    var recipeUnit = await context.Units
+    var recipeUnitLink = await context.Units
       .Include(u => u.Category)
       .FirstOrDefaultAsync(u => u.Id == createRecipeRequestModel.ServingSizeUnitId);
 
@@ -81,16 +60,13 @@ public class RecipeController : ControllerBase
       CreatedAt = DateTime.UtcNow,
       Tags = tags,
       Amount = createRecipeRequestModel.ServingSize,
-      ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid unit id"),
+      ServingSizeUnitNavigation = recipeUnitLink ?? throw new Exception("Invalid unit id"),
       Notes = createRecipeRequestModel.Notes,
-      RecipeFoods = createRecipeRequestModel.RecipeFoods.Select(rf => new RecipeFood
-      {
-        Id = Guid.NewGuid(),
-        FoodId = rf.FoodId,
-        Amount = rf.Amount,
-        UnitId = rf.UnitId,
-      }).ToList(),
     };
+
+    var recipeFoods = ProcessRecipeFoodRequests(createRecipeRequestModel.RecipeFoods);
+
+    recipePlan.RecipeFoods = recipeFoods;
 
     // Save to the database
     await context.RecipePlans.AddAsync(recipePlan);
@@ -106,6 +82,57 @@ public class RecipeController : ControllerBase
     }
 
     return Ok(new { message = "Recipe created successfully", id = recipePlan.Id });
+  }
+
+  private string? FormatTags(List<string>? tags)
+  {
+    if (!tags.IsNullOrEmpty())
+    {
+      tags = tags.Aggregate((a, b) => $"{a},{b}");
+    }
+    return null;
+  }
+
+  private List<RecipeFood> ProcessRecipeFoodRequests(List<CreateRecipeFoodRequestModel> recipeFoodRequests)
+  {
+    var recipeFoods = new List<RecipeFood>();
+    foreach (var recipeFoodRequest in recipeFoodRequests)
+    {
+      var foodPlan = context.FoodPlans
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Nutrient)
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
+        .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+        .FirstOrDefault(f => f.Id == recipeFoodRequest.FoodId);
+
+
+      if (foodPlan == null)
+      {
+        throw new Exception("Invalid food id");
+      }
+
+      var foodUnit = context.Units
+        .Include(u => u.Category)
+        .FirstOrDefault(u => u.Id == recipeFoodRequest.UnitId);
+
+      if (foodUnit == null)
+      {
+        throw new Exception("Invalid unit id");
+      }
+
+      var recipeFood = new RecipeFood
+      {
+        Id = Guid.NewGuid(),
+        FoodId = recipeFoodRequest.FoodId,
+        Food = foodPlan,
+        Amount = recipeFoodRequest.Amount,
+        UnitId = recipeFoodRequest.UnitId,
+        Unit = foodUnit,
+      };
+
+      recipeFoods.Add(recipeFood);
+    }
+
+    return recipeFoods;
   }
 
   [HttpGet("tags")]
@@ -186,14 +213,14 @@ public class RecipeController : ControllerBase
   {
     var recipes = await context.RecipePlans
       .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.FoodPlanNutrients)
-      .ThenInclude(fn => fn.Nutrient)
-      .ThenInclude(n => n.PreferredUnitNavigation)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.FoodPlanNutrients)
+            .ThenInclude(fn => fn.Nutrient)
+              .ThenInclude(n => n.PreferredUnitNavigation)
       .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.ServingSizeUnitNavigation)
+            .ThenInclude(u => u.Category)
       .ToListAsync();
 
     foreach (var recipe in recipes)
