@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Nutrinova.Features.Recipes;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
@@ -45,7 +46,6 @@ public class RecipeController : ControllerBase
     }
 
     // Build the recipe plan
-
     var tags = FormatTags(createRecipeRequestModel.Tags);
 
     var recipeUnitLink = await context.Units
@@ -82,57 +82,6 @@ public class RecipeController : ControllerBase
     }
 
     return Ok(new { message = "Recipe created successfully", id = recipePlan.Id });
-  }
-
-  private string? FormatTags(List<string>? tags)
-  {
-    if (!tags.IsNullOrEmpty())
-    {
-      tags = tags.Aggregate((a, b) => $"{a},{b}");
-    }
-    return null;
-  }
-
-  private List<RecipeFood> ProcessRecipeFoodRequests(List<CreateRecipeFoodRequestModel> recipeFoodRequests)
-  {
-    var recipeFoods = new List<RecipeFood>();
-    foreach (var recipeFoodRequest in recipeFoodRequests)
-    {
-      var foodPlan = context.FoodPlans
-        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Nutrient)
-        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
-        .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
-        .FirstOrDefault(f => f.Id == recipeFoodRequest.FoodId);
-
-
-      if (foodPlan == null)
-      {
-        throw new Exception("Invalid food id");
-      }
-
-      var foodUnit = context.Units
-        .Include(u => u.Category)
-        .FirstOrDefault(u => u.Id == recipeFoodRequest.UnitId);
-
-      if (foodUnit == null)
-      {
-        throw new Exception("Invalid unit id");
-      }
-
-      var recipeFood = new RecipeFood
-      {
-        Id = Guid.NewGuid(),
-        FoodId = recipeFoodRequest.FoodId,
-        Food = foodPlan,
-        Amount = recipeFoodRequest.Amount,
-        UnitId = recipeFoodRequest.UnitId,
-        Unit = foodUnit,
-      };
-
-      recipeFoods.Add(recipeFood);
-    }
-
-    return recipeFoods;
   }
 
   [HttpGet("tags")]
@@ -288,7 +237,7 @@ public class RecipeController : ControllerBase
 
     try
     {
-      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => rf2.Id == rf.Id)).ToList();
+      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => Guid.Parse(rf2.Id!) == rf.Id)).ToList();
 
       // delete all existing recipe foods
       context.RecipeFoods.RemoveRange(recipesFoodsToBeDeleted);
@@ -333,7 +282,7 @@ public class RecipeController : ControllerBase
       {
         Id = Guid.NewGuid(),
         RecipeId = recipePlan.Id,
-        FoodId = rf.Id ?? throw new Exception("Invalid food id on recipe food"),
+        FoodId = Guid.Parse(rf.Id ?? throw new Exception("Invalid food id on recipe food")),
         Amount = rf.ServingSize ?? throw new Exception("Invalid serving size on recipe food"),
         UnitId = rf?.Unit?.Id ?? throw new Exception("Invalid unit id on recipe food"),
         Unit = foodUnit ?? throw new Exception("Invalid foodUnit on recipe food"),
@@ -353,5 +302,56 @@ public class RecipeController : ControllerBase
     }
 
     return Ok(recipePlan);
+  }
+
+  private string? FormatTags(List<string>? tags)
+  {
+    if (!tags.IsNullOrEmpty())
+    {
+      return tags!.Aggregate((a, b) => $"{a},{b}");
+    }
+
+    return null;
+  }
+
+  private List<RecipeFood> ProcessRecipeFoodRequests(List<CreateRecipeFoodRequestModel> recipeFoodRequests)
+  {
+    var recipeFoods = new List<RecipeFood>();
+    foreach (var recipeFoodRequest in recipeFoodRequests)
+    {
+      var foodPlan = context.FoodPlans
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Nutrient)
+        .Include(f => f.FoodPlanNutrients).ThenInclude(fn => fn.Unit).ThenInclude(u => u.Category)
+        .Include(f => f.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+        .FirstOrDefault(f => f.Id == recipeFoodRequest.FoodId);
+
+      if (foodPlan == null)
+      {
+        throw new Exception("Invalid food id");
+      }
+
+      var foodUnit = context.Units
+        .Include(u => u.Category)
+        .FirstOrDefault(u => u.Id == recipeFoodRequest.UnitId);
+
+      if (foodUnit == null)
+      {
+        throw new Exception("Invalid unit id");
+      }
+
+      var recipeFood = new RecipeFood
+      {
+        Id = Guid.NewGuid(),
+        FoodId = recipeFoodRequest.FoodId,
+        Food = foodPlan,
+        Amount = recipeFoodRequest.Amount,
+        UnitId = recipeFoodRequest.UnitId,
+        Unit = foodUnit,
+      };
+
+      recipeFoods.Add(recipeFood);
+    }
+
+    return recipeFoods;
   }
 }
