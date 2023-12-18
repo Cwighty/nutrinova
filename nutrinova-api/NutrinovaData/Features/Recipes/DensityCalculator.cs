@@ -33,18 +33,18 @@ public class DensityCalculator : IDensityCalculator
 
     decimal? density = null;
 
-    var gramUnit = new Unit { Category = new UnitCategory { Description = "Mass" }, Description = "gram" };
-    var milliliterUnit = new Unit { Category = new UnitCategory { Description = "Volume" }, Description = "milliliter" };
+    var gramUnit = new Unit { Category = new UnitCategory { Id = 1, Description = "Solid" }, Description = "gram" };
+    var milliliterUnit = new Unit { Category = new UnitCategory { Id = 2, Description = "Liquid" }, Description = "milliliter" };
 
     if (foodServingsPerMeasurement.HasValue)
     {
-      if (foodServingUnit.Category.Description == "Volume" && measurementUnit.Category.Description == "Mass")
+      if (foodServingUnit.Category.Description == "Liquid" && measurementUnit.Category.Description == "Solid")
       {
         var servingsInMl = unitConverter.Convert(foodServingsPerMeasurement.Value, foodServingUnit, milliliterUnit);
         var massInG = unitConverter.Convert(1, measurementUnit, gramUnit);
         density = massInG / servingsInMl;
       }
-      else if (foodServingUnit.Category.Description == "Mass" && measurementUnit.Category.Description == "Volume")
+      else if (foodServingUnit.Category.Description == "Solid" && measurementUnit.Category.Description == "Liquid")
       {
         var servingsInG = unitConverter.Convert(foodServingsPerMeasurement.Value, foodServingUnit, gramUnit);
         var volumeInMl = unitConverter.Convert(1, measurementUnit, milliliterUnit);
