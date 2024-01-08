@@ -352,10 +352,19 @@ public class RecipeController : ControllerBase
       {
         throw new Exception("Food servings per measurement is required for any ingredient that has a different unit category than the food serving unit");
       }
+      else if (measurementUnit.Category.Description != foodUnit.Category.Description && ingredient.FoodServingsPerMeasurement != null)
+      {
+        var foodSample = new FoodMeasurementSample
+        {
+          Id = Guid.NewGuid(),
+          FoodPlanId = foodPlan.Id,
+          FoodServingsPerMeasurement = ingredient.FoodServingsPerMeasurement ?? throw new Exception("Invalid food servings per measurement"),
+          MeasurementUnitId = ingredient.MeasurementUnitId,
+        };
 
-      var density = densityCalculator.CalculateDensity(ingredient.FoodServingsPerMeasurement, foodUnit, measurementUnit);
+        context.FoodMeasurementSamples.Add(foodSample);
+      }
 
-      foodPlan.Density = density;
       var recipeFood = new RecipeFood
       {
         Id = Guid.NewGuid(),

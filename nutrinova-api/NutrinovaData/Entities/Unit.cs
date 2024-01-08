@@ -19,6 +19,8 @@ public partial class Unit
 
     public virtual ICollection<FoodHistoryNutrient> FoodHistoryNutrients { get; set; } = new List<FoodHistoryNutrient>();
 
+    public virtual ICollection<FoodMeasurementSample> FoodMeasurementSamples { get; set; } = new List<FoodMeasurementSample>();
+
     public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
 
     public virtual ICollection<FoodPlan> FoodPlans { get; set; } = new List<FoodPlan>();

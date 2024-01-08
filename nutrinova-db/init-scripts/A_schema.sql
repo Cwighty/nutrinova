@@ -67,10 +67,16 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE not null,
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
-        note TEXT null,
-        density DECIMAL null, -- g/ml
-        quanity DECIMAL null -- items per serving
+        note TEXT null
         );
+
+CREATE TABLE 
+  Food_Measurement_Sample (
+    id UUID PRIMARY KEY,
+    Food_Plan_id UUID NOT NULL REFERENCES Food_Plan (id),
+    food_servings_per_measurement DECIMAL not null,
+    measurement_unit_id serial REFERENCES Unit (id) not null
+  );
 
 CREATE TABLE
     Food_History (
@@ -83,9 +89,7 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE not null,
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
-        note TEXT null,
-        density DECIMAL null,
-        quanity DECIMAL null
+        note TEXT null
     );
 
 CREATE TABLE

@@ -5,35 +5,33 @@ namespace NutrinovaData.Entities;
 
 public partial class FoodPlan
 {
-  public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-  public int? Fdcid { get; set; }
+    public int? Fdcid { get; set; }
 
-  public string Description { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
-  public string? BrandName { get; set; }
+    public string? BrandName { get; set; }
 
-  public string? Ingredients { get; set; }
+    public string? Ingredients { get; set; }
 
-  public Guid? CreatedBy { get; set; }
+    public Guid? CreatedBy { get; set; }
 
-  public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-  public decimal ServingSize { get; set; }
+    public decimal ServingSize { get; set; }
 
-  public int ServingSizeUnit { get; set; }
+    public int ServingSizeUnit { get; set; }
 
-  public string? Note { get; set; }
+    public string? Note { get; set; }
 
-  public decimal? Density { get; set; }
+    public virtual Customer? CreatedByNavigation { get; set; }
 
-  public decimal? Quanity { get; set; }
+    public virtual ICollection<FoodMeasurementSample> FoodMeasurementSamples { get; set; } = new List<FoodMeasurementSample>();
 
-  public virtual Customer? CreatedByNavigation { get; set; }
+    public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
 
-  public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
+    public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
 
-  public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
-
-  public virtual Unit ServingSizeUnitNavigation { get; set; } = null!;
+    public virtual Unit ServingSizeUnitNavigation { get; set; } = null!;
 }

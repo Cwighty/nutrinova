@@ -20,6 +20,8 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<FoodHistoryNutrient> FoodHistoryNutrients { get; set; }
 
+    public virtual DbSet<FoodMeasurementSample> FoodMeasurementSamples { get; set; }
+
     public virtual DbSet<FoodPlan> FoodPlans { get; set; }
 
     public virtual DbSet<FoodPlanNutrient> FoodPlanNutrients { get; set; }
@@ -99,12 +101,10 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.Density).HasColumnName("density");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
             entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
-            entity.Property(e => e.Quanity).HasColumnName("quanity");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
             entity.Property(e => e.ServingSizeUnit)
                 .ValueGeneratedOnAdd()
@@ -154,6 +154,32 @@ public partial class NutrinovaDbContext : DbContext
                 .HasConstraintName("food_history_nutrient_unit_id_fkey");
         });
 
+        modelBuilder.Entity<FoodMeasurementSample>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("food_measurement_sample_pkey");
+
+            entity.ToTable("food_measurement_sample");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.FoodPlanId).HasColumnName("food_plan_id");
+            entity.Property(e => e.FoodServingsPerMeasurement).HasColumnName("food_servings_per_measurement");
+            entity.Property(e => e.MeasurementUnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("measurement_unit_id");
+
+            entity.HasOne(d => d.FoodPlan).WithMany(p => p.FoodMeasurementSamples)
+                .HasForeignKey(d => d.FoodPlanId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_measurement_sample_food_plan_id_fkey");
+
+            entity.HasOne(d => d.MeasurementUnit).WithMany(p => p.FoodMeasurementSamples)
+                .HasForeignKey(d => d.MeasurementUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_measurement_sample_measurement_unit_id_fkey");
+        });
+
         modelBuilder.Entity<FoodPlan>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("food_plan_pkey");
@@ -166,12 +192,10 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.BrandName).HasColumnName("brand_name");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.Density).HasColumnName("density");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Fdcid).HasColumnName("fdcid");
             entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Note).HasColumnName("note");
-            entity.Property(e => e.Quanity).HasColumnName("quanity");
             entity.Property(e => e.ServingSize).HasColumnName("serving_size");
             entity.Property(e => e.ServingSizeUnit)
                 .ValueGeneratedOnAdd()
