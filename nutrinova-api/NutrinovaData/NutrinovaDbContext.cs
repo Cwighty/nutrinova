@@ -69,6 +69,7 @@ public partial class NutrinovaDbContext : DbContext
                 .HasColumnName("id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.Issingleuser).HasColumnName("issingleuser");
             entity.Property(e => e.Objectid).HasColumnName("objectid");
         });
 
