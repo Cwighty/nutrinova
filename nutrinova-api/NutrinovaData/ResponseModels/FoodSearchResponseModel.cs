@@ -10,5 +10,5 @@ public class FoodSearchResponseModel
 
   public FoodSearchCriteria foodSearchCriteria { get; set; }
 
-  public List<Food> foods { get; set; }
+  public List<FoodResponse> foods { get; set; }
 }

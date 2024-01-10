@@ -13,11 +13,11 @@ const nextConfig = {
     return [
       {
         source: "/be/swagger/:path*",
-        destination: process.env.NUTRINOVA_API_URL + "/swagger/:path*", // Proxy to Backend
+        destination: (process.env.NUTRINOVA_API_URL || "/") + "/swagger/:path*", // Proxy to Backend
       },
       {
         source: "/be/:path*",
-        destination: process.env.NUTRINOVA_API_URL + "/be/:path*", // Proxy to Backend
+        destination: (process.env.NUTRINOVA_API_URL || "/") + "/be/:path*", // Proxy to Backend
       },
     ];
   },

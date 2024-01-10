@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - /home/caleb/nutrinovadata/data:/var/lib/postgresql/data
+      - /home/nutrinova/nutrinovadata/data:/var/lib/postgresql/data
       - ../nutrinova-db/init-scripts:/docker-entrypoint-initdb.d
     restart: always
 
@@ -52,7 +52,7 @@ services:
       - DUCKDNSTOKEN=${DUCKDNSTOKEN}
       - STAGING=false
     volumes:
-      - /home/caleb/data/swag:/config
+      - /home/nutrinova/data/swag:/config
       - ./swag-default.conf:/config/nginx/site-confs/default.conf
     ports:
       - 0.0.0.0:1359:443

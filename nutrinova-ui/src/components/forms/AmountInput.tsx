@@ -10,6 +10,7 @@ interface AmountInputProps {
   unit: UnitOption;
   setUnit: (unit: UnitOption) => void;
   restrictToUnitCategory?: string | null;
+  submitted?: boolean;
 }
 
 export const AmountInput = ({
@@ -18,6 +19,7 @@ export const AmountInput = ({
   unit,
   setUnit,
   restrictToUnitCategory = null,
+  submitted = true,
 }: AmountInputProps) => {
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
@@ -33,8 +35,8 @@ export const AmountInput = ({
             value={amount}
             onChange={handleAmountChange}
             fullWidth
-            error={amount <= 0}
-            helperText={amount <= 0 ? "Amount must be greater than 0" : ""}
+            error={submitted && amount <= 0}
+            helperText={submitted && amount <= 0 ? "Amount must be greater than 0" : ""}
           />
         </Grid>
 
@@ -57,8 +59,8 @@ export const AmountInput = ({
                 },
               );
             }}
-            error={unit.description === ""}
-            helperText={unit.description === "" ? "Please select a unit" : ""}
+            error={submitted && unit.description === ""}
+            helperText={submitted && unit.description === "" ? "Please select a unit" : ""}
           />
         </Grid>
       </Grid>

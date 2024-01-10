@@ -154,7 +154,8 @@ CREATE TABLE
         id UUID PRIMARY KEY,
         RecordedBy TEXT NOT NULL,
         Patient_id UUID NOT NULL,
-        RecordedDate DATE,
+        RecordedAt TIMESTAMP WITH TIME ZONE not null,
+        Notes TEXT,
         FOREIGN KEY (Patient_id) REFERENCES Patient (id)
     );
 

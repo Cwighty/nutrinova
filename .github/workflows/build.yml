@@ -27,5 +27,5 @@ jobs:
       - name: Build Frontend
         run: |
           cd nutrinova-ui/
-          docker build -t nutrinova_ui_build --build-arg NUTRINOVA_API_URL=${NUTRINOVA_API_URL} -f build.Dockerfile .
+          docker build --no-cache -t nutrinova_ui_build --build-arg NUTRINOVA_API_URL=${NUTRINOVA_API_URL} -f build.Dockerfile .
           docker run -i --rm nutrinova_ui_build

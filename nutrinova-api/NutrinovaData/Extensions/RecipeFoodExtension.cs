@@ -5,19 +5,18 @@ namespace NutrinovaData.Extensions;
 
 public static class RecipeFoodExtension
 {
-  public static Food ToFood(this RecipeFood recipeFood)
+  public static FoodResponse ToFood(this RecipeFood recipeFood)
   {
-    Console.WriteLine($"recipeFood.FoodId: {recipeFood.FoodId}");
-    return new Food
+    return new FoodResponse
     {
-      id = recipeFood.FoodId,
-      description = recipeFood.Food.Description,
-      ingredients = recipeFood.Food.Ingredients ?? string.Empty,
-      note = recipeFood.Food.Note ?? string.Empty,
-      unitId = recipeFood.UnitId,
-      servingSize = recipeFood.Amount,
-      unit = recipeFood.Unit.ToUnitOption(),
-      servingSizeUnit = recipeFood.Unit.Abbreviation,
+      Id = recipeFood.FoodId,
+      Description = recipeFood.Food.Description,
+      Ingredients = recipeFood.Food.Ingredients ?? string.Empty,
+      Note = recipeFood.Food.Note ?? string.Empty,
+      UnitId = recipeFood.UnitId,
+      ServingSize = recipeFood.Amount,
+      Unit = recipeFood.Unit.ToUnitOption(),
+      ServingSizeUnit = recipeFood.Unit.Abbreviation,
     };
   }
 }

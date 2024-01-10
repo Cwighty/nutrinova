@@ -2,7 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using NutrinovaApi.Extensions;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Meals;
+using NutrinovaData.Features.Patients;
+using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaApi.Controllers;
 
@@ -11,8 +14,8 @@ namespace NutrinovaApi.Controllers;
 [Route("/be/[controller]")]
 public class MealController : ControllerBase
 {
-  private readonly ILogger<MealController> logger;
   private readonly NutrinovaDbContext context;
+  private readonly ILogger<MealController> logger;
 
   public MealController(ILogger<MealController> logger, NutrinovaDbContext context)
   {
@@ -61,24 +64,163 @@ public class MealController : ControllerBase
   [HttpGet("{id}")]
   public async Task<ActionResult<MealHistory>> GetMeal(Guid id)
   {
-    var mealHistory = await context.MealHistories.FindAsync(id);
+    var mealHistory = await context.MealHistories
+      .Include(m => m.MealFoodHistories)
+        .ThenInclude(m => m.Food)
+        .ThenInclude(f => f.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories)
+        .ThenInclude(m => m.RecipeHistory)
+        .ThenInclude(r => r.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
+      .Include(mealHistory => mealHistory.MealRecipeHistories)
+        .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
+        .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
+        .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food)
+      .Include(mealHistory => mealHistory.Patient)
+      .FirstOrDefaultAsync(m => m.Id == id);
 
     if (mealHistory is null)
     {
       return NotFound();
     }
 
-    return Ok(mealHistory);
+    var mealHistoryResponse = new MealHistoryResponse
+    {
+      Id = mealHistory.Id,
+      PatientId = mealHistory.PatientId,
+      RecordedAt = mealHistory.Recordedat,
+      Recordedby = mealHistory.Recordedby,
+      Notes = mealHistory.Notes,
+      FoodHistoryResponses = mealHistory.MealFoodHistories.Select(mfh => new FoodHistoryResponse
+      {
+        Id = mfh.Id,
+        Fdcid = mfh.Food.Fdcid,
+        Description = mfh.Food.Description,
+        BrandName = mfh.Food.BrandName,
+        Ingredients = mfh.Food.Ingredients,
+        CreatedBy = mfh.Food.CreatedBy,
+        CreatedAt = mfh.Food.CreatedAt,
+        ServingSize = mfh.Food.ServingSize,
+        Unit = mfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
+        Note = mfh.Food.Note,
+      }).ToList(),
+      RecipeHistoryResponses = mealHistory.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
+      {
+        Id = mrh.Id,
+        Description = mrh.RecipeHistory.Description,
+        Tags = mrh.RecipeHistory.Tags,
+        Notes = mrh.RecipeHistory.Notes,
+        Amount = mrh.RecipeHistory.Amount,
+        ServingSizeUnit = mrh.RecipeHistory.ServingSizeUnit,
+        CreatedAt = mrh.RecipeHistory.CreatedAt,
+        CreatedBy = mrh.RecipeHistory.CreatedBy,
+        FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
+        {
+          Id = rfh.Id,
+          Fdcid = rfh.Food.Fdcid,
+          Description = rfh.Food.Description,
+          BrandName = rfh.Food.BrandName,
+          Ingredients = rfh.Food.Ingredients,
+          CreatedBy = rfh.Food.CreatedBy,
+          CreatedAt = rfh.Food.CreatedAt,
+          ServingSize = rfh.Food.ServingSize,
+          Unit = rfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
+          Note = rfh.Food.Note,
+        }).ToList(),
+      }).ToList(),
+      PatientResponse = mealHistory.Patient.ToPatientResponse(),
+    };
+
+    return Ok(mealHistoryResponse);
+  }
+
+  [HttpGet("getMealHistory")]
+  public async Task<ActionResult<IEnumerable<MealHistoryResponse>>> GetMealHistory(DateTime beginDate, DateTime endDate)
+  {
+    var customer = await GetCustomer();
+    if (customer is null)
+    {
+      return Unauthorized();
+    }
+
+    var mealHistories = await context.MealHistories
+      .Include(m => m.MealFoodHistories)
+      .ThenInclude(m => m.Food)
+      .ThenInclude(f => f.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories)
+      .ThenInclude(m => m.RecipeHistory)
+      .ThenInclude(r => r.ServingSizeUnitNavigation)
+      .ThenInclude(u => u.Category)
+      .Include(m => m.MealFoodHistories).ThenInclude(mfh => mfh.Unit).ThenInclude(u => u.Category)
+      .Include(m => m.MealRecipeHistories).ThenInclude(mrh => mrh.Unit).ThenInclude(u => u.Category)
+      .Include(mealHistory => mealHistory.MealRecipeHistories)
+      .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
+      .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
+      .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food)
+      .Include(mealHistory => mealHistory.Patient)
+      .Where(m => m.Patient.CustomerId == customer.Id && m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date)
+      .ToListAsync();
+
+    var mealHistoryResponses = mealHistories.Select(m => new MealHistoryResponse
+    {
+      Id = m.Id,
+      PatientId = m.PatientId,
+      RecordedAt = m.Recordedat,
+      Recordedby = m.Recordedby,
+      Notes = m.Notes,
+      FoodHistoryResponses = m.MealFoodHistories.Select(mfh => new FoodHistoryResponse
+      {
+        Id = mfh.Id,
+        Fdcid = mfh.Food.Fdcid,
+        Description = mfh.Food.Description,
+        BrandName = mfh.Food.BrandName,
+        Ingredients = mfh.Food.Ingredients,
+        CreatedBy = mfh.Food.CreatedBy,
+        CreatedAt = mfh.Food.CreatedAt,
+        ServingSize = mfh.Food.ServingSize,
+        ServingSizeUnit = mfh.Food.ServingSizeUnit,
+        Unit = mfh.Unit.ToUnitOption(),
+        Note = mfh.Food.Note,
+      }).ToList(),
+      RecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
+      {
+        Id = mrh.Id,
+        Description = mrh.RecipeHistory.Description,
+        Tags = mrh.RecipeHistory.Tags,
+        Notes = mrh.RecipeHistory.Notes,
+        Amount = mrh.RecipeHistory.Amount,
+        CreatedAt = mrh.RecipeHistory.CreatedAt,
+        CreatedBy = mrh.RecipeHistory.CreatedBy,
+        Unit = mrh.Unit.ToUnitOption(),
+        FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
+        {
+          Id = rfh.Id,
+          Fdcid = rfh.Food.Fdcid,
+          Description = rfh.Food.Description,
+          BrandName = rfh.Food.BrandName,
+          Ingredients = rfh.Food.Ingredients,
+          CreatedBy = rfh.Food.CreatedBy,
+          CreatedAt = rfh.Food.CreatedAt,
+          ServingSize = rfh.Food.ServingSize,
+          Note = rfh.Food.Note,
+        }).ToList(),
+      }).ToList(),
+      PatientResponse = m.Patient.ToPatientResponse(),
+    });
+
+    return Ok(mealHistoryResponses);
   }
 
   [HttpPost]
-  public async Task<ActionResult> AddMeal(RecordMealRequest recordMealRequest)
+  public async Task<ActionResult> RecordMeal(RecordMealRequest recordMealRequest)
   {
     using var transaction = await context.Database.BeginTransactionAsync();
 
     try
     {
-      Customer? customer = await GetCustomer();
+      var customer = await GetCustomer();
       if (customer is null)
       {
         return Unauthorized();
@@ -89,7 +231,7 @@ public class MealController : ControllerBase
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
         Recordedby = User.Identity!.Name!,
-        Recordeddate = DateOnly.FromDateTime(recordMealRequest.RecordedDate.Date),
+        Recordedat = recordMealRequest.RecordedAt,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
