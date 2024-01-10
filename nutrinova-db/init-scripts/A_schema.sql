@@ -7,6 +7,7 @@ CREATE TABLE
         ObjectId TEXT NOT NULL UNIQUE,
         Email TEXT NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE
+        isSingleUser BOOL NOT NULL,
     );
 
 CREATE TABLE 
