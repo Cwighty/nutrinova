@@ -37,6 +37,7 @@ public class CustomerController : ControllerBase
 
     customer.Id = Guid.NewGuid();
     customer.CreatedAt = DateTime.UtcNow;
+    customer.Issingleuser = true;
 
     await context.Customers.AddAsync(customer);
     await context.SaveChangesAsync();
