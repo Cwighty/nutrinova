@@ -3,6 +3,7 @@ import createAuthenticatedAxiosInstanceFactory from "./axiosRequestFactory";
 export interface Customer {
   objectId: string;
   email: string;
+  issingleuser: boolean;
 }
 
 const userService = {
@@ -17,6 +18,12 @@ const userService = {
     const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
     const response = await axiosInstance.get(`customer/exists?id=${id}`);
     return response.data === true;
+  },
+
+  async getCustomer(id: string): Promise<Customer> {
+    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
+    const response = await axiosInstance.get(`customer/get?id=${id}`);
+    return response.data as Customer;
   },
 
   async createCustomer(customer: Customer): Promise<boolean> {

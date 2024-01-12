@@ -8,6 +8,7 @@ interface PageContainerProps {
 }
 
 export const PatientContextPageContainer = ({ children, title }: PageContainerProps) => {
+
   return (
     <>
       <PageBar title={title} isPatientContext={true} />
