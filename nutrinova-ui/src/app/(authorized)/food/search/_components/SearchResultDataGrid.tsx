@@ -21,7 +21,7 @@ export default function SearchResultDataGrid({
     isError,
   } = useGetFoodSearchResultsQuery(filterParams);
   const columns: GridColDef[] = [
-    { field: "description", headerName: "Food Name", width: 400 },
+    { field: "description", headerName: "Food Name", flex: 1, minWidth: 200 },
     { field: "brandName", headerName: "Brand", width: 200 },
     {
       field: "servingSize",
