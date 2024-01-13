@@ -39,17 +39,29 @@ export const RecipeFoodList = ({
   const createFoodConversionSampleMutation = useCreateFoodConversionSampleMutation();
 
   const handleAddFood = () => {
-    setRecipeFormState({
-      ...recipeFormState,
-      recipeFoods: [...recipeFormState.recipeFoods, newFood],
-    });
     const foodConversionSample: FoodConversionSample = {
       foodPlanId: newFood.foodId,
       foodServingsPerMeasurement: newFood.foodServingsPerMeasurement,
       measurementUnitId: newFood.measurementUnitId,
     };
-    if (newFood.foodServingsPerMeasurement !== null) {
-      createFoodConversionSampleMutation.mutate(foodConversionSample);
+    if (foodConversionSample.foodServingsPerMeasurement !== null) {
+      createFoodConversionSampleMutation.mutate(foodConversionSample,
+        {
+          onSuccess: () => {
+            // ensure theres a food conversion sample in place before rerendering the nutrition summary
+            setRecipeFormState({
+              ...recipeFormState,
+              recipeFoods: [...recipeFormState.recipeFoods, newFood],
+            });
+          }
+        }
+      );
+    }
+    else {
+      setRecipeFormState({
+        ...recipeFormState,
+        recipeFoods: [...recipeFormState.recipeFoods, newFood],
+      });
     }
     setNewFood({ ...initialFood });
   };
