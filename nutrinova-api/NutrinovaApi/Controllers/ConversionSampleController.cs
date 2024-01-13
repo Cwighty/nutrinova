@@ -26,7 +26,7 @@ public class ConversionSampleController : ControllerBase
       FoodPlanId = foodConversionSample.FoodPlanId,
       FoodServingsPerMeasurement = foodConversionSample.FoodServingsPerMeasurement,
       MeasurementUnitId = foodConversionSample.MeasurementUnitId,
-      CreatedAt = DateTime.Now,
+      CreatedAt = DateTime.UtcNow,
     };
 
     context.FoodConversionSamples.Add(sample);
