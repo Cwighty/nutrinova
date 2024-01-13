@@ -123,7 +123,9 @@ public class RecipeController : ControllerBase
       Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.MeasurementUnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
 
-    var summaries = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
+    List<FoodMeasurementSample> conversionSamples = GetFoodConversionSamples();
+
+    var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipeFoods, conversionSamples);
     return Ok(summaries);
   }
 
@@ -153,7 +155,9 @@ public class RecipeController : ControllerBase
       return NotFound();
     }
 
-    var summaries = recipeFoodTotaler.GetNutrientSummaries(recipe.RecipeFoods.ToList());
+    var conversionSamples = GetFoodConversionSamples();
+
+    var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipe.RecipeFoods.ToList(), conversionSamples);
 
     var recipeRes = recipe.ToRecipeResponseModel(summaries);
     return recipeRes;
@@ -377,5 +381,13 @@ public class RecipeController : ControllerBase
     }
 
     return ingredients;
+  }
+
+  private List<FoodMeasurementSample> GetFoodConversionSamples()
+  {
+    return context.FoodMeasurementSamples
+      .Include(fms => fms.MeasurementUnit).ThenInclude(u => u.Category)
+      .Include(fms => fms.FoodPlan).ThenInclude(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .ToList();
   }
 }

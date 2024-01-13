@@ -1,4 +1,5 @@
 using NutrinovaData.Entities;
+using NutrinovaData.Extensions;
 using NutrinovaData.Features.Units;
 
 namespace NutrinovaData.Features.Recipes;
@@ -12,29 +13,58 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
     this.unitConverter = unitConverter;
   }
 
-  public List<NutrientSummary> GetNutrientSummaries(List<RecipeFood> recipeFoods)
+  public List<NutrientSummary> GetRecipeNutrientSummaries(List<RecipeFood> recipeFoods, List<FoodMeasurementSample> foodMeasurementSamples)
   {
     var nutrientSummaries = new Dictionary<int, NutrientSummary>();
     foreach (var recipeFood in recipeFoods)
     {
-      foreach (var nutrient in recipeFood.Food.FoodPlanNutrients)
+      foreach (var foodNutrient in recipeFood.Food.FoodPlanNutrients)
       {
-        if (!nutrientSummaries.ContainsKey(nutrient.NutrientId))
+        var foodServingUnit = recipeFood.Food.ServingSizeUnitNavigation;
+        var recipeFoodUnit = recipeFood.Unit;
+
+        var requiresFoodConversionSample = !(foodServingUnit.Category == recipeFoodUnit.Category);
+
+        var foodConversionSample = foodMeasurementSamples
+          .FirstOrDefault(fms => fms.FoodPlanId == recipeFood.FoodId && fms.MeasurementUnit.Category == recipeFoodUnit.Category);
+
+        decimal foodNutrientAmountInRecipeFood = 0;
+        var amountPerSingleFoodUnit = foodNutrient.GetNutrientAmountPerFoodServingUnit();
+
+        if (!requiresFoodConversionSample)
         {
-          nutrientSummaries.Add(nutrient.NutrientId, new NutrientSummary
-          {
-            Name = nutrient.Nutrient.Description,
-            Amount = nutrient.Amount * unitConverter.Convert(recipeFood.Amount, recipeFood.Unit, recipeFood.Food.ServingSizeUnitNavigation),
-            Unit = nutrient.Unit.ToUnitOption(),
-          });
+          foodNutrientAmountInRecipeFood = amountPerSingleFoodUnit.Amount * unitConverter.Convert(1, recipeFoodUnit, foodServingUnit) * recipeFood.Amount;
+        }
+        else if (foodConversionSample != null)
+        {
+          foodNutrientAmountInRecipeFood = amountPerSingleFoodUnit.Amount * foodConversionSample.FoodServingsPerMeasurement * recipeFood.Amount;
         }
         else
         {
-          nutrientSummaries[nutrient.NutrientId].Amount += nutrient.Amount * unitConverter.Convert(recipeFood.Amount, recipeFood.Unit, recipeFood.Food.ServingSizeUnitNavigation);
+          throw new Exception("No food conversion sample found");
         }
+
+        AggregateSameNutrients(nutrientSummaries, foodNutrient, foodNutrientAmountInRecipeFood);
       }
     }
 
     return nutrientSummaries.Values.ToList();
+  }
+
+  private static void AggregateSameNutrients(Dictionary<int, NutrientSummary> nutrientSummaries, FoodPlanNutrient foodNutrient, decimal foodNutrientAmountInRecipeFood)
+  {
+    if (nutrientSummaries.ContainsKey(foodNutrient.NutrientId))
+    {
+      nutrientSummaries[foodNutrient.NutrientId].Amount += foodNutrientAmountInRecipeFood;
+    }
+    else
+    {
+      nutrientSummaries.Add(foodNutrient.NutrientId, new NutrientSummary
+      {
+        Name = foodNutrient.Nutrient.Description,
+        Amount = foodNutrientAmountInRecipeFood,
+        Unit = foodNutrient.Unit.ToUnitOption(),
+      });
+    }
   }
 }
