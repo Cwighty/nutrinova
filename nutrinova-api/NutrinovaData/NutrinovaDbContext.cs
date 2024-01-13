@@ -16,6 +16,8 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<CustomerLicenseContract> CustomerLicenseContracts { get; set; }
 
+    public virtual DbSet<FoodConversionSample> FoodConversionSamples { get; set; }
+
     public virtual DbSet<FoodHistory> FoodHistories { get; set; }
 
     public virtual DbSet<FoodHistoryNutrient> FoodHistoryNutrients { get; set; }
@@ -85,6 +87,33 @@ public partial class NutrinovaDbContext : DbContext
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("customer_license_contract_customer_id_fkey");
+        });
+
+        modelBuilder.Entity<FoodConversionSample>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("food_conversion_sample_pkey");
+
+            entity.ToTable("food_conversion_sample");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.FoodPlanId).HasColumnName("food_plan_id");
+            entity.Property(e => e.FoodServingsPerMeasurement).HasColumnName("food_servings_per_measurement");
+            entity.Property(e => e.MeasurementUnitId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("measurement_unit_id");
+
+            entity.HasOne(d => d.FoodPlan).WithMany(p => p.FoodConversionSamples)
+                .HasForeignKey(d => d.FoodPlanId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_conversion_sample_food_plan_id_fkey");
+
+            entity.HasOne(d => d.MeasurementUnit).WithMany(p => p.FoodConversionSamples)
+                .HasForeignKey(d => d.MeasurementUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("food_conversion_sample_measurement_unit_id_fkey");
         });
 
         modelBuilder.Entity<FoodHistory>(entity =>

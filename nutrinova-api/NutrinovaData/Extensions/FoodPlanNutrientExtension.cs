@@ -22,4 +22,17 @@ public static class FoodPlanNutrientExtension
       value = (double)foodPlanNutrient.Amount,
     };
   }
+
+  public static NutrientSummary GetNutrientAmountPerFoodServingUnit(this FoodPlanNutrient foodPlanNutrient)
+  {
+    var foodServingUnit = foodPlanNutrient.Foodplan.ServingSizeUnitNavigation;
+    var foodServingSize = foodPlanNutrient.Foodplan.ServingSize;
+    var amountPerFoodServingUnit = foodPlanNutrient.Amount / foodServingSize;
+    return new NutrientSummary()
+    {
+      Amount = amountPerFoodServingUnit,
+      Name = foodPlanNutrient.Nutrient.Description,
+      Unit = foodServingUnit.ToUnitOption(),
+    };
+  }
 }

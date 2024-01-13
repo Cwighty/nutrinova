@@ -7,11 +7,12 @@ import {
   ListItemSecondaryAction,
   IconButton,
 } from "@mui/material";
-import { AddFoodDialog } from "./AddFoodDialog";
+import { AddFoodDialog } from "./AddFood/AddFoodDialog";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import { useState } from "react";
-import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
+import { CreateRecipeFoodModel, FoodConversionSample } from "../_models/createRecipeFoodModel";
 import { Delete } from "@mui/icons-material";
+import { useCreateFoodConversionSampleMutation } from "../../foodConversionSampleHooks";
 
 interface RecipeFoodListProps {
   recipeFormState: CreateRecipeRequestModel;
@@ -20,10 +21,11 @@ interface RecipeFoodListProps {
 
 const initialFood: CreateRecipeFoodModel = {
   foodId: "",
-  amount: 1,
-  unitId: 1,
+  measurement: 1,
+  measurementUnitId: 1,
   name: "",
-  unitName: "Gram",
+  measurementUnitName: "Gram",
+  foodServingsPerMeasurement: null,
 };
 
 export const RecipeFoodList = ({
@@ -34,11 +36,33 @@ export const RecipeFoodList = ({
     ...initialFood,
   });
 
+  const createFoodConversionSampleMutation = useCreateFoodConversionSampleMutation();
+
   const handleAddFood = () => {
-    setRecipeFormState({
-      ...recipeFormState,
-      recipeFoods: [...recipeFormState.recipeFoods, newFood],
-    });
+    const foodConversionSample: FoodConversionSample = {
+      foodPlanId: newFood.foodId,
+      foodServingsPerMeasurement: newFood.foodServingsPerMeasurement,
+      measurementUnitId: newFood.measurementUnitId,
+    };
+    if (foodConversionSample.foodServingsPerMeasurement !== null) {
+      createFoodConversionSampleMutation.mutate(foodConversionSample,
+        {
+          onSuccess: () => {
+            // ensure theres a food conversion sample in place before rerendering the nutrition summary
+            setRecipeFormState({
+              ...recipeFormState,
+              recipeFoods: [...recipeFormState.recipeFoods, newFood],
+            });
+          }
+        }
+      );
+    }
+    else {
+      setRecipeFormState({
+        ...recipeFormState,
+        recipeFoods: [...recipeFormState.recipeFoods, newFood],
+      });
+    }
     setNewFood({ ...initialFood });
   };
 
@@ -64,7 +88,7 @@ export const RecipeFoodList = ({
         <ListItem key={index} divider>
           <ListItemText
             primary={food.name}
-            secondary={`${food.amount} ${food.unitName}`}
+            secondary={`${food.measurement} ${food.measurementUnitName}`}
           />
           <ListItemSecondaryAction>
             <IconButton

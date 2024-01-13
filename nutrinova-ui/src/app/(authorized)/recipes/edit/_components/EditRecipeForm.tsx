@@ -9,7 +9,7 @@ import { EditRecipeRequestModel } from '../_models/EditRecipeRequestModel';
 import { useGetUnitsQuery } from '@/app/(authorized)/food/foodHooks';
 import { SelectNutrientWithUnitState, ServingSizeUnitField } from '../../create/_components/ServingSizeUnitField';
 import { EditRecipeFoodItem } from './EditRecipeFoodItem';
-import { AddFoodDialog } from '../../create/_components/AddFoodDialog';
+import { AddFoodDialog } from '../../create/_components/AddFood/AddFoodDialog';
 import { CreateRecipeFoodModel } from '../../create/_models/createRecipeFoodModel';
 
 interface EditRecipeFormProps {
@@ -46,10 +46,11 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
 
   const initialFood: CreateRecipeFoodModel = {
     foodId: "",
-    amount: 1,
-    unitId: 1,
+    measurement: 1,
+    measurementUnitId: 1,
     name: "",
-    unitName: "Gram",
+    measurementUnitName: "Gram",
+    foodServingsPerMeasurement: null,
   };
 
   const [newFood, setNewFood] = useState<CreateRecipeFoodModel>({
@@ -61,11 +62,11 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       ...editRecipeFormState,
       recipeFoods: [...editRecipeFormState.recipeFoods, {
         id: newFood.foodId,
-        servingSize: newFood.amount,
-        unitId: newFood.unitId,
-        unitName: newFood.unitName,
+        servingSize: newFood.measurement,
+        unitId: newFood.measurementUnitId,
+        unitName: newFood.measurementUnitName,
         name: newFood.name,
-        unit: unitOptions?.find(u => u.id === newFood.unitId),
+        unit: unitOptions?.find(u => u.id === newFood.measurementUnitId),
       }],
     });
     setNewFood({ ...initialFood });
