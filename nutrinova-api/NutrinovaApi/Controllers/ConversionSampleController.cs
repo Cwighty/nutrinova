@@ -52,7 +52,7 @@ public class ConversionSampleController : ControllerBase
       .Include(s => s.MeasurementUnit).ThenInclude(u => u.Category)
       .ToListAsync();
 
-    var sample = samples.GetMatchingFoodConversionSample(request.FoodPlanId, request.MeasurementUnitCategoryId);
+    var sample = samples.GetMatchingFoodConversionSample(request.FoodPlanId, request.MeasurementUnitId);
 
     return Ok(sample);
   }
