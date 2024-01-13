@@ -41,7 +41,12 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
         }
         else
         {
-          throw new Exception("No food conversion sample found");
+          nutrientSummaries.Add(foodNutrient.NutrientId, new NutrientSummary
+          {
+            Name = foodNutrient.Nutrient.Description + " (Could not calculate)",
+            Amount = 0,
+            Unit = foodServingUnit.ToUnitOption(),
+          });
         }
 
         AggregateSameNutrients(nutrientSummaries, foodNutrient, foodNutrientAmountInRecipeFood);
