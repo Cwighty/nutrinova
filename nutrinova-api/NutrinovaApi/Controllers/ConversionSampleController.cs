@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.Features.Recipes;
 using NutrinovaData.RequestModels;
 
 namespace NutrinovaApi.Controllers;
@@ -15,6 +17,19 @@ public class ConversionSampleController : ControllerBase
   {
     this.context = dbContext;
     this.logger = logger;
+  }
+
+  [HttpGet]
+  public async Task<IActionResult> GetConversionSample(GetMatchingFoodConversionSampleRequest request)
+  {
+    var samples = await context.FoodConversionSamples
+      .Include(fms => fms.FoodPlan).ThenInclude(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .Include(s => s.MeasurementUnit).ThenInclude(u => u.Category)
+      .ToListAsync();
+
+    var sample = samples.GetMatchingFoodConversionSample(request.FoodPlanId, request.MeasurementUnitCategoryId);
+
+    return Ok(sample);
   }
 
   [HttpPost]

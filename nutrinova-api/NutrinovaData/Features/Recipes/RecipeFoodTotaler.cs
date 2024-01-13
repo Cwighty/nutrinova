@@ -25,8 +25,7 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
 
         var requiresFoodConversionSample = !(foodServingUnit.Category == recipeFoodUnit.Category);
 
-        var foodConversionSample = foodMeasurementSamples
-          .FirstOrDefault(fms => fms.FoodPlanId == recipeFood.FoodId && fms.MeasurementUnit.Category == recipeFoodUnit.Category);
+        var foodConversionSample = foodMeasurementSamples.GetMatchingFoodConversionSample(recipeFood.FoodId, recipeFoodUnit.CategoryId!.Value);
 
         decimal foodNutrientAmountInRecipeFood = 0;
         var amountPerSingleFoodUnit = foodNutrient.GetNutrientAmountPerFoodServingUnit();
