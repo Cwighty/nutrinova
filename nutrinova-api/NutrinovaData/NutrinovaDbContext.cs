@@ -16,11 +16,11 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<CustomerLicenseContract> CustomerLicenseContracts { get; set; }
 
+    public virtual DbSet<FoodConversionSample> FoodConversionSamples { get; set; }
+
     public virtual DbSet<FoodHistory> FoodHistories { get; set; }
 
     public virtual DbSet<FoodHistoryNutrient> FoodHistoryNutrients { get; set; }
-
-    public virtual DbSet<FoodConversionSample> FoodConversionSamples { get; set; }
 
     public virtual DbSet<FoodPlan> FoodPlans { get; set; }
 
@@ -179,32 +179,6 @@ public partial class NutrinovaDbContext : DbContext
                 .HasForeignKey(d => d.UnitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_history_nutrient_unit_id_fkey");
-        });
-
-        modelBuilder.Entity<FoodConversionSample>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("food_measurement_sample_pkey");
-
-            entity.ToTable("food_measurement_sample");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.FoodPlanId).HasColumnName("food_plan_id");
-            entity.Property(e => e.FoodServingsPerMeasurement).HasColumnName("food_servings_per_measurement");
-            entity.Property(e => e.MeasurementUnitId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("measurement_unit_id");
-
-            entity.HasOne(d => d.FoodPlan).WithMany(p => p.FoodConversionSamples)
-                .HasForeignKey(d => d.FoodPlanId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("food_measurement_sample_food_plan_id_fkey");
-
-            entity.HasOne(d => d.MeasurementUnit).WithMany(p => p.FoodConversionSamples)
-                .HasForeignKey(d => d.MeasurementUnitId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("food_measurement_sample_measurement_unit_id_fkey");
         });
 
         modelBuilder.Entity<FoodPlan>(entity =>

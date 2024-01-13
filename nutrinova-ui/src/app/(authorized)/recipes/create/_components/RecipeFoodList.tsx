@@ -10,8 +10,9 @@ import {
 import { AddFoodDialog } from "./AddFood/AddFoodDialog";
 import { CreateRecipeRequestModel } from "../_models/createRecipeRequest";
 import { useState } from "react";
-import { CreateRecipeFoodModel } from "../_models/createRecipeFoodModel";
+import { CreateRecipeFoodModel, FoodConversionSample } from "../_models/createRecipeFoodModel";
 import { Delete } from "@mui/icons-material";
+import { useCreateFoodConversionSampleMutation } from "../../foodConversionSampleHooks";
 
 interface RecipeFoodListProps {
   recipeFormState: CreateRecipeRequestModel;
@@ -24,6 +25,7 @@ const initialFood: CreateRecipeFoodModel = {
   measurementUnitId: 1,
   name: "",
   measurementUnitName: "Gram",
+  foodServingsPerMeasurement: null,
 };
 
 export const RecipeFoodList = ({
@@ -34,11 +36,21 @@ export const RecipeFoodList = ({
     ...initialFood,
   });
 
+  const createFoodConversionSampleMutation = useCreateFoodConversionSampleMutation();
+
   const handleAddFood = () => {
     setRecipeFormState({
       ...recipeFormState,
       recipeFoods: [...recipeFormState.recipeFoods, newFood],
     });
+    const foodConversionSample: FoodConversionSample = {
+      foodPlanId: newFood.foodId,
+      foodServingsPerMeasurement: newFood.foodServingsPerMeasurement,
+      measurementUnitId: newFood.measurementUnitId,
+    };
+    if (newFood.foodServingsPerMeasurement !== null) {
+      createFoodConversionSampleMutation.mutate(foodConversionSample);
+    }
     setNewFood({ ...initialFood });
   };
 
