@@ -1,11 +1,10 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import toast from "react-hot-toast";
-import { FoodConversionSample } from "./create/_models/createRecipeFoodModel";
-import { useMutation } from "@tanstack/react-query";
+import { FoodConversionSample, GetMatchingFoodConversionSampleRequest } from "./create/_models/createRecipeFoodModel";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const foodConversionSampleKeys = {
-  all: "foodConversionSamples",
-  sampleID: (sampleId: string) => [foodConversionSampleKeys.all, sampleId],
+  matching: "matchingFoodConversionSample",
 };
 
 // Create a new food conversion sample
@@ -19,11 +18,12 @@ const createFoodConversionSample = async (sample: FoodConversionSample): Promise
 };
 
 export const useCreateFoodConversionSampleMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createFoodConversionSample,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Food Conversion Sample created successfully");
-      // TODO: Invalidate relevant queries if needed
+      await queryClient.invalidateQueries({ queryKey: [foodConversionSampleKeys.matching] });
     },
     onError: (error) => {
       toast.error("Error creating Food Conversion Sample: " + error.message);
@@ -31,3 +31,23 @@ export const useCreateFoodConversionSampleMutation = () => {
     },
   });
 };
+
+const getMatchingFoodConversionSample = async (foodPlanId: string, measurementUnitId: number): Promise<FoodConversionSample | null> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const request: GetMatchingFoodConversionSampleRequest = {
+    foodPlanId: foodPlanId,
+    measurementUnitId: measurementUnitId,
+  }
+  const response = await apiClient.post("/conversionsample/matching", request);
+  return response.status === 200 ? response.data as FoodConversionSample : null;
+}
+
+export const useGetMatchingFoodConversionSampleQuery = (foodPlanId: string, measurementUnitId: number) => {
+  return useQuery({
+    queryKey: [foodConversionSampleKeys.matching, foodPlanId, measurementUnitId],
+    queryFn: () => getMatchingFoodConversionSample(foodPlanId, measurementUnitId),
+  });
+}
