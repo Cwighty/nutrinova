@@ -196,12 +196,12 @@ public partial class NutrinovaDbContext : DbContext
                 .ValueGeneratedOnAdd()
                 .HasColumnName("measurement_unit_id");
 
-            entity.HasOne(d => d.FoodPlan).WithMany(p => p.FoodMeasurementSamples)
+            entity.HasOne(d => d.FoodPlan).WithMany(p => p.FoodConversionSamples)
                 .HasForeignKey(d => d.FoodPlanId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_measurement_sample_food_plan_id_fkey");
 
-            entity.HasOne(d => d.MeasurementUnit).WithMany(p => p.FoodMeasurementSamples)
+            entity.HasOne(d => d.MeasurementUnit).WithMany(p => p.FoodConversionSamples)
                 .HasForeignKey(d => d.MeasurementUnitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("food_measurement_sample_measurement_unit_id_fkey");
