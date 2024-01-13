@@ -13,7 +13,7 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
     this.unitConverter = unitConverter;
   }
 
-  public List<NutrientSummary> GetRecipeNutrientSummaries(List<RecipeFood> recipeFoods, List<FoodMeasurementSample> foodMeasurementSamples)
+  public List<NutrientSummary> GetRecipeNutrientSummaries(List<RecipeFood> recipeFoods, List<FoodConversionSample> foodMeasurementSamples)
   {
     var nutrientSummaries = new Dictionary<int, NutrientSummary>();
     foreach (var recipeFood in recipeFoods)

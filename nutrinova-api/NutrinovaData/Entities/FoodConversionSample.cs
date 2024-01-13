@@ -13,6 +13,8 @@ public partial class FoodConversionSample
 
     public int MeasurementUnitId { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public virtual FoodPlan FoodPlan { get; set; } = null!;
 
     public virtual Unit MeasurementUnit { get; set; } = null!;

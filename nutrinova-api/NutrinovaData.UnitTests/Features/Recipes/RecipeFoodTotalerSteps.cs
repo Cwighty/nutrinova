@@ -133,7 +133,7 @@ public class RecipeFoodTotalerSteps
   [Given(@"the following food conversion samples")]
   public void GivenTheFollowingFoodConversionSamples(Table table)
   {
-    var foodSamples = table.CreateSet<FoodMeasurementSample>().ToList();
+    var foodSamples = table.CreateSet<FoodConversionSample>().ToList();
     var units = this.scenarioContext.Get<List<Unit>>("Units");
     var foods = this.scenarioContext.Get<List<FoodPlan>>("Foods");
 
@@ -151,7 +151,7 @@ public class RecipeFoodTotalerSteps
   {
     var recipeFoodTotaler = this.scenarioContext.Get<RecipeFoodTotaler>("RecipeFoodTotaler");
     var recipeFoods = this.scenarioContext.Get<List<RecipeFood>>("RecipeFoods");
-    var foodSamples = this.scenarioContext.Get<List<FoodMeasurementSample>>("FoodMeasurementSamples");
+    var foodSamples = this.scenarioContext.Get<List<FoodConversionSample>>("FoodMeasurementSamples");
     var result = recipeFoodTotaler.GetRecipeNutrientSummaries(recipeFoods, foodSamples);
     this.scenarioContext["Result"] = result;
   }

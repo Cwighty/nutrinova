@@ -27,7 +27,7 @@ public partial class FoodPlan
 
     public virtual Customer? CreatedByNavigation { get; set; }
 
-    public virtual ICollection<FoodMeasurementSample> FoodMeasurementSamples { get; set; } = new List<FoodMeasurementSample>();
+    public virtual ICollection<FoodConversionSample> FoodConversionSamples { get; set; } = new List<FoodConversionSample>();
 
     public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
 

@@ -123,7 +123,7 @@ public class RecipeController : ControllerBase
       Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.MeasurementUnitId) ?? throw new Exception("Invalid unit id"),
     }).ToList();
 
-    List<FoodMeasurementSample> conversionSamples = GetFoodConversionSamples();
+    List<FoodConversionSample> conversionSamples = GetFoodConversionSamples();
 
     var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipeFoods, conversionSamples);
     return Ok(summaries);
@@ -358,7 +358,7 @@ public class RecipeController : ControllerBase
       }
       else if (measurementUnit.Category.Description != foodUnit.Category.Description && ingredient.FoodServingsPerMeasurement != null)
       {
-        var foodSample = new FoodMeasurementSample
+        var foodSample = new FoodConversionSample
         {
           Id = Guid.NewGuid(),
           FoodPlanId = foodPlan.Id,
@@ -366,7 +366,7 @@ public class RecipeController : ControllerBase
           MeasurementUnitId = ingredient.MeasurementUnitId,
         };
 
-        context.FoodMeasurementSamples.Add(foodSample);
+        context.FoodConversionSamples.Add(foodSample);
       }
 
       var recipeFood = new RecipeFood
@@ -383,9 +383,9 @@ public class RecipeController : ControllerBase
     return ingredients;
   }
 
-  private List<FoodMeasurementSample> GetFoodConversionSamples()
+  private List<FoodConversionSample> GetFoodConversionSamples()
   {
-    return context.FoodMeasurementSamples
+    return context.FoodConversionSamples
       .Include(fms => fms.MeasurementUnit).ThenInclude(u => u.Category)
       .Include(fms => fms.FoodPlan).ThenInclude(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
       .ToList();
