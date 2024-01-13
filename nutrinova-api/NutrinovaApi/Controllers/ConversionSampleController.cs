@@ -1,5 +1,6 @@
 using NutrinovaData;
 using NutrinovaData.Entities;
+using NutrinovaData.RequestModels;
 
 namespace NutrinovaApi.Controllers;
 
@@ -17,11 +18,19 @@ public class ConversionSampleController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<IActionResult> CreateNewSample(FoodConversionSample foodConversionSample)
+  public async Task<IActionResult> CreateNewSample(CreateFoodConversionSampleRequestModel foodConversionSample)
   {
-    foodConversionSample.Id = Guid.NewGuid();
-    this.context.FoodConversionSamples.Add(foodConversionSample);
-    await this.context.SaveChangesAsync();
-    return this.Ok();
+    var sample = new FoodConversionSample
+    {
+      Id = Guid.NewGuid(),
+      FoodPlanId = foodConversionSample.FoodPlanId,
+      FoodServingsPerMeasurement = foodConversionSample.FoodServingsPerMeasurement,
+      MeasurementUnitId = foodConversionSample.MeasurementUnitId,
+      CreatedAt = DateTime.Now,
+    };
+
+    context.FoodConversionSamples.Add(sample);
+    await context.SaveChangesAsync();
+    return Ok();
   }
 }
