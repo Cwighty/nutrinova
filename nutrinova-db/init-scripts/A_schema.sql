@@ -71,11 +71,12 @@ CREATE TABLE
         );
 
 CREATE TABLE 
-  Food_Measurement_Sample (
+  Food_Conversion_Sample (
     id UUID PRIMARY KEY,
     Food_Plan_id UUID NOT NULL REFERENCES Food_Plan (id),
     food_servings_per_measurement DECIMAL not null,
-    measurement_unit_id serial REFERENCES Unit (id) not null
+    measurement_unit_id serial REFERENCES Unit (id) not null,
+    created_at TIMESTAMP WITH TIME ZONE not null
   );
 
 CREATE TABLE
