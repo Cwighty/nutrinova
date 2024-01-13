@@ -12,3 +12,8 @@ export interface FoodConversionSample {
   measurementUnitId: number;
   foodServingsPerMeasurement: number | null; // the amount of the food serving that is equal to 1 of the added unit
 }
+
+export interface GetMatchingFoodConversionSampleRequest {
+  foodPlanId: string;
+  measurementUnitId: number;
+}
