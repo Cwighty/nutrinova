@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Patient } from "./_models/patient";
 import { getSession } from "next-auth/react";
-import userService from "@/services/customerService";
+import { customerService } from "@/services/customerService";
 
 export const patientKeys = {
   all: ['patients'],
@@ -20,7 +20,7 @@ const getAllPatients = async () => {
   if (session == null || session == undefined) {
     return [];
   }
-  const exists = await userService.customerExistsClient(session.user.id!) ?? false;
+  const exists = await customerService.customerExists(session.user.id!, 'client') as boolean;
   if (!exists) {
     return [];
   }

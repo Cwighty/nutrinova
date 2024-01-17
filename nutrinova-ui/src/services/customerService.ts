@@ -6,39 +6,24 @@ export interface Customer {
   issingleuser: boolean;
 }
 
-const userService = {
-  async customerExistsServer(id: string): Promise<boolean> {
-    'use server'
-    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
-    const response = await axiosInstance.get(`customer/exists?id=${id}`);
-    return response.data === true;
-  },
+const fetchFromServer = async (url: string, origin: "client" | "server") => {
+  const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin })
+  const response = await axiosInstance.get(url);
+  console.log("response", response);
+  return response.data as unknown;
+}
 
-  async customerExistsClient(id: string): Promise<boolean> {
-    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-    const response = await axiosInstance.get(`customer/exists?id=${id}`);
-    return response.data === true;
-  },
+const postToServer = async (url: string, data: unknown) => {
+  const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
+  const response = await axiosInstance.post(url, JSON.stringify(data));
+  return response.data as unknown;
+}
 
-  async getCustomer(id: string): Promise<Customer> {
-    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-    const response = await axiosInstance.get(`customer/get?id=${id}`);
-    return response.data as Customer;
+export const customerService = {
+  customerExists: async (id: string, origin: "client" | "server"): Promise<boolean> => {
+    const res = await fetchFromServer(`customer/exists?id=${id}`, origin);
+    return res as boolean;
   },
-
-  async createCustomer(customer: Customer): Promise<boolean> {
-    try {
-      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-      const customer_json = JSON.stringify(customer);
-      await axiosInstance.post(
-        `Customer/create`,
-        customer_json,
-      );
-      return true;
-    } catch (error) {
-      return false;
-    }
-  },
+  getCustomer: (id: string) => fetchFromServer(`customer/get?id=${id}`, "client"),
+  createCustomer: (customer: Customer) => postToServer(`Customer/create`, customer),
 };
-
-export default userService;
