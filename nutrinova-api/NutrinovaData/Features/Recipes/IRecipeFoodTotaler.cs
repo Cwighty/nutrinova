@@ -4,5 +4,5 @@ namespace NutrinovaData.Features.Recipes;
 
 public interface IRecipeFoodTotaler
 {
-  List<NutrientSummary> GetNutrientSummaries(List<RecipeFood> recipeFoods);
+  List<NutrientSummary> GetRecipeNutrientSummaries(List<RecipeFood> recipeFoods, List<FoodConversionSample> foodMeasurementSamples);
 }

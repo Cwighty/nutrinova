@@ -33,15 +33,15 @@ public static class MappingExtensions
     };
   }
 
-  public static UnitOption ToUnitOption(this Unit servingSizeUnit)
+  public static UnitOption ToUnitOption(this Unit unit)
   {
     return new UnitOption
     {
-      Id = servingSizeUnit.Id,
-      Abbreviation = servingSizeUnit.Abbreviation,
-      CategoryName = servingSizeUnit.Category!.Description,
-      Category = servingSizeUnit.Category.ToUnitCategoryRequestModel(),
-      Description = servingSizeUnit.Description,
+      Id = unit.Id,
+      Abbreviation = unit.Abbreviation,
+      CategoryName = unit.Category!.Description,
+      Category = unit.Category.ToUnitCategoryRequestModel(),
+      Description = unit.Description,
     };
   }
 

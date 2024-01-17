@@ -74,6 +74,7 @@ public class Program
     builder.Services.AddScoped<IUnitConverter, UnitConverter>();
     builder.Services.AddScoped<IRecipeFoodTotaler, RecipeFoodTotaler>();
     builder.Services.AddScoped<IFoodNutrientMapper, NutrientImporter>();
+    builder.Services.AddScoped<IDensityCalculator, DensityCalculator>();
     builder.Services.AddSingleton<WebSocketManager>();
 
     var app = builder.Build();

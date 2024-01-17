@@ -50,8 +50,8 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
         new()
         {
           FoodId = TestFoodPlan.Id,
-          Amount = 10,
-          UnitId = 1,
+          Measurement = 10,
+          MeasurementUnitId = 1,
         },
       },
     };
