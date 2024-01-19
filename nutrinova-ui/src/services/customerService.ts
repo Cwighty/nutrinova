@@ -29,12 +29,12 @@ export const customerService = {
     const res = await fetchFromServer(`customer/exists?id=${session?.user.id}`, origin);
     return res as boolean;
   },
-  getCustomerClient: async () => {
+  getCustomerClient: async (): Promise<Customer> => {
     const session = await getSession();
     if (!session?.user) {
       throw new Error("No user session found");
     }
-    await fetchFromServer(`customer/get?id=${session?.user.id}`, "client")
+    return await fetchFromServer(`customer/get?id=${session?.user.id}`, "client") as Customer;
   },
   createCustomer: async (customer: Customer) => await postToServer(`Customer/create`, customer),
 };

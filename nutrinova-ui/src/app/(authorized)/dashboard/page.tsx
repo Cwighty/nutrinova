@@ -1,4 +1,3 @@
-import { WebSocketTest } from "./WebSocketTest";
 import { PatientContextPageContainer } from "@/components/PatientContextPageContainer";
 import { getServerSession } from "next-auth";
 import DashboardLayout from "./_components/DashboardLayout";
@@ -12,7 +11,6 @@ export default async function DashboardPage() {
   return (
     <PatientContextPageContainer title={metadata.title}>
       <DashboardLayout session={session} />
-      <WebSocketTest />
     </PatientContextPageContainer>
   );
 }
