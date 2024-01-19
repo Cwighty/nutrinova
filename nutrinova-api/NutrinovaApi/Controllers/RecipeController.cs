@@ -197,11 +197,11 @@ public class RecipeController : ControllerBase
     {
       return NotFound();
     }
-    
+
     var recipeResponseModels = new List<RecipeResponseModel>();
-    
+
     var conversionSamples = GetFoodConversionSamples();
-    
+
     foreach (var recipe in recipes)
     {
       var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipe.RecipeFoods.ToList(), conversionSamples);

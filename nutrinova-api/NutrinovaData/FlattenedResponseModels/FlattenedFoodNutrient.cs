@@ -11,7 +11,7 @@ public class FlattenedFoodNutrient
 
   public string? UnitName { get; set; }
 
-  public double Value { get; set; }
+  public decimal? Value { get; set; }
 
   public double? UnitId { get; set; }
 
@@ -23,29 +23,26 @@ public class FlattenedFoodNutrient
 
   public FlattenedFoodNutrient(FoodPlanNutrient fpn)
   {
-    this.NameWithAmountAndUnit = $"{fpn.Nutrient.Description}: {fpn.Amount} {fpn?.Unit?.Description}";
-
-    this.UnitName = fpn?.Unit?.Description;
-
-    this.NutrientName = fpn?.Nutrient.Description;
-
-    this.UnitId = fpn?.UnitId;
-
-    this.UnitCategoryId = fpn?.Unit?.CategoryId;
+    NameWithAmountAndUnit = $"{fpn.Nutrient.Description}: {fpn.Amount} {fpn?.Unit?.Description}";
+    UnitName = fpn?.Unit?.Description;
+    NutrientName = fpn?.Nutrient.Description;
+    Value = fpn?.Amount;
+    UnitId = fpn?.UnitId;
+    UnitCategoryId = fpn?.Unit?.CategoryId;
   }
 
   public FlattenedFoodNutrient(FoodNutrient foodNutrient)
   {
-    this.NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
+    NameWithAmountAndUnit = $"{foodNutrient.nutrientName}: {foodNutrient.value} {foodNutrient.unitName}";
 
-    this.UnitName = foodNutrient.unitName;
+    UnitName = foodNutrient.unitName;
 
-    this.Value = foodNutrient.value;
+    Value = foodNutrient.value;
 
-    this.NutrientName = foodNutrient.nutrientName;
+    NutrientName = foodNutrient.nutrientName;
 
-    this.UnitId = foodNutrient?.unitId;
+    UnitId = foodNutrient?.unitId;
 
-    this.UnitCategoryId = foodNutrient?.UnitCategoryId;
+    UnitCategoryId = foodNutrient?.UnitCategoryId;
   }
 }

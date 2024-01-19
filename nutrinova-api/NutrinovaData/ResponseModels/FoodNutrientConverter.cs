@@ -55,15 +55,15 @@ public class FoodNutrientConverter : JsonConverter<FoodNutrient>
 
       if (root.TryGetProperty("amount", out var amountProperty))
       {
-        foodNutrient.value = amountProperty.GetDouble();
+        foodNutrient.value = amountProperty.GetDecimal();
       }
       else if (root.TryGetProperty("value", out var valueProperty))
       {
-        foodNutrient.value = valueProperty.GetDouble();
+        foodNutrient.value = valueProperty.GetDecimal();
       }
       else if (root.TryGetProperty("Value", out var valueProp))
       {
-        foodNutrient.value = valueProp.GetDouble();
+        foodNutrient.value = valueProp.GetDecimal();
       }
 
       if (root.TryGetProperty("unit", out var unitObject) && unitObject.TryGetProperty("id", out var unitId))

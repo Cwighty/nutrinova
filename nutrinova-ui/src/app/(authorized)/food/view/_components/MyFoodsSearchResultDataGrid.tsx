@@ -6,6 +6,7 @@ import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 import { useRouter } from "next/navigation";
 import { SearchParameters } from "../page";
+import { fn } from "@vitest/spy";
 
 interface MyFoodsSearchResultDataGridProps {
   searchQuery: SearchParameters;
@@ -38,10 +39,11 @@ export const MyFoodsSearchResultDataGrid = ({
       width: 100,
       valueGetter: (params) => {
         const row = params.row as FoodSearchResult;
-        if (row.foodNutrients && row.foodNutrients[3]) {
-          return row.foodNutrients[3].value.toString();
-        }
-        return "";
+        return (
+          row.foodNutrients.find(
+            (fn) => fn.nutrientName === "Energy (Calories)",
+          )?.value ?? ""
+        );
       },
     },
   ];
