@@ -5,7 +5,7 @@ RUN dnf -y install \
       tar \
       gzip \
       git \
-      dotnet-sdk-8.0 \
+      dotnet \
       nodejs \
       gcc  \
       dnf-plugins-core && \
@@ -15,7 +15,7 @@ RUN dnf -y install \
     npm i -g n && \
     n 20
 
-RUN dotnet tool install --global dotnet-ef --version 8.0.0
+RUN dotnet tool install --global dotnet-ef 
   
 RUN groupadd --gid 1000 developer \
     && useradd --uid 1000 --gid 1000 -m developer \

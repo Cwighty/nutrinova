@@ -15,6 +15,8 @@ public partial class Unit
 
     public virtual UnitCategory? Category { get; set; }
 
+    public virtual ICollection<FoodConversionSample> FoodConversionSamples { get; set; } = new List<FoodConversionSample>();
+
     public virtual ICollection<FoodHistory> FoodHistories { get; set; } = new List<FoodHistory>();
 
     public virtual ICollection<FoodHistoryNutrient> FoodHistoryNutrients { get; set; } = new List<FoodHistoryNutrient>();

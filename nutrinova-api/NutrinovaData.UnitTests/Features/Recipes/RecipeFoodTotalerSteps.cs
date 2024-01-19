@@ -69,14 +69,16 @@ public class RecipeFoodTotalerSteps
     var foodNutrients = table.CreateSet<FoodPlanNutrient>().ToList();
     var foods = this.scenarioContext.Get<List<FoodPlan>>("Foods");
     var nutrients = this.scenarioContext.Get<List<Nutrient>>("Nutrients");
+    var units = this.scenarioContext.Get<List<Unit>>("Units");
 
     foreach (var foodNutrient in foodNutrients)
     {
       foodNutrient.Foodplan = foods?.FirstOrDefault(f => f.Id == foodNutrient.FoodplanId) ?? new FoodPlan { Id = foodNutrient.FoodplanId };
       foodNutrient.Nutrient = nutrients?.FirstOrDefault(n => n.Id == foodNutrient.NutrientId) ?? new Nutrient { Id = foodNutrient.NutrientId };
+      foodNutrient.Unit = units?.FirstOrDefault(u => u.Id == foodNutrient.UnitId) ?? new Unit { Id = foodNutrient.UnitId };
     }
 
-    foreach (var food in foods)
+    foreach (var food in foods!)
     {
       food.FoodPlanNutrients = foodNutrients.Where(fn => fn.FoodplanId == food.Id).ToList();
     }
@@ -128,12 +130,29 @@ public class RecipeFoodTotalerSteps
     this.scenarioContext["Recipes"] = recipes;
   }
 
+  [Given(@"the following food conversion samples")]
+  public void GivenTheFollowingFoodConversionSamples(Table table)
+  {
+    var foodSamples = table.CreateSet<FoodConversionSample>().ToList();
+    var units = this.scenarioContext.Get<List<Unit>>("Units");
+    var foods = this.scenarioContext.Get<List<FoodPlan>>("Foods");
+
+    foreach (var sample in foodSamples)
+    {
+      sample.MeasurementUnit = units?.FirstOrDefault(u => u.Id == sample.MeasurementUnitId) ?? new Unit { Id = sample.MeasurementUnitId };
+      sample.FoodPlan = foods?.FirstOrDefault(f => f.Id == sample.FoodPlanId) ?? new FoodPlan { Id = sample.FoodPlanId };
+    }
+
+    this.scenarioContext["FoodMeasurementSamples"] = foodSamples;
+  }
+
   [When(@"I calculate nutrient summaries")]
   public void WhenICalculateNutrientSummaries()
   {
     var recipeFoodTotaler = this.scenarioContext.Get<RecipeFoodTotaler>("RecipeFoodTotaler");
     var recipeFoods = this.scenarioContext.Get<List<RecipeFood>>("RecipeFoods");
-    var result = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
+    var foodSamples = this.scenarioContext.Get<List<FoodConversionSample>>("FoodMeasurementSamples");
+    var result = recipeFoodTotaler.GetRecipeNutrientSummaries(recipeFoods, foodSamples);
     this.scenarioContext["Result"] = result;
   }
 
