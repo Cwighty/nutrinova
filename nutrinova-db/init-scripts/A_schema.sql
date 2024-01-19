@@ -228,3 +228,17 @@ CREATE TABLE
         Amount DECIMAL not null,
         Unit_id serial not null REFERENCES Unit (id)
     );
+
+-- Nova Chat
+Create Table chat_session (
+    id UUID PRIMARY KEY,
+    created_by uuid REFERENCES Customer(id) not null
+);
+
+CREATE TABLE chat_message (
+    id UUID PRIMARY KEY,
+    session_id UUID REFERENCES chat_session(id) not null,
+    message_text TEXT NOT NULL,
+    sentByCustomer BOOL not null,
+    created_at TIMESTAMP WITH TIME ZONE not null
+);
