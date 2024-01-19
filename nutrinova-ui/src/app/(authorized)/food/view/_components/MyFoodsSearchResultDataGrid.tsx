@@ -6,7 +6,6 @@ import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 import { useRouter } from "next/navigation";
 import { SearchParameters } from "../page";
-import { fn } from "@vitest/spy";
 
 interface MyFoodsSearchResultDataGridProps {
   searchQuery: SearchParameters;
