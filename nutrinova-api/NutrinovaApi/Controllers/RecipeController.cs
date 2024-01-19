@@ -18,7 +18,8 @@ public class RecipeController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly IRecipeFoodTotaler recipeFoodTotaler;
 
-  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler)
+  public RecipeController(ILogger<RecipeController> logger, NutrinovaDbContext context,
+    IRecipeFoodTotaler recipeFoodTotaler)
   {
     this.logger = logger;
     this.context = context;
@@ -125,7 +126,8 @@ public class RecipeController : ControllerBase
   }
 
   [HttpPost("summarize")]
-  public ActionResult<IEnumerable<NutrientSummary>> SummarizeRecipeNutrients(IEnumerable<CreateRecipeFoodRequestModel> tentativeRecipeFoods)
+  public ActionResult<IEnumerable<NutrientSummary>> SummarizeRecipeNutrients(
+    IEnumerable<CreateRecipeFoodRequestModel> tentativeRecipeFoods)
   {
     if (tentativeRecipeFoods == null || !tentativeRecipeFoods.Any())
     {
@@ -142,7 +144,8 @@ public class RecipeController : ControllerBase
         .FirstOrDefault(f => f.Id == rf.FoodId) ?? throw new Exception("Invalid food id"),
       Amount = rf.Amount,
       UnitId = rf.UnitId,
-      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ?? throw new Exception("Invalid unit id"),
+      Unit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == rf.UnitId) ??
+             throw new Exception("Invalid unit id"),
     }).ToList();
 
     var summaries = recipeFoodTotaler.GetNutrientSummaries(recipeFoods);
@@ -153,22 +156,22 @@ public class RecipeController : ControllerBase
   public async Task<ActionResult<RecipeResponseModel>> GetRecipe(Guid id)
   {
     var recipe = await context.RecipePlans
-        .Include(r => r.RecipeFoods)
-            .ThenInclude(u => u.Unit)
-                .ThenInclude(u => u.Category)
-        .Include(r => r.RecipeFoods)
-            .ThenInclude(rf => rf.Food)
-                .ThenInclude(f => f.ServingSizeUnitNavigation)
-                    .ThenInclude(u => u.Category)
-        .Include(r => r.RecipeFoods)
-            .ThenInclude(rf => rf.Food)
-                .ThenInclude(f => f.FoodPlanNutrients)
-                    .ThenInclude(fn => fn.Nutrient)
-                        .ThenInclude(n => n.PreferredUnitNavigation)
-                            .ThenInclude(u => u.Category)
-        .Include(r => r.ServingSizeUnitNavigation)
+      .Include(r => r.RecipeFoods)
+        .ThenInclude(u => u.Unit)
+          .ThenInclude(u => u.Category)
+      .Include(r => r.RecipeFoods)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.ServingSizeUnitNavigation)
             .ThenInclude(u => u.Category)
-        .FirstOrDefaultAsync(r => r.Id == id);
+      .Include(r => r.RecipeFoods)
+          .ThenInclude(rf => rf.Food)
+            .ThenInclude(f => f.FoodPlanNutrients)
+              .ThenInclude(fn => fn.Nutrient)
+                .ThenInclude(n => n.PreferredUnitNavigation)
+                  .ThenInclude(u => u.Category)
+      .Include(r => r.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
+      .FirstOrDefaultAsync(r => r.Id == id);
 
     if (recipe == null)
     {
@@ -186,14 +189,20 @@ public class RecipeController : ControllerBase
   {
     var recipes = await context.RecipePlans
       .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.FoodPlanNutrients)
-      .ThenInclude(fn => fn.Nutrient)
-      .ThenInclude(n => n.PreferredUnitNavigation)
+        .ThenInclude(u => u.Unit)
+          .ThenInclude(u => u.Category)
       .Include(r => r.RecipeFoods)
-      .ThenInclude(rf => rf.Food)
-      .ThenInclude(f => f.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.ServingSizeUnitNavigation)
+            .ThenInclude(u => u.Category)
+      .Include(r => r.RecipeFoods)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.FoodPlanNutrients)
+            .ThenInclude(fn => fn.Nutrient)
+              .ThenInclude(n => n.PreferredUnitNavigation)
+                .ThenInclude(u => u.Category)
+      .Include(r => r.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
       .ToListAsync();
 
     foreach (var recipe in recipes)
@@ -203,14 +212,24 @@ public class RecipeController : ControllerBase
         .FirstOrDefaultAsync(u => u.Id == recipe.ServingSizeUnit);
 
       recipe.ServingSizeUnitNavigation = recipeUnit ?? throw new Exception("Invalid recipeUnit id");
+      
+      
     }
 
     if (recipes == null)
     {
       return NotFound();
     }
+    
+    var recipeResponseModels = new List<RecipeResponseModel>();
+    
+    foreach (var recipe in recipes)
+    {
+      var summaries = recipeFoodTotaler.GetNutrientSummaries(recipe.RecipeFoods.ToList());
+      var recipeRes = recipe.ToRecipeResponseModel(summaries);
+      recipeResponseModels.Add(recipeRes);
+    }
 
-    var recipeResponseModels = recipes.Select(r => r.ToRecipeResponseModel()).ToList();
     return recipeResponseModels;
   }
 
@@ -261,7 +280,8 @@ public class RecipeController : ControllerBase
 
     try
     {
-      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods.Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => rf2.Id == rf.Id)).ToList();
+      var recipesFoodsToBeDeleted = recipePlan.RecipeFoods
+        .Where(rf => !editRecipeRequest.RecipeFoods.Any(rf2 => rf2.Id == rf.Id)).ToList();
 
       // delete all existing recipe foods
       context.RecipeFoods.RemoveRange(recipesFoodsToBeDeleted);
