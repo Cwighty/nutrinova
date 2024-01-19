@@ -21,8 +21,29 @@ export default function SearchResultDataGrid({
     isError,
   } = useGetFoodSearchResultsQuery(filterParams);
   const columns: GridColDef[] = [
-    { field: "fdcId", headerName: "ID", width: 100 },
-    { field: "description", headerName: "Description", width: 500 },
+    { field: "description", headerName: "Food Name", flex: 1, minWidth: 200 },
+    { field: "brandName", headerName: "Brand", width: 200 },
+    {
+      field: "servingSize",
+      headerName: "Serving Size",
+      valueGetter: (params) => {
+        const row = params.row as FoodSearchResult;
+        return `${row.servingSize} ${row.servingSizeUnit}`;
+      },
+      width: 100,
+    },
+    {
+      field: "calories",
+      headerName: "Calories",
+      width: 100,
+      valueGetter: (params) => {
+        const row = params.row as FoodSearchResult;
+        if (row.foodNutrients && row.foodNutrients[3]) {
+          return row.foodNutrients[3].value.toString();
+        }
+        return "";
+      },
+    },
   ];
   const handleRowClick = (row: GridRowParams<FoodSearchResult>) => {
     router.push(
