@@ -1,4 +1,5 @@
 import createAuthenticatedAxiosInstanceFactory from "./axiosRequestFactory";
+import { getSession } from "next-auth/react";
 
 export interface Customer {
   objectId: string;
@@ -20,10 +21,20 @@ const postToServer = async (url: string, data: unknown) => {
 }
 
 export const customerService = {
-  customerExists: async (id: string, origin: "client" | "server"): Promise<boolean> => {
-    const res = await fetchFromServer(`customer/exists?id=${id}`, origin);
+  customerExists: async (origin: "client" | "server"): Promise<boolean> => {
+    const session = await getSession();
+    if (!session?.user) {
+      throw new Error("No user session found");
+    }
+    const res = await fetchFromServer(`customer/exists?id=${session?.user.id}`, origin);
     return res as boolean;
   },
-  getCustomer: (id: string) => fetchFromServer(`customer/get?id=${id}`, "client"),
-  createCustomer: (customer: Customer) => postToServer(`Customer/create`, customer),
+  getCustomerClient: async () => {
+    const session = await getSession();
+    if (!session?.user) {
+      throw new Error("No user session found");
+    }
+    await fetchFromServer(`customer/get?id=${session?.user.id}`, "client")
+  },
+  createCustomer: async (customer: Customer) => await postToServer(`Customer/create`, customer),
 };

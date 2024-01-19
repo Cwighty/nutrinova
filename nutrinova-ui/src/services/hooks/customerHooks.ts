@@ -9,18 +9,18 @@ export const customerKeys = {
 };
 
 // Hook to check if customer exists
-export const useCustomerExists = (id: string, origin: "client" | "server") => {
+export const useCustomerExists = (origin: "client" | "server") => {
   return useQuery({
-    queryKey: [customerKeys.all, customerKeys.customerExists, id, origin],
-    queryFn: () => customerService.customerExists(id, origin)
+    queryKey: [customerKeys.all, customerKeys.customerExists, origin],
+    queryFn: () => customerService.customerExists(origin)
   });
 };
 
 // Hook to get a customer
-export const useGetCustomer = (id: string) => {
+export const useGetCustomer = () => {
   return useQuery({
-    queryKey: [customerKeys.all, customerKeys.getCustomer, id],
-    queryFn: () => customerService.getCustomer(id)
+    queryKey: [customerKeys.all, customerKeys.getCustomer],
+    queryFn: () => customerService.getCustomerClient()
   });
 };
 

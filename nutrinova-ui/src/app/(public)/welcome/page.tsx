@@ -22,7 +22,7 @@ const Welcome = () => {
       throw new Error('Failed to get user id');
     }
     const test = async (): Promise<boolean> => {
-      const exists = await customerService.customerExists(session.user.id ?? "", "client");
+      const exists = await customerService.customerExists("client");
       console.log(exists);
       return exists;
     }

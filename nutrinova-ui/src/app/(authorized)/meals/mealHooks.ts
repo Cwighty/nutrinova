@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
-import { useNotification } from "@/components/providers/NotificationProvider";
 import { MealSelectionItem } from "./record/_models/mealSelectionItem";
 import { RecordMealRequest } from "./record/_models/recordMealRequest";
 import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
@@ -40,12 +39,10 @@ const addMeal = async (recordMealRequest: RecordMealRequest): Promise<void> => {
 
 export const useAddMealMutation = () => {
   const queryClient = useQueryClient();
-  const notificationContext = useNotification();
 
   return useMutation({
     mutationFn: addMeal,
     onSuccess: async () => {
-      notificationContext.sendMessage("Meal recorded successfully");
       await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
     },
     onError: (error: Error) => {
