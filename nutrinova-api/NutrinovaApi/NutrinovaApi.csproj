@@ -8,6 +8,7 @@
 	<NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
 	<GenerateDocumentationFile>false</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UserSecretsId>7c508e61-b236-4c9d-8a97-fb73674ed860</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

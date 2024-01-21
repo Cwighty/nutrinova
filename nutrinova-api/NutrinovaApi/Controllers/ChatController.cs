@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using NutrinovaData.Features.Chat;
 
 namespace NutrinovaApi.Controllers;
 
@@ -7,11 +8,13 @@ namespace NutrinovaApi.Controllers;
 public class ChatController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
+  private readonly INovaChatService chatService;
   private readonly ILogger<ChatController> logger;
 
-  public ChatController(NutrinovaDbContext context, ILogger<ChatController> logger)
+  public ChatController(NutrinovaDbContext context, INovaChatService chatService, ILogger<ChatController> logger)
   {
     this.context = context;
+    this.chatService = chatService;
     this.logger = logger;
   }
 
@@ -19,8 +22,8 @@ public class ChatController : ControllerBase
   public async Task<ActionResult> CreateNewChatSessionAsync()
   {
       var userObjectId = User.GetObjectIdFromClaims();
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
-      if (customer?.Id is null)
+      var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+      if (customer is null || customer?.Id is null)
       {
         return Unauthorized();
       }
@@ -32,6 +35,7 @@ public class ChatController : ControllerBase
       };
 
       await context.ChatSessions.AddAsync(session);
+      await context.SaveChangesAsync();
 
       logger.LogInformation("New chat session started {sessionId}", session.Id);
       return Ok(new { message = "Chat session created successfully", id = session.Id });
@@ -41,8 +45,8 @@ public class ChatController : ControllerBase
   public async Task<ActionResult<IEnumerable<ChatMessage>>> GetChats(Guid sessionId)
   {
       var userObjectId = User.GetObjectIdFromClaims();
-      var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
-      if (customer?.Id is null)
+      var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+      if (customer is null || customer?.Id is null)
       {
         return Unauthorized();
       }
@@ -60,7 +64,7 @@ public class ChatController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult> PostChatMessage(NewChatMessageRequest request)
+  public async Task<ActionResult<IEnumerable<ChatMessageResponse>>> PostChatMessage(NewChatMessageRequest request)
   {
     if (request.MessageText.IsNullOrEmpty())
     {
@@ -68,8 +72,8 @@ public class ChatController : ControllerBase
     }
 
     var userObjectId = User.GetObjectIdFromClaims();
-    var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
-    if (customer?.Id is null)
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    if (customer is null || customer?.Id is null)
     {
       return Unauthorized();
     }
@@ -92,9 +96,12 @@ public class ChatController : ControllerBase
       CreatedAt = DateTime.UtcNow,
     };
 
-    await context.ChatMessages.AddAsync(message);
+    session.ChatMessages.Add(message);
+    var response = await chatService.GetNextChatResponseAsync(session.ChatMessages);
+
+    await context.ChatMessages.AddAsync(response);
     await context.SaveChangesAsync();
 
-    return Ok(new { message = "Message sent successfully", id = message.Id });
+    return Ok(session.ChatMessages.ToResponseModels());
   }
 }
