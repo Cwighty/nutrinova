@@ -12,6 +12,10 @@ public partial class NutrinovaDbContext : DbContext
     {
     }
 
+    public virtual DbSet<ChatMessage> ChatMessages { get; set; }
+
+    public virtual DbSet<ChatSession> ChatSessions { get; set; }
+
     public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<CustomerLicenseContract> CustomerLicenseContracts { get; set; }
@@ -58,6 +62,43 @@ public partial class NutrinovaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("chat_message_pkey");
+
+            entity.ToTable("chat_message");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.MessageText).HasColumnName("message_text");
+            entity.Property(e => e.Sentbycustomer).HasColumnName("sentbycustomer");
+            entity.Property(e => e.SessionId).HasColumnName("session_id");
+
+            entity.HasOne(d => d.Session).WithMany(p => p.ChatMessages)
+                .HasForeignKey(d => d.SessionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("chat_message_session_id_fkey");
+        });
+
+        modelBuilder.Entity<ChatSession>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("chat_session_pkey");
+
+            entity.ToTable("chat_session");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ChatSessions)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("chat_session_created_by_fkey");
+        });
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("customer_pkey");
