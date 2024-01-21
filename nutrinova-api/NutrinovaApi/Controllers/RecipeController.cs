@@ -1,12 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Nutrinova.Features.Recipes;
-using NutrinovaApi.Extensions;
-using NutrinovaData;
-using NutrinovaData.Entities;
-using NutrinovaData.Extensions;
 using NutrinovaData.Features.Recipes;
-using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.Controllers;
 
