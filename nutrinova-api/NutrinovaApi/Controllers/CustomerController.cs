@@ -1,6 +1,3 @@
-using NutrinovaData;
-using NutrinovaData.Entities;
-
 namespace NutrinovaApi.User.Controllers;
 
 [Authorize]

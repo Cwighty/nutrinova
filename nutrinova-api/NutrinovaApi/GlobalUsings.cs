@@ -1,2 +1,9 @@
 ﻿global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using NutrinovaApi.Extensions;
+global using NutrinovaData;
+global using NutrinovaData.Entities;
+global using NutrinovaData.Extensions;
+global using NutrinovaData.RequestModels;
+global using NutrinovaData.ResponseModels;

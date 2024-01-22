@@ -1,13 +1,7 @@
 using System.Text.Json;
 using System.Web;
-using Microsoft.EntityFrameworkCore;
-using NutrinovaApi.Extensions;
-using NutrinovaData;
-using NutrinovaData.Entities;
-using NutrinovaData.Extensions;
 using NutrinovaData.Features.Nutrients;
 using NutrinovaData.FlattenedResponseModels;
-using NutrinovaData.ResponseModels;
 
 namespace NutrinovaApi.Controllers;
 

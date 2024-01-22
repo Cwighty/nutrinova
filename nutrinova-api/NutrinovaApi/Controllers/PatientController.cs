@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using NutrinovaApi.Extensions;
-using NutrinovaData;
-using NutrinovaData.Entities;
-
 namespace NutrinovaApi.Controllers;
 
 [Authorize]
