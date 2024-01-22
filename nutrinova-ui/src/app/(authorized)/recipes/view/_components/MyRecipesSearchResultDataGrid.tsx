@@ -16,8 +16,29 @@ export const MyRecipesSearchResultDataGrid = ({
   const { data, isError, isLoading } = useGetAllRecipesQuery();
   const router = useRouter();
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", minWidth: 100 },
-    { field: "description", headerName: "Description", minWidth: 500 },
+    { field: "description", headerName: "Recipe Name", flex: 1, minWidth: 200 },
+    { field: "tags", headerName: "Tags", width: 200 },
+    {
+      field: "servingSize",
+      headerName: "Serving Size",
+      valueGetter: (params) => {
+        const row = params.row as Recipe;
+        return `${row.amount}${row.unit.abbreviation}`;
+      },
+      width: 100,
+    },
+    {
+      field: "calories",
+      headerName: "Calories",
+      width: 100,
+      valueGetter: (params) => {
+        const row = params.row as Recipe;
+        return (
+          row.nutrientSummaries?.find((rns) => rns.name === "Energy (Calories)")
+            ?.amount ?? ""
+        );
+      },
+    },
   ];
 
   const handleOnRowClick = (row: GridRowParams<Recipe>) => {

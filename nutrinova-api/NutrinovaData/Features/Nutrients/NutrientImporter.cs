@@ -51,7 +51,7 @@ public class NutrientImporter : IFoodNutrientMapper
 
       var preferredUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == nutrientOption.PreferredUnitId);
       var fromUnit = context.Units.Include(u => u.Category).FirstOrDefault(u => u.Id == unit.Id);
-      var newAmount = unitConverter.Convert((decimal)nutrient.value, fromUnit!, preferredUnit!);
+      var newAmount = unitConverter.Convert(nutrient.value, fromUnit!, preferredUnit!);
 
       if (newAmount <= 0)
       {

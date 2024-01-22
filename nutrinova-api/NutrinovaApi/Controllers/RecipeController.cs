@@ -168,14 +168,20 @@ public class RecipeController : ControllerBase
   {
     var recipes = await context.RecipePlans
       .Include(r => r.RecipeFoods)
-        .ThenInclude(rf => rf.Food)
-          .ThenInclude(f => f.FoodPlanNutrients)
-            .ThenInclude(fn => fn.Nutrient)
-              .ThenInclude(n => n.PreferredUnitNavigation)
+        .ThenInclude(u => u.Unit)
+          .ThenInclude(u => u.Category)
       .Include(r => r.RecipeFoods)
         .ThenInclude(rf => rf.Food)
           .ThenInclude(f => f.ServingSizeUnitNavigation)
             .ThenInclude(u => u.Category)
+      .Include(r => r.RecipeFoods)
+        .ThenInclude(rf => rf.Food)
+          .ThenInclude(f => f.FoodPlanNutrients)
+            .ThenInclude(fn => fn.Nutrient)
+              .ThenInclude(n => n.PreferredUnitNavigation)
+                .ThenInclude(u => u.Category)
+      .Include(r => r.ServingSizeUnitNavigation)
+        .ThenInclude(u => u.Category)
       .ToListAsync();
 
     foreach (var recipe in recipes)
@@ -192,7 +198,17 @@ public class RecipeController : ControllerBase
       return NotFound();
     }
 
-    var recipeResponseModels = recipes.Select(r => r.ToRecipeResponseModel()).ToList();
+    var recipeResponseModels = new List<RecipeResponseModel>();
+
+    var conversionSamples = GetFoodConversionSamples();
+
+    foreach (var recipe in recipes)
+    {
+      var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipe.RecipeFoods.ToList(), conversionSamples);
+      var recipeRes = recipe.ToRecipeResponseModel(summaries);
+      recipeResponseModels.Add(recipeRes);
+    }
+
     return recipeResponseModels;
   }
 

@@ -20,7 +20,7 @@ public class FoodNutrient
 
     public string? derivationDescription { get; set; }
 
-    public double value { get; set; }
+    public decimal value { get; set; }
 
     public double? UnitCategoryId { get; set; }
 

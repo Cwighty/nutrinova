@@ -19,7 +19,7 @@ public static class FoodPlanNutrientExtension
       nutrientName = foodPlanNutrient.Nutrient.Description,
       unitId = foodPlanNutrient.Nutrient.PreferredUnit,
       unitName = foodPlanNutrient.Nutrient.PreferredUnitNavigation.Abbreviation,
-      value = (double)foodPlanNutrient.Amount,
+      value = foodPlanNutrient.Amount,
     };
   }
 
