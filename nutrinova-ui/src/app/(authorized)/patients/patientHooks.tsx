@@ -14,13 +14,13 @@ export const patientKeys = {
 const getAllPatients = async () => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
-    origin: 'client',
+    origin: "client",
   });
   const session = await getSession();
   if (session == null || session == undefined) {
     return [];
   }
-  const exists = await customerService.customerExists(session.user.id!, 'client') as boolean;
+  const exists = await customerService.customerExists('client') as boolean;
   if (!exists) {
     return [];
   }
