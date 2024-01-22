@@ -1,12 +1,12 @@
 using System.Net.WebSockets;
 using System.Text.Json.Serialization;
 using DotNetEnv;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using NutrinovaData;
+using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Nutrients;
 using NutrinovaData.Features.Recipes;
 using NutrinovaData.Features.Units;
+using OpenAI.Extensions;
 
 namespace NutrinovaApi;
 
@@ -76,6 +76,8 @@ public class Program
     builder.Services.AddScoped<IFoodNutrientMapper, NutrientImporter>();
     builder.Services.AddScoped<IDensityCalculator, DensityCalculator>();
     builder.Services.AddSingleton<WebSocketManager>();
+    builder.Services.AddOpenAIService();
+    builder.Services.AddScoped<INovaChatService, NovaChatService>();
 
     var app = builder.Build();
 

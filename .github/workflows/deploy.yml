@@ -13,6 +13,7 @@ env:
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   USDA_API_KEY: ${{ secrets.USDA_API_KEY }}
   WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 on:
   push:
     branches:

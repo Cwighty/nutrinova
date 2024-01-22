@@ -13,6 +13,8 @@ public partial class Customer
 
     public DateTime? CreatedAt { get; set; }
 
+    public virtual ICollection<ChatSession> ChatSessions { get; set; } = new List<ChatSession>();
+
     public virtual ICollection<CustomerLicenseContract> CustomerLicenseContracts { get; set; } = new List<CustomerLicenseContract>();
 
     public virtual ICollection<FoodHistory> FoodHistories { get; set; } = new List<FoodHistory>();
