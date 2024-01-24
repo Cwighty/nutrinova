@@ -7,8 +7,6 @@ import {
   ChatMessageRequest,
   NewChatSessionResponse,
 } from "@/components/chatbot/chatBotModels";
-import { ChatBotContext } from "@/context/ChatBotContext";
-import { useContext } from "react";
 
 const createChatSession = async () => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
@@ -19,23 +17,30 @@ const createChatSession = async () => {
   return response.data as NewChatSessionResponse;
 };
 
-export const useCreateChatSessionMutation = () => {
-  const chatBotContext = useContext(ChatBotContext);
-  return useMutation({
-    mutationFn: createChatSession,
-    onSuccess: (data) => {
-      toast.success("Chat session created successfully: " + data.id);
-      chatBotContext.setSessionId(data.id);
-    },
-    onError: (error) => {
-      toast.error("Error creating chat session: " + error.message);
-      console.error(error);
-    },
+export const useGetNewChatSessionQuery = () => {
+  return useQuery({
+    queryKey: ["newChatSession"],
+    queryFn: () => createChatSession(),
   });
 };
 
+// export const useCreateChatSessionMutation = () => {
+//   const chatBotContext = useContext(ChatBotContext);
+//   return useMutation({
+//     mutationFn: createChatSession,
+//     onSuccess: (data) => {
+//       toast.success("Chat session created successfully: " + data.id);
+//       chatBotContext.setSessionId(data.id);
+//     },
+//     onError: (error) => {
+//       toast.error("Error creating chat session: " + error.message);
+//       console.error(error);
+//     },
+//   });
+// };
+
 // Fetch chat messages by session ID
-const getChatsBySessionId = async (sessionId: string) => {
+const getChatsBySessionId = async (sessionId?: string) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -44,10 +49,11 @@ const getChatsBySessionId = async (sessionId: string) => {
   return response.data as ChatMessageResponse[];
 };
 
-export const useGetChatsBySessionIdQuery = (sessionId: string) => {
+export const useGetChatsBySessionIdQuery = (sessionId?: string) => {
   return useQuery({
     queryKey: ["chatMessages", sessionId],
     queryFn: () => getChatsBySessionId(sessionId),
+    enabled: !!sessionId,
   });
 };
 

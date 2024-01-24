@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { ChatBotContext, ChatBotProvider } from "@/context/ChatBotContext";
 import {
-  useCreateChatSessionMutation,
   useGetChatsBySessionIdQuery,
+  useGetNewChatSessionQuery,
   usePostChatMessageMutation,
 } from "@/components/chatbot/chatBotHooks";
 import {
@@ -20,7 +20,7 @@ import {
 } from "@/components/chatbot/chatBotModels";
 
 export const ChatBot = () => {
-  const { sessionId } = useContext(ChatBotContext);
+  const { sessionId, setSessionId } = useContext(ChatBotContext);
   const [messages, setMessages] = useState<ChatMessageResponse[]>([]);
   const [newMessage, setNewMessage] = useState<ChatMessageRequest>({
     messageText: "",
@@ -28,17 +28,13 @@ export const ChatBot = () => {
   } as ChatMessageRequest);
 
   // Hooks
-  const { data: createSession, mutate: creatChatMessageMutate } =
-    useCreateChatSessionMutation();
-  const { data: chatMessages } = useGetChatsBySessionIdQuery(sessionId);
+  const {
+    data: createSession,
+    isLoading,
+    isError,
+  } = useGetNewChatSessionQuery();
+  const { data: chatMessages } = useGetChatsBySessionIdQuery(createSession?.id);
   const { mutate: postChatMessageMutate } = usePostChatMessageMutation();
-
-  useEffect(() => {
-    // Create a new session if it doesn't exist
-    if (!sessionId) {
-      creatChatMessageMutate();
-    }
-  }, []);
 
   // Update messages when new chats are fetched
   useEffect(() => {
@@ -46,12 +42,12 @@ export const ChatBot = () => {
       const formattedMessages = chatMessages.map((msg) => ({
         messageText: msg.messageText,
         sender: msg.sender ? "user" : "bot",
-        sessionId: createSession?.id ?? "",
+        sessionId: sessionId,
         createdAt: msg.createdAt,
       }));
       setMessages(formattedMessages);
     }
-  }, [chatMessages]);
+  }, [chatMessages, sessionId]);
 
   const sendMessage = () => {
     if (newMessage.messageText.trim() !== "") {
@@ -84,53 +80,57 @@ export const ChatBot = () => {
     } as ChatMessageRequest);
   };
 
+  if (createSession?.id && !isLoading && !isError) {
+    setSessionId(createSession.id);
+    console.log("Session ID: ", createSession.id);
+    console.log("Session ID: ", sessionId);
+  }
+
   return (
-    <ChatBotProvider>
-      <Paper
-        elevation={3}
-        sx={{ position: "fixed", bottom: 80, right: 16, p: 2, maxWidth: 300 }}
+    <Paper
+      elevation={3}
+      sx={{ position: "fixed", bottom: 80, right: 16, p: 2, maxWidth: 300 }}
+    >
+      <List>
+        {messages.map((message, index) => (
+          <ListItem
+            key={index}
+            sx={{
+              display: "flex",
+              justifyContent:
+                message.sender === "user" ? "flex-end" : "flex-start",
+              backgroundColor:
+                message.sender === "user" ? "primary" : "secondary",
+              borderRadius: "10px",
+              padding: "10px",
+              margin: "5px 0",
+            }}
+          >
+            <Typography variant="body1">{message.messageText}</Typography>
+          </ListItem>
+        ))}
+      </List>
+      <TextField
+        fullWidth
+        variant="outlined"
+        placeholder="Type a message..."
+        value={newMessage.messageText}
+        onChange={handleMessageChange}
+        onKeyPress={(event) => {
+          if (event.key === "Enter") {
+            sendMessage();
+            event.preventDefault();
+          }
+        }}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={sendMessage}
+        sx={{ marginTop: 1 }}
       >
-        <List>
-          {messages.map((message, index) => (
-            <ListItem
-              key={index}
-              sx={{
-                display: "flex",
-                justifyContent:
-                  message.sender === "user" ? "flex-end" : "flex-start",
-                backgroundColor:
-                  message.sender === "user" ? "primary" : "secondary",
-                borderRadius: "10px",
-                padding: "10px",
-                margin: "5px 0",
-              }}
-            >
-              <Typography variant="body1">{message.messageText}</Typography>
-            </ListItem>
-          ))}
-        </List>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Type a message..."
-          value={newMessage.messageText}
-          onChange={handleMessageChange}
-          onKeyPress={(event) => {
-            if (event.key === "Enter") {
-              sendMessage();
-              event.preventDefault();
-            }
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={sendMessage}
-          sx={{ marginTop: 1 }}
-        >
-          Send
-        </Button>
-      </Paper>
-    </ChatBotProvider>
+        Send
+      </Button>
+    </Paper>
   );
 };
