@@ -8,7 +8,7 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
-import { ChatBotContext, ChatBotProvider } from "@/context/ChatBotContext";
+import { ChatBotContext } from "@/context/ChatBotContext";
 import {
   useGetChatsBySessionIdQuery,
   useGetNewChatSessionQuery,
@@ -18,6 +18,7 @@ import {
   ChatMessageRequest,
   ChatMessageResponse,
 } from "@/components/chatbot/chatBotModels";
+import { useTheme } from "@/context/ThemeContext";
 
 export const ChatBot = () => {
   const { sessionId, setSessionId } = useContext(ChatBotContext);
@@ -27,7 +28,6 @@ export const ChatBot = () => {
     sessionId: "",
   } as ChatMessageRequest);
 
-  // Hooks
   const {
     data: createSession,
     isLoading,
@@ -36,12 +36,13 @@ export const ChatBot = () => {
   const { data: chatMessages } = useGetChatsBySessionIdQuery(createSession?.id);
   const { mutate: postChatMessageMutate } = usePostChatMessageMutation();
 
-  // Update messages when new chats are fetched
+  const { theme } = useTheme();
+
   useEffect(() => {
     if (chatMessages) {
       const formattedMessages = chatMessages.map((msg) => ({
         messageText: msg.messageText,
-        sender: msg.sender ? "user" : "bot",
+        sender: msg.sender,
         sessionId: sessionId,
         createdAt: msg.createdAt,
       }));
@@ -56,7 +57,7 @@ export const ChatBot = () => {
         ...messages,
         {
           messageText: newMessage.messageText,
-          sender: "user",
+          sender: "You",
           sessionId: sessionId,
           createdAt: new Date().toString(),
         },
@@ -89,18 +90,32 @@ export const ChatBot = () => {
   return (
     <Paper
       elevation={3}
-      sx={{ position: "fixed", bottom: 80, right: 16, p: 2, maxWidth: 300 }}
+      sx={{
+        position: "fixed",
+        bottom: 80,
+        right: 16,
+        p: 2,
+        maxWidth: 300,
+      }}
     >
-      <List>
+      <List
+        sx={{
+          maxHeight: 400,
+          overflow: "auto",
+        }}
+      >
         {messages.map((message, index) => (
           <ListItem
             key={index}
             sx={{
               display: "flex",
               justifyContent:
-                message.sender === "user" ? "flex-end" : "flex-start",
+                message.sender === "You" ? "flex-end" : "flex-start",
               backgroundColor:
-                message.sender === "user" ? "primary" : "secondary",
+                message.sender === "You"
+                  ? "primary.dark"
+                  : "background.default",
+              color: message.sender === "You" ? "white" : "text.primary",
               borderRadius: "10px",
               padding: "10px",
               margin: "5px 0",
@@ -112,6 +127,7 @@ export const ChatBot = () => {
       </List>
       <TextField
         fullWidth
+        sx={{ my: 2 }}
         variant="outlined"
         placeholder="Type a message..."
         value={newMessage.messageText}
