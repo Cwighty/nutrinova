@@ -7,6 +7,7 @@ import {
   List,
   ListItem,
   Typography,
+  Fab,
 } from "@mui/material";
 import { ChatBotContext } from "@/context/ChatBotContext";
 import {
@@ -18,10 +19,11 @@ import {
   ChatMessageRequest,
   ChatMessageResponse,
 } from "@/components/chatbot/chatBotModels";
-import { useTheme } from "@/context/ThemeContext";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 
 export const ChatBot = () => {
   const { sessionId, setSessionId } = useContext(ChatBotContext);
+  const [showChatBot, setShowChatBot] = useState(false);
   const [messages, setMessages] = useState<ChatMessageResponse[]>([]);
   const [newMessage, setNewMessage] = useState<ChatMessageRequest>({
     messageText: "",
@@ -35,8 +37,6 @@ export const ChatBot = () => {
   } = useGetNewChatSessionQuery();
   const { data: chatMessages } = useGetChatsBySessionIdQuery(createSession?.id);
   const { mutate: postChatMessageMutate } = usePostChatMessageMutation();
-
-  const { theme } = useTheme();
 
   useEffect(() => {
     if (chatMessages) {
@@ -88,65 +88,77 @@ export const ChatBot = () => {
   }
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        position: "fixed",
-        bottom: 80,
-        right: 16,
-        p: 2,
-        maxWidth: 300,
-      }}
-    >
-      <List
-        sx={{
-          maxHeight: 400,
-          overflow: "auto",
-        }}
+    <>
+      <Fab
+        color="primary"
+        aria-label="chat"
+        sx={{ position: "fixed", bottom: 16, right: 16 }}
+        onClick={() => setShowChatBot(!showChatBot)}
       >
-        {messages.map((message, index) => (
-          <ListItem
-            key={index}
+        <ChatBubbleIcon />
+      </Fab>
+      {showChatBot && (
+        <Paper
+          elevation={3}
+          sx={{
+            position: "fixed",
+            bottom: 80,
+            right: 16,
+            p: 2,
+            maxWidth: 300,
+          }}
+        >
+          <List
             sx={{
-              display: "flex",
-              justifyContent:
-                message.sender === "You" ? "flex-end" : "flex-start",
-              backgroundColor:
-                message.sender === "You"
-                  ? "primary.dark"
-                  : "background.default",
-              color: message.sender === "You" ? "white" : "text.primary",
-              borderRadius: "10px",
-              padding: "10px",
-              margin: "5px 0",
+              maxHeight: 400,
+              overflow: "auto",
             }}
           >
-            <Typography variant="body1">{message.messageText}</Typography>
-          </ListItem>
-        ))}
-      </List>
-      <TextField
-        fullWidth
-        sx={{ my: 2 }}
-        variant="outlined"
-        placeholder="Type a message..."
-        value={newMessage.messageText}
-        onChange={handleMessageChange}
-        onKeyPress={(event) => {
-          if (event.key === "Enter") {
-            sendMessage();
-            event.preventDefault();
-          }
-        }}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={sendMessage}
-        sx={{ marginTop: 1 }}
-      >
-        Send
-      </Button>
-    </Paper>
+            {messages.map((message, index) => (
+              <ListItem
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent:
+                    message.sender === "You" ? "flex-end" : "flex-start",
+                  backgroundColor:
+                    message.sender === "You"
+                      ? "primary.dark"
+                      : "background.default",
+                  color: message.sender === "You" ? "white" : "text.primary",
+                  borderRadius: "10px",
+                  padding: "10px",
+                  margin: "5px 0",
+                }}
+              >
+                <Typography variant="body1">{message.messageText}</Typography>
+              </ListItem>
+            ))}
+          </List>
+          <TextField
+            fullWidth
+            sx={{ my: 2 }}
+            variant="outlined"
+            placeholder="Type a message..."
+            value={newMessage.messageText}
+            onChange={handleMessageChange}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                sendMessage();
+                event.preventDefault();
+              }
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={sendMessage}
+            sx={{ marginTop: 1 }}
+          >
+            Send
+          </Button>
+        </Paper>
+      )}
+    </>
   );
 };
