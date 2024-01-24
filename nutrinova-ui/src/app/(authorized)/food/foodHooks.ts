@@ -8,8 +8,6 @@ import toast from "react-hot-toast";
 import { SearchParameters } from "./view/page";
 import { FoodSearchFilterParams } from "./_models/foodSearchFilterParams";
 import { EditFoodRequestModel } from "./edit/_models/editFoodRequest";
-import { useContext } from "react";
-import { NotificationContext } from "@/components/providers/NotificationProvider";
 
 const nutrientKeys = {
   all: ["nutrients"] as const,
@@ -146,11 +144,10 @@ const createFood = async (food: CreateFoodRequestModel): Promise<CreateFoodReque
 };
 
 export const useCreateFoodMutation = () => {
-  const notificationContext = useContext(NotificationContext);
   return useMutation({
     mutationFn: (food: CreateFoodRequestModel) => createFood(food),
     onSuccess: (food: CreateFoodRequestModel) => {
-      notificationContext!.sendMessage("New Food Created: " + food.description);
+      toast.success("New Food Created: " + food.description);
       //TODO: invalidate get foods query
     },
     onError: (error) => {

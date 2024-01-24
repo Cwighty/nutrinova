@@ -8,9 +8,10 @@ interface PageContainerProps {
 }
 
 export const PatientContextPageContainer = ({ children, title }: PageContainerProps) => {
+
   return (
     <>
-      <PageBar title={title} isPatientContext={true} />
+      <PageBar title={title} />
       <Divider />
       <Container maxWidth={"lg"} sx={{ pt: 3, pb: { xs: 3, md: 0 } }}>
         {children}

@@ -1,5 +1,6 @@
 namespace NutrinovaApi.User.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/be/[controller]")]
 public class CustomerController : ControllerBase
@@ -22,6 +23,21 @@ public class CustomerController : ControllerBase
     return exists;
   }
 
+  [HttpGet("get")]
+  public ActionResult<Customer> GetUser([FromQuery] string id)
+  {
+    logger.LogInformation("Getting user...");
+    var user = context.Customers.FirstOrDefault(c => c.Objectid == id);
+    if (user == null)
+    {
+      logger.LogInformation("User not found");
+      return NotFound();
+    }
+
+    logger.LogInformation("User found");
+    return user;
+  }
+
   [HttpPost("create")]
   public async Task<IActionResult> CreateUser(Customer customer)
   {
@@ -34,6 +50,7 @@ public class CustomerController : ControllerBase
 
     customer.Id = Guid.NewGuid();
     customer.CreatedAt = DateTime.UtcNow;
+    customer.Issingleuser = true;
 
     await context.Customers.AddAsync(customer);
     await context.SaveChangesAsync();

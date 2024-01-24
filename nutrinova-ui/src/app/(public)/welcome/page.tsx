@@ -3,7 +3,7 @@ import React from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleRight } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import customerService, { Customer } from '@/services/customerService';
+import { customerService, Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
 import { Patient } from '@/app/(authorized)/patients/_models/patient';
@@ -21,8 +21,12 @@ const Welcome = () => {
     if (session.user.id == null || session.user.id == undefined) {
       throw new Error('Failed to get user id');
     }
-
-    if (await customerService.customerExistsClient(session.user.id)) {
+    const test = async (): Promise<boolean> => {
+      const exists = await customerService.customerExists("client");
+      console.log(exists);
+      return exists;
+    }
+    if (await test()) {
       router.push('/dashboard');
       return;
     }

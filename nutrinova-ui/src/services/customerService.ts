@@ -1,37 +1,40 @@
 import createAuthenticatedAxiosInstanceFactory from "./axiosRequestFactory";
+import { getSession } from "next-auth/react";
 
 export interface Customer {
   objectId: string;
   email: string;
+  issingleuser: boolean;
 }
 
-const userService = {
-  async customerExistsServer(id: string): Promise<boolean> {
-    'use server'
-    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "server" })
-    const response = await axiosInstance.get(`customer/exists?id=${id}`);
-    return response.data === true;
-  },
+const fetchFromServer = async (url: string, origin: "client" | "server") => {
+  const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin })
+  const response = await axiosInstance.get(url);
+  console.log("response", response);
+  return response.data as unknown;
+}
 
-  async customerExistsClient(id: string): Promise<boolean> {
-    const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-    const response = await axiosInstance.get(`customer/exists?id=${id}`);
-    return response.data === true;
-  },
+const postToServer = async (url: string, data: unknown) => {
+  const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
+  const response = await axiosInstance.post(url, JSON.stringify(data));
+  return response.data as unknown;
+}
 
-  async createCustomer(customer: Customer): Promise<boolean> {
-    try {
-      const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
-      const customer_json = JSON.stringify(customer);
-      await axiosInstance.post(
-        `Customer/create`,
-        customer_json,
-      );
-      return true;
-    } catch (error) {
-      return false;
+export const customerService = {
+  customerExists: async (origin: "client" | "server"): Promise<boolean> => {
+    const session = await getSession();
+    if (!session?.user) {
+      throw new Error("No user session found");
     }
+    const res = await fetchFromServer(`customer/exists?id=${session?.user.id}`, origin);
+    return res as boolean;
   },
+  getCustomerClient: async (): Promise<Customer> => {
+    const session = await getSession();
+    if (!session?.user) {
+      throw new Error("No user session found");
+    }
+    return await fetchFromServer(`customer/get?id=${session?.user.id}`, "client") as Customer;
+  },
+  createCustomer: async (customer: Customer) => await postToServer(`Customer/create`, customer),
 };
-
-export default userService;
