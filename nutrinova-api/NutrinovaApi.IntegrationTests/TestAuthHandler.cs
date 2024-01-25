@@ -1,8 +1,9 @@
-using System.Security.Claims;
-using System.Text.Encodings.Web;
+// Copyright (c) Nutrinova
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 // https://mazeez.dev/posts/auth-in-integration-tests
 public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
@@ -15,9 +16,8 @@ public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
   public TestAuthHandler(
         IOptionsMonitor<TestAuthHandlerOptions> options,
         ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock)
-        : base(options, logger, encoder, clock)
+        UrlEncoder encoder)
+        : base(options, logger, encoder)
   {
     _defaultUserId = options.CurrentValue.DefaultUserId;
   }

@@ -6,15 +6,17 @@ RUN dnf -y install \
       gzip \
       git \
       dotnet-sdk-8.0 \
+      aspnetcore-runtime-8.0 \
       nodejs \
       gcc  \
       dnf-plugins-core && \
-    dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && \
-    dnf -y install docker-ce --nobest && \
-    rm -rf /var/cache/yum && \
-    npm i -g n && \
-    n 20
-RUN dotnet tool install --global dotnet-ef --version 8.0.0
+      dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && \
+      dnf -y install docker-ce --nobest && \
+      rm -rf /var/cache/yum && \
+      npm i -g n && \
+      n 20
+RUN dotnet tool install --global dotnet-ef --version 8.0.0 
+ 
   
 RUN groupadd --gid 1000 developer \
     && useradd --uid 1000 --gid 1000 -m developer \
