@@ -10,7 +10,7 @@ public static class ChatMessageExtensions
     {
       SessionId = chatMessage.SessionId,
       MessageText = chatMessage.MessageText,
-      Sender = chatMessage.Sentbycustomer ? "You" : "Nova",
+      Sender = chatMessage.Sentbycustomer ? "You" : "NOVA",
       CreatedAt = chatMessage.CreatedAt,
     }).OrderBy(cm => cm.CreatedAt);
   }

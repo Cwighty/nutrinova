@@ -24,22 +24,6 @@ export const useGetNewChatSessionQuery = () => {
   });
 };
 
-// export const useCreateChatSessionMutation = () => {
-//   const chatBotContext = useContext(ChatBotContext);
-//   return useMutation({
-//     mutationFn: createChatSession,
-//     onSuccess: (data) => {
-//       toast.success("Chat session created successfully: " + data.id);
-//       chatBotContext.setSessionId(data.id);
-//     },
-//     onError: (error) => {
-//       toast.error("Error creating chat session: " + error.message);
-//       console.error(error);
-//     },
-//   });
-// };
-
-// Fetch chat messages by session ID
 const getChatsBySessionId = async (sessionId?: string) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
@@ -57,7 +41,6 @@ export const useGetChatsBySessionIdQuery = (sessionId?: string) => {
   });
 };
 
-// Post a new chat message
 const postChatMessage = async (message: {
   sessionId: string;
   messageText: string;

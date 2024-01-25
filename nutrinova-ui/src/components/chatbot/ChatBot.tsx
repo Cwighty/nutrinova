@@ -3,11 +3,12 @@ import React, { useContext, useState, useEffect } from "react";
 import {
   Paper,
   TextField,
-  Button,
   List,
   ListItem,
   Typography,
   Fab,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { ChatBotContext } from "@/context/ChatBotContext";
 import {
@@ -20,6 +21,7 @@ import {
   ChatMessageResponse,
 } from "@/components/chatbot/chatBotModels";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import { Send } from "@mui/icons-material";
 
 export const ChatBot = () => {
   const { sessionId, setSessionId } = useContext(ChatBotContext);
@@ -83,8 +85,16 @@ export const ChatBot = () => {
 
   if (createSession?.id && !isLoading && !isError) {
     setSessionId(createSession.id);
-    console.log("Session ID: ", createSession.id);
-    console.log("Session ID: ", sessionId);
+    if (messages.length === 0) {
+      const welcomeMessage = {
+        messageText:
+          "Hi! I'm NOVA, a chat bot designed to help you meet your nutritional goals. How can I help?",
+        sender: "NOVA",
+        sessionId: createSession.id,
+        createdAt: new Date().toString(),
+      };
+      setMessages([welcomeMessage]);
+    }
   }
 
   return (
@@ -113,50 +123,70 @@ export const ChatBot = () => {
               maxHeight: 400,
               overflow: "auto",
             }}
+            subheader={<Typography variant="h6">NOVA Chat Bot</Typography>}
           >
             {messages.map((message, index) => (
-              <ListItem
-                key={index}
-                sx={{
-                  display: "flex",
-                  justifyContent:
-                    message.sender === "You" ? "flex-end" : "flex-start",
-                  backgroundColor:
-                    message.sender === "You"
-                      ? "primary.dark"
-                      : "background.default",
-                  color: message.sender === "You" ? "white" : "text.primary",
-                  borderRadius: "10px",
-                  padding: "10px",
-                  margin: "5px 0",
-                }}
-              >
-                <Typography variant="body1">{message.messageText}</Typography>
-              </ListItem>
+              <>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    px: 1,
+                    pt: 1,
+                    display: "flex",
+                    justifyContent:
+                      message.sender === "You" ? "flex-end" : "flex-start",
+                  }}
+                >
+                  {message.sender}
+                </Typography>
+                <ListItem
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    maxWidth: "90%",
+                    justifyContent:
+                      message.sender === "You" ? "flex-end" : "flex-start",
+                    backgroundColor:
+                      message.sender === "You"
+                        ? "primary.dark"
+                        : "background.default",
+                    color: message.sender === "You" ? "white" : "text.primary",
+                    borderRadius: "10px",
+                    p: 1,
+                    my: "5px",
+                    marginLeft: message.sender === "You" ? "auto" : 0,
+                    marginRight: message.sender === "NOVA" ? "auto" : 0,
+                  }}
+                >
+                  <Typography variant="body1">{message.messageText}</Typography>
+                </ListItem>
+              </>
             ))}
           </List>
           <TextField
             fullWidth
+            multiline
             sx={{ my: 2 }}
             variant="outlined"
             placeholder="Type a message..."
             value={newMessage.messageText}
             onChange={handleMessageChange}
-            onKeyPress={(event) => {
-              if (event.key === "Enter") {
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
                 sendMessage();
                 event.preventDefault();
               }
             }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={sendMessage} edge="end">
+                    <Send />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={sendMessage}
-            sx={{ marginTop: 1 }}
-          >
-            Send
-          </Button>
         </Paper>
       )}
     </>
