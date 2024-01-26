@@ -1,6 +1,7 @@
 import { Container, Divider } from "@mui/material";
 import PageBar from "@/components/PageBar";
 import { ReactNode } from "react";
+import { ChatBot } from "@/components/chatbot/ChatBot";
 
 interface PageContainerProps {
   children: ReactNode;
