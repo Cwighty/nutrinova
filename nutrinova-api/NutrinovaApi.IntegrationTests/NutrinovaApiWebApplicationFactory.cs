@@ -37,7 +37,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
 
   public async Task InitializeAsync()
   {
-    Thread.Sleep(9000);
+    Thread.Sleep(90000);
     await _dbContainer.StartAsync();
 
     // Add test user here if not using SQL script
