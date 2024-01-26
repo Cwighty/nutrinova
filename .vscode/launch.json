@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/nutrinova-api/NutrinovaApi/bin/Debug/net7.0/NutrinovaApi.dll",
+            "program": "${workspaceFolder}/nutrinova-api/NutrinovaApi/bin/Debug/net8.0/NutrinovaApi.dll",
             "args": [],
             "cwd": "${workspaceFolder}/nutrinova-api/NutrinovaApi",
             "stopAtEntry": false,

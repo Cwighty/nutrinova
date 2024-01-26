@@ -4,7 +4,6 @@ import { MUIThemeProvider } from "@/context/ThemeContext";
 import { NextAuthSessionProvider } from "@/components/providers/SessionProvider";
 import { QueryClientNextProvider } from "@/components/providers/QueryClientNextProvider";
 import { PatientProvider } from "@/components/providers/PatientProvider";
-import { NotificationProvider } from "@/components/providers/NotificationProvider";
 import { ChatBotProvider } from "@/context/ChatBotContext";
 
 export const metadata: Metadata = {
@@ -24,11 +23,9 @@ export default async function RootLayout({
         <NextAuthSessionProvider session={session}>
           <QueryClientNextProvider>
             <MUIThemeProvider>
-              <NotificationProvider webSocketUrl={process.env.WEBSOCKET_URL}>
                 <ChatBotProvider>
                   <PatientProvider>{children}</PatientProvider>
                 </ChatBotProvider>
-              </NotificationProvider>
             </MUIThemeProvider>
           </QueryClientNextProvider>
         </NextAuthSessionProvider>
