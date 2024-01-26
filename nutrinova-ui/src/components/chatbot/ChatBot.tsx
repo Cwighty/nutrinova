@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Paper,
   TextField,
@@ -9,6 +9,7 @@ import {
   Fab,
   InputAdornment,
   IconButton,
+  Box,
 } from "@mui/material";
 import { ChatBotContext } from "@/context/ChatBotContext";
 import {
@@ -39,6 +40,15 @@ export const ChatBot = () => {
   } = useGetNewChatSessionQuery();
   const { data: chatMessages } = useGetChatsBySessionIdQuery(createSession?.id);
   const { mutate: postChatMessageMutate } = usePostChatMessageMutation();
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (chatMessages) {
@@ -95,7 +105,7 @@ export const ChatBot = () => {
         messageText:
           "Hi! I'm NOVA, a chat bot designed to help you meet your nutritional goals. How can I help?",
         sender: "NOVA",
-        sessionId: createSession.id,
+        sessionId: sessionId,
         createdAt: new Date().toString(),
       };
       setMessages([welcomeMessage]);
@@ -167,6 +177,7 @@ export const ChatBot = () => {
                 </ListItem>
               </>
             ))}
+            <Box ref={messagesEndRef} />
           </List>
           <TextField
             fullWidth
