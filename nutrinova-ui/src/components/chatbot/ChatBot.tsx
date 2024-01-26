@@ -102,20 +102,20 @@ export const ChatBot = () => {
       <Fab
         color="primary"
         aria-label="chat"
-        sx={{ position: "fixed", bottom: 16, right: 16 }}
+        sx={{ position: "fixed", bottom: { xs: 72, md: 16 }, right: 16 }}
         onClick={() => setShowChatBot(!showChatBot)}
       >
         <ChatBubbleIcon />
       </Fab>
       {showChatBot && (
         <Paper
-          elevation={3}
+          elevation={10}
           sx={{
             position: "fixed",
-            bottom: 80,
+            bottom: { xs: 136, md: 80 },
             right: 16,
             p: 2,
-            maxWidth: 300,
+            maxWidth: 400,
           }}
         >
           <List
