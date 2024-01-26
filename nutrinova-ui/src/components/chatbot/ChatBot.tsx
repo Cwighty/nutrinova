@@ -42,19 +42,25 @@ export const ChatBot = () => {
 
   useEffect(() => {
     if (chatMessages) {
+      const welcomeMessage = {
+        messageText:
+          "Hi! I'm NOVA, a chat bot designed to help you meet your nutritional goals. How can I help?",
+        sender: "NOVA",
+        sessionId: sessionId,
+        createdAt: new Date().toString(),
+      };
       const formattedMessages = chatMessages.map((msg) => ({
         messageText: msg.messageText,
         sender: msg.sender,
         sessionId: sessionId,
         createdAt: msg.createdAt,
       }));
-      setMessages(formattedMessages);
+      setMessages([welcomeMessage, ...formattedMessages]);
     }
   }, [chatMessages, sessionId]);
 
   const sendMessage = () => {
     if (newMessage.messageText.trim() !== "") {
-      // Add user message to the chat
       setMessages([
         ...messages,
         {
@@ -64,7 +70,6 @@ export const ChatBot = () => {
           createdAt: new Date().toString(),
         },
       ]);
-      // Send message to server
       postChatMessageMutate({
         sessionId,
         messageText: newMessage.messageText,
