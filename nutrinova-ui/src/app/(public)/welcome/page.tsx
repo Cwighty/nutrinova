@@ -34,17 +34,12 @@ const Welcome = () => {
     const customer = {
       objectId: session.user.id,
       email: session.user.email,
+      issingleuser: true,
     } as Customer;
     const created = await customerService.createCustomer(customer);
     if (!created) {
       throw new Error('Failed to create customer');
     }
-
-    const patient: Patient = {
-      firstname: session.user.name.split(' ')[0],
-      lastname: session.user.name.split(' ')[1] ?? '',
-    }
-    createPatientMutation.mutate(patient);
 
     router.push('/dashboard');
   }

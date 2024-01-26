@@ -50,7 +50,13 @@ public class CustomerController : ControllerBase
 
     customer.Id = Guid.NewGuid();
     customer.CreatedAt = DateTime.UtcNow;
-    customer.Issingleuser = true;
+
+    Patient patient = new()
+    {
+      Id = Guid.NewGuid(),
+      CustomerId = customer.Id,
+      Customer = customer,
+    };
 
     await context.Customers.AddAsync(customer);
     await context.SaveChangesAsync();
