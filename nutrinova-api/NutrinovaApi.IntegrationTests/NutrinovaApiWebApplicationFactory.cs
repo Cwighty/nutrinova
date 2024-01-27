@@ -28,7 +28,6 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
        .WithImage("postgres")
        .WithPassword("Strong_password_123!")
        .WithResourceMapping(new DirectoryInfo(directory), "/docker-entrypoint-initdb.d")
-       .WithBindMount(directory, "/docker-entrypoint-initdb.d")
        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
        .Build();
   }
