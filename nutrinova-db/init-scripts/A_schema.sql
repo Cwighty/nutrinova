@@ -243,3 +243,12 @@ CREATE TABLE chat_message (
     sentByCustomer BOOL not null,
     created_at TIMESTAMP WITH TIME ZONE not null
 );
+
+
+-- Nutrient Goals
+CREATE TABLE patient_nutrient_goal (
+    id UUID PRIMARY KEY,
+    patient_id UUID REFERENCES Patient(id) not null,
+    nutrient_id serial REFERENCES Nutrient(id) not null,
+    daily_goal_amount DECIMAL not null
+);

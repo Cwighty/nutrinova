@@ -17,5 +17,7 @@ public partial class Patient
 
     public virtual ICollection<MealHistory> MealHistories { get; set; } = new List<MealHistory>();
 
+    public virtual ICollection<PatientNutrientGoal> PatientNutrientGoals { get; set; } = new List<PatientNutrientGoal>();
+
     public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
 }
