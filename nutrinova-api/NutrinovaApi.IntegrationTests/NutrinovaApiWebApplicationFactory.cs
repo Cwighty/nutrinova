@@ -27,13 +27,12 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
        .WithImage("postgres")
        .WithPassword("Strong_password_123!")
        .WithResourceMapping(new DirectoryInfo(directory), "/docker-entrypoint-initdb.d")
-       .WithBindMount(directory, "/docker-entrypoint-initdb.d")
        .WithCleanUp(true)
        .WithAutoRemove(true)
        .Build();
   }
 
-  public string DefaultUserId { get; set; } = TestCustomer.ObjectId;
+  public string DefaultCustomerId { get; set; } = TestCustomer.ObjectId;
 
   public async Task InitializeAsync()
   {
@@ -70,7 +69,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
       services.RemoveAll(typeof(DbContextOptions<NutrinovaDbContext>));
       services.AddDbContext<NutrinovaDbContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
 
-      services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
+      services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultCustomerId);
 
       services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
               .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });

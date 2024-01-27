@@ -1,5 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using NutrinovaApi.Extensions;
+using NutrinovaData;
+using NutrinovaData.Entities;
 using NutrinovaData.Features.Chat;
+using NutrinovaData.RequestModels;
 
 namespace NutrinovaApi.Controllers;
 

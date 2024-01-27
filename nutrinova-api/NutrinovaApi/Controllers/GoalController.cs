@@ -22,7 +22,7 @@ public class GoalController : ControllerBase
     this.logger = logger;
   }
 
-  [HttpGet]
+  [HttpGet("all")]
   public async Task<ActionResult<IEnumerable<PatientNutrientGoalResponse>>> GetGoals()
   {
     var userObjectId = User.GetObjectIdFromClaims();
@@ -37,9 +37,8 @@ public class GoalController : ControllerBase
       .ToListAsync();
 
     var goals = await context.PatientNutrientGoals
-      .Where(g => patients.Any(p => p.Id == g.PatientId))
-      .Include(g => g.Patient)
-      .Include(g => g.Nutrient).ThenInclude(n => n.PreferredUnitNavigation)
+      .Where(g => g.Patient.CustomerId == customer.Id)
+      .IncludeAllGoalDependencies()
       .ToListAsync();
 
     return Ok(goals.ToResponseModels());
@@ -48,7 +47,7 @@ public class GoalController : ControllerBase
   [HttpPost]
   public async Task<ActionResult<PatientNutrientGoalResponse>> CreateGoal(PatientNutrientGoalRequestModel request)
   {
-    if (request.PatientId == Guid.Empty || request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
+    if (request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
     {
       return BadRequest("All request parameters are required.");
     }
@@ -84,8 +83,7 @@ public class GoalController : ControllerBase
     await context.SaveChangesAsync();
 
     goal = await context.PatientNutrientGoals.Where(g => g.Id == goal.Id)
-      .Include(g => g.Patient)
-      .Include(g => g.Nutrient).ThenInclude(n => n.PreferredUnitNavigation)
+      .IncludeAllGoalDependencies()
       .FirstOrDefaultAsync();
 
     return Ok(goal!.ToResponseModel());
@@ -119,8 +117,7 @@ public class GoalController : ControllerBase
     }
 
     var goal = await context.PatientNutrientGoals.Where(g => g.Id == id)
-      .Include(g => g.Patient)
-      .Include(g => g.Nutrient).ThenInclude(n => n.PreferredUnitNavigation)
+      .IncludeAllGoalDependencies()
       .FirstOrDefaultAsync();
     if (goal is null)
     {

@@ -1,4 +1,5 @@
-﻿using NutrinovaData.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NutrinovaData.Entities;
 using NutrinovaData.Features.Patients;
 
 namespace NutrinovaData.Features.Goals;
@@ -22,5 +23,14 @@ public static class GoalExtensions
       PatientId = goal.PatientId,
       PatientName = goal.Patient.GetFullName(),
     };
+  }
+
+  public static IQueryable<PatientNutrientGoal> IncludeAllGoalDependencies(this IQueryable<PatientNutrientGoal> query)
+  {
+    return query
+          .Include(g => g.Patient)
+          .Include(g => g.Nutrient)
+              .ThenInclude(n => n.PreferredUnitNavigation)
+                  .ThenInclude(u => u.Category);
   }
 }
