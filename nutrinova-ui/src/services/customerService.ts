@@ -36,5 +36,14 @@ export const customerService = {
     }
     return await fetchFromServer(`customer/get?id=${session?.user.id}`, "client") as Customer;
   },
-  createCustomer: async (customer: Customer) => await postToServer(`Customer/create`, customer),
+  createCustomer: async (customer: Customer) => {
+    try {
+      await postToServer(`Customer/create`, customer);
+      return true;
+    }
+    catch {
+      return false;
+    }
+
+  }
 };
