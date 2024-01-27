@@ -18,15 +18,8 @@ const Welcome = () => {
     if (session == null || session == undefined) {
       throw new Error('Failed to get user session');
     }
-    if (session.user.id == null || session.user.id == undefined) {
-      throw new Error('Failed to get user id');
-    }
-    const test = async (): Promise<boolean> => {
-      const exists = await customerService.customerExists("client");
-      console.log(exists);
-      return exists;
-    }
-    if (await test()) {
+
+    if (await customerService.customerExists("client")) {
       router.push('/dashboard');
       return;
     }
@@ -36,10 +29,17 @@ const Welcome = () => {
       email: session.user.email,
       issingleuser: true,
     } as Customer;
+
     const created = await customerService.createCustomer(customer);
     if (!created) {
       throw new Error('Failed to create customer');
     }
+
+    const patient: Patient = {
+      firstname: session.user.name.split(' ')[0],
+      lastname: session.user.name.split(' ')[1] ?? '',
+    }
+    createPatientMutation.mutate(patient);
 
     router.push('/dashboard');
   }
