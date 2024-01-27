@@ -4,14 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
 
-env:
-  DOCKER_HOST: unix:///var/run/docker.sock
-
 jobs:
   test:
     runs-on: [self-hosted]
-    services:
-      docker:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,5 +21,4 @@ jobs:
           cd nutrinova-api/NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
-          echo $DOCKER_HOST
           dotnet test
