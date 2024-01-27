@@ -22,4 +22,4 @@ jobs:
           cd nutrinova-api/NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
-          dotnet test --verbosity detailed
+          dotnet test --verbosity detailed --DOCKER_CONFIG=/home/nutrinova/.docker/
