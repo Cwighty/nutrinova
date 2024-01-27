@@ -10,6 +10,8 @@ env:
 jobs:
   test:
     runs-on: [self-hosted]
+    services:
+      docker:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,5 +28,3 @@ jobs:
           cd ../NutrinovaApi.IntegrationTests
           echo $DOCKER_HOST
           dotnet test
-    services:
-      - docker
