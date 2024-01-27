@@ -1,6 +1,6 @@
-using System.Net.Http.Headers;
 using DotNet.Testcontainers.Builders;
 using NutrinovaApi.IntegrationTests.TestEntities;
+using System.Net.Http.Headers;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -36,7 +36,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
 
   public async Task InitializeAsync()
   {
-    Thread.Sleep(90000);
+    Thread.Sleep(1000);
     await _dbContainer.StartAsync();
 
     // Add test user here if not using SQL script
