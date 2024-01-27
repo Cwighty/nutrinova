@@ -21,4 +21,4 @@ jobs:
           cd nutrinova-api/NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
-          dotnet test
+          dotnet test --verbosity detailed
