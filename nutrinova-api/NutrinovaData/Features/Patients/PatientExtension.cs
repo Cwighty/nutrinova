@@ -16,4 +16,9 @@ public static class PatientExtension
       CustomerResponse = patient.Customer?.ToCustomerResponse(),
     };
   }
+
+  public static string GetFullName(this Patient patient)
+  {
+    return $"{patient.Firstname} {patient.Lastname}";
+  }
 }
