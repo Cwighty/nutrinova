@@ -26,3 +26,5 @@ jobs:
           cd ../NutrinovaApi.IntegrationTests
           echo $DOCKER_HOST
           dotnet test
+    services:
+      - docker
