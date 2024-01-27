@@ -54,10 +54,13 @@ public class CustomerController : ControllerBase
     Patient patient = new()
     {
       Id = Guid.NewGuid(),
+      Firstname = "You",
+      Lastname = "You",
       CustomerId = customer.Id,
       Customer = customer,
     };
 
+    await context.Patients.AddAsync(patient);
     await context.Customers.AddAsync(customer);
     await context.SaveChangesAsync();
 
