@@ -56,7 +56,7 @@ explaining details of nutritional terms, etc.";
   {
     var context = new List<OpenAIChatMessage>();
     context.Add(OpenAIChatMessage.FromSystem(systemPrompt));
-    context.Add(OpenAIChatMessage.FromAssistant("Hi, I'm Nova a chat bot designed to help you meet your nutritional goals. How can I help?"));
+    context.Add(OpenAIChatMessage.FromAssistant("Hi! I'm Nova, a chat bot designed to help you meet your nutritional goals. How can I help?"));
 
     foreach (var m in messages)
     {
