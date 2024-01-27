@@ -18,6 +18,7 @@ jobs:
 
       - name: Restore dependencies and run tests
         run: |
+          docker ps
           cd nutrinova-api/NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
