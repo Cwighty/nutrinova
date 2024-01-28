@@ -1,5 +1,6 @@
-using System.Net.Http.Headers;
+using DotNet.Testcontainers.Builders;
 using NutrinovaApi.IntegrationTests.TestEntities;
+using System.Net.Http.Headers;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -27,9 +28,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
        .WithImage("postgres")
        .WithPassword("Strong_password_123!")
        .WithResourceMapping(new DirectoryInfo(directory), "/docker-entrypoint-initdb.d")
-       .WithBindMount(directory, "/docker-entrypoint-initdb.d")
-       .WithCleanUp(true)
-       .WithAutoRemove(true)
+       .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
        .Build();
   }
 
@@ -37,6 +36,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
 
   public async Task InitializeAsync()
   {
+    Thread.Sleep(1000);
     await _dbContainer.StartAsync();
 
     // Add test user here if not using SQL script

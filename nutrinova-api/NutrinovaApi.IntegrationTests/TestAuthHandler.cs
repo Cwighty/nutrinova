@@ -1,8 +1,9 @@
-using System.Security.Claims;
-using System.Text.Encodings.Web;
+// Copyright (c) Nutrinova
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 // https://mazeez.dev/posts/auth-in-integration-tests
 public class TestAuthHandler : AuthenticationHandler<TestAuthHandlerOptions>
