@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted]
+    runs-on: [ubuntu-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,7 +16,9 @@ jobs:
         with:
           dotnet-version: "8.0"
 
-      # - name: Restore dependencies and run tests
-      #   run: |
-      #     cd nutrinova-api/
-      #     dotnet test
+      - name: Restore dependencies and run tests
+        run: |
+          cd nutrinova-api/NutrinovaData.UnitTests
+          dotnet test
+          cd ../NutrinovaApi.IntegrationTests
+          dotnet test
