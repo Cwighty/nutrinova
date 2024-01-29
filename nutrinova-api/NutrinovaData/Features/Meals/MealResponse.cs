@@ -4,7 +4,7 @@ using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaData.Features.Meals;
 
-public class MealHistoryResponse
+public class MealResponse
 {
     public Guid Id { get; set; }
 
