@@ -239,22 +239,6 @@ public class MealController : ControllerBase
           return NotFound();
         }
 
-        var foodHistory = foodPlan.ToFoodHistory(customer.Id);
-
-        await context.FoodHistories.AddAsync(foodHistory);
-
-        var mealFoodHistory = new MealFoodHistory
-        {
-          Id = Guid.NewGuid(),
-          MealHistoryId = mealHistoryEntity.Id,
-          FoodId = foodHistory.Id,
-          Amount = recordMealRequest.Amount,
-          UnitId = recordMealRequest.UnitId,
-        };
-
-        await context.MealFoodHistories.AddAsync(mealFoodHistory);
-
-        mealHistoryEntity.MealFoodHistories.Add(mealFoodHistory);
       }
       else if (recordMealRequest.MealSelectionType == MealSelectionItemType.Recipe.ToString())
       {
@@ -264,23 +248,6 @@ public class MealController : ControllerBase
         {
           return NotFound();
         }
-
-        var recipeHistory = recipePlan.ToRecipeHistory(customer.Id);
-
-        await context.RecipeHistories.AddAsync(recipeHistory);
-
-        var mealRecipeHistory = new MealRecipeHistory
-        {
-          Id = Guid.NewGuid(),
-          MealHistoryId = mealHistoryEntity.Id,
-          RecipeHistoryId = recipeHistory.Id,
-          Amount = recordMealRequest.Amount,
-          UnitId = recordMealRequest.UnitId,
-        };
-
-        await context.MealRecipeHistories.AddAsync(mealRecipeHistory);
-
-        mealHistoryEntity.MealRecipeHistories.Add(mealRecipeHistory);
       }
       else
       {

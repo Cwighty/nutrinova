@@ -39,14 +39,6 @@ CREATE TABLE
         category_id serial REFERENCES Nutrient_Category (id)
     );
 
--- Modules Table
-CREATE TABLE
-    Module (
-        id UUID PRIMARY KEY,
-        Module_Name TEXT NOT NULL,
-        Description TEXT
-    );
-
 -- License Table
 CREATE TABLE
     License (
@@ -80,34 +72,9 @@ CREATE TABLE
     created_at TIMESTAMP WITH TIME ZONE not null
   );
 
-CREATE TABLE
-    Food_History (
-        id UUID PRIMARY KEY,
-        fdcid integer null,
-        description TEXT not null, 
-        brand_name TEXT null,
-        ingredients TEXT null,
-        created_by uuid REFERENCES Customer(id),
-        created_at TIMESTAMP WITH TIME ZONE not null,
-        serving_size DECIMAL not null,
-        serving_size_unit serial REFERENCES Unit(id) not null,
-        note TEXT null
-    );
 
 CREATE TABLE
     Recipe_Plan (
-        id UUID PRIMARY KEY,
-        description TEXT,
-        Tags TEXT,
-        Notes TEXT,
-        Amount DECIMAL not null,
-        serving_size_unit serial REFERENCES Unit(id) not null,
-        created_at TIMESTAMP WITH TIME ZONE not null,
-        created_by uuid REFERENCES Customer(id)
-    );
-
-CREATE TABLE
-    Recipe_History (
         id UUID PRIMARY KEY,
         description TEXT,
         Tags TEXT,
@@ -138,16 +105,6 @@ CREATE TABLE
         FOREIGN KEY (Customer_id) REFERENCES Customer (id)
     );
 
--- Patient_Module Table
-CREATE TABLE
-    Patient_Module (
-        Patient_id UUID NOT NULL,
-        Module_id UUID NOT NULL,
-        FOREIGN KEY (Patient_id) REFERENCES Patient (id),
-        FOREIGN KEY (Module_id) REFERENCES Module (id),
-        PRIMARY KEY (Patient_id, Module_id)
-    );
-
 -- Customer_License_Contract Table
 CREATE TABLE
     Customer_License_Contract (
@@ -157,49 +114,26 @@ CREATE TABLE
         PRIMARY KEY (Customer_id, License_Contract_id)
     );
 
--- Meal_History Table
+-- Meal Table
 CREATE TABLE
-    Meal_History (
+    Meal (
         id UUID PRIMARY KEY,
         RecordedBy TEXT NOT NULL,
         Patient_id UUID NOT NULL,
         RecordedAt TIMESTAMP WITH TIME ZONE not null,
         Notes TEXT,
+        ingredients TEXT,
         FOREIGN KEY (Patient_id) REFERENCES Patient (id)
     );
 
-
--- Recipe_Food_History Table
 CREATE TABLE
-    Recipe_Food_History (
+    Meal_Nutrient (
         id UUID PRIMARY KEY,
-        Food_id UUID NOT NULL REFERENCES Food_History (id),
-        Recipe_id UUID NOT NULL REFERENCES Recipe_History (id),
-        Amount DECIMAL not null,
-        Unit_id serial not null REFERENCES Unit (id)
+        Meal_id UUID NOT NULL REFERENCES Meal (id),
+        Nutrient_id serial Not Null REFERENCES Nutrient(id),
+        amount DECIMAL not null
     );
 
--- Meal_Recipe_History Table
-CREATE TABLE
-    Meal_Recipe_History (
-        id UUID PRIMARY KEY,
-        Recipe_History_id UUID NOT NULL REFERENCES Recipe_History (id),
-        Meal_History_id UUID NOT NULL REFERENCES Meal_History (id),
-        Amount DECIMAL not null,
-        created_at TIMESTAMP WITH TIME ZONE not null,
-        Unit_id serial REFERENCES Unit (id) not null
-    );
-
--- Meal_Food_History Table
-CREATE TABLE
-    Meal_Food_History (
-        id UUID PRIMARY KEY,
-        Meal_History_id UUID NOT NULL REFERENCES Meal_History (id),
-        food_id UUID not null REFERENCES Food_History (id),
-        Amount DECIMAL,
-        created_at TIMESTAMP WITH TIME ZONE not null,
-        Unit_id serial not null REFERENCES Unit (id)
-    );
 
 CREATE TABLE
     Food_Plan_Nutrient (
@@ -207,16 +141,6 @@ CREATE TABLE
         FoodPlan_id UUID NOT NULL REFERENCES Food_Plan (id),
         Nutrient_id serial Not Null REFERENCES Nutrient(id),
         amount DECIMAL not null,
-        unit_id serial not null REFERENCES Unit (id)
-    );
-
--- Food_History_Nutrient Table
-CREATE TABLE
-    Food_History_Nutrient (
-        id UUID PRIMARY KEY,
-        FoodHistory_id UUID NOT NULL REFERENCES Food_History (id),
-        Nutrient_id serial NOT NULL REFERENCES Nutrient (id),
-        amount DECIMAL NOT NULL,
         unit_id serial not null REFERENCES Unit (id)
     );
 

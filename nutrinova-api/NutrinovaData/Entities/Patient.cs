@@ -15,7 +15,5 @@ public partial class Patient
 
     public virtual Customer? Customer { get; set; }
 
-    public virtual ICollection<MealHistory> MealHistories { get; set; } = new List<MealHistory>();
-
-    public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
+    public virtual ICollection<Meal> Meals { get; set; } = new List<Meal>();
 }
