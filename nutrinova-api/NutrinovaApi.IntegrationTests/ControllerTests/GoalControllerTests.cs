@@ -104,4 +104,51 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
       Assert.Equal(testGoal.DailyGoalAmount, goal!.DailyGoalAmount);
     }
   }
+
+  public class UpdatePatientNutrientGoal : GoalControllerTests
+  {
+    public UpdatePatientNutrientGoal(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task UpdatePatientNutrientGoal_ShouldReturnOk()
+    {
+      // Arrange
+      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+      var patient = await DataUtility.CreatePatientAsync(customer);
+      var nutrient = await DataUtility.EnsureNutrientExistsAsync();
+
+      var testGoal = new PatientNutrientGoal
+      {
+        Id = Guid.NewGuid(),
+        PatientId = patient.Id,
+        NutrientId = nutrient.Id,
+        DailyGoalAmount = 100,
+      };
+      DbContext.PatientNutrientGoals.Add(testGoal);
+      await DbContext.SaveChangesAsync();
+
+      var testGoalUpdate = new PatientNutrientGoalRequestModel
+      {
+        PatientId = patient.Id,
+        NutrientId = nutrient.Id,
+        DailyGoalAmount = 200,
+      };
+
+      // Act
+      var response = await HttpClient.PutAsJsonAsync($"be/goal/{testGoal.Id}", testGoalUpdate);
+
+      // Assert
+      Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+      var goalResponse = await response.Content.ReadFromJsonAsync<PatientNutrientGoalResponse>();
+      Assert.NotNull(goalResponse);
+      Assert.Equal(testGoalUpdate.DailyGoalAmount, goalResponse!.DailyGoalAmount);
+
+      DbContext.Entry(testGoal).Reload();
+
+      Assert.Equal(testGoalUpdate.DailyGoalAmount, testGoal!.DailyGoalAmount);
+    }
+  }
 }

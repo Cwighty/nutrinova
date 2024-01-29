@@ -118,7 +118,9 @@ public class GoalController : ControllerBase
 
     var goal = await context.PatientNutrientGoals.Where(g => g.Id == id)
       .IncludeAllGoalDependencies()
+      .AsTracking()
       .FirstOrDefaultAsync();
+
     if (goal is null)
     {
       return NotFound();
@@ -130,7 +132,7 @@ public class GoalController : ControllerBase
 
     await context.SaveChangesAsync();
 
-    return Ok(goal.ToResponseModel());
+    return Ok(goal!.ToResponseModel());
   }
 
   [HttpDelete("{id}")]
