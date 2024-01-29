@@ -1,5 +1,5 @@
-using System.Net;
 using NutrinovaApi.IntegrationTests.TestEntities;
+using System.Net;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -45,6 +45,21 @@ public class RecipeControllerTests : IClassFixture<NutrinovaApiWebApplicationFac
     {
       Description = "Test recipe plan",
       Notes = "Test note",
+      ServingSize = 1,
+      ServingSizeUnitId = 1,
+      ServingSizeUnit = new UnitOption
+      {
+        Id = 1,
+        Description = "G",
+        CategoryId = 1,
+        Abbreviation = "G",
+        CategoryName = "Weight",
+        Category = new UnitCategoryRequestModel
+        {
+          Id = 1,
+          Description = "Weight",
+        },
+      },
       RecipeFoods = new List<CreateRecipeFoodRequestModel>
       {
         new()
