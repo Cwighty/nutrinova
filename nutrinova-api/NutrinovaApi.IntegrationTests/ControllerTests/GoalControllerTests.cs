@@ -29,7 +29,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
     }
 
     DbContext = dbContext;
-    DataUtility = new TestDataUtility(dbContext);
+    DataUtility = new TestDataUtility(dbContext, factory);
   }
 
   public class GetPatientNutrientGoals : GoalControllerTests

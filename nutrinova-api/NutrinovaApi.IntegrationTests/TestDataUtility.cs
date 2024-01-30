@@ -3,10 +3,12 @@
 internal class TestDataUtility
 {
   private readonly NutrinovaDbContext context;
+  private readonly NutrinovaApiWebApplicationFactory factory;
 
-  public TestDataUtility(NutrinovaDbContext dbContext)
+  public TestDataUtility(NutrinovaDbContext dbContext, NutrinovaApiWebApplicationFactory factory)
   {
     context = dbContext;
+    this.factory = factory;
   }
 
   public async Task<Customer> EnsureCustomerExistsAsync(string customerId)
@@ -43,5 +45,34 @@ internal class TestDataUtility
     }
 
     return nutrient;
+  }
+
+  public async Task<Meal> CreateMealAsync()
+  {
+    var nutrient = await EnsureNutrientExistsAsync();
+    var customer = await EnsureCustomerExistsAsync(factory.DefaultCustomerId);
+    var patient = await CreatePatientAsync(customer);
+    var meal = new Meal
+    {
+      Id = Guid.NewGuid(),
+      PatientId = patient.Id,
+      Ingredients = "Test Ingredients",
+      Description = "Apple",
+      MealNutrients = new List<MealNutrient>
+      {
+        new()
+        {
+          NutrientId = nutrient.Id,
+          Amount = 10,
+        },
+      },
+      Notes = "Test Notes",
+      Recordedat = DateTime.UtcNow,
+      Recordedby = "Test User",
+    };
+
+    context.Meals.Add(meal);
+    await context.SaveChangesAsync();
+    return meal;
   }
 }

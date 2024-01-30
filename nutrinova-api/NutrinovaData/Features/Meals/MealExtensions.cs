@@ -50,6 +50,7 @@ public static class MealExtensions
         .ThenInclude(p => p.Customer)
       .Include(m => m.MealNutrients)
         .ThenInclude(mn => mn.Nutrient)
-          .ThenInclude(n => n.PreferredUnitNavigation);
+          .ThenInclude(n => n.PreferredUnitNavigation)
+            .ThenInclude(un => un.Category);
   }
 }
