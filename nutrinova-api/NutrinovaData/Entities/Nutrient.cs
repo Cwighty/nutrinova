@@ -19,5 +19,7 @@ public partial class Nutrient
 
     public virtual ICollection<MealNutrient> MealNutrients { get; set; } = new List<MealNutrient>();
 
+    public virtual ICollection<PatientNutrientGoal> PatientNutrientGoals { get; set; } = new List<PatientNutrientGoal>();
+
     public virtual Unit PreferredUnitNavigation { get; set; } = null!;
 }

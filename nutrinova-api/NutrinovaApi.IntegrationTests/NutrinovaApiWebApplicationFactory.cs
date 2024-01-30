@@ -32,11 +32,10 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
        .Build();
   }
 
-  public string DefaultUserId { get; set; } = TestCustomer.ObjectId;
+  public string DefaultCustomerId { get; set; } = TestCustomer.ObjectId;
 
   public async Task InitializeAsync()
   {
-    Thread.Sleep(1000);
     await _dbContainer.StartAsync();
 
     // Add test user here if not using SQL script
@@ -70,7 +69,7 @@ public class NutrinovaApiWebApplicationFactory : WebApplicationFactory<Program>,
       services.RemoveAll(typeof(DbContextOptions<NutrinovaDbContext>));
       services.AddDbContext<NutrinovaDbContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
 
-      services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
+      services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultCustomerId);
 
       services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
               .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });

@@ -38,6 +38,8 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<Patient> Patients { get; set; }
 
+    public virtual DbSet<PatientNutrientGoal> PatientNutrientGoals { get; set; }
+
     public virtual DbSet<RecipeFood> RecipeFoods { get; set; }
 
     public virtual DbSet<RecipePlan> RecipePlans { get; set; }
@@ -328,6 +330,32 @@ public partial class NutrinovaDbContext : DbContext
             entity.HasOne(d => d.Customer).WithMany(p => p.Patients)
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("patient_customer_id_fkey");
+        });
+
+        modelBuilder.Entity<PatientNutrientGoal>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("patient_nutrient_goal_pkey");
+
+            entity.ToTable("patient_nutrient_goal");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.DailyGoalAmount).HasColumnName("daily_goal_amount");
+            entity.Property(e => e.NutrientId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("nutrient_id");
+            entity.Property(e => e.PatientId).HasColumnName("patient_id");
+
+            entity.HasOne(d => d.Nutrient).WithMany(p => p.PatientNutrientGoals)
+                .HasForeignKey(d => d.NutrientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("patient_nutrient_goal_nutrient_id_fkey");
+
+            entity.HasOne(d => d.Patient).WithMany(p => p.PatientNutrientGoals)
+                .HasForeignKey(d => d.PatientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("patient_nutrient_goal_patient_id_fkey");
         });
 
         modelBuilder.Entity<RecipeFood>(entity =>
