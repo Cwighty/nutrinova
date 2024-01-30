@@ -118,6 +118,7 @@ CREATE TABLE
 CREATE TABLE
     Meal (
         id UUID PRIMARY KEY,
+        Description TEXT,
         RecordedBy TEXT NOT NULL,
         Patient_id UUID NOT NULL,
         RecordedAt TIMESTAMP WITH TIME ZONE not null,

@@ -237,6 +237,7 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Ingredients).HasColumnName("ingredients");
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.PatientId).HasColumnName("patient_id");

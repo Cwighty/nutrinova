@@ -7,6 +7,8 @@ public partial class Meal
 {
     public Guid Id { get; set; }
 
+    public string? Description { get; set; }
+
     public string Recordedby { get; set; } = null!;
 
     public Guid PatientId { get; set; }
