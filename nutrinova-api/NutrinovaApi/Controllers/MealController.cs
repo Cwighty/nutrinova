@@ -74,13 +74,17 @@ public class MealController : ControllerBase
   [HttpGet("getMealHistory")]
   public async Task<ActionResult<IEnumerable<MealResponse>>> GetMeals(DateTime beginDate, DateTime endDate)
   {
+    beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
+    endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
     var customer = await GetCustomer();
     if (customer is null)
     {
       return Unauthorized();
     }
 
-    var meals = await context.Meals
+    var meals = new List<Meal>();
+    meals = await context.Meals
       .IncludeMealResponseDetails()
       .Where(m =>
         m.Patient.CustomerId == customer.Id &&

@@ -47,8 +47,13 @@ internal class TestDataUtility
     return nutrient;
   }
 
-  public async Task<Meal> CreateMealAsync()
+  public async Task<Meal> CreateMealAsync(DateTime date = default)
   {
+    if (date == default)
+    {
+      date = DateTime.UtcNow;
+    }
+
     var nutrient = await EnsureNutrientExistsAsync();
     var customer = await EnsureCustomerExistsAsync(factory.DefaultCustomerId);
     var patient = await CreatePatientAsync(customer);
@@ -67,7 +72,7 @@ internal class TestDataUtility
         },
       },
       Notes = "Test Notes",
-      Recordedat = DateTime.UtcNow,
+      Recordedat = date,
       Recordedby = "Test User",
     };
 

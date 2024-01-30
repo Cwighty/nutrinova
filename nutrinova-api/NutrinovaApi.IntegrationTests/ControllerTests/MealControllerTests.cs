@@ -57,6 +57,32 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     }
   }
 
+  public class GetMealHistoryTest : MealControllerTests
+  {
+    public GetMealHistoryTest(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Get_Meal_History()
+    {
+      // Arrange
+      var utcDate = DateTime.SpecifyKind(new DateTime(2022, 1, 1), DateTimeKind.Utc);
+      var meal = await DataUtility.CreateMealAsync(utcDate);
+      var mealId = meal.Id;
+
+      // Act
+      var response = await HttpClient.GetAsync("be/meal/getMealHistory?beginDate=2022-01-01&endDate=2022-01-01");
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+      var mealResponses = await response.Content.ReadFromJsonAsync<IEnumerable<MealResponse>>();
+      Assert.NotNull(mealResponses);
+      Assert.Contains(mealResponses, m => m.Id == mealId);
+    }
+  }
+
   public class RecordMealTests : MealControllerTests
   {
     public RecordMealTests(NutrinovaApiWebApplicationFactory factory)
