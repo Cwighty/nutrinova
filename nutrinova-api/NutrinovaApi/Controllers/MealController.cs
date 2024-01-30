@@ -1,5 +1,5 @@
 using NutrinovaData.Features.Meals;
-using NutrinovaData.Features.Patients;
+using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaApi.Controllers;
 
@@ -9,12 +9,14 @@ namespace NutrinovaApi.Controllers;
 public class MealController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
+  private readonly IRecipeFoodTotaler recipeFoodTotaler;
   private readonly ILogger<MealController> logger;
 
-  public MealController(ILogger<MealController> logger, NutrinovaDbContext context)
+  public MealController(ILogger<MealController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler)
   {
     this.logger = logger;
     this.context = context;
+    this.recipeFoodTotaler = recipeFoodTotaler;
   }
 
   [HttpGet("searchFoodItems")]
@@ -56,9 +58,9 @@ public class MealController : ControllerBase
   }
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<Meal>> GetMeal(Guid id)
+  public async Task<ActionResult<MealResponse>> GetMeal(Guid id)
   {
-    var meal = await context.Meals
+    var meal = await context.Meals.IncludeMealResponseDetails()
       .FirstOrDefaultAsync(m => m.Id == id);
 
     if (meal is null)
@@ -66,21 +68,11 @@ public class MealController : ControllerBase
       return NotFound();
     }
 
-    var mealResponse = new MealResponse
-    {
-      Id = meal.Id,
-      PatientId = meal.PatientId,
-      RecordedAt = meal.Recordedat,
-      Recordedby = meal.Recordedby,
-      Notes = meal.Notes,
-      PatientResponse = meal.Patient.ToPatientResponse(),
-    };
-
-    return Ok(mealResponse);
+    return Ok(meal.ToMealResponse());
   }
 
   [HttpGet("getMealHistory")]
-  public async Task<ActionResult<IEnumerable<MealResponse>>> GetMealHistory(DateTime beginDate, DateTime endDate)
+  public async Task<ActionResult<IEnumerable<MealResponse>>> GetMeals(DateTime beginDate, DateTime endDate)
   {
     var customer = await GetCustomer();
     if (customer is null)
@@ -88,21 +80,15 @@ public class MealController : ControllerBase
       return Unauthorized();
     }
 
-    var mealHistories = await context.Meals
-      .Where(m => m.Patient.CustomerId == customer.Id && m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date)
+    var meals = await context.Meals
+      .IncludeMealResponseDetails()
+      .Where(m =>
+        m.Patient.CustomerId == customer.Id &&
+        m.Recordedat >= beginDate.Date &&
+        m.Recordedat <= endDate.Date)
       .ToListAsync();
 
-    var mealResponses = mealHistories.Select(m => new MealResponse
-    {
-      Id = m.Id,
-      PatientId = m.PatientId,
-      RecordedAt = m.Recordedat,
-      Recordedby = m.Recordedby,
-      Notes = m.Notes,
-      PatientResponse = m.Patient.ToPatientResponse(),
-    });
-
-    return Ok(mealResponses);
+    return Ok(meals.ToMealResponses());
   }
 
   [HttpPost]
@@ -118,7 +104,7 @@ public class MealController : ControllerBase
         return Unauthorized();
       }
 
-      var mealEntity = new Meal // rename to meal record?
+      var mealEntity = new Meal
       {
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
@@ -134,14 +120,60 @@ public class MealController : ControllerBase
         {
           return NotFound();
         }
+
+        mealEntity.Description = foodPlan.Description;
+        mealEntity.Ingredients = foodPlan.Ingredients;
+
+        var foodPlanNutrients = await context.FoodPlanNutrients
+          .Where(f => f.FoodplanId == foodPlan.Id)
+          .ToListAsync();
+
+        foreach (var foodPlanNutrient in foodPlanNutrients)
+        {
+          var mealNutrient = new MealNutrient
+          {
+            Id = Guid.NewGuid(),
+            MealId = mealEntity.Id,
+            NutrientId = foodPlanNutrient.NutrientId,
+            Amount = foodPlanNutrient.Amount * recordMealRequest.Amount / foodPlan.ServingSize, // TODO: Handle unit conversion
+          };
+
+          await context.MealNutrients.AddAsync(mealNutrient);
+        }
       }
       else if (recordMealRequest.MealSelectionType == MealSelectionItemType.Recipe.ToString())
       {
-        var recipePlan = await context.RecipePlans.FindAsync(recordMealRequest.SelectedMealItemId);
+        var recipePlan = await context.RecipePlans
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Unit)
+          .FirstOrDefaultAsync(r => r.Id == recordMealRequest.SelectedMealItemId);
 
         if (recipePlan is null)
         {
           return NotFound();
+        }
+
+        mealEntity.Description = recipePlan.Description;
+        mealEntity.Ingredients = recipePlan.RecipeFoods
+          .Select(rf => $"{rf.Food.Description}: {rf.Amount} {rf.Unit.Abbreviation}")
+          .Aggregate((a, b) => $"{a}\n{b}");
+
+        List<FoodConversionSample> conversionSamples = GetFoodConversionSamples();
+        var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipePlan.RecipeFoods.ToList(), conversionSamples);
+
+        foreach (var summary in summaries)
+        {
+          var mealNutrient = new MealNutrient
+          {
+            Id = Guid.NewGuid(),
+            MealId = mealEntity.Id,
+            NutrientId = summary.NutrientId,
+            Amount = summary.Amount * recordMealRequest.Amount / recipePlan.Amount, // TODO: Handle unit conversion
+          };
+
+          await context.MealNutrients.AddAsync(mealNutrient);
         }
       }
       else
@@ -168,5 +200,13 @@ public class MealController : ControllerBase
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
     return customer;
+  }
+
+  private List<FoodConversionSample> GetFoodConversionSamples()
+  {
+    return context.FoodConversionSamples
+      .Include(fms => fms.MeasurementUnit).ThenInclude(u => u.Category)
+      .Include(fms => fms.FoodPlan).ThenInclude(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .ToList();
   }
 }

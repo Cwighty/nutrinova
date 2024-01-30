@@ -1,24 +1,24 @@
-using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Patients;
-using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaData.Features.Meals;
 
 public class MealResponse
 {
-    public Guid Id { get; set; }
+  public Guid Id { get; set; }
 
-    public string Recordedby { get; set; } = null!;
+  public string? Description { get; set; } = null!;
 
-    public Guid PatientId { get; set; }
+  public string? Ingredients { get; set; } = null!;
 
-    public DateTime? RecordedAt { get; set; }
+  public List<NutrientSummary> NutrientSummaries { get; set; } = null!;
 
-    public string? Notes { get; set; }
+  public string Recordedby { get; set; } = null!;
 
-    public virtual ICollection<FoodHistoryResponse> FoodHistoryResponses { get; set; } = new List<FoodHistoryResponse>();
+  public Guid PatientId { get; set; }
 
-    public virtual ICollection<RecipeHistoryResponse> RecipeHistoryResponses { get; set; } = new List<RecipeHistoryResponse>();
+  public DateTime? RecordedAt { get; set; }
 
-    public PatientResponse PatientResponse { get; set; } = null!;
+  public string? Notes { get; set; }
+
+  public PatientResponse PatientResponse { get; set; } = null!;
 }
