@@ -8,13 +8,11 @@ namespace NutrinovaApi.Controllers;
 public class GoalController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
-  private readonly INovaChatService chatService;
   private readonly ILogger<ChatController> logger;
 
-  public GoalController(NutrinovaDbContext context, INovaChatService chatService, ILogger<ChatController> logger)
+  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger)
   {
     this.context = context;
-    this.chatService = chatService;
     this.logger = logger;
   }
 

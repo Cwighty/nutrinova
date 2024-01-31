@@ -1,4 +1,6 @@
-﻿namespace NutrinovaApi.IntegrationTests;
+﻿using NutrinovaData.Features.Goals;
+
+namespace NutrinovaApi.IntegrationTests;
 
 public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplicationFactory>
 {
@@ -30,7 +32,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
     DataUtility = new TestDataUtility(dbContext, factory);
   }
 
-  /* public class GetPatientNutrientGoals : GoalControllerTests
+  public class GetPatientNutrientGoals : GoalControllerTests
   {
     public GetPatientNutrientGoals(NutrinovaApiWebApplicationFactory factory)
       : base(factory)
@@ -148,5 +150,5 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
 
       Assert.Equal(testGoalUpdate.DailyGoalAmount, testGoal!.DailyGoalAmount);
     }
-  } */
+  }
 }
