@@ -1,6 +1,4 @@
-using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Meals;
-using NutrinovaData.Features.Patients;
 using NutrinovaData.Features.Recipes;
 
 namespace NutrinovaApi.Controllers;
@@ -11,12 +9,14 @@ namespace NutrinovaApi.Controllers;
 public class MealController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
+  private readonly IRecipeFoodTotaler recipeFoodTotaler;
   private readonly ILogger<MealController> logger;
 
-  public MealController(ILogger<MealController> logger, NutrinovaDbContext context)
+  public MealController(ILogger<MealController> logger, NutrinovaDbContext context, IRecipeFoodTotaler recipeFoodTotaler)
   {
     this.logger = logger;
     this.context = context;
+    this.recipeFoodTotaler = recipeFoodTotaler;
   }
 
   [HttpGet("searchFoodItems")]
@@ -58,155 +58,41 @@ public class MealController : ControllerBase
   }
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<MealHistory>> GetMeal(Guid id)
+  public async Task<ActionResult<MealResponse>> GetMeal(Guid id)
   {
-    var mealHistory = await context.MealHistories
-      .Include(m => m.MealFoodHistories)
-        .ThenInclude(m => m.Food)
-        .ThenInclude(f => f.ServingSizeUnitNavigation)
-        .ThenInclude(u => u.Category)
-      .Include(m => m.MealRecipeHistories)
-        .ThenInclude(m => m.RecipeHistory)
-        .ThenInclude(r => r.ServingSizeUnitNavigation)
-        .ThenInclude(u => u.Category)
-      .Include(mealHistory => mealHistory.MealRecipeHistories)
-        .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
-        .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
-        .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food)
-      .Include(mealHistory => mealHistory.Patient)
+    var meal = await context.Meals.IncludeMealResponseDetails()
       .FirstOrDefaultAsync(m => m.Id == id);
 
-    if (mealHistory is null)
+    if (meal is null)
     {
       return NotFound();
     }
 
-    var mealHistoryResponse = new MealHistoryResponse
-    {
-      Id = mealHistory.Id,
-      PatientId = mealHistory.PatientId,
-      RecordedAt = mealHistory.Recordedat,
-      Recordedby = mealHistory.Recordedby,
-      Notes = mealHistory.Notes,
-      FoodHistoryResponses = mealHistory.MealFoodHistories.Select(mfh => new FoodHistoryResponse
-      {
-        Id = mfh.Id,
-        Fdcid = mfh.Food.Fdcid,
-        Description = mfh.Food.Description,
-        BrandName = mfh.Food.BrandName,
-        Ingredients = mfh.Food.Ingredients,
-        CreatedBy = mfh.Food.CreatedBy,
-        CreatedAt = mfh.Food.CreatedAt,
-        ServingSize = mfh.Food.ServingSize,
-        Unit = mfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
-        Note = mfh.Food.Note,
-      }).ToList(),
-      RecipeHistoryResponses = mealHistory.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
-      {
-        Id = mrh.Id,
-        Description = mrh.RecipeHistory.Description,
-        Tags = mrh.RecipeHistory.Tags,
-        Notes = mrh.RecipeHistory.Notes,
-        Amount = mrh.RecipeHistory.Amount,
-        ServingSizeUnit = mrh.RecipeHistory.ServingSizeUnit,
-        CreatedAt = mrh.RecipeHistory.CreatedAt,
-        CreatedBy = mrh.RecipeHistory.CreatedBy,
-        FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
-        {
-          Id = rfh.Id,
-          Fdcid = rfh.Food.Fdcid,
-          Description = rfh.Food.Description,
-          BrandName = rfh.Food.BrandName,
-          Ingredients = rfh.Food.Ingredients,
-          CreatedBy = rfh.Food.CreatedBy,
-          CreatedAt = rfh.Food.CreatedAt,
-          ServingSize = rfh.Food.ServingSize,
-          Unit = rfh.Food.ServingSizeUnitNavigation.ToUnitOption(),
-          Note = rfh.Food.Note,
-        }).ToList(),
-      }).ToList(),
-      PatientResponse = mealHistory.Patient.ToPatientResponse(),
-    };
-
-    return Ok(mealHistoryResponse);
+    return Ok(meal.ToMealResponse());
   }
 
   [HttpGet("getMealHistory")]
-  public async Task<ActionResult<IEnumerable<MealHistoryResponse>>> GetMealHistory(DateTime beginDate, DateTime endDate)
+  public async Task<ActionResult<IEnumerable<MealResponse>>> GetMeals(DateTime beginDate, DateTime endDate)
   {
+    beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
+    endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
     var customer = await GetCustomer();
     if (customer is null)
     {
       return Unauthorized();
     }
 
-    var mealHistories = await context.MealHistories
-      .Include(m => m.MealFoodHistories)
-      .ThenInclude(m => m.Food)
-      .ThenInclude(f => f.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
-      .Include(m => m.MealRecipeHistories)
-      .ThenInclude(m => m.RecipeHistory)
-      .ThenInclude(r => r.ServingSizeUnitNavigation)
-      .ThenInclude(u => u.Category)
-      .Include(m => m.MealFoodHistories).ThenInclude(mfh => mfh.Unit).ThenInclude(u => u.Category)
-      .Include(m => m.MealRecipeHistories).ThenInclude(mrh => mrh.Unit).ThenInclude(u => u.Category)
-      .Include(mealHistory => mealHistory.MealRecipeHistories)
-      .ThenInclude(mealRecipeHistory => mealRecipeHistory.RecipeHistory)
-      .ThenInclude(recipeHistory => recipeHistory.RecipeFoodHistories)
-      .ThenInclude(recipeFoodHistory => recipeFoodHistory.Food)
-      .Include(mealHistory => mealHistory.Patient)
-      .Where(m => m.Patient.CustomerId == customer.Id && m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date)
+    var meals = new List<Meal>();
+    meals = await context.Meals
+      .IncludeMealResponseDetails()
+      .Where(m =>
+        m.Patient.CustomerId == customer.Id &&
+        m.Recordedat >= beginDate.Date &&
+        m.Recordedat <= endDate.Date)
       .ToListAsync();
 
-    var mealHistoryResponses = mealHistories.Select(m => new MealHistoryResponse
-    {
-      Id = m.Id,
-      PatientId = m.PatientId,
-      RecordedAt = m.Recordedat,
-      Recordedby = m.Recordedby,
-      Notes = m.Notes,
-      FoodHistoryResponses = m.MealFoodHistories.Select(mfh => new FoodHistoryResponse
-      {
-        Id = mfh.Id,
-        Fdcid = mfh.Food.Fdcid,
-        Description = mfh.Food.Description,
-        BrandName = mfh.Food.BrandName,
-        Ingredients = mfh.Food.Ingredients,
-        CreatedBy = mfh.Food.CreatedBy,
-        CreatedAt = mfh.Food.CreatedAt,
-        ServingSize = mfh.Food.ServingSize,
-        ServingSizeUnit = mfh.Food.ServingSizeUnit,
-        Unit = mfh.Unit.ToUnitOption(),
-        Note = mfh.Food.Note,
-      }).ToList(),
-      RecipeHistoryResponses = m.MealRecipeHistories.Select(mrh => new RecipeHistoryResponse
-      {
-        Id = mrh.Id,
-        Description = mrh.RecipeHistory.Description,
-        Tags = mrh.RecipeHistory.Tags,
-        Notes = mrh.RecipeHistory.Notes,
-        Amount = mrh.RecipeHistory.Amount,
-        CreatedAt = mrh.RecipeHistory.CreatedAt,
-        CreatedBy = mrh.RecipeHistory.CreatedBy,
-        Unit = mrh.Unit.ToUnitOption(),
-        FoodHistoryResponses = mrh.RecipeHistory.RecipeFoodHistories.Select(rfh => new FoodHistoryResponse
-        {
-          Id = rfh.Id,
-          Fdcid = rfh.Food.Fdcid,
-          Description = rfh.Food.Description,
-          BrandName = rfh.Food.BrandName,
-          Ingredients = rfh.Food.Ingredients,
-          CreatedBy = rfh.Food.CreatedBy,
-          CreatedAt = rfh.Food.CreatedAt,
-          ServingSize = rfh.Food.ServingSize,
-          Note = rfh.Food.Note,
-        }).ToList(),
-      }).ToList(),
-      PatientResponse = m.Patient.ToPatientResponse(),
-    });
-
-    return Ok(mealHistoryResponses);
+    return Ok(meals.ToMealResponses());
   }
 
   [HttpPost]
@@ -222,7 +108,7 @@ public class MealController : ControllerBase
         return Unauthorized();
       }
 
-      var mealHistoryEntity = new MealHistory // rename to meal record?
+      var mealEntity = new Meal
       {
         Id = Guid.NewGuid(),
         PatientId = recordMealRequest.PatientId,
@@ -239,60 +125,81 @@ public class MealController : ControllerBase
           return NotFound();
         }
 
-        var foodHistory = foodPlan.ToFoodHistory(customer.Id);
+        mealEntity.Description = foodPlan.Description;
+        mealEntity.Ingredients = foodPlan.Ingredients;
 
-        await context.FoodHistories.AddAsync(foodHistory);
+        var foodPlanNutrients = await context.FoodPlanNutrients
+          .Where(f => f.FoodplanId == foodPlan.Id)
+          .ToListAsync();
 
-        var mealFoodHistory = new MealFoodHistory
+        foreach (var foodPlanNutrient in foodPlanNutrients)
         {
-          Id = Guid.NewGuid(),
-          MealHistoryId = mealHistoryEntity.Id,
-          FoodId = foodHistory.Id,
-          Amount = recordMealRequest.Amount,
-          UnitId = recordMealRequest.UnitId,
-        };
+          var mealNutrient = new MealNutrient
+          {
+            Id = Guid.NewGuid(),
+            MealId = mealEntity.Id,
+            NutrientId = foodPlanNutrient.NutrientId,
+            Amount = foodPlanNutrient.Amount * recordMealRequest.Amount / foodPlan.ServingSize, // TODO: Handle unit conversion
+          };
 
-        await context.MealFoodHistories.AddAsync(mealFoodHistory);
-
-        mealHistoryEntity.MealFoodHistories.Add(mealFoodHistory);
+          await context.MealNutrients.AddAsync(mealNutrient);
+        }
       }
       else if (recordMealRequest.MealSelectionType == MealSelectionItemType.Recipe.ToString())
       {
-        var recipePlan = await context.RecipePlans.FindAsync(recordMealRequest.SelectedMealItemId);
+        var recipePlan = await context.RecipePlans
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+              .ThenInclude(f => f.FoodPlanNutrients)
+                .ThenInclude(fpn => fpn.Nutrient)
+                  .ThenInclude(n => n.PreferredUnitNavigation)
+                   .ThenInclude(u => u.Category)
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+              .ThenInclude(f => f.ServingSizeUnitNavigation)
+                .ThenInclude(u => u.Category)
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Unit)
+              .ThenInclude(u => u.Category)
+          .FirstOrDefaultAsync(r => r.Id == recordMealRequest.SelectedMealItemId);
 
         if (recipePlan is null)
         {
           return NotFound();
         }
 
-        var recipeHistory = recipePlan.ToRecipeHistory(customer.Id);
+        mealEntity.Description = recipePlan.Description;
+        mealEntity.Ingredients = recipePlan.RecipeFoods
+          .Select(rf => $"{rf.Food.Description}: {rf.Amount} {rf.Unit.Abbreviation}")
+          .Aggregate((a, b) => $"{a}\n{b}");
 
-        await context.RecipeHistories.AddAsync(recipeHistory);
+        List<FoodConversionSample> conversionSamples = GetFoodConversionSamples();
+        var summaries = recipeFoodTotaler.GetRecipeNutrientSummaries(recipePlan.RecipeFoods.ToList(), conversionSamples);
 
-        var mealRecipeHistory = new MealRecipeHistory
+        foreach (var summary in summaries)
         {
-          Id = Guid.NewGuid(),
-          MealHistoryId = mealHistoryEntity.Id,
-          RecipeHistoryId = recipeHistory.Id,
-          Amount = recordMealRequest.Amount,
-          UnitId = recordMealRequest.UnitId,
-        };
+          var mealNutrient = new MealNutrient
+          {
+            Id = Guid.NewGuid(),
+            MealId = mealEntity.Id,
+            NutrientId = summary.NutrientId,
+            Amount = summary.Amount * recordMealRequest.Amount / recipePlan.Amount, // TODO: Handle unit conversion
+          };
 
-        await context.MealRecipeHistories.AddAsync(mealRecipeHistory);
-
-        mealHistoryEntity.MealRecipeHistories.Add(mealRecipeHistory);
+          await context.MealNutrients.AddAsync(mealNutrient);
+        }
       }
       else
       {
         return BadRequest();
       }
 
-      await context.MealHistories.AddAsync(mealHistoryEntity);
+      await context.Meals.AddAsync(mealEntity);
       await context.SaveChangesAsync();
 
       await transaction.CommitAsync();
 
-      return CreatedAtAction(nameof(GetMeal), new { id = mealHistoryEntity.Id }, mealHistoryEntity);
+      return CreatedAtAction(nameof(GetMeal), new { id = mealEntity.Id }, mealEntity);
     }
     catch
     {
@@ -306,5 +213,13 @@ public class MealController : ControllerBase
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstAsync(c => c.Objectid == userObjectId);
     return customer;
+  }
+
+  private List<FoodConversionSample> GetFoodConversionSamples()
+  {
+    return context.FoodConversionSamples
+      .Include(fms => fms.MeasurementUnit).ThenInclude(u => u.Category)
+      .Include(fms => fms.FoodPlan).ThenInclude(fp => fp.ServingSizeUnitNavigation).ThenInclude(u => u.Category)
+      .ToList();
   }
 }

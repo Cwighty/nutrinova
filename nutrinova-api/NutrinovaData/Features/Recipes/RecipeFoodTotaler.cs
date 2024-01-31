@@ -42,6 +42,7 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
         {
           nutrientSummaries.TryAdd(foodNutrient.NutrientId, new NutrientSummary
           {
+            NutrientId = foodNutrient.NutrientId,
             Name = foodNutrient.Nutrient.Description + " (Could not calculate)",
             Amount = 0,
             Unit = foodServingUnit.ToUnitOption(),
@@ -65,6 +66,7 @@ public class RecipeFoodTotaler : IRecipeFoodTotaler
     {
       nutrientSummaries.Add(foodNutrient.NutrientId, new NutrientSummary
       {
+        NutrientId = foodNutrient.NutrientId,
         Name = foodNutrient.Nutrient.Description,
         Amount = foodNutrientAmountInRecipeFood,
         Unit = foodNutrient.Unit.ToUnitOption(),

@@ -1,5 +1,3 @@
-using NutrinovaData.Entities;
-
 public class TestCustomer : ITestDbInitializer
 {
     public static Guid Id { get; } = Guid.NewGuid();

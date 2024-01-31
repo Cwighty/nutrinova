@@ -15,9 +15,11 @@ public partial class Nutrient
 
     public virtual NutrientCategory Category { get; set; } = null!;
 
-    public virtual ICollection<FoodHistoryNutrient> FoodHistoryNutrients { get; set; } = new List<FoodHistoryNutrient>();
-
     public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
+
+    public virtual ICollection<MealNutrient> MealNutrients { get; set; } = new List<MealNutrient>();
+
+    public virtual ICollection<PatientNutrientGoal> PatientNutrientGoals { get; set; } = new List<PatientNutrientGoal>();
 
     public virtual Unit PreferredUnitNavigation { get; set; } = null!;
 }
