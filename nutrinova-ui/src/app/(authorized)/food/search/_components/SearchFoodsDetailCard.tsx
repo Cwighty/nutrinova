@@ -50,7 +50,9 @@ export const SearchFoodsDetailCard = ({
   }
   return (
     <Card sx={{ my: 1, p: 1.25 }}>
-      {importFoodMutation.isPending && (<CenteredSpinnerWithBackdrop message="Importing food..." />)}
+      {importFoodMutation.isPending && (
+        <CenteredSpinnerWithBackdrop message="Importing food..." />
+      )}
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="start">
           <Box>
@@ -92,7 +94,7 @@ export const SearchFoodsDetailCard = ({
         )}
         {food.servingSizeWithUnits && (
           <Typography variant="body1" paragraph sx={{ my: 1.5 }}>
-            Serving Size: {parseFloat(food.servingSizeWithUnits).toFixed(2)} GRM
+            Serving Size: {food.servingSizeWithUnits}
           </Typography>
         )}
         {food.foodNutrients && food.foodNutrients.length > 0 && (
