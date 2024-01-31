@@ -150,6 +150,10 @@ public class MealController : ControllerBase
         var recipePlan = await context.RecipePlans
           .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Food)
+              .ThenInclude(f => f.FoodPlanNutrients)
+                .ThenInclude(fpn => fpn.Nutrient)
+                  .ThenInclude(n => n.PreferredUnitNavigation)
+                   .ThenInclude(u => u.Category)
           .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Unit)
           .FirstOrDefaultAsync(r => r.Id == recordMealRequest.SelectedMealItemId);

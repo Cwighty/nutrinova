@@ -89,5 +89,74 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       : base(factory)
     {
     }
+
+    [Fact]
+    public async Task Record_Food_As_Meal()
+    {
+      // Arrange
+      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+      var patient = await DataUtility.CreatePatientAsync(customer);
+      var food = await DataUtility.CreateFoodAsync();
+      var recordMealRequest = new RecordMealRequest
+      {
+        PatientId = patient.Id,
+        SelectedMealItemId = food.Id,
+        MealSelectionType = MealSelectionItemType.CustomFood.ToString(),
+        RecordedAt = DateTime.UtcNow,
+        Amount = 1,
+        UnitId = food.ServingSizeUnit,
+      };
+
+      // Act
+      var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+
+      var dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == patient.Id &&
+          m.Description == food.Description);
+
+      Assert.NotNull(dbMeal);
+      Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
+      Assert.True(dbMeal.MealNutrients.Any());
+      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+    }
+
+    [Fact]
+    public async Task Record_Recipe_As_Meal()
+    {
+      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+      var patient = await DataUtility.CreatePatientAsync(customer);
+      var recipe = await DataUtility.CreateRecipeAsync();
+      var recordMealRequest = new RecordMealRequest
+      {
+        PatientId = patient.Id,
+        SelectedMealItemId = recipe.Id,
+        MealSelectionType = MealSelectionItemType.Recipe.ToString(),
+        RecordedAt = DateTime.UtcNow,
+        Amount = 1,
+        UnitId = recipe.ServingSizeUnit,
+      };
+
+      // Act
+      var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+
+      // Assert
+      Assert.NotNull(response);
+      response.EnsureSuccessStatusCode();
+
+      var dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == patient.Id &&
+          m.Description == recipe.Description);
+      Assert.NotNull(dbMeal);
+      Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
+      Assert.True(dbMeal.MealNutrients.Any());
+      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+    }
   }
 }
