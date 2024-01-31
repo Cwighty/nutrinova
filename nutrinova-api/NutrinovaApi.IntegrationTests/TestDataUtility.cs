@@ -155,6 +155,7 @@ internal class TestDataUtility
       CreatedBy = customer!.Id,
       Description = "Test Recipe",
       CreatedAt = DateTime.UtcNow,
+      Amount = 1,
     };
 
     recipePlan.RecipeFoods = new List<RecipeFood>

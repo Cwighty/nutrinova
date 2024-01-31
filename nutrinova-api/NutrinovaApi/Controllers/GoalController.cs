@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NutrinovaApi.Extensions;
-using NutrinovaData;
-using NutrinovaData.Entities;
-using NutrinovaData.Features.Chat;
+﻿using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Goals;
 
 namespace NutrinovaApi.Controllers;

@@ -155,7 +155,12 @@ public class MealController : ControllerBase
                   .ThenInclude(n => n.PreferredUnitNavigation)
                    .ThenInclude(u => u.Category)
           .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
+              .ThenInclude(f => f.ServingSizeUnitNavigation)
+                .ThenInclude(u => u.Category)
+          .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Unit)
+              .ThenInclude(u => u.Category)
           .FirstOrDefaultAsync(r => r.Id == recordMealRequest.SelectedMealItemId);
 
         if (recipePlan is null)
