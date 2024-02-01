@@ -223,6 +223,18 @@ public class MealController : ControllerBase
       }
 
       // update the meal with the new values
+      // if current meal amount is different from the new amount, update the meal nutrients
+      if (currentMeal.Amount != recordMealRequest.Amount)
+      {
+        // get the meal nutrients
+        var mealNutrients = context.MealNutrients.Where(mn => mn.MealId == recordMealRequest.Id).ToList();
+
+        // update the meal nutrients
+        foreach (var mealNutrient in mealNutrients)
+        {
+          mealNutrient.Amount = mealNutrient.Amount * (recordMealRequest.Amount / currentMeal);
+        }
+      }
       currentMeal.Amount = recordMealRequest.Amount;
       currentMeal.Recordedat = recordMealRequest.RecordedAt;
 
