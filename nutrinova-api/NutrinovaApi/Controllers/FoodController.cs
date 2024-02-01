@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Web;
+using NutrinovaData.Features.Foods;
 using NutrinovaData.Features.Nutrients;
 using NutrinovaData.FlattenedResponseModels;
 
@@ -127,6 +128,9 @@ public class FoodController : ControllerBase
       {
         return NotFound("No foods found");
       }
+
+      var foodPlanNutrients = foodNutrientMapper.MapNutrients(deserRes.FoodNutrients);
+      deserRes.FoodNutrients = foodPlanNutrients.ToFoodNutrients().ToList();
 
       return deserRes.MakeFlattenedFood();
     }
