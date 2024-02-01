@@ -161,7 +161,7 @@ public class GoalController : ControllerBase
     return Ok();
   }
 
-  [HttpGet("goal-report")]
+  [HttpGet("report")]
   public async Task<ActionResult<IEnumerable<PatientNutrientGoalReport>>> GetGoalReport(DateTime beginDate, DateTime endDate)
   {
     beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
@@ -175,6 +175,9 @@ public class GoalController : ControllerBase
     }
 
     var patients = await context.Patients
+      .Include(p => p.PatientNutrientGoals)
+        .ThenInclude(g => g.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
       .Where(p => p.CustomerId == customer.Id)
       .ToListAsync();
 
@@ -195,12 +198,11 @@ public class GoalController : ControllerBase
         m.Recordedat <= endDate.Date))
       .Include(m => m.MealNutrients)
         .ThenInclude(m => m.Nutrient)
-          .ThenInclude(n => n.PreferredUnit)
+          .ThenInclude(n => n.PreferredUnitNavigation)
+            .ThenInclude(u => u.Category)
       .ToListAsync();
 
-      var goals = await context.PatientNutrientGoals
-        .Where(g => g.PatientId == patient.Id)
-        .ToListAsync();
+      var goals = patient.PatientNutrientGoals.ToList();
 
       var nutrientSummaries = new Dictionary<int, NutrientSummary>();
       foreach (var meal in mealsInDateRange)
@@ -212,15 +214,20 @@ public class GoalController : ControllerBase
       }
 
       report.NutrientGoalReportItems = nutrientSummaries
-        .Where(n => goals.Any(g => g.NutrientId == n.Key))
-        .Zip(goals, (n, g) => new NutrientGoalReportItem
+        .Join(goals, n => n.Key, g => g.NutrientId, (n, g) => new { n, g })
+        .Select(ng => new NutrientGoalReportItem
         {
-          NutrientId = n.Key,
-          NutrientName = n.Value.Name!,
-          PrefferedUnit = n.Value.Unit!,
-          DailyGoalAmount = g.DailyGoalAmount,
-          ConsumedAmount = n.Value.Amount,
-          RemainingAmount = g.DailyGoalAmount - n.Value.Amount,
+          NutrientId = ng.n.Key,
+          NutrientName = ng.n.Value.Name!,
+          PrefferedUnit = ng.n.Value.Unit!,
+          DailyGoalAmount = ng.g.DailyGoalAmount,
+          ConsumedAmount = ng.n.Value.Amount,
+          RemainingAmount = ng.g.DailyGoalAmount - ng.n.Value.Amount,
+          GoalStatus = ng.n.Value.Amount >= ng.g.DailyGoalAmount * 1.1M
+            ? NutrientGoalStatus.Exceeded
+            : ng.n.Value.Amount >= ng.g.DailyGoalAmount
+              ? NutrientGoalStatus.Met
+              : NutrientGoalStatus.NotMet,
         });
 
       patientReports.Add(report);

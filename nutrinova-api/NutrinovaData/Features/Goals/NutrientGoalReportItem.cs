@@ -14,5 +14,12 @@ public class NutrientGoalReportItem
 
   public decimal RemainingAmount { get; set; }
 
-  public string GoalStatus { get; set; } = string.Empty;
+  public NutrientGoalStatus GoalStatus { get; set; } = default;
+}
+
+public enum NutrientGoalStatus
+{
+  NotMet,
+  Met,
+  Exceeded,
 }
