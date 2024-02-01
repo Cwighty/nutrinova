@@ -1,4 +1,5 @@
 ﻿using NutrinovaData.Features.Goals;
+using NutrinovaData.Features.Reports;
 
 namespace NutrinovaApi.IntegrationTests;
 
@@ -62,7 +63,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
 
       // Assert
       Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-      var goalResponse = await response.Content.ReadFromJsonAsync<IEnumerable<PatientNutrientGoalResponse>>();
+      var goalResponse = await response.Content.ReadFromJsonAsync<IEnumerable<NutrientGoalResponse>>();
       Assert.NotNull(goalResponse);
       Assert.Equal(testGoal.DailyGoalAmount, goalResponse!.FirstOrDefault()?.DailyGoalAmount);
     }
@@ -83,7 +84,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
       var patient = await DataUtility.EnsurePatientExistsAsync(customer);
       var nutrient = await DataUtility.EnsureNutrientExistsAsync();
 
-      var testGoal = new PatientNutrientGoalRequestModel
+      var testGoal = new NutrientGoalRequestModel
       {
         PatientId = patient.Id,
         NutrientId = nutrient.Id,
@@ -95,7 +96,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
 
       // Assert
       Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-      var goalResponse = await response.Content.ReadFromJsonAsync<PatientNutrientGoalResponse>();
+      var goalResponse = await response.Content.ReadFromJsonAsync<NutrientGoalResponse>();
       Assert.NotNull(goalResponse);
       Assert.Equal(testGoal.DailyGoalAmount, goalResponse!.DailyGoalAmount);
 
@@ -130,7 +131,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
       DbContext.PatientNutrientGoals.Add(testGoal);
       await DbContext.SaveChangesAsync();
 
-      var testGoalUpdate = new PatientNutrientGoalRequestModel
+      var testGoalUpdate = new NutrientGoalRequestModel
       {
         PatientId = patient.Id,
         NutrientId = nutrient.Id,
@@ -142,7 +143,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
 
       // Assert
       Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-      var goalResponse = await response.Content.ReadFromJsonAsync<PatientNutrientGoalResponse>();
+      var goalResponse = await response.Content.ReadFromJsonAsync<NutrientGoalResponse>();
       Assert.NotNull(goalResponse);
       Assert.Equal(testGoalUpdate.DailyGoalAmount, goalResponse!.DailyGoalAmount);
 

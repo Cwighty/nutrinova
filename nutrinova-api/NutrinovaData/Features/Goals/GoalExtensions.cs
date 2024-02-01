@@ -6,14 +6,14 @@ namespace NutrinovaData.Features.Goals;
 
 public static class GoalExtensions
 {
-  public static IEnumerable<PatientNutrientGoalResponse> ToResponseModels(this IEnumerable<PatientNutrientGoal> goals)
+  public static IEnumerable<NutrientGoalResponse> ToResponseModels(this IEnumerable<PatientNutrientGoal> goals)
   {
     return goals.Select(g => g.ToResponseModel());
   }
 
-  public static PatientNutrientGoalResponse ToResponseModel(this PatientNutrientGoal goal)
+  public static NutrientGoalResponse ToResponseModel(this PatientNutrientGoal goal)
   {
-    return new PatientNutrientGoalResponse
+    return new NutrientGoalResponse
     {
       Id = goal.Id,
       NutrientId = goal.NutrientId,

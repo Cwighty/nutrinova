@@ -1,6 +1,6 @@
 ﻿using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Goals;
-using NutrinovaData.Features.Patients;
+using NutrinovaData.Features.Reports;
 
 namespace NutrinovaApi.Controllers;
 
@@ -10,15 +10,17 @@ public class GoalController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
   private readonly ILogger<ChatController> logger;
+  private readonly INutrientGoalReportCreator reportCreator;
 
-  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger)
+  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger, INutrientGoalReportCreator reportCreator)
   {
     this.context = context;
     this.logger = logger;
+    this.reportCreator = reportCreator;
   }
 
   [HttpGet("all")]
-  public async Task<ActionResult<IEnumerable<PatientNutrientGoalResponse>>> GetGoals()
+  public async Task<ActionResult<IEnumerable<NutrientGoalResponse>>> GetGoals()
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -40,7 +42,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<PatientNutrientGoalResponse>> CreateGoal(PatientNutrientGoalRequestModel request)
+  public async Task<ActionResult<NutrientGoalResponse>> CreateGoal(NutrientGoalRequestModel request)
   {
     if (request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
     {
@@ -85,7 +87,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpPut("{id}")]
-  public async Task<ActionResult<PatientNutrientGoalResponse>> UpdateGoal(Guid id, PatientNutrientGoalRequestModel request)
+  public async Task<ActionResult<NutrientGoalResponse>> UpdateGoal(Guid id, NutrientGoalRequestModel request)
   {
     if (request.PatientId == Guid.Empty || request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
     {
@@ -174,7 +176,12 @@ public class GoalController : ControllerBase
       return Unauthorized();
     }
 
-    var patients = await context.Patients
+    var patientsWithMealsAndGoalsForDateRange = await context.Patients
+      .Include(p => p.Meals.Where(m => m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date))
+        .ThenInclude(m => m.MealNutrients)
+          .ThenInclude(m => m.Nutrient)
+            .ThenInclude(n => n.PreferredUnitNavigation)
+              .ThenInclude(u => u.Category)
       .Include(p => p.PatientNutrientGoals)
         .ThenInclude(g => g.Nutrient)
           .ThenInclude(n => n.PreferredUnitNavigation)
@@ -182,75 +189,12 @@ public class GoalController : ControllerBase
       .ToListAsync();
 
     var patientReports = new List<PatientNutrientGoalReport>();
-
-    foreach (var patient in patients)
+    foreach (var p in patientsWithMealsAndGoalsForDateRange)
     {
-      var report = new PatientNutrientGoalReport();
-      report.ReportBegin = beginDate;
-      report.ReportEnd = endDate;
-      report.PatientName = patient.GetFullName();
-
-      var mealsInDateRange = await context.Meals
-      .Where(
-        m => (
-        m.PatientId == patient.Id &&
-        m.Recordedat >= beginDate.Date &&
-        m.Recordedat <= endDate.Date))
-      .Include(m => m.MealNutrients)
-        .ThenInclude(m => m.Nutrient)
-          .ThenInclude(n => n.PreferredUnitNavigation)
-            .ThenInclude(u => u.Category)
-      .ToListAsync();
-
-      var goals = patient.PatientNutrientGoals.ToList();
-
-      var nutrientSummaries = new Dictionary<int, NutrientSummary>();
-      foreach (var meal in mealsInDateRange)
-      {
-        foreach (var mealNutrient in meal.MealNutrients)
-        {
-          AggregateMealNutrient(nutrientSummaries, mealNutrient);
-        }
-      }
-
-      report.NutrientGoalReportItems = nutrientSummaries
-        .Join(goals, n => n.Key, g => g.NutrientId, (n, g) => new { n, g })
-        .Select(ng => new NutrientGoalReportItem
-        {
-          NutrientId = ng.n.Key,
-          NutrientName = ng.n.Value.Name!,
-          PrefferedUnit = ng.n.Value.Unit!,
-          DailyGoalAmount = ng.g.DailyGoalAmount,
-          ConsumedAmount = ng.n.Value.Amount,
-          RemainingAmount = ng.g.DailyGoalAmount - ng.n.Value.Amount,
-          GoalStatus = ng.n.Value.Amount >= ng.g.DailyGoalAmount * 1.1M
-            ? NutrientGoalStatus.Exceeded
-            : ng.n.Value.Amount >= ng.g.DailyGoalAmount
-              ? NutrientGoalStatus.Met
-              : NutrientGoalStatus.NotMet,
-        });
-
+      var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate);
       patientReports.Add(report);
     }
 
     return Ok(patientReports);
-  }
-
-  private static void AggregateMealNutrient(Dictionary<int, NutrientSummary> nutrientSummaries, MealNutrient mealNutrient)
-  {
-    if (nutrientSummaries.TryGetValue(mealNutrient.NutrientId, out NutrientSummary? value))
-    {
-      value.Amount += mealNutrient.Amount;
-    }
-    else
-    {
-      nutrientSummaries.Add(mealNutrient.NutrientId, new NutrientSummary
-      {
-        NutrientId = mealNutrient.NutrientId,
-        Name = mealNutrient.Nutrient.Description,
-        Amount = mealNutrient.Amount,
-        Unit = mealNutrient.Nutrient.PreferredUnitNavigation.ToUnitOption(),
-      });
-    }
   }
 }

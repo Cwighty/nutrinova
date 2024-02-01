@@ -1,6 +1,6 @@
 ﻿namespace NutrinovaData.Features.Goals;
 
-public class PatientNutrientGoalRequestModel
+public class NutrientGoalRequestModel
 {
   public Guid PatientId { get; set; }
 

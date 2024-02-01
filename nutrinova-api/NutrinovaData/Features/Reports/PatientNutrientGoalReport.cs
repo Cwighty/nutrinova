@@ -1,4 +1,4 @@
-namespace NutrinovaData.Features.Goals;
+namespace NutrinovaData.Features.Reports;
 
 public class PatientNutrientGoalReport
 {
