@@ -1,5 +1,6 @@
 ﻿using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Goals;
+using NutrinovaData.Features.Patients;
 
 namespace NutrinovaApi.Controllers;
 
@@ -158,5 +159,91 @@ public class GoalController : ControllerBase
     await context.SaveChangesAsync();
 
     return Ok();
+  }
+
+  [HttpGet("goal-report")]
+  public async Task<ActionResult<IEnumerable<PatientNutrientGoalReport>>> GetGoalReport(DateTime beginDate, DateTime endDate)
+  {
+    beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
+    endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    if (customer is null || customer?.Id is null)
+    {
+      return Unauthorized();
+    }
+
+    var patients = await context.Patients
+      .Where(p => p.CustomerId == customer.Id)
+      .ToListAsync();
+
+    var patientReports = new List<PatientNutrientGoalReport>();
+
+    foreach (var patient in patients)
+    {
+      var report = new PatientNutrientGoalReport();
+      report.ReportBegin = beginDate;
+      report.ReportEnd = endDate;
+      report.PatientName = patient.GetFullName();
+
+      var mealsInDateRange = await context.Meals
+      .Where(
+        m => (
+        m.PatientId == patient.Id &&
+        m.Recordedat >= beginDate.Date &&
+        m.Recordedat <= endDate.Date))
+      .Include(m => m.MealNutrients)
+        .ThenInclude(m => m.Nutrient)
+          .ThenInclude(n => n.PreferredUnit)
+      .ToListAsync();
+
+      var goals = await context.PatientNutrientGoals
+        .Where(g => g.PatientId == patient.Id)
+        .ToListAsync();
+
+      var nutrientSummaries = new Dictionary<int, NutrientSummary>();
+      foreach (var meal in mealsInDateRange)
+      {
+        foreach (var mealNutrient in meal.MealNutrients)
+        {
+          AggregateMealNutrient(nutrientSummaries, mealNutrient);
+        }
+      }
+
+      report.NutrientGoalReportItems = nutrientSummaries
+        .Where(n => goals.Any(g => g.NutrientId == n.Key))
+        .Zip(goals, (n, g) => new NutrientGoalReportItem
+        {
+          NutrientId = n.Key,
+          NutrientName = n.Value.Name!,
+          PrefferedUnit = n.Value.Unit!,
+          DailyGoalAmount = g.DailyGoalAmount,
+          ConsumedAmount = n.Value.Amount,
+          RemainingAmount = g.DailyGoalAmount - n.Value.Amount,
+        });
+
+      patientReports.Add(report);
+    }
+
+    return Ok(patientReports);
+  }
+
+  private static void AggregateMealNutrient(Dictionary<int, NutrientSummary> nutrientSummaries, MealNutrient mealNutrient)
+  {
+    if (nutrientSummaries.TryGetValue(mealNutrient.NutrientId, out NutrientSummary? value))
+    {
+      value.Amount += mealNutrient.Amount;
+    }
+    else
+    {
+      nutrientSummaries.Add(mealNutrient.NutrientId, new NutrientSummary
+      {
+        NutrientId = mealNutrient.NutrientId,
+        Name = mealNutrient.Nutrient.Description,
+        Amount = mealNutrient.Amount,
+        Unit = mealNutrient.Nutrient.PreferredUnitNavigation.ToUnitOption(),
+      });
+    }
   }
 }
