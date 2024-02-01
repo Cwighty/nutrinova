@@ -13,6 +13,8 @@ public partial class Meal
 
     public Guid PatientId { get; set; }
 
+    public decimal Amount { get; set; }
+
     public DateTime Recordedat { get; set; }
 
     public string? Notes { get; set; }
