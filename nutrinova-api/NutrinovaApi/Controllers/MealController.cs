@@ -208,6 +208,38 @@ public class MealController : ControllerBase
     }
   }
 
+  [HttpPut]
+  public async Task<ActionResult> UpdateMeal(EditMealRequest recordMealRequest)
+  {
+    try
+    {
+      // check if the meal exists
+      var currentMeal = context.Meals.Include(m => m.MealNutrients).FirstOrDefault(m => m.Id == recordMealRequest.Id);
+
+      // return not found if it doesn't
+      if (currentMeal == null)
+      {
+        return NotFound("Meal Not Found In Database");
+      }
+
+      // update the meal with the new values
+      currentMeal.Amount = recordMealRequest.Amount;
+      currentMeal.Recordedat = recordMealRequest.RecordedAt;
+
+      // save the changes
+
+
+    }
+    catch (Exception ex)
+    {
+
+      throw;
+    }
+    // return the updated meal?
+
+    return Ok();
+  }
+
   private async Task<Customer?> GetCustomer()
   {
     var userObjectId = User.GetObjectIdFromClaims();

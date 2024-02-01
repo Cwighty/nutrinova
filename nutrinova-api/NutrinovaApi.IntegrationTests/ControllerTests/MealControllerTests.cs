@@ -1,4 +1,5 @@
 ﻿using NutrinovaData.Features.Meals;
+using NutrinovaData.RequestModels;
 
 namespace NutrinovaApi.IntegrationTests.ControllerTests;
 
@@ -155,6 +156,42 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
           m.Description == recipe.Description);
       Assert.NotNull(dbMeal);
       Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
+      Assert.True(dbMeal.MealNutrients.Any());
+      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+    }
+  }
+
+  public class UpdateMealTests : MealControllerTests
+  {
+    public UpdateMealTests(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Update_Meal()
+    {
+      // Arrange
+      var meal = await DataUtility.CreateMealAsync();
+      var mealId = meal.Id;
+      var mealNutrient = meal.MealNutrients.First();
+      var newDate = DateTime.UtcNow;
+      var updateMealRequest = new EditMealRequest
+      {
+        Id = mealId,
+        Amount = 6,
+        RecordedAt = newDate,
+      };
+
+      // Act
+      var response = await HttpClient.PutAsJsonAsync("be/meal", updateMealRequest);
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+      var dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(m => m.Id == mealId);
+      Assert.NotNull(dbMeal);
       Assert.True(dbMeal.MealNutrients.Any());
       Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
     }
