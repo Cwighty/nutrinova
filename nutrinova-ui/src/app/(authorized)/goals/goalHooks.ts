@@ -7,6 +7,7 @@ import { PatientNutrientGoalReport } from "./_models/PatientNutrientGoalReport";
 const goalKeys = {
   all: ['goals'] as const,
   reports: (dates: { beginDate: Date; endDate: Date }) => [dates, 'goalReports'] as const,
+  reportsandgoals: ['goals', 'goalReports'] as const,
 };
 
 const fetchAllGoals = async (): Promise<NutrientGoalResponse[]> => {
@@ -63,7 +64,7 @@ export const useCreateGoal = () => {
   return useMutation({
     mutationFn: (newGoal: NutrientGoalRequestModel) => createGoal(newGoal),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: goalKeys.all });
+      await queryClient.invalidateQueries({ queryKey: goalKeys.reportsandgoals });
     }
   });
 }

@@ -5,7 +5,7 @@ import { LinearProgress, Box, Typography, Paper } from '@mui/material';
 import { CreatePatientNutrientGoalModal } from '@/components/forms/CreatePatientNutrientGoalModal';
 import { NutrientGoalRequestModel } from '@/app/(authorized)/goals/_models/NutrientGoalRequestModel';
 import { PatientContext } from '@/components/providers/PatientProvider';
-import { useCreateGoal } from '@/app/(authorized)/goals/goalHooks';
+import { useCreateGoal, useFetchGoalReport } from '@/app/(authorized)/goals/goalHooks';
 
 interface NutrientProgressProps {
   label: string;
@@ -51,6 +51,14 @@ const DailyRecapCard: React.FC = () => {
     { label: 'Fats', value: 35, total: 11.2, color: '#E91E63' },
     { label: 'Protein', value: 85, total: 16.2, color: '#2196F3' },
   ];
+
+  const today = new Date(Date.now());
+  const patientContext = React.useContext(PatientContext);
+  const patient = patientContext?.selectedPatient;
+  const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport({ beginDate: today, endDate: today });
+
+   // TODO
+
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
     patientId: "",
@@ -58,8 +66,6 @@ const DailyRecapCard: React.FC = () => {
   };
   const [newGoal, setNewGoal] = React.useState<NutrientGoalRequestModel>(defaultGoal);
   const createGoalMutation = useCreateGoal();
-  const patientContext = React.useContext(PatientContext);
-  const patient = patientContext?.selectedPatient;
   const handleSubmit = (): void => {
     if (patient) {
       createGoalMutation.mutate(newGoal);
