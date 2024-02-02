@@ -65,7 +65,6 @@ public class NutrientImporter : IFoodNutrientMapper
         NutrientId = nutrientOption.Id,
         Amount = newAmount,
         UnitId = nutrientOption.PreferredUnitId,
-        Unit = preferredUnit!,
       };
     }
     catch (Exception ex)
