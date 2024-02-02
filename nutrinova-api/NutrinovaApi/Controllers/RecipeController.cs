@@ -126,6 +126,13 @@ public class RecipeController : ControllerBase
   [HttpGet("{id}")]
   public async Task<ActionResult<RecipeResponseModel>> GetRecipe(Guid id)
   {
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == User.GetObjectIdFromClaims());
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
     var recipe = await context.RecipePlans
         .Include(r => r.RecipeFoods)
             .ThenInclude(u => u.Unit)
@@ -142,6 +149,7 @@ public class RecipeController : ControllerBase
                             .ThenInclude(u => u.Category)
         .Include(r => r.ServingSizeUnitNavigation)
             .ThenInclude(u => u.Category)
+        .Where(r => r.CreatedBy == customer.Id)
         .FirstOrDefaultAsync(r => r.Id == id);
 
     if (recipe == null)
@@ -160,6 +168,13 @@ public class RecipeController : ControllerBase
   [HttpGet]
   public async Task<ActionResult<IEnumerable<RecipeResponseModel>>> GetRecipes()
   {
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == User.GetObjectIdFromClaims());
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
     var recipes = await context.RecipePlans
       .Include(r => r.RecipeFoods)
         .ThenInclude(u => u.Unit)
@@ -176,6 +191,7 @@ public class RecipeController : ControllerBase
                 .ThenInclude(u => u.Category)
       .Include(r => r.ServingSizeUnitNavigation)
         .ThenInclude(u => u.Category)
+      .Where(r => r.CreatedBy == customer.Id)
       .ToListAsync();
 
     foreach (var recipe in recipes)
