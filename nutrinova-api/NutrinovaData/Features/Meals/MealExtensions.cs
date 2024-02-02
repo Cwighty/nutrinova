@@ -13,6 +13,7 @@ public static class MealExtensions
       Id = meal.Id,
       Description = meal.Description,
       Ingredients = meal.Ingredients,
+      Amount = meal.Amount,
       Recordedby = meal.Recordedby,
       PatientId = meal.PatientId,
       RecordedAt = meal.Recordedat,

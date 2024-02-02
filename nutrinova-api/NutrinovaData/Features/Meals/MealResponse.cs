@@ -20,5 +20,7 @@ public class MealResponse
 
   public string? Notes { get; set; }
 
+  public decimal Amount { get; set; }
+
   public PatientResponse PatientResponse { get; set; } = null!;
 }

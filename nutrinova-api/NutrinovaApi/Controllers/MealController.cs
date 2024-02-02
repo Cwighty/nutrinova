@@ -111,6 +111,7 @@ public class MealController : ControllerBase
       var mealEntity = new Meal
       {
         Id = Guid.NewGuid(),
+        Amount = recordMealRequest.Amount,
         PatientId = recordMealRequest.PatientId,
         Recordedby = User.Identity!.Name!,
         Recordedat = recordMealRequest.RecordedAt,
@@ -209,46 +210,55 @@ public class MealController : ControllerBase
   }
 
   [HttpPut]
-  public async Task<ActionResult> UpdateMeal(EditMealRequest recordMealRequest)
+  public async Task<ActionResult> UpdateMeal(EditMealRequest incomingMealRequest)
   {
+    if (incomingMealRequest.Id == Guid.Empty)
+    {
+      return BadRequest("Invalid Meal Id");
+    }
+    else if (incomingMealRequest.Amount <= 0)
+    {
+      return BadRequest("Amount must be greater then 0");
+    }
+
     try
     {
       // check if the meal exists
-      var currentMeal = context.Meals.Include(m => m.MealNutrients).FirstOrDefault(m => m.Id == recordMealRequest.Id);
+      var currentMeal = await context.Meals.Include(m => m.MealNutrients).FirstOrDefaultAsync(m => m.Id == incomingMealRequest.Id);
 
       // return not found if it doesn't
       if (currentMeal == null)
       {
-        return NotFound("Meal Not Found In Database");
+        return BadRequest("Invalid Meal Id");
       }
 
       // update the meal with the new values
       // if current meal amount is different from the new amount, update the meal nutrients
-      if (currentMeal.Amount != recordMealRequest.Amount)
+      if (currentMeal.Amount != incomingMealRequest.Amount)
       {
         // get the meal nutrients
-        var mealNutrients = context.MealNutrients.Where(mn => mn.MealId == recordMealRequest.Id).ToList();
+        var mealNutrients = await context.MealNutrients.Where(mn => mn.MealId == incomingMealRequest.Id).ToListAsync();
 
         // update the meal nutrients
         foreach (var mealNutrient in mealNutrients)
         {
-          mealNutrient.Amount = mealNutrient.Amount * (recordMealRequest.Amount / currentMeal);
+          mealNutrient.Amount = mealNutrient.Amount * (incomingMealRequest.Amount / currentMeal.Amount);
         }
       }
-      currentMeal.Amount = recordMealRequest.Amount;
-      currentMeal.Recordedat = recordMealRequest.RecordedAt;
+
+      currentMeal.Amount = incomingMealRequest.Amount;
+      currentMeal.Recordedat = incomingMealRequest.RecordedAt;
 
       // save the changes
-
-
+      await context.SaveChangesAsync();
     }
     catch (Exception ex)
     {
-
-      throw;
+      logger.LogError(ex, "Error updating meal");
+      return StatusCode(500, "Error updating meal");
     }
-    // return the updated meal?
 
+    // return the updated meal?
     return Ok();
   }
 

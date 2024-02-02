@@ -1,5 +1,4 @@
 ﻿using NutrinovaData.Features.Meals;
-using NutrinovaData.RequestModels;
 
 namespace NutrinovaApi.IntegrationTests.ControllerTests;
 
@@ -174,7 +173,6 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       // Arrange
       var meal = await DataUtility.CreateMealAsync();
       var mealId = meal.Id;
-      var mealNutrient = meal.MealNutrients.First();
       var newDate = DateTime.UtcNow;
       var updateMealRequest = new EditMealRequest
       {
@@ -188,12 +186,18 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
       // Assert
       response.EnsureSuccessStatusCode();
-      var dbMeal = await DbContext.Meals
-        .Include(m => m.MealNutrients)
-        .FirstOrDefaultAsync(m => m.Id == mealId);
+      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + mealId);
       Assert.NotNull(dbMeal);
-      Assert.True(dbMeal.MealNutrients.Any());
-      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+      Assert.True(dbMeal.NutrientSummaries.Any());
+      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      foreach (var nutrient in dbMeal.NutrientSummaries)
+      {
+        var originalNutrientAmount = meal.MealNutrients.First(n => n.NutrientId == nutrient.NutrientId).Amount;
+        Assert.Equal(nutrient.Amount, originalNutrientAmount * (updateMealRequest.Amount / meal.Amount));
+      }
+
+      Assert.Equal(updateMealRequest.Amount, dbMeal.Amount);
+      Assert.NotNull(dbMeal.RecordedAt);
     }
   }
 }
