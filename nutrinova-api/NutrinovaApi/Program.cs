@@ -1,4 +1,3 @@
-using System.Net.WebSockets;
 using System.Text.Json.Serialization;
 using DotNetEnv;
 using Microsoft.OpenApi.Models;
@@ -75,7 +74,6 @@ public class Program
     builder.Services.AddScoped<IRecipeFoodTotaler, RecipeFoodTotaler>();
     builder.Services.AddScoped<IFoodNutrientMapper, NutrientImporter>();
     builder.Services.AddScoped<IDensityCalculator, DensityCalculator>();
-    builder.Services.AddSingleton<WebSocketManager>();
     builder.Services.AddOpenAIService();
     builder.Services.AddScoped<INovaChatService, NovaChatService>();
 
@@ -91,40 +89,8 @@ public class Program
       app.UseSwaggerUI();
     }
 
-    app.UseWebSockets();
-
-    app.Map("/ws/repeater", async (context) =>
-      {
-        if (context.WebSockets.IsWebSocketRequest)
-        {
-          var webSocketManager = app.Services.GetRequiredService<WebSocketManager>();
-          WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-          string connId = webSocketManager.AddSocket(webSocket);
-          await webSocketManager.EchoMessagesAsync(webSocket, CancellationToken.None);
-        }
-        else
-        {
-          context.Response.StatusCode = StatusCodes.Status400BadRequest;
-          await context.Response.WriteAsync("Not a websocket request");
-        }
-      });
-
     app.MapControllers();
 
     app.Run();
-  }
-
-  private static async Task Echo(HttpContext context, WebSocket webSocket)
-  {
-    var buffer = new byte[1024 * 4];
-    WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-    while (!result.CloseStatus.HasValue)
-    {
-      await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-      result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-    }
-
-    await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
   }
 }
