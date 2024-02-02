@@ -7,9 +7,10 @@ interface GenericCardProps {
   icon?: React.ReactNode; // Optional icon prop
   children: React.ReactNode;
   sx?: SxProps<Theme>; // Allow custom styles
+  actions?: React.ReactNode; // Add an actions prop
 }
 
-const GenericCard: React.FC<GenericCardProps> = ({ title, icon, children, sx }) => {
+const GenericCard: React.FC<GenericCardProps> = ({ title, icon, children, sx, actions }) => {
   const theme = useTheme();
 
   return (
@@ -20,6 +21,7 @@ const GenericCard: React.FC<GenericCardProps> = ({ title, icon, children, sx }) 
           <Typography variant="h6" component="div">
             {title}
           </Typography>
+          {actions && <Box sx={{ ml: 'auto' }}>{actions}</Box>}
         </Box>
         <Box sx={{ mt: 2 }}>
           {children}
