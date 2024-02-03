@@ -185,6 +185,7 @@ public class GoalController : ControllerBase
       .Include(p => p.PatientNutrientGoals)
         .ThenInclude(g => g.Nutrient)
           .ThenInclude(n => n.PreferredUnitNavigation)
+            .ThenInclude(u => u.Category)
       .Where(p => p.CustomerId == customer.Id)
       .ToListAsync();
 

@@ -1,15 +1,13 @@
-'use client'
-import React from 'react';
+"use client";
+import React from "react";
 
-import Masonry from '@mui/lab/Masonry';
-import { Session } from 'next-auth';
-import CalendarCard from './Cards/CalendarCard';
-import DailyCaloriesCard from './Cards/DailyCalories';
-import DailyRecapCard from './Cards/DailyRecap';
-import NotificationsCard from './Cards/NotificationsCard';
-import WelcomeCard from './Cards/WelcomeCard';
-import ReminderCard from './Cards/ReminderCard';
-
+import Masonry from "@mui/lab/Masonry";
+import { Session } from "next-auth";
+import DailyCaloriesCard from "./Cards/DailyCalories";
+import DailyRecapCard from "./Cards/DailyRecap/DailyRecapCard";
+import NotificationsCard from "./Cards/NotificationsCard";
+import WelcomeCard from "./Cards/WelcomeCard";
+import ReminderCard from "./Cards/ReminderCard";
 
 interface DashboardLayoutProps {
   session?: Session | null;
@@ -21,7 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ session }) => {
   return (
     <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
       <WelcomeCard caretakerName={session?.user.name} />
-      <CalendarCard />
+      {/* <CalendarCard /> */}
       <NotificationsCard />
       <DailyCaloriesCard />
       <DailyRecapCard />

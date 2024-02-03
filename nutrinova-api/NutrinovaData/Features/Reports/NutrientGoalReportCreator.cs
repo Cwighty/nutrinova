@@ -18,6 +18,7 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
     {
       ReportBegin = beginDate,
       ReportEnd = endDate,
+      PatientId = patientWithMealsAndGoals.Id.ToString(),
       PatientName = patientWithMealsAndGoals.GetFullName(),
       NutrientGoalReportItems = reportItems,
     };
@@ -56,22 +57,28 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
     Dictionary<int, NutrientSummary> consumedNutrientSummaries = GetConsumedNutrientTotals(mealsInDateRange);
 
     var nutrientGoals = p.PatientNutrientGoals.ToList();
-    var reportItems = consumedNutrientSummaries
-      .Join(nutrientGoals, n => n.Key, g => g.NutrientId, (n, g) => new { n, g })
-      .Select(ng => new NutrientGoalReportItem
-      {
-        NutrientId = ng.n.Key,
-        NutrientName = ng.n.Value.Name!,
-        PreferredUnit = ng.n.Value.Unit!,
-        DailyGoalAmount = ng.g.DailyGoalAmount,
-        ConsumedAmount = ng.n.Value.Amount,
-        RemainingAmount = ng.g.DailyGoalAmount - ng.n.Value.Amount,
-        GoalStatus = ng.n.Value.Amount >= ng.g.DailyGoalAmount * 1.1M
-          ? NutrientGoalStatus.Exceeded
-          : ng.n.Value.Amount >= ng.g.DailyGoalAmount
-            ? NutrientGoalStatus.Met
-            : NutrientGoalStatus.NotMet,
-      });
+    var reportItems = nutrientGoals
+    .GroupJoin(
+      consumedNutrientSummaries,
+      g => g.NutrientId,
+      n => n.Key,
+      (g, nGroup) => new { g, nGroup })
+    .SelectMany(
+        x => x.nGroup.DefaultIfEmpty(),
+        (x, n) => new NutrientGoalReportItem
+        {
+          NutrientId = x.g.NutrientId,
+          NutrientName = x.g.Nutrient.Description,
+          PreferredUnit = x.g.Nutrient.PreferredUnitNavigation.ToUnitOption(),
+          DailyGoalAmount = x.g.DailyGoalAmount,
+          ConsumedAmount = n.Value != null ? n.Value.Amount : 0,
+          RemainingAmount = n.Value != null ? x.g.DailyGoalAmount - n.Value.Amount : x.g.DailyGoalAmount,
+          GoalStatus = n.Value != null ? (n.Value.Amount >= x.g.DailyGoalAmount * 1.1M
+                ? NutrientGoalStatus.Exceeded
+                : n.Value.Amount >= x.g.DailyGoalAmount
+                    ? NutrientGoalStatus.Met
+                    : NutrientGoalStatus.NotMet) : NutrientGoalStatus.NotStarted,
+        });
 
     return reportItems;
   }
