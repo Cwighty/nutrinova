@@ -10,7 +10,7 @@ import {
 } from "@/app/(authorized)/goals/goalHooks";
 import { NutrientProgress } from "./NutrientProgress";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
-import { Box, Typography } from "@mui/material";
+import { Box, Skeleton, Typography } from "@mui/material";
 
 const DailyRecapCard: React.FC = () => {
   const [today] = React.useState(new Date(Date.now()));
@@ -72,9 +72,9 @@ const DailyRecapCard: React.FC = () => {
 
   return (
     <>
-      {reportDataLoading && <div>Loading...</div>}
       <GenericCard title="Daily Recap" actions={actionButton}>
-        {nutrients && nutrients.length === 0 && (
+        {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
+        {reportData && nutrients && nutrients.length === 0 && (
           <Box>
             <Typography variant="body1">
               Set a nutrient goal above to track your progress.
