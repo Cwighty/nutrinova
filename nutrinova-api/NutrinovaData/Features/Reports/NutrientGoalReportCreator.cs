@@ -62,7 +62,7 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       {
         NutrientId = ng.n.Key,
         NutrientName = ng.n.Value.Name!,
-        PrefferedUnit = ng.n.Value.Unit!,
+        PreferredUnit = ng.n.Value.Unit!,
         DailyGoalAmount = ng.g.DailyGoalAmount,
         ConsumedAmount = ng.n.Value.Amount,
         RemainingAmount = ng.g.DailyGoalAmount - ng.n.Value.Amount,

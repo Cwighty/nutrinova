@@ -6,7 +6,7 @@ public class NutrientGoalReportItem
 
   public string NutrientName { get; set; } = string.Empty;
 
-  public UnitOption PrefferedUnit { get; set; } = new UnitOption();
+  public UnitOption PreferredUnit { get; set; } = new UnitOption();
 
   public decimal DailyGoalAmount { get; set; }
 
