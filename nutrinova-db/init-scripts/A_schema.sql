@@ -122,6 +122,7 @@ CREATE TABLE
         RecordedBy TEXT NOT NULL,
         Patient_id UUID NOT NULL,
         Amount DECIMAL not null,
+        Unit serial REFERENCES Unit (id) not null,
         RecordedAt TIMESTAMP WITH TIME ZONE not null,
         Notes TEXT,
         ingredients TEXT,
