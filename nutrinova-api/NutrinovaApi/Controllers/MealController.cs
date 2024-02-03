@@ -115,6 +115,7 @@ public class MealController : ControllerBase
         PatientId = recordMealRequest.PatientId,
         Recordedby = User.Identity!.Name!,
         Recordedat = recordMealRequest.RecordedAt,
+        Unit = recordMealRequest.UnitId,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
@@ -221,6 +222,8 @@ public class MealController : ControllerBase
       return BadRequest("Amount must be greater then 0");
     }
 
+    using var transaction = await context.Database.BeginTransactionAsync();
+
     try
     {
       // check if the meal exists
@@ -246,20 +249,23 @@ public class MealController : ControllerBase
         }
       }
 
+      currentMeal.Unit = incomingMealRequest.UnitId;
+      currentMeal.UnitNavigation = await context.Units.FirstOrDefaultAsync(u => u.Id == incomingMealRequest.UnitId) ?? throw new InvalidOperationException("Unit not found");
       currentMeal.Amount = incomingMealRequest.Amount;
       currentMeal.Recordedat = incomingMealRequest.RecordedAt;
 
       // save the changes
       await context.SaveChangesAsync();
+      await transaction.CommitAsync();
+
+      return Ok("Meal updated");
     }
     catch (Exception ex)
     {
+      await transaction.RollbackAsync();
       logger.LogError(ex, "Error updating meal");
       return StatusCode(500, "Error updating meal");
     }
-
-    // return the updated meal?
-    return Ok();
   }
 
   private async Task<Customer?> GetCustomer()

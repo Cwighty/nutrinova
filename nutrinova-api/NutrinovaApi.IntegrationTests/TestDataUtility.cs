@@ -64,6 +64,7 @@ internal class TestDataUtility
       Ingredients = "Test Ingredients",
       Amount = 5,
       Description = "Apple",
+      Unit = 3,
       MealNutrients = new List<MealNutrient>
       {
         new()

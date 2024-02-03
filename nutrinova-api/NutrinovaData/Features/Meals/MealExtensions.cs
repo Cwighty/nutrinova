@@ -17,6 +17,7 @@ public static class MealExtensions
       Recordedby = meal.Recordedby,
       PatientId = meal.PatientId,
       RecordedAt = meal.Recordedat,
+      UnitId = meal.Unit,
       Notes = meal.Notes,
       NutrientSummaries = meal.MealNutrients.ToNutrientSummaries(),
       PatientResponse = meal.Patient.ToPatientResponse(),

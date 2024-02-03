@@ -143,20 +143,18 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
       // Act
       var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+      var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
 
       // Assert
       Assert.NotNull(response);
       response.EnsureSuccessStatusCode();
 
-      var dbMeal = await DbContext.Meals
-        .Include(m => m.MealNutrients)
-        .FirstOrDefaultAsync(
-          m => m.PatientId == patient.Id &&
-          m.Description == recipe.Description);
+      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + desResponse?.Id ?? throw new InvalidOperationException());
       Assert.NotNull(dbMeal);
       Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
-      Assert.True(dbMeal.MealNutrients.Any());
-      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+      Assert.True(dbMeal.NutrientSummaries.Any());
+      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      Assert.Equal(recordMealRequest.UnitId, dbMeal.UnitId);
     }
   }
 
@@ -179,6 +177,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
         Id = mealId,
         Amount = 6,
         RecordedAt = newDate,
+        UnitId = 1,
       };
 
       // Act
@@ -190,6 +189,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       Assert.NotNull(dbMeal);
       Assert.True(dbMeal.NutrientSummaries.Any());
       Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      Assert.Equal(updateMealRequest.UnitId, dbMeal.UnitId);
       foreach (var nutrient in dbMeal.NutrientSummaries)
       {
         var originalNutrientAmount = meal.MealNutrients.First(n => n.NutrientId == nutrient.NutrientId).Amount;

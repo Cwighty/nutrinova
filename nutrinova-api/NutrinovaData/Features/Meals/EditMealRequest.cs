@@ -7,4 +7,6 @@ public class EditMealRequest
   public decimal Amount { get; set; }
 
   public DateTime RecordedAt { get; set; }
+
+  public int UnitId { get; set; }
 }
