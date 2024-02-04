@@ -1,5 +1,4 @@
 using NutrinovaApi.IntegrationTests.TestEntities;
-using System.Net;
 
 namespace NutrinovaApi.IntegrationTests;
 

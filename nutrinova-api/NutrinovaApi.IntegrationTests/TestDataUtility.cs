@@ -67,7 +67,9 @@ internal class TestDataUtility
       Id = Guid.NewGuid(),
       PatientId = patient.Id,
       Ingredients = "Test Ingredients",
+      Amount = 5,
       Description = "Apple",
+      Unit = 3,
       MealNutrients = new List<MealNutrient>
       {
         new()

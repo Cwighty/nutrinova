@@ -1,5 +1,4 @@
 using NutrinovaData.FlattenedResponseModels;
-using System.Net;
 
 namespace NutrinovaApi.IntegrationTests;
 

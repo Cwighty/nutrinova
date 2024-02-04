@@ -143,20 +143,61 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
       // Act
       var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+      var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
 
       // Assert
       Assert.NotNull(response);
       response.EnsureSuccessStatusCode();
 
-      var dbMeal = await DbContext.Meals
-        .Include(m => m.MealNutrients)
-        .FirstOrDefaultAsync(
-          m => m.PatientId == patient.Id &&
-          m.Description == recipe.Description);
+      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + desResponse?.Id ?? throw new InvalidOperationException());
       Assert.NotNull(dbMeal);
       Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
-      Assert.True(dbMeal.MealNutrients.Any());
-      Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
+      Assert.True(dbMeal.NutrientSummaries.Any());
+      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      Assert.Equal(recordMealRequest.UnitId, dbMeal.UnitId);
+    }
+  }
+
+  public class UpdateMealTests : MealControllerTests
+  {
+    public UpdateMealTests(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Update_Meal()
+    {
+      // Arrange
+      var meal = await DataUtility.CreateMealAsync();
+      var mealId = meal.Id;
+      var newDate = DateTime.UtcNow;
+      var updateMealRequest = new EditMealRequest
+      {
+        Id = mealId,
+        Amount = 6,
+        RecordedAt = newDate,
+        UnitId = 1,
+      };
+
+      // Act
+      var response = await HttpClient.PutAsJsonAsync("be/meal", updateMealRequest);
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + mealId);
+      Assert.NotNull(dbMeal);
+      Assert.True(dbMeal.NutrientSummaries.Any());
+      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      Assert.Equal(updateMealRequest.UnitId, dbMeal.UnitId);
+      foreach (var nutrient in dbMeal.NutrientSummaries)
+      {
+        var originalNutrientAmount = meal.MealNutrients.First(n => n.NutrientId == nutrient.NutrientId).Amount;
+        Assert.Equal(nutrient.Amount, originalNutrientAmount * (updateMealRequest.Amount / meal.Amount));
+      }
+
+      Assert.Equal(updateMealRequest.Amount, dbMeal.Amount);
+      Assert.NotNull(dbMeal.RecordedAt);
     }
   }
 }

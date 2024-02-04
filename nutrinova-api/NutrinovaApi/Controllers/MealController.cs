@@ -111,9 +111,11 @@ public class MealController : ControllerBase
       var mealEntity = new Meal
       {
         Id = Guid.NewGuid(),
+        Amount = recordMealRequest.Amount,
         PatientId = recordMealRequest.PatientId,
         Recordedby = User.Identity!.Name!,
         Recordedat = recordMealRequest.RecordedAt,
+        Unit = recordMealRequest.UnitId,
       };
 
       if (recordMealRequest.MealSelectionType == MealSelectionItemType.CustomFood.ToString())
@@ -205,6 +207,64 @@ public class MealController : ControllerBase
     {
       await transaction.RollbackAsync();
       throw;
+    }
+  }
+
+  [HttpPut]
+  public async Task<ActionResult> UpdateMeal(EditMealRequest incomingMealRequest)
+  {
+    if (incomingMealRequest.Id == Guid.Empty)
+    {
+      return BadRequest("Invalid Meal Id");
+    }
+    else if (incomingMealRequest.Amount <= 0)
+    {
+      return BadRequest("Amount must be greater then 0");
+    }
+
+    using var transaction = await context.Database.BeginTransactionAsync();
+
+    try
+    {
+      // check if the meal exists
+      var currentMeal = await context.Meals.Include(m => m.MealNutrients).FirstOrDefaultAsync(m => m.Id == incomingMealRequest.Id);
+
+      // return not found if it doesn't
+      if (currentMeal == null)
+      {
+        return BadRequest("Invalid Meal Id");
+      }
+
+      // update the meal with the new values
+      // if current meal amount is different from the new amount, update the meal nutrients
+      if (currentMeal.Amount != incomingMealRequest.Amount)
+      {
+        // get the meal nutrients
+        var mealNutrients = await context.MealNutrients.Where(mn => mn.MealId == incomingMealRequest.Id).ToListAsync();
+
+        // update the meal nutrients
+        foreach (var mealNutrient in mealNutrients)
+        {
+          mealNutrient.Amount = mealNutrient.Amount * (incomingMealRequest.Amount / currentMeal.Amount);
+        }
+      }
+
+      currentMeal.Unit = incomingMealRequest.UnitId;
+      currentMeal.UnitNavigation = await context.Units.FirstOrDefaultAsync(u => u.Id == incomingMealRequest.UnitId) ?? throw new InvalidOperationException("Unit not found");
+      currentMeal.Amount = incomingMealRequest.Amount;
+      currentMeal.Recordedat = incomingMealRequest.RecordedAt;
+
+      // save the changes
+      await context.SaveChangesAsync();
+      await transaction.CommitAsync();
+
+      return Ok("Meal updated");
+    }
+    catch (Exception ex)
+    {
+      await transaction.RollbackAsync();
+      logger.LogError(ex, "Error updating meal");
+      return StatusCode(500, "Error updating meal");
     }
   }
 
