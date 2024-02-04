@@ -14,11 +14,15 @@ public class MealResponse
 
   public string Recordedby { get; set; } = null!;
 
+  public int UnitId { get; set; }
+
   public Guid PatientId { get; set; }
 
   public DateTime? RecordedAt { get; set; }
 
   public string? Notes { get; set; }
+
+  public decimal Amount { get; set; }
 
   public PatientResponse PatientResponse { get; set; } = null!;
 }

@@ -1,5 +1,3 @@
-using NutrinovaData.Entities;
-
 namespace NutrinovaApi.IntegrationTests.TestEntities;
 
 public class TestRecipePlan : ITestDbInitializer

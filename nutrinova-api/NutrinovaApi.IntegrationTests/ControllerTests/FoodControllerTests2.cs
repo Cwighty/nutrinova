@@ -1,5 +1,4 @@
 ﻿using NutrinovaData.ResponseModels;
-using System.Net;
 
 namespace NutrinovaApi.IntegrationTests.ControllerTests;
 
