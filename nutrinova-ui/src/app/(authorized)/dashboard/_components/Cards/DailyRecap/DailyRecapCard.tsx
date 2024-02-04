@@ -10,9 +10,11 @@ import {
 } from "@/app/(authorized)/goals/goalHooks";
 import { NutrientProgress } from "./NutrientProgress";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
-import { Box, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 const DailyRecapCard: React.FC = () => {
+  const router = useRouter();
   const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
@@ -83,7 +85,7 @@ const DailyRecapCard: React.FC = () => {
         )}
         {nutrients &&
           nutrients.length > 0 &&
-          nutrients.map((nutrient) => (
+          nutrients.slice(0, 3).map((nutrient) => (
             <NutrientProgress
               key={nutrient.nutrientId}
               label={nutrient.nutrientName}
@@ -93,6 +95,18 @@ const DailyRecapCard: React.FC = () => {
               color={getNutrientColor(nutrient.nutrientName)}
             />
           ))}
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={() => {
+              // navigate to the goals page
+              router.push("/goals/view");
+            }}
+          >See More</Button>
+        </Box>
+
       </GenericCard>
     </>
   );

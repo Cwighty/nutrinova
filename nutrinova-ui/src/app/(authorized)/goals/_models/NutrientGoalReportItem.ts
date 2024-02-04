@@ -10,8 +10,20 @@ export interface NutrientGoalReportItem {
   goalStatus: NutrientGoalStatus;
 }
 
-enum NutrientGoalStatus {
+export enum NutrientGoalStatus {
+  NotStarted,
   NotMet,
   Met,
   Exceeded,
 }
+
+export type NutrientGoalStatusDisplayType = {
+  [key in number]: string;
+};
+
+export const NutrientGoalStatusDisplay: NutrientGoalStatusDisplayType = {
+  [NutrientGoalStatus.NotStarted]: "Not Started",
+  [NutrientGoalStatus.NotMet]: "Not Met",
+  [NutrientGoalStatus.Met]: "Met",
+  [NutrientGoalStatus.Exceeded]: "Exceeded",
+};

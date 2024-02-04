@@ -1,18 +1,16 @@
 // FoodSelection.tsx
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
-  AccordionSummary,
-  AccordionDetails,
   Typography,
   Box,
   styled,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import { MealSelectionItemCard } from './MealSelectionItemCard';
 import { MealSelectionItem } from '../_models/mealSelectionItem';
+import { CustomAccordion } from '../../../../../components/CustomAccordion';
 
-const Accordion = styled((props: AccordionProps) => (
+export const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
@@ -30,15 +28,6 @@ interface Props {
   usdaFoods: MealSelectionItem[];
   onSelectItem: (item: MealSelectionItem) => void;
 }
-
-const CustomAccordion: React.FC<{ title: string, children: ReactNode }> = ({ title, children }) => (
-  <Accordion defaultExpanded>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography>{title}</Typography>
-    </AccordionSummary>
-    <AccordionDetails>{children}</AccordionDetails>
-  </Accordion>
-);
 
 const SelectableBox: React.FC<{ item: MealSelectionItem, onSelectItem: (item: MealSelectionItem) => void }> = ({ item, onSelectItem }) => (
   <Box
