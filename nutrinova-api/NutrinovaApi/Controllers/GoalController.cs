@@ -1,5 +1,6 @@
 ﻿using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Goals;
+using NutrinovaData.Features.Reports;
 
 namespace NutrinovaApi.Controllers;
 
@@ -8,18 +9,18 @@ namespace NutrinovaApi.Controllers;
 public class GoalController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
-  private readonly INovaChatService chatService;
   private readonly ILogger<ChatController> logger;
+  private readonly INutrientGoalReportCreator reportCreator;
 
-  public GoalController(NutrinovaDbContext context, INovaChatService chatService, ILogger<ChatController> logger)
+  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger, INutrientGoalReportCreator reportCreator)
   {
     this.context = context;
-    this.chatService = chatService;
     this.logger = logger;
+    this.reportCreator = reportCreator;
   }
 
   [HttpGet("all")]
-  public async Task<ActionResult<IEnumerable<PatientNutrientGoalResponse>>> GetGoals()
+  public async Task<ActionResult<IEnumerable<NutrientGoalResponse>>> GetGoals()
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -41,7 +42,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<PatientNutrientGoalResponse>> CreateGoal(PatientNutrientGoalRequestModel request)
+  public async Task<ActionResult<NutrientGoalResponse>> CreateGoal(NutrientGoalRequestModel request)
   {
     if (request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
     {
@@ -86,7 +87,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpPut("{id}")]
-  public async Task<ActionResult<PatientNutrientGoalResponse>> UpdateGoal(Guid id, PatientNutrientGoalRequestModel request)
+  public async Task<ActionResult<NutrientGoalResponse>> UpdateGoal(Guid id, NutrientGoalRequestModel request)
   {
     if (request.PatientId == Guid.Empty || request.NutrientId == 0 || !(request.DailyGoalAmount > 0))
     {
@@ -160,5 +161,41 @@ public class GoalController : ControllerBase
     await context.SaveChangesAsync();
 
     return Ok();
+  }
+
+  [HttpGet("report")]
+  public async Task<ActionResult<IEnumerable<PatientNutrientGoalReport>>> GetGoalReport(DateTime beginDate, DateTime endDate)
+  {
+    beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
+    endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    if (customer is null || customer?.Id is null)
+    {
+      return Unauthorized();
+    }
+
+    var patientsWithMealsAndGoalsForDateRange = await context.Patients
+      .Include(p => p.Meals.Where(m => m.Recordedat >= beginDate.Date && m.Recordedat <= endDate.Date))
+        .ThenInclude(m => m.MealNutrients)
+          .ThenInclude(m => m.Nutrient)
+            .ThenInclude(n => n.PreferredUnitNavigation)
+              .ThenInclude(u => u.Category)
+      .Include(p => p.PatientNutrientGoals)
+        .ThenInclude(g => g.Nutrient)
+          .ThenInclude(n => n.PreferredUnitNavigation)
+            .ThenInclude(u => u.Category)
+      .Where(p => p.CustomerId == customer.Id)
+      .ToListAsync();
+
+    var patientReports = new List<PatientNutrientGoalReport>();
+    foreach (var p in patientsWithMealsAndGoalsForDateRange)
+    {
+      var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate);
+      patientReports.Add(report);
+    }
+
+    return Ok(patientReports);
   }
 }
