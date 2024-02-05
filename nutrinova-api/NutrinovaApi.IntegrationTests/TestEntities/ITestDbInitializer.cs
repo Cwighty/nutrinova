@@ -1,4 +1,4 @@
 public interface ITestDbInitializer
 {
-    Task InitializeDbTestData(NutrinovaDbContext context);
+  Task InitializeDbTestData(NutrinovaDbContext context);
 }

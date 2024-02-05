@@ -8,18 +8,18 @@ namespace NutrinovaApi.IntegrationTests;
 [Route("/be/[controller]")]
 public class UnitControllerTests : IClassFixture<NutrinovaApiWebApplicationFactory>
 {
-    private readonly HttpClient httpClient;
+  private readonly HttpClient httpClient;
 
-    public UnitControllerTests(NutrinovaApiWebApplicationFactory factory)
-    {
-        httpClient = factory.CreateClient();
-    }
+  public UnitControllerTests(NutrinovaApiWebApplicationFactory factory)
+  {
+    httpClient = factory.CreateClient();
+  }
 
-    [Fact]
-    public async Task CanRequestNutrients()
-    {
-        var response = await httpClient.GetFromJsonAsync<IEnumerable<UnitOption>>("be/unit/all-units");
-        Assert.NotNull(response);
-        Assert.NotEmpty(response);
-    }
+  [Fact]
+  public async Task CanRequestNutrients()
+  {
+    var response = await httpClient.GetFromJsonAsync<IEnumerable<UnitOption>>("be/unit/all-units");
+    Assert.NotNull(response);
+    Assert.NotEmpty(response);
+  }
 }
