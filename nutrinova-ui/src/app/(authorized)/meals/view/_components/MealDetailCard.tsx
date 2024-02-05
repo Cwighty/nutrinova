@@ -11,18 +11,14 @@ interface MealDetailCardProps {
 export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
   const router = useRouter();
 
-  const foodOrRecipe = meal.foodHistoryResponses[0] ? "Food" : "Recipe";
-
-  const description = meal.foodHistoryResponses[0]
-    ? meal.foodHistoryResponses[0].description
-    : meal.recipeHistoryResponses[0]
-      ? meal.recipeHistoryResponses[0].description
-      : "No description available";
+  const description = meal.description
+    ? meal.description
+    : "No description available";
 
   const mealTime = format(new Date(meal.recordedAt), "MMMM d, yyyy h:mm a");
 
-  const amount = foodOrRecipe === "Food" ? meal.foodHistoryResponses[0].servingSize : meal.recipeHistoryResponses[0].amount;
-  const unit = foodOrRecipe === "Food" ? meal.foodHistoryResponses[0].unit?.abbreviation : meal.recipeHistoryResponses[0].unit?.abbreviation;
+  const amount = meal.amount;
+  const unit = meal.unit;
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -44,7 +40,7 @@ export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
         <Grid item xs={12} md={6}>
           <Paper elevation={6} sx={{ p: 2 }}>
             <Typography variant="subtitle1" >
-              Servings Eaten: {amount} {unit}
+              Servings Eaten: {amount} {unit.abbreviation}
             </Typography>
           </Paper>
         </Grid>

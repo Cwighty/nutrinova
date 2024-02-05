@@ -16,6 +16,7 @@ public static class MealExtensions
       Amount = meal.Amount,
       Recordedby = meal.Recordedby,
       PatientId = meal.PatientId,
+      Unit = meal.UnitNavigation.ToUnitOption(),
       RecordedAt = meal.Recordedat,
       UnitId = meal.Unit,
       Notes = meal.Notes,
@@ -50,6 +51,8 @@ public static class MealExtensions
     return meals
       .Include(m => m.Patient)
         .ThenInclude(p => p.Customer)
+      .Include(m => m.UnitNavigation)
+        .ThenInclude(u => u.Category)
       .Include(m => m.MealNutrients)
         .ThenInclude(mn => mn.Nutrient)
           .ThenInclude(n => n.PreferredUnitNavigation)

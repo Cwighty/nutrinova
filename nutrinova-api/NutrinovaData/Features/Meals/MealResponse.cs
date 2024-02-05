@@ -16,6 +16,8 @@ public class MealResponse
 
   public int UnitId { get; set; }
 
+  public UnitOption Unit { get; set; } = null!;
+
   public Guid PatientId { get; set; }
 
   public DateTime? RecordedAt { get; set; }
