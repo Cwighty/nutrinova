@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Nutrients;
 using NutrinovaData.Features.Recipes;
+using NutrinovaData.Features.Reports;
 using NutrinovaData.Features.Units;
 using OpenAI.Extensions;
 
@@ -75,6 +76,7 @@ public class Program
     builder.Services.AddScoped<IRecipeFoodTotaler, RecipeFoodTotaler>();
     builder.Services.AddScoped<IFoodNutrientMapper, NutrientImporter>();
     builder.Services.AddScoped<IDensityCalculator, DensityCalculator>();
+    builder.Services.AddScoped<INutrientGoalReportCreator, NutrientGoalReportCreator>();
     builder.Services.AddSingleton<WebSocketManager>();
     builder.Services.AddOpenAIService();
     builder.Services.AddScoped<INovaChatService, NovaChatService>();

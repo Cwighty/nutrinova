@@ -95,7 +95,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     {
       // Arrange
       var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
-      var patient = await DataUtility.CreatePatientAsync(customer);
+      var patient = await DataUtility.EnsurePatientExistsAsync(customer);
       var food = await DataUtility.CreateFoodAsync();
       var recordMealRequest = new RecordMealRequest
       {
@@ -129,7 +129,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     public async Task Record_Recipe_As_Meal()
     {
       var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
-      var patient = await DataUtility.CreatePatientAsync(customer);
+      var patient = await DataUtility.EnsurePatientExistsAsync(customer);
       var recipe = await DataUtility.CreateRecipeAsync();
       var recordMealRequest = new RecordMealRequest
       {

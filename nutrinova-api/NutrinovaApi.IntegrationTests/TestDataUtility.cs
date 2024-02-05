@@ -22,17 +22,22 @@ internal class TestDataUtility
     return customer;
   }
 
-  public async Task<Patient> CreatePatientAsync(Customer customer)
+  public async Task<Patient> EnsurePatientExistsAsync(Customer customer)
   {
-    var patient = new Patient
+    var patient = await context.Patients.Where(p => p.CustomerId == customer.Id).FirstOrDefaultAsync();
+    if (patient == null)
     {
-      Id = Guid.NewGuid(),
-      CustomerId = customer!.Id,
-      Firstname = "Test",
-      Lastname = "Patient",
-    };
-    context.Patients.Add(patient);
-    await context.SaveChangesAsync();
+      patient = new Patient
+      {
+        Id = Guid.NewGuid(),
+        CustomerId = customer!.Id,
+        Firstname = "Test",
+        Lastname = "Patient",
+      };
+      context.Patients.Add(patient);
+      await context.SaveChangesAsync();
+    }
+
     return patient;
   }
 
@@ -56,7 +61,7 @@ internal class TestDataUtility
 
     var nutrient = await EnsureNutrientExistsAsync();
     var customer = await EnsureCustomerExistsAsync(factory.DefaultCustomerId);
-    var patient = await CreatePatientAsync(customer);
+    var patient = await EnsurePatientExistsAsync(customer);
     var meal = new Meal
     {
       Id = Guid.NewGuid(),
@@ -181,5 +186,23 @@ internal class TestDataUtility
     context.RecipePlans.Add(recipePlan);
     await context.SaveChangesAsync();
     return recipePlan;
+  }
+
+  public async Task<PatientNutrientGoal> CreatePatientGoalAsync()
+  {
+    var patient = await EnsurePatientExistsAsync(await EnsureCustomerExistsAsync(factory.DefaultCustomerId));
+    var nutrient = await EnsureNutrientExistsAsync();
+
+    var goal = new PatientNutrientGoal
+    {
+      Id = Guid.NewGuid(),
+      PatientId = patient.Id,
+      NutrientId = nutrient.Id,
+      DailyGoalAmount = 100,
+    };
+
+    context.PatientNutrientGoals.Add(goal);
+    await context.SaveChangesAsync();
+    return goal;
   }
 }
