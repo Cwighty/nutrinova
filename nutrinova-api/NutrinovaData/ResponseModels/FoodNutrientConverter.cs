@@ -30,13 +30,17 @@ public class FoodNutrientConverter : JsonConverter<FoodNutrient>
         foodNutrient.nutrientNumber = nutrientNumberProperty.GetString();
       }
 
-      if (root.TryGetProperty("nutrient", out _) && nutrientObject.TryGetProperty("unitName", out var unitName))
+      if (root.TryGetProperty("nutrient", out _) && nutrientObject.TryGetProperty("unitName", out var unitName1))
       {
-        foodNutrient.unitName = unitName.GetString();
+        foodNutrient.unitName = unitName1.GetString();
       }
-      else if (root.TryGetProperty("nutrient:unitName", out var unitNameProperty))
+      else if (root.TryGetProperty("nutrient:unitName", out var unitName2))
       {
-        foodNutrient.unitName = unitNameProperty.GetString();
+        foodNutrient.unitName = unitName2.GetString();
+      }
+      else if (root.TryGetProperty("unitName", out var unitName3))
+      {
+        foodNutrient.unitName = unitName3.GetString();
       }
 
       if (root.TryGetProperty("derivationCode", out var derivationCodeProperty))
