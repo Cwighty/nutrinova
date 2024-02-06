@@ -125,6 +125,7 @@ internal class TestDataUtility
       Description = "Test Food 1",
       Ingredients = "Test Ingredients 1",
       ServingSize = 1,
+      ServingSizeUnit = 1,
       FoodPlanNutrients = new List<FoodPlanNutrient>
       {
         new()
@@ -142,6 +143,7 @@ internal class TestDataUtility
       Description = "Test Food 2",
       Ingredients = "Test Ingredients 2",
       ServingSize = 1,
+      ServingSizeUnit = 1,
       FoodPlanNutrients = new List<FoodPlanNutrient>
       {
         new()
@@ -163,6 +165,7 @@ internal class TestDataUtility
       Description = "Test Recipe",
       CreatedAt = DateTime.UtcNow,
       Amount = 1,
+      ServingSizeUnit = 1,
     };
 
     recipePlan.RecipeFoods = new List<RecipeFood>

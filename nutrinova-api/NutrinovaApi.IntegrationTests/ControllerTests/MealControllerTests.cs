@@ -143,6 +143,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
       // Act
       var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+      var stringResponse = await response.Content.ReadAsStringAsync();
       var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
 
       // Assert
