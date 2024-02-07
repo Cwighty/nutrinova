@@ -146,7 +146,7 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       var stringResponse = await response.Content.ReadAsStringAsync();
       var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
 
-      // Assert
+      // Asserts
       Assert.NotNull(response);
       response.EnsureSuccessStatusCode();
 
