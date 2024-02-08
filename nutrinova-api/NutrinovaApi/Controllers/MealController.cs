@@ -150,6 +150,8 @@ public class MealController : ControllerBase
       else if (recordMealRequest.MealSelectionType == MealSelectionItemType.Recipe.ToString())
       {
         var recipePlan = await context.RecipePlans
+        .Include(r => r.ServingSizeUnitNavigation)
+          .ThenInclude(u => u.Category)
           .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Food)
               .ThenInclude(f => f.FoodPlanNutrients)
@@ -201,10 +203,14 @@ public class MealController : ControllerBase
 
       await transaction.CommitAsync();
 
-      return CreatedAtAction(nameof(GetMeal), new { id = mealEntity.Id }, mealEntity);
+      var meal = await context.Meals.IncludeMealResponseDetails()
+        .FirstOrDefaultAsync(m => m.Id == mealEntity.Id);
+
+      return CreatedAtAction(nameof(GetMeal), new { id = mealEntity.Id }, meal!.ToMealResponse());
     }
-    catch
+    catch (Exception ex)
     {
+      logger.LogError(ex, "Error recording meal");
       await transaction.RollbackAsync();
       throw;
     }

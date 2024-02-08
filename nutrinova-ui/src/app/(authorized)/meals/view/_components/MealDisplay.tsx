@@ -9,11 +9,9 @@ interface MealDisplayProps {
 }
 
 export const MealDisplay = ({ meal }: MealDisplayProps) => {
-  const description = meal.foodHistoryResponses[0]
-    ? meal.foodHistoryResponses[0].description
-    : meal.recipeHistoryResponses[0]
-    ? meal.recipeHistoryResponses[0].description
-    : "No description available";
+  const description = meal !== null
+    ? meal.description
+    : "No name available";
 
   const mealTime = format(new Date(meal.recordedAt), "p");
 
