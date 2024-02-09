@@ -228,6 +228,12 @@ public class MealController : ControllerBase
       return BadRequest("Amount must be greater then 0");
     }
 
+    var customer = await GetCustomer();
+    if (customer is null)
+    {
+      return Unauthorized();
+    }
+
     using var transaction = await context.Database.BeginTransactionAsync();
 
     try
