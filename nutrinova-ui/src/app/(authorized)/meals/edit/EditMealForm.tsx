@@ -71,16 +71,6 @@ export const EditMealForm = ({ meal }: EditMealFormProps) => {
             Update
           </Button>
         </Grid>
-        {/* <Grid item>
-          <IconButton aria-label="delete" onClick={handleDelete}>
-          <DeleteIcon />
-          </IconButton>
-        </Grid> */}
-        <Grid item xs={6} md={6}>
-          <Button variant="text" onClick={() => { /* handle change patient */ }}>
-            Change Patient
-          </Button>
-        </Grid>
       </Grid>
     </>
   );
