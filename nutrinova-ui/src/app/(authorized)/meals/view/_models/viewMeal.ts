@@ -20,3 +20,10 @@ export interface NutrientSummary {
   amount: number;
   unit: UnitOption;
 }
+
+export interface UpdateMeal {
+  id: string;
+  recordedat: Date;
+  unitId: number;
+  amount: number;
+}
