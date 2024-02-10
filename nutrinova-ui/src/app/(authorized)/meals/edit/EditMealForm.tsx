@@ -44,38 +44,44 @@ export const EditMealForm = ({ meal }: EditMealFormProps) => {
 
   return (
     <>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DateTimePicker
-          label="Recorded Date"
-          value={dateTime}
-          onChange={(e: Date | null) => setDateTime(e)}
-        />
-      </LocalizationProvider>
-      <AmountInput
-        amount={meal.amount}
-        setAmount={setAmount}
-        unit={meal.unit ?? ({} as UnitOption)}
-        setUnit={setUnit}
-        restrictToUnitCategory={
-          meal.unit.category.description
-        }
-        submitted={submitted}
-      />
-      <Grid container spacing={2} justifyContent="flex-end" alignItems="center" marginTop={2}>
-        <Grid item>
+      <Grid container spacing={1} justifyContent="flext-start" alignItems="center" marginTop={1}>
+        <Grid item xs={12} md={6}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateTimePicker
+              label="Recorded Date"
+              value={dateTime}
+              onChange={(e: Date | null) => setDateTime(e)}
+            />
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={12} md={6} paddingBottom={3}>
+          <AmountInput
+            amount={meal.amount}
+            setAmount={setAmount}
+            unit={meal.unit ?? ({} as UnitOption)}
+            setUnit={setUnit}
+            restrictToUnitCategory={
+              meal.unit.category.description
+            }
+            submitted={submitted}
+          />
+        </Grid>
+        <Grid item xs={6} md={6}>
           <Button variant="contained" color="primary" onClick={handleUpdate}>
-            Finished
+            Update
           </Button>
         </Grid>
         {/* <Grid item>
           <IconButton aria-label="delete" onClick={handleDelete}>
-            <DeleteIcon />
+          <DeleteIcon />
           </IconButton>
         </Grid> */}
+        <Grid item xs={6} md={6}>
+          <Button variant="text" onClick={() => { /* handle change patient */ }}>
+            Change Patient
+          </Button>
+        </Grid>
       </Grid>
-      <Button variant="text" onClick={() => { /* handle change patient */ }}>
-        Change Patient
-      </Button>
     </>
   );
 }
