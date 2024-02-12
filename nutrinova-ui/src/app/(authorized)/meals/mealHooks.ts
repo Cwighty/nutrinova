@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import { MealSelectionItem } from "./record/_models/mealSelectionItem";
 import { RecordMealRequest } from "./record/_models/recordMealRequest";
-import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
+import { Meal, UpdateMeal } from "@/app/(authorized)/meals/view/_models/viewMeal";
 
 export const mealKeys = {
   all: "meals",
@@ -88,3 +88,50 @@ export const useGetMealDetailsQuery = (mealId: string) => {
     queryFn: () => getMealDetails(mealId),
   });
 };
+
+const updateMeal = async (meal: UpdateMeal): Promise<void> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  await apiClient.put(`/Meal`, meal);
+};
+
+export const useUpdateMealMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateMeal,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
+      toast.success("Meal updated successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(`Error updating meal: ${error.message}`);
+      console.error(error);
+    },
+  });
+}
+
+const deleteMeal = async (mealId: string): Promise<void> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  await apiClient.delete(`/Meal/${mealId}`);
+}
+
+export const useDeleteMealMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteMeal,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
+    },
+    onError: (error: Error) => {
+      toast.error(`Error deleting meal: ${error.message}`);
+      console.error(error);
+    },
+  });
+}

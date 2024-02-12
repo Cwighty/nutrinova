@@ -9,4 +9,6 @@ public class EditMealRequest
   public DateTime RecordedAt { get; set; }
 
   public int UnitId { get; set; }
+
+  public string? Notes { get; set; }
 }

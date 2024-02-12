@@ -228,6 +228,18 @@ public class MealController : ControllerBase
       return BadRequest("Amount must be greater then 0");
     }
 
+    var customer = await GetCustomer();
+
+    var meal = await context.Meals
+      .Include(m => m.Patient)
+      .ThenInclude(p => p.Customer)
+      .FirstOrDefaultAsync(m => m.Id == incomingMealRequest.Id);
+
+    if (customer is null || meal?.Patient?.Customer?.Id != customer.Id)
+    {
+      return Unauthorized();
+    }
+
     using var transaction = await context.Database.BeginTransactionAsync();
 
     try
@@ -260,6 +272,8 @@ public class MealController : ControllerBase
       currentMeal.Amount = incomingMealRequest.Amount;
       currentMeal.Recordedat = incomingMealRequest.RecordedAt;
 
+      currentMeal.Notes = incomingMealRequest.Notes;
+
       // save the changes
       await context.SaveChangesAsync();
       await transaction.CommitAsync();
@@ -271,6 +285,51 @@ public class MealController : ControllerBase
       await transaction.RollbackAsync();
       logger.LogError(ex, "Error updating meal");
       return StatusCode(500, "Error updating meal");
+    }
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<ActionResult> DeleteMeal(Guid id)
+  {
+    if (id == Guid.Empty)
+    {
+      return BadRequest("Invalid Meal Id");
+    }
+
+    var customer = await GetCustomer();
+    var meal = await context.Meals
+      .Include(m => m.Patient)
+      .ThenInclude(p => p.Customer)
+      .FirstOrDefaultAsync(m => m.Id == id);
+    if (customer is null || meal?.Patient.Customer?.Id != customer.Id)
+    {
+      return Unauthorized();
+    }
+
+    using var transaction = await context.Database.BeginTransactionAsync();
+
+    try
+    {
+      // delete the meal
+      var mealToDelete = await context.Meals.FirstOrDefaultAsync(m => m.Id == id);
+      if (mealToDelete == null)
+      {
+        return BadRequest("Invalid Meal Id");
+      }
+
+      var mealNutrients = await context.MealNutrients.Where(mn => mn.MealId == id).ToListAsync();
+      context.MealNutrients.RemoveRange(mealNutrients);
+      context.Meals.Remove(mealToDelete);
+      await context.SaveChangesAsync();
+      await transaction.CommitAsync();
+
+      return Ok("Meal deleted");
+    }
+    catch (Exception ex)
+    {
+      await transaction.RollbackAsync();
+      logger.LogError(ex, "Error deleting meal");
+      return StatusCode(500, "Error deleting meal");
     }
   }
 

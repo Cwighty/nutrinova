@@ -209,4 +209,40 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       Assert.NotNull(dbMeal.RecordedAt);
     }
   }
+
+  public class DeleteMealTests : MealControllerTests
+  {
+    public DeleteMealTests(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Delete_Meal()
+    {
+      // Arrange
+      var meal = await DataUtility.CreateMealAsync();
+      var mealId = meal.Id;
+      var newDate = DateTime.UtcNow;
+
+      // Act
+      var dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == meal.PatientId &&
+          m.Description == meal.Description);
+
+      var response = await HttpClient.DeleteAsync("be/meal/" + mealId);
+
+      dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == meal.PatientId &&
+          m.Description == meal.Description);
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+      Assert.Null(dbMeal);
+    }
+  }
 }

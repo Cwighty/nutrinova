@@ -2,14 +2,20 @@
 import { format } from "date-fns";
 import { Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { EditMealModal } from "../../edit/EditMealModal";
 
 interface MealDetailCardProps {
   meal: Meal;
 }
 
 export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
-  const router = useRouter();
+
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+
+  const handleEditModalToggle = () => {
+    setShowEditModal(!showEditModal);
+  }
 
   const description = meal.description
     ? meal.description
@@ -22,6 +28,7 @@ export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
 
   return (
     <Paper sx={{ p: 3 }}>
+      <EditMealModal meal={meal} open={showEditModal} handleClose={handleEditModalToggle} />
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
@@ -31,7 +38,7 @@ export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => router.push("/meals/edit?mealId=" + meal.id)}
+          onClick={handleEditModalToggle}
         >
           Edit
         </Button>
