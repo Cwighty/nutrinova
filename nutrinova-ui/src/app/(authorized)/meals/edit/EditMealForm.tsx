@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { useUpdateMealMutation } from "../mealHooks";
+import { useDeleteMealMutation, useUpdateMealMutation } from "../mealHooks";
 import { Meal, UpdateMeal } from "../view/_models/viewMeal";
 import { Grid, Button } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
@@ -10,14 +10,18 @@ import { UnitOption } from "../../food/_models/unitOption";
 
 interface EditMealFormProps {
   meal: Meal;
+  closeModal: () => void;
 }
 
 
-export const EditMealForm = ({ meal }: EditMealFormProps) => {
+export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
 
   const { mutate: updateMeal } = useUpdateMealMutation();
 
+  const { mutate: deleteMeal } = useDeleteMealMutation();
+
   const [submitted, setSubmitted] = useState<boolean>(false);
+
 
   const [mealToUpdate, setMealToUpdate] = useState<UpdateMeal>({
     id: meal.id,
@@ -36,6 +40,12 @@ export const EditMealForm = ({ meal }: EditMealFormProps) => {
 
   const [dateTime, setDateTime] = useState<Date | null>(new Date(meal.recordedAt));
 
+  const handleDelete = () => {
+    deleteMeal(meal.id);
+    if (closeModal) {
+      closeModal();
+    }
+  }
 
   const handleUpdate = () => {
     updateMeal(mealToUpdate);
@@ -69,6 +79,11 @@ export const EditMealForm = ({ meal }: EditMealFormProps) => {
         <Grid item xs={6} md={6}>
           <Button variant="contained" color="primary" onClick={handleUpdate}>
             Update
+          </Button>
+        </Grid>
+        <Grid item container xs={6} md={6} justifyContent={'flex-end'}>
+          <Button variant="contained" color="secondary" onClick={handleDelete}>
+            Delete
           </Button>
         </Grid>
       </Grid>

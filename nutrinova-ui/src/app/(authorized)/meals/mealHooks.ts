@@ -111,3 +111,26 @@ export const useUpdateMealMutation = () => {
     },
   });
 }
+
+const deleteMeal = async (mealId: string): Promise<void> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  await apiClient.delete(`/Meal/${mealId}`);
+}
+
+export const useDeleteMealMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteMeal,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
+    },
+    onError: (error: Error) => {
+      toast.error(`Error deleting meal: ${error.message}`);
+      console.error(error);
+    },
+  });
+}
