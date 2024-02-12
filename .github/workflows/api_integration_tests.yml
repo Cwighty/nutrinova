@@ -20,7 +20,7 @@ jobs:
         run: |
           cd ./nutrinova-api
           dotnet build
-          cd ../NutrinovaData.UnitTests
+          cd ./NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
           dotnet test
