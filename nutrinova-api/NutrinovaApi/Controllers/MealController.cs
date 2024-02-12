@@ -300,7 +300,7 @@ public class MealController : ControllerBase
       .Include(m => m.Patient)
       .ThenInclude(p => p.Customer)
       .FirstOrDefaultAsync(m => m.Id == id);
-    if (customer is null || meal?.Patient.Customer?.Id != id)
+    if (customer is null || meal?.Patient.Customer?.Id != customer.Id)
     {
       return Unauthorized();
     }
@@ -316,6 +316,8 @@ public class MealController : ControllerBase
         return BadRequest("Invalid Meal Id");
       }
 
+      var mealNutrients = await context.MealNutrients.Where(mn => mn.MealId == id).ToListAsync();
+      context.MealNutrients.RemoveRange(mealNutrients);
       context.Meals.Remove(mealToDelete);
       await context.SaveChangesAsync();
       await transaction.CommitAsync();
