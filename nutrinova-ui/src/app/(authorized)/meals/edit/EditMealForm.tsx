@@ -10,7 +10,7 @@ import { UnitOption } from "../../food/_models/unitOption";
 
 interface EditMealFormProps {
   meal: Meal;
-  closeModal: () => void;
+  closeModal?: () => void;
 }
 
 
@@ -31,7 +31,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
   });
 
   const setAmount = (amount: number) => {
-    setMealToUpdate({ ...mealToUpdate, amount });
+    setMealToUpdate({ ...mealToUpdate, amount: amount });
   }
 
   const setUnit = (unit: UnitOption) => {
@@ -55,7 +55,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
   return (
     <>
       <Grid container spacing={1} justifyContent="flext-start" alignItems="center" marginTop={1}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateTimePicker
               label="Recorded Date"
@@ -64,9 +64,9 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
             />
           </LocalizationProvider>
         </Grid>
-        <Grid item xs={12} md={6} paddingBottom={3}>
+        <Grid item xs={12} md={12} paddingBottom={3}>
           <AmountInput
-            amount={meal.amount}
+            amount={mealToUpdate.amount}
             setAmount={setAmount}
             unit={meal.unit ?? ({} as UnitOption)}
             setUnit={setUnit}

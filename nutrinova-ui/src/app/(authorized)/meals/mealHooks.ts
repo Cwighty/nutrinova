@@ -104,6 +104,7 @@ export const useUpdateMealMutation = () => {
     mutationFn: updateMeal,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [mealKeys.all] });
+      toast.success("Meal updated successfully");
     },
     onError: (error: Error) => {
       toast.error(`Error updating meal: ${error.message}`);

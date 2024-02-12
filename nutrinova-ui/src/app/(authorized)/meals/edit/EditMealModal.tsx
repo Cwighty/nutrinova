@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
 import { Meal } from "../view/_models/viewMeal";
 import { EditMealForm } from "./EditMealForm";
 
@@ -15,10 +15,23 @@ export const EditMealModal = ({
 }: EditMealModalProps) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Edit Meal</DialogTitle>
+      <DialogTitle>
+        <Grid container justifyContent={'flex-start'} alignItems={'center'}>
+          <Grid item xs={6} >
+            <Typography fontSize={32}>
+              Edit Meal
+            </Typography>
+          </Grid>
+          <Grid item container xs={6} justifyContent={'flex-end'} >
+            <Button onClick={handleClose} size="large">
+              X
+            </Button>
+          </Grid>
+        </Grid>
+      </DialogTitle>
       <DialogContent>
-        <EditMealForm meal={meal} />
+        <EditMealForm meal={meal} closeModal={handleClose} />
       </DialogContent>
-    </Dialog>
+    </Dialog >
   );
 }
