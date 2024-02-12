@@ -48,7 +48,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
   }
 
   const handleUpdate = () => {
-    updateMeal(mealToUpdate);
+    updateMeal({ ...mealToUpdate, recordedat: dateTime as Date });
     setSubmitted(true);
   };
 
@@ -61,6 +61,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
               label="Recorded Date"
               value={dateTime}
               onChange={(e: Date | null) => setDateTime(e)}
+              disableFuture={true}
             />
           </LocalizationProvider>
         </Grid>

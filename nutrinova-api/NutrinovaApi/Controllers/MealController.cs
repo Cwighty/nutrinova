@@ -271,6 +271,7 @@ public class MealController : ControllerBase
       currentMeal.UnitNavigation = await context.Units.FirstOrDefaultAsync(u => u.Id == incomingMealRequest.UnitId) ?? throw new InvalidOperationException("Unit not found");
       currentMeal.Amount = incomingMealRequest.Amount;
       currentMeal.Recordedat = incomingMealRequest.RecordedAt;
+      currentMeal.Notes = incomingMealRequest.Notes;
 
       // save the changes
       await context.SaveChangesAsync();
