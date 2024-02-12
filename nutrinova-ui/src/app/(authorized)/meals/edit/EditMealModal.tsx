@@ -18,13 +18,13 @@ export const EditMealModal = ({
       <DialogTitle>
         <Grid container justifyContent={'flex-start'} alignItems={'center'}>
           <Grid item xs={6} >
-            <Typography fontSize={32}>
+            <Typography variant="h4">
               Edit Meal
             </Typography>
           </Grid>
           <Grid item container xs={6} justifyContent={'flex-end'} >
-            <Button onClick={handleClose} size="large">
-              X
+            <Button onClick={handleClose} size="arge">
+              Close
             </Button>
           </Grid>
         </Grid>

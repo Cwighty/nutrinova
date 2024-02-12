@@ -7,6 +7,8 @@ import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { UnitOption } from "../../food/_models/unitOption";
+import { useRouter } from "next/navigation";
+
 
 interface EditMealFormProps {
   meal: Meal;
@@ -21,6 +23,8 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
   const { mutate: deleteMeal } = useDeleteMealMutation();
 
   const [submitted, setSubmitted] = useState<boolean>(false);
+
+  const router = useRouter();
 
 
   const [mealToUpdate, setMealToUpdate] = useState<UpdateMeal>({
@@ -45,11 +49,16 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
     if (closeModal) {
       closeModal();
     }
+    router.push("/meals/view");
   }
 
   const handleUpdate = () => {
     updateMeal({ ...mealToUpdate, recordedat: dateTime as Date });
     setSubmitted(true);
+    if (closeModal) {
+      closeModal();
+    }
+    router.push("/meals/view");
   };
 
   return (
@@ -83,7 +92,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
           </Button>
         </Grid>
         <Grid item container xs={6} md={6} justifyContent={'flex-end'}>
-          <Button variant="contained" color="secondary" onClick={handleDelete}>
+          <Button variant="contained" color="warning" onClick={handleDelete}>
             Delete
           </Button>
         </Grid>
