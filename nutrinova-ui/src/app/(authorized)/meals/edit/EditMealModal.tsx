@@ -23,7 +23,7 @@ export const EditMealModal = ({
             </Typography>
           </Grid>
           <Grid item container xs={6} justifyContent={'flex-end'} >
-            <Button onClick={handleClose} size="arge">
+            <Button onClick={handleClose} size="large">
               Close
             </Button>
           </Grid>
