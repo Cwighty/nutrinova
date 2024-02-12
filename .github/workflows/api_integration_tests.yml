@@ -18,7 +18,7 @@ jobs:
 
       - name: Restore dependencies and run tests
         run: |
-          cd nutrinova-api
+          cd ./nutrinova-api
           dotnet build
           cd ../NutrinovaData.UnitTests
           dotnet test
