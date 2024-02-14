@@ -17,15 +17,20 @@ import { useGetMealHistoryQuery } from "@/app/(authorized)/meals/mealHooks";
 export const DailyMeals = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [slideIn, setSlideIn] = useState(true);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "left",
+  );
 
   const containerRef = useRef<HTMLElement>(null);
 
   const handleDateChange = (days: number) => {
+    setSlideDirection(days > 0 ? "right" : "left");
     setSlideIn(false);
     setTimeout(() => {
       setCurrentDate(addDays(currentDate, days));
+      setSlideDirection(days > 0 ? "left" : "right");
       setSlideIn(true);
-    }, 200);
+    }, 500);
   };
 
   const {
@@ -65,7 +70,11 @@ export const DailyMeals = () => {
       <Button onClick={() => handleDateChange(-1)}>Previous Day</Button>
       <Button onClick={() => handleDateChange(1)}>Next Day</Button>
 
-      <Slide in={slideIn} direction={"left"} container={containerRef.current}>
+      <Slide
+        in={slideIn}
+        direction={slideDirection}
+        container={containerRef.current}
+      >
         {isLoading ? (
           <Box />
         ) : (
