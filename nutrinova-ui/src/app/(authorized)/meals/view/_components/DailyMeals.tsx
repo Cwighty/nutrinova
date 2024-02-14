@@ -77,9 +77,7 @@ export const DailyMeals = () => {
 
   return (
     <Box sx={{ px: 1, overflow: "hidden" }} ref={containerRef}>
-      <Box
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
         <IconButton
           onClick={() => handleIncrementalDateChange(-1)}
           size="large"
@@ -102,7 +100,7 @@ export const DailyMeals = () => {
         </LocalizationProvider>
         <Button
           onClick={() => setOpenDatePicker(true)}
-          sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }}
+          sx={{ fontSize: { xs: "1rem", md: "1.65rem" } }}
         >
           {format(currentDate, "PPP")}
         </Button>
