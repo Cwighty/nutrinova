@@ -101,6 +101,9 @@ CREATE TABLE
         id UUID PRIMARY KEY,
         FirstName TEXT NOT NULL,
         LastName TEXT,
+        Age smallint Check (Age > 0),
+        Profile_Picture_Name TEXT,
+        Sex TEXT Check (Sex = 'M' OR Sex = 'F' OR Sex is null),
         Customer_id UUID,
         FOREIGN KEY (Customer_id) REFERENCES Customer (id)
     );
