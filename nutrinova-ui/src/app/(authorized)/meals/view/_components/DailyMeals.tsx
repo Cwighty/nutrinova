@@ -6,6 +6,7 @@ import {
   Alert,
   Box,
   Button,
+  IconButton,
   List,
   Paper,
   Slide,
@@ -13,6 +14,9 @@ import {
 } from "@mui/material";
 import { MealDisplay } from "@/app/(authorized)/meals/view/_components/MealDisplay";
 import { useGetMealHistoryQuery } from "@/app/(authorized)/meals/mealHooks";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 export const DailyMeals = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -20,10 +24,11 @@ export const DailyMeals = () => {
   const [slideDirection, setSlideDirection] = useState<"left" | "right">(
     "left",
   );
+  const [openDatePicker, setOpenDatePicker] = useState(false);
 
   const containerRef = useRef<HTMLElement>(null);
 
-  const handleDateChange = (days: number) => {
+  const handleIncrementalDateChange = (days: number) => {
     setSlideDirection(days > 0 ? "right" : "left");
     setSlideIn(false);
     setTimeout(() => {
@@ -31,6 +36,12 @@ export const DailyMeals = () => {
       setSlideDirection(days > 0 ? "left" : "right");
       setSlideIn(true);
     }, 500);
+  };
+
+  const handleDateChange = (newDate: Date | null) => {
+    if (newDate) {
+      setCurrentDate(newDate);
+    }
   };
 
   const {
@@ -66,9 +77,39 @@ export const DailyMeals = () => {
 
   return (
     <Box sx={{ px: 1, overflow: "hidden" }} ref={containerRef}>
-      <Typography variant="h6">{format(currentDate, "PPP")}</Typography>
-      <Button onClick={() => handleDateChange(-1)}>Previous Day</Button>
-      <Button onClick={() => handleDateChange(1)}>Next Day</Button>
+      <Box
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <IconButton
+          onClick={() => handleIncrementalDateChange(-1)}
+          size="large"
+        >
+          <ChevronLeft />
+        </IconButton>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            open={openDatePicker}
+            value={currentDate}
+            onChange={(newValue) => {
+              handleDateChange(newValue);
+              setOpenDatePicker(false);
+            }}
+            onClose={() => setOpenDatePicker(false)}
+            slotProps={{
+              textField: { sx: { opacity: 0, maxWidth: 0, maxHeight: 0 } },
+            }}
+          />
+        </LocalizationProvider>
+        <Button
+          onClick={() => setOpenDatePicker(true)}
+          sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }}
+        >
+          {format(currentDate, "PPP")}
+        </Button>
+        <IconButton onClick={() => handleIncrementalDateChange(1)} size="large">
+          <ChevronRight />
+        </IconButton>
+      </Box>
 
       <Slide
         in={slideIn}
