@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleRight } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -7,10 +7,23 @@ import { customerService, Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
 import { Patient } from '@/app/(authorized)/patients/_models/patient';
+import { PatientInfoModal } from './components/PatientInfoModal';
 
 const Welcome = () => {
   const router = useRouter();
   const createPatientMutation = useCreatePatientMutation();
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const [name, setName] = useState('' as string);
+
+  const getUserName = async () => {
+    const session = await getSession();
+    if (session == null || session == undefined) {
+      throw new Error('Failed to get user session');
+    }
+    setName(session.user.name);
+  }
 
   const handleSingleUser = async () => {
     const session = await getSession();
@@ -44,8 +57,15 @@ const Welcome = () => {
     router.push('/dashboard');
   }
 
+  const toggleCustomerInfoModal = async () => {
+    await getUserName();
+    setOpenModal(!openModal);
+  }
+
+
   return (
     <Container>
+      <PatientInfoModal openModal={openModal} onClose={toggleCustomerInfoModal} defaultName={name} />
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
         Welcome to Nutrinova!
       </Typography>
@@ -82,7 +102,7 @@ const Welcome = () => {
 
                 <Grid item xs={6}>
                   <Box display="flex" justifyContent="center">
-                    <Button color="primary" onClick={() => handleSingleUser()}>
+                    <Button color="primary" onClick={() => toggleCustomerInfoModal()}>
                       <ArrowCircleRight fontSize={'large'} />
                     </Button>
                   </Box>
