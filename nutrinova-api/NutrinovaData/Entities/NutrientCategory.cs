@@ -9,5 +9,5 @@ public partial class NutrientCategory
 
     public string Description { get; set; } = null!;
 
-    public virtual ICollection<Nutrient1> Nutrient1s { get; set; } = new List<Nutrient1>();
+    public virtual ICollection<Nutrient> Nutrients { get; set; } = new List<Nutrient>();
 }

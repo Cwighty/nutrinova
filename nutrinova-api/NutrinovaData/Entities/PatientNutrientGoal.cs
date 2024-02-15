@@ -13,7 +13,7 @@ public partial class PatientNutrientGoal
 
     public decimal DailyGoalAmount { get; set; }
 
-    public virtual Nutrient1 Nutrient { get; set; } = null!;
+    public virtual Nutrient Nutrient { get; set; } = null!;
 
     public virtual Patient Patient { get; set; } = null!;
 }

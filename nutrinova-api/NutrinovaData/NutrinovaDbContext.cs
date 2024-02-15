@@ -12,7 +12,7 @@ public partial class NutrinovaDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Agesexgroup> Agesexgroups { get; set; }
+    public virtual DbSet<AgeSexGroup> AgeSexGroups { get; set; }
 
     public virtual DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -36,11 +36,7 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<Nutrient> Nutrients { get; set; }
 
-    public virtual DbSet<Nutrient1> Nutrients1 { get; set; }
-
     public virtual DbSet<NutrientCategory> NutrientCategories { get; set; }
-
-    public virtual DbSet<Nutrientgoal> Nutrientgoals { get; set; }
 
     public virtual DbSet<Patient> Patients { get; set; }
 
@@ -56,19 +52,23 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<UnitCategory> UnitCategories { get; set; }
 
-    public virtual DbSet<Usdareccomendednutrientvalue> Usdareccomendednutrientvalues { get; set; }
+    public virtual DbSet<UsdaNutrient> UsdaNutrients { get; set; }
+
+    public virtual DbSet<UsdaNutrientGoal> UsdaNutrientGoals { get; set; }
+
+    public virtual DbSet<UsdaReccomendedNutrientValue> UsdaReccomendedNutrientValues { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Agesexgroup>(entity =>
+        modelBuilder.Entity<AgeSexGroup>(entity =>
         {
-            entity.HasKey(e => e.Groupid).HasName("agesexgroups_pkey");
+            entity.HasKey(e => e.Groupid).HasName("age_sex_group_pkey");
 
-            entity.ToTable("agesexgroups");
+            entity.ToTable("age_sex_group");
 
             entity.Property(e => e.Groupid).HasColumnName("groupid");
-            entity.Property(e => e.Maxage).HasColumnName("maxage");
-            entity.Property(e => e.Minage).HasColumnName("minage");
+            entity.Property(e => e.MaxAge).HasColumnName("max_age");
+            entity.Property(e => e.MinAge).HasColumnName("min_age");
             entity.Property(e => e.Sex)
                 .HasMaxLength(50)
                 .HasColumnName("sex");
@@ -311,23 +311,6 @@ public partial class NutrinovaDbContext : DbContext
 
         modelBuilder.Entity<Nutrient>(entity =>
         {
-            entity.HasKey(e => e.Nutrientid).HasName("nutrients_pkey");
-
-            entity.ToTable("nutrients");
-
-            entity.Property(e => e.Nutrientid)
-                .ValueGeneratedNever()
-                .HasColumnName("nutrientid");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .HasColumnName("name");
-            entity.Property(e => e.Unit)
-                .HasMaxLength(50)
-                .HasColumnName("unit");
-        });
-
-        modelBuilder.Entity<Nutrient1>(entity =>
-        {
             entity.HasKey(e => e.Id).HasName("nutrient_pkey");
 
             entity.ToTable("nutrient");
@@ -341,12 +324,12 @@ public partial class NutrinovaDbContext : DbContext
                 .ValueGeneratedOnAdd()
                 .HasColumnName("preferred_unit");
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Nutrient1s)
+            entity.HasOne(d => d.Category).WithMany(p => p.Nutrients)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("nutrient_category_id_fkey");
 
-            entity.HasOne(d => d.PreferredUnitNavigation).WithMany(p => p.Nutrient1s)
+            entity.HasOne(d => d.PreferredUnitNavigation).WithMany(p => p.Nutrients)
                 .HasForeignKey(d => d.PreferredUnit)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("nutrient_preferred_unit_fkey");
@@ -360,33 +343,6 @@ public partial class NutrinovaDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
-        });
-
-        modelBuilder.Entity<Nutrientgoal>(entity =>
-        {
-            entity.HasKey(e => e.Goalid).HasName("nutrientgoals_pkey");
-
-            entity.ToTable("nutrientgoals");
-
-            entity.Property(e => e.Goalid).HasColumnName("goalid");
-            entity.Property(e => e.Ai).HasColumnName("ai");
-            entity.Property(e => e.Amdr)
-                .HasMaxLength(50)
-                .HasColumnName("amdr");
-            entity.Property(e => e.Groupid).HasColumnName("groupid");
-            entity.Property(e => e.Nutrientid).HasColumnName("nutrientid");
-            entity.Property(e => e.Rda).HasColumnName("rda");
-            entity.Property(e => e.Ul).HasColumnName("ul");
-
-            entity.HasOne(d => d.Group).WithMany(p => p.Nutrientgoals)
-                .HasForeignKey(d => d.Groupid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("nutrientgoals_groupid_fkey");
-
-            entity.HasOne(d => d.Nutrient).WithMany(p => p.Nutrientgoals)
-                .HasForeignKey(d => d.Nutrientid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("nutrientgoals_nutrientid_fkey");
         });
 
         modelBuilder.Entity<Patient>(entity =>
@@ -538,19 +494,63 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Description).HasColumnName("description");
         });
 
-        modelBuilder.Entity<Usdareccomendednutrientvalue>(entity =>
+        modelBuilder.Entity<UsdaNutrient>(entity =>
+        {
+            entity.HasKey(e => e.Nutrientid).HasName("usda_nutrient_pkey");
+
+            entity.ToTable("usda_nutrient");
+
+            entity.Property(e => e.Nutrientid)
+                .ValueGeneratedNever()
+                .HasColumnName("nutrientid");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(50)
+                .HasColumnName("unit");
+        });
+
+        modelBuilder.Entity<UsdaNutrientGoal>(entity =>
+        {
+            entity.HasKey(e => e.Goalid).HasName("usda_nutrient_goal_pkey");
+
+            entity.ToTable("usda_nutrient_goal");
+
+            entity.Property(e => e.Goalid).HasColumnName("goalid");
+            entity.Property(e => e.Ai).HasColumnName("ai");
+            entity.Property(e => e.Amdr)
+                .HasMaxLength(50)
+                .HasColumnName("amdr");
+            entity.Property(e => e.Groupid).HasColumnName("groupid");
+            entity.Property(e => e.Nutrientid).HasColumnName("nutrientid");
+            entity.Property(e => e.Rda).HasColumnName("rda");
+            entity.Property(e => e.Ul).HasColumnName("ul");
+
+            entity.HasOne(d => d.Group).WithMany(p => p.UsdaNutrientGoals)
+                .HasForeignKey(d => d.Groupid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("usda_nutrient_goal_groupid_fkey");
+
+            entity.HasOne(d => d.Nutrient).WithMany(p => p.UsdaNutrientGoals)
+                .HasForeignKey(d => d.Nutrientid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("usda_nutrient_goal_nutrientid_fkey");
+        });
+
+        modelBuilder.Entity<UsdaReccomendedNutrientValue>(entity =>
         {
             entity
                 .HasNoKey()
-                .ToView("usdareccomendednutrientvalues");
+                .ToView("usda_reccomended_nutrient_value");
 
             entity.Property(e => e.Groupid).HasColumnName("groupid");
-            entity.Property(e => e.Maxage).HasColumnName("maxage");
-            entity.Property(e => e.Minage).HasColumnName("minage");
-            entity.Property(e => e.Nutrientname)
+            entity.Property(e => e.MaxAge).HasColumnName("max_age");
+            entity.Property(e => e.MinAge).HasColumnName("min_age");
+            entity.Property(e => e.NutrientName)
                 .HasMaxLength(255)
-                .HasColumnName("nutrientname");
-            entity.Property(e => e.Recommendedvalue).HasColumnName("recommendedvalue");
+                .HasColumnName("nutrient_name");
+            entity.Property(e => e.RecommendedValue).HasColumnName("recommended_value");
             entity.Property(e => e.Sex)
                 .HasMaxLength(50)
                 .HasColumnName("sex");

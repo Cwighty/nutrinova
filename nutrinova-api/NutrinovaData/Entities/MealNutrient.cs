@@ -15,5 +15,5 @@ public partial class MealNutrient
 
     public virtual Meal Meal { get; set; } = null!;
 
-    public virtual Nutrient1 Nutrient { get; set; } = null!;
+    public virtual Nutrient Nutrient { get; set; } = null!;
 }

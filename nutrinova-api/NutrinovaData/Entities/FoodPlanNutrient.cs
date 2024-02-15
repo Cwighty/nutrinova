@@ -17,7 +17,7 @@ public partial class FoodPlanNutrient
 
     public virtual FoodPlan Foodplan { get; set; } = null!;
 
-    public virtual Nutrient1 Nutrient { get; set; } = null!;
+    public virtual Nutrient Nutrient { get; set; } = null!;
 
     public virtual Unit Unit { get; set; } = null!;
 }

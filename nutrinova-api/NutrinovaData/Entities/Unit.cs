@@ -23,7 +23,7 @@ public partial class Unit
 
     public virtual ICollection<Meal> Meals { get; set; } = new List<Meal>();
 
-    public virtual ICollection<Nutrient1> Nutrient1s { get; set; } = new List<Nutrient1>();
+    public virtual ICollection<Nutrient> Nutrients { get; set; } = new List<Nutrient>();
 
     public virtual ICollection<RecipeFood> RecipeFoods { get; set; } = new List<RecipeFood>();
 

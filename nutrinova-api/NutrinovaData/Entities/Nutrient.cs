@@ -5,11 +5,21 @@ namespace NutrinovaData.Entities;
 
 public partial class Nutrient
 {
-    public int Nutrientid { get; set; }
+    public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
-    public string Unit { get; set; } = null!;
+    public int PreferredUnit { get; set; }
 
-    public virtual ICollection<Nutrientgoal> Nutrientgoals { get; set; } = new List<Nutrientgoal>();
+    public int CategoryId { get; set; }
+
+    public virtual NutrientCategory Category { get; set; } = null!;
+
+    public virtual ICollection<FoodPlanNutrient> FoodPlanNutrients { get; set; } = new List<FoodPlanNutrient>();
+
+    public virtual ICollection<MealNutrient> MealNutrients { get; set; } = new List<MealNutrient>();
+
+    public virtual ICollection<PatientNutrientGoal> PatientNutrientGoals { get; set; } = new List<PatientNutrientGoal>();
+
+    public virtual Unit PreferredUnitNavigation { get; set; } = null!;
 }
