@@ -1,8 +1,8 @@
-CREATE TABLE AgeSexGroups (
+CREATE TABLE Age_Sex_Groups (
     GroupID SERIAL PRIMARY KEY,
     Sex VARCHAR(50) NOT NULL,
-    MinAge INT NOT NULL,
-    MaxAge INT NOT NULL
+    Min_Age INT NOT NULL,
+    Max_Age INT NOT NULL
 );
 
 CREATE TABLE Nutrients (
@@ -11,9 +11,9 @@ CREATE TABLE Nutrients (
     Unit VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE NutrientGoals (
+CREATE TABLE Nutrient_Goals (
     GoalID SERIAL PRIMARY KEY,
-    GroupID INT NOT NULL REFERENCES AgeSexGroups(GroupID),
+    GroupID INT NOT NULL REFERENCES Age_Sex_Groups(GroupID),
     NutrientID INT NOT NULL REFERENCES Nutrients(NutrientID),
     RDA Numeric,
     AMDR VARCHAR(50),
@@ -22,29 +22,29 @@ CREATE TABLE NutrientGoals (
 );
 
 
-CREATE VIEW UsdaReccomendedNutrientValues AS
+CREATE VIEW Usda_Reccomended_Nutrient_Values AS
 SELECT
     ag.GroupID,
     ag.Sex,
-    ag.MinAge,
-    ag.MaxAge,
-    n.Name AS NutrientName,
+    ag.Min_Age,
+    ag.Max_Age,
+    n.Name AS Nutrient_Name,
     CASE
         WHEN ng.RDA IS NOT NULL THEN ng.RDA
         WHEN ng.AI IS NOT NULL THEN ng.AI
         WHEN ng.UL IS NOT NULL THEN ng.UL
-        ELSE 'Not Available'
-    END AS RecommendedValue,
+        ELSE null
+    END AS Recommended_Value,
     n.Unit
 FROM
-    NutrientGoals ng
+    Nutrient_Goals ng
 JOIN
-    AgeSexGroups ag ON ng.GroupID = ag.GroupID
+    Age_Sex_Groups ag ON ng.GroupID = ag.GroupID
 JOIN
     Nutrients n ON ng.NutrientID = n.NutrientID;
 
 
-INSERT INTO AgeSexGroups (Sex, MinAge, MaxAge) VALUES 
+INSERT INTO Age_Sex_Groups (Sex, Min_Age, Max_Age) VALUES 
   ('Female', 0, 3),
   ('Male', 0, 3),
   ('Female', 4, 8),
@@ -94,7 +94,7 @@ INSERT INTO Nutrients (NutrientID, Name, Unit) VALUES
 (31,'Folate', 'mg_DFE');
 
 
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 1, 13),
 (2, 1, 13),
 (3, 1, 19),
@@ -110,7 +110,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (13, 1, 46),
 (14, 1, 56);
 
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 3, 130),
 (2, 3, 130),
 (3, 3, 130),
@@ -126,7 +126,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (13, 3, 130),
 (14, 3, 130);
 
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 5, 14),
 (2, 5, 14),
 (3, 5, 16.8),
@@ -142,7 +142,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (13, 5, 22.4),
 (14, 5, 28);
 
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 8, 7),
 (2, 8, 7),
 (3, 8, 10),
@@ -158,7 +158,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (13, 8, 11),
 (14, 8, 14);
 
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 9, 0.7),
 (2, 9, 0.7),
 (3, 9, 0.9),
@@ -175,7 +175,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (14, 9, 1.6);
 
 -- Calcium, NutrientID = 10
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 10, 700),
 (2, 10, 700),
 (3, 10, 1000),
@@ -192,7 +192,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 10, 1200);
 
 -- Iron, NutrientID = 11
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 11, 7),
 (2, 11, 7),
 (3, 11, 10),
@@ -209,7 +209,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 11, 8);
 
 -- Magnesium, NutrientID = 12
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 12, 80),
 (2, 12, 80),
 (3, 12, 130),
@@ -226,7 +226,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 12, 420);
 
 -- Phosphorus, NutrientID = 13
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 13, 460),
 (2, 13, 460),
 (3, 13, 500),
@@ -243,7 +243,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 13, 700);
 
 -- Potassium, NutrientID = 14
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 14, 3000),
 (2, 14, 3000),
 (3, 14, 3800),
@@ -260,7 +260,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (14, 14, 4700);
 
 -- Sodium, NutrientID = 15
-INSERT INTO NutrientGoals (GroupID, NutrientID, UL) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, UL) VALUES 
 (1, 15, 1500),
 (2, 15, 1500),
 (3, 15, 1900),
@@ -277,7 +277,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, UL) VALUES
 (14, 15, 2300);
 
 -- Zinc, NutrientID = 16
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 16, 3),
 (2, 16, 3),
 (3, 16, 5),
@@ -294,7 +294,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 16, 11);
 
 -- Copper, NutrientID = 17
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 17, 0.34),
 (2, 17, 0.34),
 (3, 17, 0.44),
@@ -311,7 +311,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 17, 0.9);
 
 -- Manganese, NutrientID = 18
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 18, 1.2),
 (2, 18, 1.2),
 (3, 18, 1.5),
@@ -328,7 +328,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (14, 18, 2.3);
 
 -- Selenium, NutrientID = 19
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 19, 20),
 (2, 19, 20),
 (3, 19, 30),
@@ -345,7 +345,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 19, 55);
 
 -- Vitamin A, NutrientID = 20
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 20, 300),
 (2, 20, 300),
 (3, 20, 400),
@@ -362,7 +362,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 20, 900);
 
 -- Vitamin E, NutrientID = 21
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 21, 6),
 (2, 21, 6),
 (3, 21, 7),
@@ -379,7 +379,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 21, 15);
 
 -- Vitamin D, NutrientID = 22
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 22, 600),
 (2, 22, 600),
 (3, 22, 600),
@@ -396,7 +396,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 22, 600);
 
 -- Vitamin C, NutrientID = 23
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 23, 15),
 (2, 23, 15),
 (3, 23, 25),
@@ -413,7 +413,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 23, 90);
 
 -- Thiamin, NutrientID = 24
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 24, 0.5),
 (2, 24, 0.5),
 (3, 24, 0.6),
@@ -430,7 +430,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 24, 1.2);
 
 -- Riboflavin, NutrientID = 25
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 25, 0.5),
 (2, 25, 0.5),
 (3, 25, 0.6),
@@ -447,7 +447,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 25, 1.3);
 
 -- Niacin, NutrientID = 26
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 26, 6),
 (2, 26, 6),
 (3, 26, 8),
@@ -464,7 +464,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 26, 16);
 
 -- Vitamin B-6, NutrientID = 27
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 27, 0.5),
 (2, 27, 0.5),
 (3, 27, 0.6),
@@ -481,7 +481,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 27, 1.7);
 
 -- Vitamin B-12, NutrientID = 28
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 28, 0.9),
 (2, 28, 0.9),
 (3, 28, 1.2),
@@ -498,7 +498,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES
 (14, 28, 2.4);
 
 -- Choline, NutrientID = 29
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 29, 200),
 (2, 29, 200),
 (3, 29, 250),
@@ -515,7 +515,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (14, 29, 550);
 
 -- Vitamin K, NutrientID = 30
-INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, AI) VALUES 
 (1, 30, 30),
 (2, 30, 30),
 (3, 30, 55),
@@ -532,7 +532,7 @@ INSERT INTO NutrientGoals (GroupID, NutrientID, AI) VALUES
 (14, 30, 120);
 
 -- Folate, NutrientID = 31
-INSERT INTO NutrientGoals (GroupID, NutrientID, RDA) VALUES 
+INSERT INTO Nutrient_Goals (GroupID, NutrientID, RDA) VALUES 
 (1, 31, 150),
 (2, 31, 150),
 (3, 31, 200),
