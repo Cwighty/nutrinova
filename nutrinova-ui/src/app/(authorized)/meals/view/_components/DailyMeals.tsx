@@ -16,7 +16,6 @@ import { useGetMealHistoryQuery } from "@/app/(authorized)/meals/mealHooks";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import {
-  Add,
   AddCircle,
   ChevronLeft,
   ChevronRight,
@@ -24,6 +23,7 @@ import {
   WbSunny,
   WbTwilight,
 } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 export const DailyMeals = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -34,6 +34,8 @@ export const DailyMeals = () => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
 
   const containerRef = useRef<HTMLElement>(null);
+
+  const router = useRouter();
 
   const handleIncrementalDateChange = (days: number) => {
     setSlideDirection(days > 0 ? "right" : "left");
@@ -78,7 +80,7 @@ export const DailyMeals = () => {
   const categorizedMeals = categorizeMeals(meals || []);
 
   const handleAddMealClick = () => {
-    console.log("Add meal clicked");
+    router.push("/meals/record");
   };
 
   if (isError) {
@@ -142,6 +144,7 @@ export const DailyMeals = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        mt: 5,
                         mb: 1,
                         gap: 2,
                       }}
@@ -163,8 +166,7 @@ export const DailyMeals = () => {
                       <Paper
                         elevation={3}
                         sx={{
-                          mb: 3,
-                          mt: 1,
+                          my: 1,
                           minWidth: { xs: "100%", md: "50%" },
                         }}
                       >
@@ -190,11 +192,11 @@ export const DailyMeals = () => {
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Button
                 onClick={handleAddMealClick}
-                startIcon={<AddCircle />}
-                size="large"
+                startIcon={<AddCircle sx={{ mb: "0.2rem" }} />}
                 sx={{
-                  mt: 5,
+                  mt: 3,
                   minWidth: { xs: "100%", md: "50%" },
+                  fontSize: "1.65rem",
                 }}
               >
                 Add Meal
