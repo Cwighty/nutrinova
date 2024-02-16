@@ -21,8 +21,7 @@ CREATE TABLE Usda_Nutrient_Goal (
     UL Numeric
 );
 
-
-CREATE VIEW Usda_Reccomended_Nutrient_Value AS
+CREATE VIEW Usda_Recommended_Nutrient_Value AS
 SELECT
     ag.GroupID,
     ag.Sex,
@@ -35,6 +34,13 @@ SELECT
         WHEN ng.UL IS NOT NULL THEN ng.UL
         ELSE null
     END AS Recommended_Value,
+    CASE
+        WHEN ng.RDA IS NOT NULL THEN 'RDA'
+        WHEN ng.AI IS NOT NULL THEN 'AI'
+        WHEN ng.UL IS NOT NULL THEN 'UL'
+        ELSE null
+    END
+    AS Recommended_Value_Type,
     n.Unit
 FROM
     Usda_Nutrient_Goal ng

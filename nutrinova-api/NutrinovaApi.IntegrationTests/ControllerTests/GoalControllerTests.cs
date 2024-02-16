@@ -188,4 +188,30 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
       Assert.Equal(NutrientGoalStatus.NotMet, goalReport.NutrientGoalReportItems.FirstOrDefault()?.GoalStatus);
     }
   }
+
+  public class GetNutrientRecommendation : GoalControllerTests
+  {
+    public GetNutrientRecommendation(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task GetNutrientRecommendation_ShouldReturnOk()
+    {
+      // Arrange
+      var nutrient = await DbContext.Nutrients.Where(n => n.Description == "Protein").FirstOrDefaultAsync();
+      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+      var patient = await DataUtility.EnsurePatientExistsAsync(customer);
+
+      // Act
+      var response = await HttpClient.GetAsync($"be/goal/reccomendation?nutrientId={nutrient!.Id}&patientId={patient.Id}");
+
+      // Assert
+      Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+      var recommendation = await response.Content.ReadFromJsonAsync<UsdaRecommendedNutrientValue>();
+      Assert.NotNull(recommendation);
+      Assert.True(recommendation.RecommendedValue == 46);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 ﻿using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Goals;
+using NutrinovaData.Features.Nutrients;
 using NutrinovaData.Features.Reports;
 
 namespace NutrinovaApi.Controllers;
@@ -11,12 +12,14 @@ public class GoalController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly ILogger<ChatController> logger;
   private readonly INutrientGoalReportCreator reportCreator;
+  private readonly INutrientRecommendationService nutrientReccomendationService;
 
-  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger, INutrientGoalReportCreator reportCreator)
+  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger, INutrientGoalReportCreator reportCreator, INutrientRecommendationService nutrientReccomendationService)
   {
     this.context = context;
     this.logger = logger;
     this.reportCreator = reportCreator;
+    this.nutrientReccomendationService = nutrientReccomendationService;
   }
 
   [HttpGet("all")]
@@ -197,5 +200,38 @@ public class GoalController : ControllerBase
     }
 
     return Ok(patientReports);
+  }
+
+  [HttpGet("reccomendation")]
+  public async Task<ActionResult<UsdaRecommendedNutrientValue>> GetNutrientReccomendation([FromQuery] int nutrientId, [FromQuery] Guid patientId)
+  {
+    var nutrient = await context.Nutrients.FirstOrDefaultAsync(n => n.Id == nutrientId);
+    if (nutrient is null)
+    {
+      return NotFound();
+    }
+
+    var usdaNutrient = await context.UsdaNutrients.FirstOrDefaultAsync(n => n.Name == nutrient.Description);
+    if (usdaNutrient is null)
+    {
+      return NotFound();
+    }
+
+    var patient = await context.Patients.FirstOrDefaultAsync(p => p.Id == patientId);
+    if (patient is null)
+    {
+      return NotFound();
+    }
+
+    var sex = patient.Sex == "F" ? Sex.Female : Sex.Male;
+
+    var reccomendation = await nutrientReccomendationService.GetNutrientReccomendationAsync(usdaNutrient, patient.Age ?? 0, sex);
+
+    if (reccomendation is null)
+    {
+      return NotFound();
+    }
+
+    return Ok(reccomendation);
   }
 }

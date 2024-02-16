@@ -9,16 +9,16 @@ public enum Sex
   Female,
 }
 
-public class UsdaNutrientReccomendationService : INutrientReccomendationService
+public class UsdaNutrientRecommendationService : INutrientRecommendationService
 {
   private NutrinovaDbContext _dbContext;
 
-  public UsdaNutrientReccomendationService(NutrinovaDbContext dbContext)
+  public UsdaNutrientRecommendationService(NutrinovaDbContext dbContext)
   {
     _dbContext = dbContext;
   }
 
-  public async Task<UsdaReccomendedNutrientValue> GetNutrientReccomendationAsync(UsdaNutrient nutrient, int age, Sex sex)
+  public async Task<UsdaRecommendedNutrientValue> GetNutrientReccomendationAsync(UsdaNutrient nutrient, int age, Sex sex)
   {
     if (nutrient == null)
     {
@@ -32,7 +32,7 @@ public class UsdaNutrientReccomendationService : INutrientReccomendationService
 
     var sexString = sex == Sex.Male ? "Male" : "Female";
 
-    var reccomendation = await _dbContext.UsdaReccomendedNutrientValues
+    var reccomendation = await _dbContext.UsdaRecommendedNutrientValues
       .Where(rnv => rnv.NutrientName == nutrient.Name && age >= rnv.MinAge && age <= rnv.MaxAge && sexString == rnv.Sex)
       .FirstOrDefaultAsync();
 

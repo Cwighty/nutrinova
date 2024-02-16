@@ -33,6 +33,8 @@ internal class TestDataUtility
         CustomerId = customer!.Id,
         Firstname = "Test",
         Lastname = "Patient",
+        Age = 30,
+        Sex = "F",
       };
       context.Patients.Add(patient);
       await context.SaveChangesAsync();

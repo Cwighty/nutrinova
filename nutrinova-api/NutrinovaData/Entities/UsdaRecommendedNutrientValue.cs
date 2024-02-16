@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NutrinovaData.Entities;
 
-public partial class UsdaReccomendedNutrientValue
+public partial class UsdaRecommendedNutrientValue
 {
     public int? Groupid { get; set; }
 
@@ -16,6 +16,8 @@ public partial class UsdaReccomendedNutrientValue
     public string? NutrientName { get; set; }
 
     public decimal? RecommendedValue { get; set; }
+
+    public string? RecommendedValueType { get; set; }
 
     public string? Unit { get; set; }
 }

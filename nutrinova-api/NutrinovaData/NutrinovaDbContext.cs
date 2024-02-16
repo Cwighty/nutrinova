@@ -56,7 +56,7 @@ public partial class NutrinovaDbContext : DbContext
 
     public virtual DbSet<UsdaNutrientGoal> UsdaNutrientGoals { get; set; }
 
-    public virtual DbSet<UsdaReccomendedNutrientValue> UsdaReccomendedNutrientValues { get; set; }
+    public virtual DbSet<UsdaRecommendedNutrientValue> UsdaRecommendedNutrientValues { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -354,12 +354,12 @@ public partial class NutrinovaDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-      entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
             entity.Property(e => e.Firstname).HasColumnName("firstname");
             entity.Property(e => e.Lastname).HasColumnName("lastname");
-      entity.Property(e => e.ProfilePictureName).HasColumnName("profile_picture_name");
-      entity.Property(e => e.Sex).HasColumnName("sex");
+            entity.Property(e => e.ProfilePictureName).HasColumnName("profile_picture_name");
+            entity.Property(e => e.Sex).HasColumnName("sex");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Patients)
                 .HasForeignKey(d => d.CustomerId)
@@ -541,11 +541,11 @@ public partial class NutrinovaDbContext : DbContext
                 .HasConstraintName("usda_nutrient_goal_nutrientid_fkey");
         });
 
-        modelBuilder.Entity<UsdaReccomendedNutrientValue>(entity =>
+        modelBuilder.Entity<UsdaRecommendedNutrientValue>(entity =>
         {
             entity
                 .HasNoKey()
-                .ToView("usda_reccomended_nutrient_value");
+                .ToView("usda_recommended_nutrient_value");
 
             entity.Property(e => e.Groupid).HasColumnName("groupid");
             entity.Property(e => e.MaxAge).HasColumnName("max_age");
@@ -554,6 +554,7 @@ public partial class NutrinovaDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("nutrient_name");
             entity.Property(e => e.RecommendedValue).HasColumnName("recommended_value");
+            entity.Property(e => e.RecommendedValueType).HasColumnName("recommended_value_type");
             entity.Property(e => e.Sex)
                 .HasMaxLength(50)
                 .HasColumnName("sex");
