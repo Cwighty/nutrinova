@@ -1,7 +1,9 @@
 "use client"
 import { CloudUpload } from '@mui/icons-material';
+import toast from "react-hot-toast";
 import { Button, Checkbox, FormControlLabel, Grid, MenuItem, Select, SelectChangeEvent, TextField, styled } from '@mui/material'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
 
 export interface PatientForm {
   name: string;
@@ -42,6 +44,10 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 1048576000) { // 1000 MB in bytes
+        toast.error('File size must be 1000 MB or smaller.');
+        return; // Do not proceed further
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormPatient({
