@@ -3,4 +3,7 @@ export interface Patient {
   firstname: string;
   lastname?: string;
   customerId?: string;
+  age?: number;
+  sex?: 'M' | 'F' | 'O';
+  pff?: string;
 }

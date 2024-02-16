@@ -2,16 +2,10 @@
 import React, { useState } from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleRight } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
-import { customerService, Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
-import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
-import { Patient } from '@/app/(authorized)/patients/_models/patient';
 import { PatientInfoModal } from './components/PatientInfoModal';
 
 const Welcome = () => {
-  const router = useRouter();
-  const createPatientMutation = useCreatePatientMutation();
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -23,38 +17,6 @@ const Welcome = () => {
       throw new Error('Failed to get user session');
     }
     setName(session.user.name);
-  }
-
-  const handleSingleUser = async () => {
-    const session = await getSession();
-
-    if (session == null || session == undefined) {
-      throw new Error('Failed to get user session');
-    }
-
-    if (await customerService.customerExists("client")) {
-      router.push('/dashboard');
-      return;
-    }
-
-    const customer = {
-      objectId: session.user.id,
-      email: session.user.email,
-      issingleuser: true,
-    } as Customer;
-
-    const created = await customerService.createCustomer(customer);
-    if (!created) {
-      throw new Error('Failed to create customer');
-    }
-
-    const patient: Patient = {
-      firstname: session.user.name.split(' ')[0],
-      lastname: session.user.name.split(' ')[1] ?? '',
-    }
-    createPatientMutation.mutate(patient);
-
-    router.push('/dashboard');
   }
 
   const toggleCustomerInfoModal = async () => {
