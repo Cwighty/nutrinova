@@ -1,5 +1,11 @@
 "use client";
-import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Box,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
 import { format } from "date-fns";
 import { NextLinkComposed } from "@/components/Link";
@@ -9,11 +15,22 @@ interface MealDisplayProps {
 }
 
 export const MealDisplay = ({ meal }: MealDisplayProps) => {
-  const description = meal !== null
-    ? meal.description
-    : "No name available";
+  const primaryText = (
+    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Typography variant="h6">{meal.description}</Typography>
+      <Typography variant="h6">
+        {meal.amount} {meal.unit.description}
+      </Typography>
+    </Box>
+  );
 
-  const mealTime = format(new Date(meal.recordedAt), "p");
+  const secondaryText = (
+    <Box>
+      <Typography variant="h6">
+        {format(new Date(meal.recordedAt), "p")}
+      </Typography>
+    </Box>
+  );
 
   return (
     <ListItem disableGutters disablePadding>
@@ -24,7 +41,7 @@ export const MealDisplay = ({ meal }: MealDisplayProps) => {
           query: { mealId: meal.id },
         }}
       >
-        <ListItemText primary={description} secondary={mealTime} />
+        <ListItemText primary={primaryText} secondary={secondaryText} />
       </ListItemButton>
     </ListItem>
   );
