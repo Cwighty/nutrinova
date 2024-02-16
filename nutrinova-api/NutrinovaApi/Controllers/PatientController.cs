@@ -1,3 +1,5 @@
+using NutrinovaData.Features.Patients;
+
 namespace NutrinovaApi.Controllers;
 
 [Authorize]
@@ -33,7 +35,7 @@ public class PatientController : ControllerBase
 
   // Create a new patient
   [HttpPost("create-patient")]
-  public async Task<ActionResult> CreatePatient([FromBody] Patient patient)
+  public async Task<ActionResult> CreatePatient([FromBody] CreatePatientRequest patient)
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -43,13 +45,21 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
-    patient.Id = Guid.NewGuid();
-    patient.CustomerId = customer.Id;
+    var pictureName = Guid.NewGuid();
+    var newPatient = new Patient
+    {
+      Id = Guid.NewGuid(),
+      Firstname = patient.Firstname,
+      Lastname = patient.Lastname,
+      Age = patient.Age,
+      ProfilePictureName = patient?.Base64Image != null ? pictureName.ToString() : null,
+      CustomerId = customer.Id,
+    };
 
-    await context.Patients.AddAsync(patient);
+    await context.Patients.AddAsync(newPatient);
     await context.SaveChangesAsync();
 
-    return Ok(new { message = "Patient created successfully", id = patient.Id });
+    return Ok(new { message = "Patient created successfully", id = newPatient.Id });
   }
 
   // Get a single patient by ID
