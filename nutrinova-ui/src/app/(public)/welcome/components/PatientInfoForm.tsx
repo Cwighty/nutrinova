@@ -3,7 +3,6 @@ import { CloudUpload } from '@mui/icons-material';
 import toast from "react-hot-toast";
 import { Button, Checkbox, FormControlLabel, Grid, MenuItem, Select, SelectChangeEvent, TextField, styled } from '@mui/material'
 import React, { useState } from 'react'
-import toast from 'react-hot-toast';
 
 export interface PatientForm {
   name: string;
