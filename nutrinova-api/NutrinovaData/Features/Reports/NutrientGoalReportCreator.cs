@@ -42,9 +42,9 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       throw new ArgumentNullException(nameof(patientWithMealsAndGoals.Meals) + " is required");
     }
 
-    if (patientWithMealsAndGoals.PatientNutrientGoals == null)
+    if (patientWithMealsAndGoals.PatientNutrientDailyGoals == null)
     {
-      throw new ArgumentNullException(nameof(patientWithMealsAndGoals.PatientNutrientGoals) + " is required");
+      throw new ArgumentNullException(nameof(patientWithMealsAndGoals.PatientNutrientDailyGoals) + " is required");
     }
   }
 
@@ -56,7 +56,7 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       .ToList();
     Dictionary<int, NutrientSummary> consumedNutrientSummaries = GetConsumedNutrientTotals(mealsInDateRange);
 
-    var nutrientGoals = p.PatientNutrientGoals.ToList();
+    var nutrientGoals = p.PatientNutrientDailyGoals.ToList();
     var reportItems = nutrientGoals
     .GroupJoin(
       consumedNutrientSummaries,
@@ -70,14 +70,16 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
           NutrientId = x.g.NutrientId,
           NutrientName = x.g.Nutrient.Description,
           PreferredUnit = x.g.Nutrient.PreferredUnitNavigation.ToUnitOption(),
-          DailyGoalAmount = x.g.DailyGoalAmount,
+
+          // DailyGoalAmount = x.g.DailyGoalAmount,
           ConsumedAmount = n.Value != null ? n.Value.Amount : 0,
-          RemainingAmount = n.Value != null ? x.g.DailyGoalAmount - n.Value.Amount : x.g.DailyGoalAmount,
-          GoalStatus = n.Value != null ? (n.Value.Amount >= x.g.DailyGoalAmount * 1.1M
-                ? NutrientGoalStatus.Exceeded
-                : n.Value.Amount >= x.g.DailyGoalAmount
-                    ? NutrientGoalStatus.Met
-                    : NutrientGoalStatus.NotMet) : NutrientGoalStatus.NotStarted,
+
+          // RemainingAmount = n.Value != null ? x.g.DailyGoalAmount - n.Value.Amount : x.g.DailyGoalAmount,
+          // GoalStatus = n.Value != null ? (n.Value.Amount >= x.g.DailyGoalAmount * 1.1M
+          //       ? NutrientGoalStatus.Exceeded
+          //       : n.Value.Amount >= x.g.DailyGoalAmount
+          //           ? NutrientGoalStatus.Met
+          //           : NutrientGoalStatus.NotMet) : NutrientGoalStatus.NotStarted,
         });
 
     return reportItems;

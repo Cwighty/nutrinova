@@ -14,5 +14,13 @@ public class NutrientGoalResponse
 
   public UnitOption NutrientUnit { get; set; } = new UnitOption();
 
-  public decimal DailyGoalAmount { get; set; }
+  public decimal? CustomUpperTarget { get; set; }
+
+  public decimal? CustomLowerTarget { get; set; }
+
+  public decimal? RecommendedUpperTarget { get; set; }
+
+  public decimal? RecommendedLowerTarget { get; set; }
+
+  public decimal? RecommendedMax { get; set; }
 }
