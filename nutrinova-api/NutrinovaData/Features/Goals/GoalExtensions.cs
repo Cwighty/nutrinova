@@ -6,26 +6,30 @@ namespace NutrinovaData.Features.Goals;
 
 public static class GoalExtensions
 {
-  public static IEnumerable<NutrientGoalResponse> ToResponseModels(this IEnumerable<PatientNutrientGoal> goals)
+  public static IEnumerable<NutrientGoalResponse> ToResponseModels(this IEnumerable<PatientNutrientDailyGoal> goals)
   {
     return goals.Select(g => g.ToResponseModel());
   }
 
-  public static NutrientGoalResponse ToResponseModel(this PatientNutrientGoal goal)
+  public static NutrientGoalResponse ToResponseModel(this PatientNutrientDailyGoal goal)
   {
     return new NutrientGoalResponse
     {
       Id = goal.Id,
       NutrientId = goal.NutrientId,
       NutrientName = goal.Nutrient.Description,
-      DailyGoalAmount = goal.DailyGoalAmount,
       NutrientUnit = goal.Nutrient.PreferredUnitNavigation.ToUnitOption(),
       PatientId = goal.PatientId,
       PatientName = goal.Patient.GetFullName(),
+      CustomUpperTarget = goal.CustomUpperTarget,
+      CustomLowerTarget = goal.CustomLowerTarget,
+      RecommendedUpperTarget = goal.RecommendedUpperTarget,
+      RecommendedLowerTarget = goal.RecommendedLowerTarget,
+      RecommendedMax = goal.RecommendedMax,
     };
   }
 
-  public static IQueryable<PatientNutrientGoal> IncludeAllGoalDependencies(this IQueryable<PatientNutrientGoal> query)
+  public static IQueryable<PatientNutrientDailyGoal> IncludeAllGoalDependencies(this IQueryable<PatientNutrientDailyGoal> query)
   {
     return query
           .Include(g => g.Patient)

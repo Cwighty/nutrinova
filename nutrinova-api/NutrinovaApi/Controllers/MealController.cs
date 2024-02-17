@@ -160,6 +160,11 @@ public class MealController : ControllerBase
                    .ThenInclude(u => u.Category)
           .Include(r => r.RecipeFoods)
             .ThenInclude(rf => rf.Food)
+              .ThenInclude(f => f.FoodPlanNutrients)
+               .ThenInclude(fpn => fpn.Unit)
+                 .ThenInclude(u => u.Category)
+          .Include(r => r.RecipeFoods)
+            .ThenInclude(rf => rf.Food)
               .ThenInclude(f => f.ServingSizeUnitNavigation)
                 .ThenInclude(u => u.Category)
           .Include(r => r.RecipeFoods)
@@ -206,7 +211,9 @@ public class MealController : ControllerBase
       var meal = await context.Meals.IncludeMealResponseDetails()
         .FirstOrDefaultAsync(m => m.Id == mealEntity.Id);
 
-      return CreatedAtAction(nameof(GetMeal), new { id = mealEntity.Id }, meal!.ToMealResponse());
+      var mealResponse = meal?.ToMealResponse();
+
+      return CreatedAtAction(nameof(GetMeal), new { id = mealEntity.Id }, mealResponse);
     }
     catch (Exception ex)
     {

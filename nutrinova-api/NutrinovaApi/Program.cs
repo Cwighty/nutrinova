@@ -78,6 +78,7 @@ public class Program
     builder.Services.AddScoped<INutrientGoalReportCreator, NutrientGoalReportCreator>();
     builder.Services.AddOpenAIService();
     builder.Services.AddScoped<INovaChatService, NovaChatService>();
+    builder.Services.AddScoped<INutrientRecommendationService, UsdaNutrientRecommendationService>();
 
     var app = builder.Build();
 
