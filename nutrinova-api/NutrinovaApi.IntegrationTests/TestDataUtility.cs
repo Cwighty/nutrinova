@@ -33,6 +33,8 @@ internal class TestDataUtility
         CustomerId = customer!.Id,
         Firstname = "Test",
         Lastname = "Patient",
+        Age = 30,
+        Sex = "F",
       };
       context.Patients.Add(patient);
       await context.SaveChangesAsync();
@@ -191,20 +193,24 @@ internal class TestDataUtility
     return recipePlan;
   }
 
-  public async Task<PatientNutrientGoal> CreatePatientGoalAsync()
+  public async Task<PatientNutrientDailyGoal> CreatePatientGoalAsync()
   {
     var patient = await EnsurePatientExistsAsync(await EnsureCustomerExistsAsync(factory.DefaultCustomerId));
     var nutrient = await EnsureNutrientExistsAsync();
 
-    var goal = new PatientNutrientGoal
+    var goal = new PatientNutrientDailyGoal
     {
       Id = Guid.NewGuid(),
       PatientId = patient.Id,
       NutrientId = nutrient.Id,
-      DailyGoalAmount = 100,
+      CustomLowerTarget = 10,
+      CustomUpperTarget = 20,
+      RecommendedUpperTarget = 30,
+      RecommendedLowerTarget = 40,
+      RecommendedMax = 50,
     };
 
-    context.PatientNutrientGoals.Add(goal);
+    context.PatientNutrientDailyGoals.Add(goal);
     await context.SaveChangesAsync();
     return goal;
   }

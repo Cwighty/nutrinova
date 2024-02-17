@@ -11,15 +11,15 @@ INSERT INTO unit (description, abbreviation, category_id) VALUES
   -- Mass Units
   ('Gram', 'G', 1),
   ('Kilogram', 'KG', 1),
-  ('Milligram', 'MG', 1),
+  ('Milligram', 'mg', 1),
   ('Microgram', 'mcg', 1),
-  ('Ounce', 'OZ', 1),
+  ('Ounce', 'Oz', 1),
   ('Pound', 'LB', 1),
 
   -- Volume Units
   ('Liter', 'L', 2),
-  ('Milliliter', 'ML', 2),
-  ('Teaspoon', 'TSP', 2),
+  ('Milliliter', 'mL', 2),
+  ('Teaspoon', 'tsp', 2),
   ('Tablespoon', 'TBSP', 2),
   ('Cup', 'Cup', 2),
   ('Fluid Ounce', 'FL OZ', 2), -- Often used in the U.S.
@@ -29,7 +29,7 @@ INSERT INTO unit (description, abbreviation, category_id) VALUES
 
   -- Quantity Units
   ('Piece', 'PC', 3),
-  ('Items', 'qty', 3),
+  ('Items', 'QTY', 3),
 
   -- Energy Units
   ('Calorie', 'KCAL', 4);

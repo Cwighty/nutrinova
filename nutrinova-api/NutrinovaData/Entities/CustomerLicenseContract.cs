@@ -5,9 +5,9 @@ namespace NutrinovaData.Entities;
 
 public partial class CustomerLicenseContract
 {
-  public Guid CustomerId { get; set; }
+    public Guid CustomerId { get; set; }
 
-  public Guid LicenseContractId { get; set; }
+    public Guid LicenseContractId { get; set; }
 
-  public virtual Customer Customer { get; set; } = null!;
+    public virtual Customer Customer { get; set; } = null!;
 }

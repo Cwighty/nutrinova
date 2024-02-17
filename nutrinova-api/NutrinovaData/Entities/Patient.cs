@@ -23,5 +23,5 @@ public partial class Patient
 
   public virtual ICollection<Meal> Meals { get; set; } = new List<Meal>();
 
-  public virtual ICollection<PatientNutrientGoal> PatientNutrientGoals { get; set; } = new List<PatientNutrientGoal>();
+  public virtual ICollection<PatientNutrientDailyGoal> PatientNutrientDailyGoals { get; set; } = new List<PatientNutrientDailyGoal>();
 }
