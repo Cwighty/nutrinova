@@ -52,6 +52,7 @@ public class PatientController : ControllerBase
       Firstname = patient.Firstname,
       Lastname = patient.Lastname,
       Age = patient.Age,
+      Sex = patient.Sex,
       ProfilePictureName = patient?.Base64Image != null ? pictureName.ToString() : null,
       CustomerId = customer.Id,
     };

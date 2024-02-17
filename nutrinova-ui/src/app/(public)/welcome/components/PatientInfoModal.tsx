@@ -19,7 +19,6 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
   const router = useRouter();
   const createPatientMutation = useCreatePatientMutation();
 
-
   const handleSingleUser = async (patientInfo: PatientForm) => {
     const session = await getSession();
 
@@ -47,12 +46,17 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
       firstname: patientInfo.name.split(' ')[0],
       lastname: patientInfo.name.split(' ')[1] ?? '',
       sex: patientInfo?.sex,
-      pff: patientInfo?.pff,
+      base64image: patientInfo?.pff,
       age: patientInfo?.age,
     }
     createPatientMutation.mutate(patient);
 
     router.push('/dashboard');
+  }
+
+  const hadleSubmit = async (patient: PatientForm) => {
+    await handleSingleUser(patient);
+    onClose();
   }
 
   return (
@@ -61,7 +65,7 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
         We Need Some Information
       </DialogTitle>
       <DialogContent>
-        <PatientInfoForm name={defaultName} age={0} onSubmit={handleSingleUser} />
+        <PatientInfoForm name={defaultName} age={0} onSubmit={hadleSubmit} />
       </DialogContent>
     </Dialog>
   )

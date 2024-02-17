@@ -5,5 +5,5 @@ export interface Patient {
   customerId?: string;
   age?: number;
   sex?: 'M' | 'F' | 'O';
-  pff?: string;
+  base64image?: string;
 }
