@@ -8,6 +8,7 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const session = await getServerSession();
+
   return (
     <PatientContextPageContainer title={metadata.title}>
       <DashboardLayout session={session} />

@@ -1,3 +1,4 @@
+using Microsoft.IdentityModel.Tokens;
 using NutrinovaData.Features.Patients;
 
 namespace NutrinovaApi.Controllers;
@@ -8,10 +9,12 @@ namespace NutrinovaApi.Controllers;
 public class PatientController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
+  private readonly ILogger<PatientController> logger;
 
-  public PatientController(NutrinovaDbContext context)
+  public PatientController(NutrinovaDbContext context, ILogger<PatientController> logger)
   {
     this.context = context;
+    this.logger = logger;
   }
 
   // Get all patients for the logged-in customer
@@ -33,6 +36,37 @@ public class PatientController : ControllerBase
     return Ok(patients);
   }
 
+  [HttpGet("image/{paitentId}")]
+  public async Task<ActionResult> GetImage(Guid paitentId)
+  {
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+    logger.LogInformation($"User object id: {userObjectId}");
+    logger.LogInformation($"Here is the patient Id: {paitentId}");
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    var patient = await context.Patients
+        .FirstOrDefaultAsync(p => p.Id == paitentId && p.CustomerId == customer.Id);
+
+    if (patient == null)
+    {
+      return NotFound();
+    }
+
+    var filePath = Path.Combine("/app/images", patient.ProfilePictureName + ".png");
+
+    if (!System.IO.File.Exists(filePath))
+    {
+      return NotFound();
+    }
+
+    var bytes = System.IO.File.ReadAllBytes(filePath);
+    return File(bytes, "image/png");
+  }
+
   // Create a new patient
   [HttpPost("create-patient")]
   public async Task<ActionResult> CreatePatient([FromBody] CreatePatientRequest patient)
@@ -45,11 +79,20 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
+    var base64Image = patient?.Base64Image?.Split(',')[1];
+
     var pictureName = Guid.NewGuid();
+
+    if (!base64Image.IsNullOrEmpty())
+    {
+      byte[] bytes = Convert.FromBase64String(base64Image ?? throw new Exception("image stream is null your empty"));
+      System.IO.File.WriteAllBytes($"/app/images/{pictureName}.png", bytes);
+    }
+
     var newPatient = new Patient
     {
       Id = Guid.NewGuid(),
-      Firstname = patient.Firstname,
+      Firstname = patient?.Firstname ?? throw new InvalidOperationException("First name it required"),
       Lastname = patient.Lastname,
       Age = patient.Age,
       Sex = patient.Sex,

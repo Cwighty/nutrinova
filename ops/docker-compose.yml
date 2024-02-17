@@ -32,6 +32,7 @@ services:
 
   api:
     container_name: nutrinova-api
+    user: 0:0
     build:
       context: ../nutrinova-api/
     environment:
@@ -39,6 +40,17 @@ services:
       - USDA_API_KEY=${USDA_API_KEY}
       - OpenAIServiceOptions__ApiKey=${OPENAI_API_KEY}
     restart: always
+    # This might not be needed but this is how I did file permissions for the ChatApp
+    # If there is a better way to do this please let me know
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        chown -R 1000:1000 /app/images
+        su nutrinova 
+        dotnet NutrinovaApi.dll
+    volumes:
+      - /home/nutrinova:/app/images
 
   swag:
     image: lscr.io/linuxserver/swag
