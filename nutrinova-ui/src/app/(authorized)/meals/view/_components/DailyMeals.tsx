@@ -13,19 +13,44 @@ import {
 } from "@mui/material";
 import { MealDisplay } from "@/app/(authorized)/meals/view/_components/MealDisplay";
 import { useGetMealHistoryQuery } from "@/app/(authorized)/meals/mealHooks";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import {
+  AddCircle,
+  ChevronLeft,
+  ChevronRight,
+  NightsStay,
+  WbSunny,
+  WbTwilight,
+} from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 export const DailyMeals = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [slideIn, setSlideIn] = useState(true);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "left",
+  );
+  const [openDatePicker, setOpenDatePicker] = useState(false);
 
   const containerRef = useRef<HTMLElement>(null);
 
-  const handleDateChange = (days: number) => {
+  const router = useRouter();
+
+  const handleIncrementalDateChange = (days: number) => {
+    setSlideDirection(days > 0 ? "right" : "left");
     setSlideIn(false);
     setTimeout(() => {
       setCurrentDate(addDays(currentDate, days));
+      setSlideDirection(days > 0 ? "left" : "right");
       setSlideIn(true);
-    }, 200);
+    }, 500);
+  };
+
+  const handleDateChange = (newDate: Date | null) => {
+    if (newDate) {
+      setCurrentDate(newDate);
+    }
   };
 
   const {
@@ -40,7 +65,6 @@ export const DailyMeals = () => {
 
     meals.forEach((meal) => {
       const hour = getHours(new Date(meal.recordedAt));
-      console.log(hour);
       if (hour < 12) {
         categories.morning.push(meal);
       } else if (hour < 18) {
@@ -55,17 +79,50 @@ export const DailyMeals = () => {
 
   const categorizedMeals = categorizeMeals(meals || []);
 
+  const handleAddMealClick = () => {
+    router.push("/meals/record");
+  };
+
   if (isError) {
     return <Alert severity="error">Error loading meals</Alert>;
   }
 
   return (
     <Box sx={{ px: 1, overflow: "hidden" }} ref={containerRef}>
-      <Typography variant="h6">{format(currentDate, "PPP")}</Typography>
-      <Button onClick={() => handleDateChange(-1)}>Previous Day</Button>
-      <Button onClick={() => handleDateChange(1)}>Next Day</Button>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Button onClick={() => handleIncrementalDateChange(-1)}>
+          <ChevronLeft />
+        </Button>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            open={openDatePicker}
+            value={currentDate}
+            onChange={(newValue) => {
+              handleDateChange(newValue);
+              setOpenDatePicker(false);
+            }}
+            onClose={() => setOpenDatePicker(false)}
+            slotProps={{
+              textField: { sx: { opacity: 0, maxWidth: 0, maxHeight: 0 } },
+            }}
+          />
+        </LocalizationProvider>
+        <Button
+          onClick={() => setOpenDatePicker(true)}
+          sx={{ fontSize: { xs: "1rem", md: "1.65rem" } }}
+        >
+          {format(currentDate, "PPP")}
+        </Button>
+        <Button onClick={() => handleIncrementalDateChange(1)}>
+          <ChevronRight />
+        </Button>
+      </Box>
 
-      <Slide in={slideIn} direction={"left"} container={containerRef.current}>
+      <Slide
+        in={slideIn}
+        direction={slideDirection}
+        container={containerRef.current}
+      >
         {isLoading ? (
           <Box />
         ) : (
@@ -73,22 +130,78 @@ export const DailyMeals = () => {
             {Object.entries(categorizedMeals).map(([timeOfDay, meals]) => {
               if (meals.length > 0) {
                 return (
-                  <Box key={timeOfDay}>
-                    <Typography variant="h6">
-                      {timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)}
-                    </Typography>
-                    <Paper elevation={3} sx={{ mb: 2 }}>
-                      <List disablePadding>
-                        {meals.map((meal) => (
-                          <MealDisplay key={meal.id} meal={meal} />
-                        ))}
-                      </List>
-                    </Paper>
+                  <Box
+                    key={timeOfDay}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mt: 5,
+                        mb: 1,
+                        gap: 2,
+                      }}
+                    >
+                      {timeOfDay === "morning" && (
+                        <WbTwilight fontSize="large" />
+                      )}
+                      {timeOfDay === "afternoon" && (
+                        <WbSunny fontSize="large" />
+                      )}
+                      {timeOfDay === "evening" && (
+                        <NightsStay fontSize="large" />
+                      )}
+                      <Typography variant="h5">
+                        {timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)}
+                      </Typography>
+                    </Box>
+                    {meals.length > 0 && (
+                      <Paper
+                        elevation={3}
+                        sx={{
+                          my: 1,
+                          minWidth: { xs: "100%", md: "50%" },
+                        }}
+                      >
+                        <List disablePadding>
+                          {meals.map((meal) => (
+                            <MealDisplay key={meal.id} meal={meal} />
+                          ))}
+                        </List>
+                      </Paper>
+                    )}
                   </Box>
                 );
               }
               return null;
             })}
+            {Object.values(categorizedMeals).every(
+              (meals) => meals.length === 0,
+            ) && (
+              <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
+                No meals found for this day
+              </Typography>
+            )}
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                onClick={handleAddMealClick}
+                startIcon={<AddCircle sx={{ mb: "0.2rem" }} />}
+                sx={{
+                  mt: 3,
+                  minWidth: { xs: "100%", md: "50%" },
+                  fontSize: "1.65rem",
+                }}
+              >
+                Add Meal
+              </Button>
+            </Box>
           </Box>
         )}
       </Slide>
