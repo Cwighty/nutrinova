@@ -35,8 +35,8 @@ namespace NutrinovaData.UnitTests.Features.Recipes
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features/Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\n    As a nutrition analyst\n    I " +
-                    "want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features/Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\r\n    As a nutrition analyst\r\n    " +
+                    "I want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
