@@ -1,51 +1,33 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleRight } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
-import { customerService, Customer } from '@/services/customerService';
 import { getSession } from 'next-auth/react';
-import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
-import { Patient } from '@/app/(authorized)/patients/_models/patient';
+import { PatientInfoModal } from './components/PatientInfoModal';
 
 const Welcome = () => {
-  const router = useRouter();
-  const createPatientMutation = useCreatePatientMutation();
 
-  const handleSingleUser = async () => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const [name, setName] = useState('' as string);
+
+  const getUserName = async () => {
     const session = await getSession();
-
     if (session == null || session == undefined) {
       throw new Error('Failed to get user session');
     }
-
-    if (await customerService.customerExists("client")) {
-      router.push('/dashboard');
-      return;
-    }
-
-    const customer = {
-      objectId: session.user.id,
-      email: session.user.email,
-      issingleuser: true,
-    } as Customer;
-
-    const created = await customerService.createCustomer(customer);
-    if (!created) {
-      throw new Error('Failed to create customer');
-    }
-
-    const patient: Patient = {
-      firstname: session.user.name.split(' ')[0],
-      lastname: session.user.name.split(' ')[1] ?? '',
-    }
-    createPatientMutation.mutate(patient);
-
-    router.push('/dashboard');
+    setName(session.user.name);
   }
+
+  const toggleCustomerInfoModal = async () => {
+    await getUserName();
+    setOpenModal(!openModal);
+  }
+
 
   return (
     <Container>
+      <PatientInfoModal openModal={openModal} onClose={toggleCustomerInfoModal} defaultName={name} />
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
         Welcome to Nutrinova!
       </Typography>
@@ -82,7 +64,7 @@ const Welcome = () => {
 
                 <Grid item xs={6}>
                   <Box display="flex" justifyContent="center">
-                    <Button color="primary" onClick={() => handleSingleUser()}>
+                    <Button color="primary" onClick={() => toggleCustomerInfoModal()}>
                       <ArrowCircleRight fontSize={'large'} />
                     </Button>
                   </Box>
