@@ -76,3 +76,30 @@ export const useGetPatientByIdQuery = (patientId: string) => {
     queryFn: () => getPatientById(patientId),
   });
 };
+
+const getCurrentPatientImage = async (patientId: string) => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: 'client',
+  });
+  const response = await apiClient.get(`/patient/image/${patientId}`, { responseType: 'blob' });
+  console.log("response", response);
+  //convert here are return
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(response.data as Blob); // Converts Blob to Base64
+    reader.onloadend = function () {
+      const base64data = reader.result;
+      console.log(base64data); // Log or use the Base64 string as needed
+      resolve(base64data); // Resolve the promise with the Base64 string
+    };
+    reader.onerror = reject;
+  });
+}
+
+export const useGetCurrentPatientImageQuery = (patientId: string) => {
+  return useQuery({
+    queryKey: [patientKeys.details, patientId],
+    queryFn: () => getCurrentPatientImage(patientId),
+  });
+};

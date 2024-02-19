@@ -5,5 +5,5 @@ export interface Patient {
   customerId?: string;
   age?: number;
   sex?: 'M' | 'F' | 'O';
-  base64image?: string;
+  base64image?: string; // only used for upload need use the patient image hook to get the image
 }
