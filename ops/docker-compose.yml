@@ -50,7 +50,7 @@ services:
         su nutrinova 
         dotnet NutrinovaApi.dll
     volumes:
-      - /home/nutrinova:/app/images
+      - /home/nutrinova/images:/app/images
 
   swag:
     image: lscr.io/linuxserver/swag
