@@ -85,12 +85,10 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
-    var base64Image = patient?.Base64Image?.Split(',')[1];
-
     var pictureName = Guid.NewGuid();
-
-    if (!base64Image.IsNullOrEmpty())
+    if (!patient.Base64Image.IsNullOrEmpty())
     {
+      var base64Image = patient?.Base64Image?.Split(',')[1];
       byte[] bytes = Convert.FromBase64String(base64Image ?? throw new Exception("image stream is null your empty"));
       System.IO.File.WriteAllBytes($"/app/images/{pictureName}.png", bytes);
     }
