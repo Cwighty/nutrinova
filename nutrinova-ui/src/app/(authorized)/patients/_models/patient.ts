@@ -7,3 +7,7 @@ export interface Patient {
   sex?: 'M' | 'F' | 'O';
   base64image?: string; // only used for upload need use the patient image hook to get the image
 }
+
+export interface CreatePatientReq extends Patient {
+  useDefaultNutritionGoals: boolean;
+}

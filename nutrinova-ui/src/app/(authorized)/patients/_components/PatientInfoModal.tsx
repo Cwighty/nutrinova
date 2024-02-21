@@ -1,7 +1,7 @@
 "use client"
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import React from 'react'
-import { Patient } from '@/app/(authorized)/patients/_models/patient';
+import { CreatePatientReq } from '@/app/(authorized)/patients/_models/patient';
 import { PatientForm, PatientInfoForm } from './PatientInfoForm';
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
 import { useRouter } from 'next/navigation';
@@ -42,12 +42,13 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
       throw new Error('Failed to create customer');
     }
 
-    const patient: Patient = {
+    const patient: CreatePatientReq = {
       firstname: patientInfo.name.split(' ')[0],
       lastname: patientInfo.name.split(' ')[1] ?? '',
       sex: patientInfo?.sex,
       base64image: patientInfo?.pff,
       age: patientInfo?.age,
+      useDefaultNutritionGoals: patientInfo.optOut
     }
     createPatientMutation.mutate(patient);
 
