@@ -45,6 +45,7 @@ public class PatientController : ControllerBase
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
     logger.LogInformation($"User object id: {userObjectId}");
     logger.LogInformation($"Here is the patient Id: {paitentId}");
+
     if (customer == null)
     {
       return Unauthorized();
@@ -54,6 +55,11 @@ public class PatientController : ControllerBase
         .FirstOrDefaultAsync(p => p.Id == paitentId && p.CustomerId == customer.Id);
 
     if (patient == null)
+    {
+      return NotFound();
+    }
+
+    if (patient.ProfilePictureName.IsNullOrEmpty())
     {
       return NotFound();
     }
