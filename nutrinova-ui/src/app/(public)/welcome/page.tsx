@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mui/material';
 import { ArrowCircleRight } from '@mui/icons-material';
 import { getSession } from 'next-auth/react';
-import { PatientInfoModal } from './components/PatientInfoModal';
+import { PatientInfoModal } from '../../(authorized)/patients/_components/PatientInfoModal';
 
 const Welcome = () => {
 
