@@ -47,6 +47,7 @@ services:
     environment:
       - DOTNET_URLS=http://+:5000 # by default Dotnet only listens to requests coming from 'localhost' from within the container, adding this will listen outside
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!
+      - IMAGE_PATH=/app/images/
     command: >
       sh -c "
         chown -R developer:developer /app/images

@@ -10,11 +10,13 @@ public class PatientController : ControllerBase
 {
   private readonly NutrinovaDbContext context;
   private readonly ILogger<PatientController> logger;
+  private readonly IConfiguration configuration;
 
-  public PatientController(NutrinovaDbContext context, ILogger<PatientController> logger)
+  public PatientController(NutrinovaDbContext context, ILogger<PatientController> logger, IConfiguration configuration)
   {
     this.context = context;
     this.logger = logger;
+    this.configuration = configuration;
   }
 
   // Get all patients for the logged-in customer
@@ -62,7 +64,7 @@ public class PatientController : ControllerBase
       return NotFound();
     }
 
-    var filePath = Path.Combine("/app/images", patient.ProfilePictureName + ".png");
+    var filePath = configuration["IMAGE_PATH"] + patient.ProfilePictureName + ".png";
 
     if (!System.IO.File.Exists(filePath))
     {
@@ -90,7 +92,7 @@ public class PatientController : ControllerBase
     {
       var base64Image = patient?.Base64Image?.Split(',')[1];
       byte[] bytes = Convert.FromBase64String(base64Image ?? throw new Exception("image stream is null your empty"));
-      System.IO.File.WriteAllBytes($"/app/images/{pictureName}.png", bytes);
+      System.IO.File.WriteAllBytes($"{configuration["IMAGE_PATH"]}/{pictureName}.png", bytes);
     }
 
     var newPatient = new Patient
