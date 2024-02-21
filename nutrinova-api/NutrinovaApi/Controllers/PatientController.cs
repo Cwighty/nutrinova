@@ -64,7 +64,7 @@ public class PatientController : ControllerBase
       return NotFound();
     }
 
-    var filePath = Path.Combine($"{configuration["IMAGE_PATH"]}/", patient.ProfilePictureName + ".png");
+    var filePath = configuration["IMAGE_PATH"] + patient.ProfilePictureName + ".png";
 
     if (!System.IO.File.Exists(filePath))
     {
