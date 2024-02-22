@@ -143,7 +143,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpGet("report")]
-  public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(DateTime beginDate, DateTime endDate)
+  public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(DateTime beginDate, DateTime endDate, int nutrientId = 0, Guid patientId = default)
   {
     beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
     endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
@@ -173,6 +173,18 @@ public class GoalController : ControllerBase
     {
       var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate);
       patientReports.Add(report);
+    }
+
+    if (nutrientId != 0)
+    {
+      // filter out any nutrient that doesn't match the nutrientId
+      patientReports.ForEach(p => p.Days.ToList().ForEach(d => d.NutrientGoalReportItems.ToList().RemoveAll(n => n.NutrientId != nutrientId)));
+    }
+
+    if (patientId != Guid.Empty)
+    {
+      // filter out any patient that doesn't match the patientId
+      patientReports.RemoveAll(p => p.PatientId != patientId.ToString());
     }
 
     var aggregateReport = new AggregatePatientNutrientReport
