@@ -180,7 +180,7 @@ public class GoalController : ControllerBase
       BeginDate = beginDate,
       EndDate = endDate,
       PatientReports = patientReports,
-      DaysCount = (endDate - beginDate).Days,
+      DaysCount = patientReports.Count,
     };
 
     return Ok(aggregateReport);

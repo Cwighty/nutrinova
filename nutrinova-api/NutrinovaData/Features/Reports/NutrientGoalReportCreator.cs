@@ -38,6 +38,9 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       PatientId = patientWithMealsAndGoals.Id.ToString(),
       PatientName = patientWithMealsAndGoals.GetFullName(),
       Days = dailyReports,
+      MaxConsumption = dailyReports.Max(d => d.NutrientGoalReportItems.Max(n => n.ConsumedAmount)),
+      AvgConsumption = dailyReports.Average(d => d.NutrientGoalReportItems.Average(n => n.ConsumedAmount)),
+      DaysAchievedCount = dailyReports.Count(d => d.NutrientGoalReportItems.All(n => n.GoalStatus == NutrientGoalStatus.Met)),
     };
 
     return report;
