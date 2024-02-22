@@ -113,6 +113,11 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
           </TextField>
         </Grid>
         {/* age */}
+        {formPatient.optOut &&
+          <p>
+            By opting out we will use default nutrition goals for your recommended diet. This will not stop you from adding your own goals later.
+          </p>
+        }
         <Grid item xs={12} sx={
           {
             display: formPatient.optOut ? 'none' : 'inherit'
