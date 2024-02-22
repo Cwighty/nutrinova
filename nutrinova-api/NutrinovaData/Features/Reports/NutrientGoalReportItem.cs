@@ -8,11 +8,11 @@ public class NutrientGoalReportItem
 
   public UnitOption PreferredUnit { get; set; } = new UnitOption();
 
-  public decimal DailyGoalAmount { get; set; }
+  public GoalTargetAmount CustomTargetAmount { get; set; } = default!;
+
+  public GoalTargetAmount RecommendedTargetAmount { get; set; } = default!;
 
   public decimal ConsumedAmount { get; set; }
-
-  public decimal RemainingAmount { get; set; }
 
   public NutrientGoalStatus GoalStatus { get; set; } = default;
 }

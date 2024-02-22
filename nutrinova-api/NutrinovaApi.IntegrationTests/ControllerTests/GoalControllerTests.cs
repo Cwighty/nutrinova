@@ -109,7 +109,6 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
     }
   }
 
-  /*
   public class GetNutrientGoalReport : GoalControllerTests
   {
     public GetNutrientGoalReport(NutrinovaApiWebApplicationFactory factory)
@@ -130,21 +129,11 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
 
       // Assert
       Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-      var goalReportResponse = await response.Content.ReadFromJsonAsync<IEnumerable<PatientNutrientGoalReport>>();
+      var goalReportResponse = await response.Content.ReadFromJsonAsync<AggregatePatientNutrientReport>();
 
       Assert.NotNull(goalReportResponse);
-
-      var goalReport = goalReportResponse.FirstOrDefault();
-      Assert.NotNull(goalReport);
-
-      Assert.Single(goalReport.NutrientGoalReportItems);
-      Assert.Equal(goal.NutrientId, goalReport.NutrientGoalReportItems.FirstOrDefault()?.NutrientId);
-      Assert.Equal(10, goalReport.NutrientGoalReportItems.FirstOrDefault()?.ConsumedAmount);
-      Assert.Equal(90, goalReport.NutrientGoalReportItems.FirstOrDefault()?.RemainingAmount);
-      Assert.Equal(NutrientGoalStatus.NotMet, goalReport.NutrientGoalReportItems.FirstOrDefault()?.GoalStatus);
     }
   }
-  */
 
   public class GetNutrientRecommendation : GoalControllerTests
   {

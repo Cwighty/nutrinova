@@ -143,7 +143,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpGet("report")]
-  public async Task<ActionResult<IEnumerable<PatientNutrientGoalReport>>> GetGoalReport(DateTime beginDate, DateTime endDate)
+  public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(DateTime beginDate, DateTime endDate)
   {
     beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
     endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
@@ -168,14 +168,22 @@ public class GoalController : ControllerBase
       .Where(p => p.CustomerId == customer.Id)
       .ToListAsync();
 
-    var patientReports = new List<PatientNutrientGoalReport>();
+    var patientReports = new List<PatientNutrientReport>();
     foreach (var p in patientsWithMealsAndGoalsForDateRange)
     {
       var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate);
       patientReports.Add(report);
     }
 
-    return Ok(patientReports);
+    var aggregateReport = new AggregatePatientNutrientReport
+    {
+      BeginDate = beginDate,
+      EndDate = endDate,
+      PatientReports = patientReports,
+      DaysCount = (endDate - beginDate).Days,
+    };
+
+    return Ok(aggregateReport);
   }
 
   [HttpGet("reccomendation")]
