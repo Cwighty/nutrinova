@@ -171,20 +171,20 @@ public class GoalController : ControllerBase
     var patientReports = new List<PatientNutrientReport>();
     foreach (var p in patientsWithMealsAndGoalsForDateRange)
     {
-      var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate);
-      patientReports.Add(report);
-    }
+      if (patientId != Guid.Empty && p.Id != patientId)
+      {
+        continue;
+      }
 
-    if (nutrientId != 0)
-    {
-      // filter out any nutrient that doesn't match the nutrientId
-      patientReports.ForEach(p => p.Days.ToList().ForEach(d => d.NutrientGoalReportItems.ToList().RemoveAll(n => n.NutrientId != nutrientId)));
-    }
-
-    if (patientId != Guid.Empty)
-    {
-      // filter out any patient that doesn't match the patientId
-      patientReports.RemoveAll(p => p.PatientId != patientId.ToString());
+      try
+      {
+        var report = reportCreator.CreateNutrientGoalReportForPatient(p, beginDate, endDate, nutrientId);
+        patientReports.Add(report);
+      }
+      catch (ArgumentException)
+      {
+        return NotFound("No nutrient goals found matching patient, nutrient, or date range");
+      }
     }
 
     var aggregateReport = new AggregatePatientNutrientReport

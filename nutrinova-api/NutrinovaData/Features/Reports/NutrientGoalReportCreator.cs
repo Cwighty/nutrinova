@@ -9,7 +9,7 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
   {
   }
 
-  public PatientNutrientReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate)
+  public PatientNutrientReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate, int nutrientId = 0)
   {
     ValidateParameters(patientWithMealsAndGoals, beginDate, endDate);
 
@@ -23,7 +23,12 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
 
     foreach (var day in days)
     {
-      var dailyReport = CreateNutrientGoalReportItems(patientWithMealsAndGoals, day.Date, day.AddDays(1).AddSeconds(-1));
+      var dailyReport = CreateNutrientGoalReportItems(patientWithMealsAndGoals, day.Date, day.AddDays(1).AddSeconds(-1), nutrientId);
+      if (dailyReport.Count() == 0)
+      {
+        continue;
+      }
+
       var dayReport = new DailyNutrientGoalReport
       {
         Date = day,
@@ -31,6 +36,11 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       };
 
       dailyReports.Add(dayReport);
+    }
+
+    if (dailyReports.Count == 0)
+    {
+      throw new ArgumentException("No nutrient goals found for patient");
     }
 
     var report = new PatientNutrientReport()
@@ -69,7 +79,7 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
     }
   }
 
-  private IEnumerable<NutrientGoalReportItem> CreateNutrientGoalReportItems(Patient p, DateTime beginDate, DateTime endDate)
+  private IEnumerable<NutrientGoalReportItem> CreateNutrientGoalReportItems(Patient p, DateTime beginDate, DateTime endDate, int nutrientId = 0)
   {
     // Aggregate eached consumed nutrient from meals with corresponding nutrient goals
     var mealsInDateRange = p.Meals
@@ -78,6 +88,11 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
     Dictionary<int, NutrientSummary> consumedNutrientSummaries = GetConsumedNutrientTotals(mealsInDateRange);
 
     var nutrientGoals = p.PatientNutrientDailyGoals.ToList();
+    if (nutrientId != 0)
+    {
+      nutrientGoals = nutrientGoals.Where(g => g.NutrientId == nutrientId).ToList();
+    }
+
     var reportItems = nutrientGoals
     .GroupJoin(
       consumedNutrientSummaries,
