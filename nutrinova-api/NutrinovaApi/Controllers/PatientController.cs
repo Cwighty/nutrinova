@@ -107,7 +107,7 @@ public class PatientController : ControllerBase
       Firstname = patient?.Firstname ?? throw new InvalidOperationException("First name it required"),
       Lastname = patient.Lastname,
       Age = patient.Age,
-      Sex = patient.Sex != "M" || patient.Sex != "F" ? "M" : patient.Sex, // This was Drew Gordons desicion
+      Sex = patient.Sex != "M" && patient.Sex != "F" ? "M" : patient.Sex, // This was Drew Gordons desicion
       ProfilePictureName = patient?.Base64Image != null ? pictureName.ToString() : null,
       CustomerId = customer.Id,
     };
