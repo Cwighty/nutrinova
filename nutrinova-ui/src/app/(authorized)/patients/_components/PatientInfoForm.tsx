@@ -111,13 +111,13 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
             fullWidth
           >
           </TextField>
+          {/* age */}
+          {formPatient.optOut &&
+            <p>
+              By opting out we will use default nutrition goals for your recommended diet. This will not stop you from adding your own goals later.
+            </p>
+          }
         </Grid>
-        {/* age */}
-        {formPatient.optOut &&
-          <p>
-            By opting out we will use default nutrition goals for your recommended diet. This will not stop you from adding your own goals later.
-          </p>
-        }
         <Grid item xs={12} sx={
           {
             display: formPatient.optOut ? 'none' : 'inherit'
@@ -158,10 +158,14 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
           />} label="I want to opt out of giving this information" />
 
         </Grid>
-        <Grid container justifyContent={"flex-start"}>
-          <Grid item xs={12}>
-            <Button onClick={() => onSubmit(formPatient)}>Submit</Button>
-          </Grid>
+        <Grid item xs={12} >
+          <Button sx={
+            {
+              padding: '0px',
+              margin: '0px',
+            }
+          }
+            onClick={() => onSubmit(formPatient)}>Submit</Button>
         </Grid>
       </Grid >
     </>
