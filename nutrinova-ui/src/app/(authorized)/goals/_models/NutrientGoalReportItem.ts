@@ -4,13 +4,21 @@ export interface NutrientGoalReportItem {
   nutrientId: number;
   nutrientName: string;
   preferredUnit: UnitOption;
-  dailyGoalAmount: number;
+  customTargetAmount: GoalTargetAmount;
+  recommendedTargetAmount: GoalTargetAmount;
   consumedAmount: number;
-  remainingAmount: number;
   goalStatus: NutrientGoalStatus;
 }
 
-enum NutrientGoalStatus {
+export interface GoalTargetAmount {
+  LowerLimit: number;
+  UpperLimit: number;
+  MaxLimit: number;
+  Type: string;
+}
+
+export enum NutrientGoalStatus {
+  NotStarted,
   NotMet,
   Met,
   Exceeded,

@@ -1,9 +1,13 @@
 "use client";
 
+import { GoalTargetAmount, NutrientGoalStatus } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
+
+export type StatusType = 'In Progress' | 'Over' | 'Achieved';
+
 export interface NutrientProgressProps {
-  label: string;
-  value: number;
-  total: number;
-  unitAbbreviation: string;
-  color: string; // Add a color prop for the total box
+  nutrientName: string;
+  consumedAmount: number;
+  targetAmount: GoalTargetAmount;
+  status: NutrientGoalStatus;
+  unit: string;
 }

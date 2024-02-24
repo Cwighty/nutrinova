@@ -6,23 +6,59 @@ import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/Nutri
 import { PatientContext } from "@/components/providers/PatientProvider";
 import {
   useCreateGoal,
-  useFetchGoalReport,
+  // useFetchGoalReport,
 } from "@/app/(authorized)/goals/goalHooks";
-import { NutrientProgress } from "./NutrientProgress";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
-import { Box, Skeleton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import NutrientProgress from "./NutrientProgress";
 
 const DailyRecapCard: React.FC = () => {
-  const [today] = React.useState(new Date(Date.now()));
+  // const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
-  const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport(
-    { beginDate: today, endDate: today }
-  );
+  // const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport(
+  //   { beginDate: today, endDate: today }
+  // );
 
-  const selectedPatientReport = reportData?.filter(
-    (r) => r.patientId === patient?.id
-  )[0];
+  const sampleNutrientGoalReportItem: NutrientGoalReportItem = {
+    nutrientId: 1,
+    nutrientName: "Protein",
+    preferredUnit: {
+      id: 1,
+      description: "Grams",
+      abbreviation: "g",
+      categoryId: 1,
+      category: { id: 1, description: "Weight" },
+    },
+    customTargetAmount: {
+      LowerLimit: 0,
+      UpperLimit: 100,
+      MaxLimit: 200,
+      Type: "Custom",
+    },
+    recommendedTargetAmount: {
+      LowerLimit: 0,
+      UpperLimit: 100,
+      MaxLimit: 200,
+      Type: "Recommended",
+    },
+    consumedAmount: 50,
+    goalStatus: 0,
+  };
+
+  const reportData = [
+    {
+      patientId: "1",
+      nutrientGoalReportItems: [
+        sampleNutrientGoalReportItem,
+      ]
+    },
+  ];
+
+  // const selectedPatientReport = reportData?.filter(
+  //   (r) => r.patientId === patient?.id
+  // )[0];
+  const selectedPatientReport = reportData[0];
 
   const nutrients: NutrientGoalReportItem[] =
     selectedPatientReport?.nutrientGoalReportItems ?? [];
@@ -41,22 +77,6 @@ const DailyRecapCard: React.FC = () => {
     }
   };
 
-  const getNutrientColor = (nutrientName: string): string => {
-    // hash the nutrient name to get a color
-    const colorPalette = [
-      "#FA6977",
-      "#F0B967",
-      "#FAF278",
-      "#9AE66E",
-      "#87D5F8",
-      "#CE81F8",
-    ];
-    const hash = nutrientName
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colorPalette[hash % colorPalette.length];
-  };
-
   const actionButton = (
     <>
       {patient && (
@@ -73,7 +93,7 @@ const DailyRecapCard: React.FC = () => {
   return (
     <>
       <GenericCard title="Daily Recap" actions={actionButton}>
-        {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
+        {/* {reportDataLoading && <Skeleton variant="rectangular" height={200} />} */}
         {reportData && nutrients && nutrients.length === 0 && (
           <Box>
             <Typography variant="body1">
@@ -86,11 +106,11 @@ const DailyRecapCard: React.FC = () => {
           nutrients.map((nutrient) => (
             <NutrientProgress
               key={nutrient.nutrientId}
-              label={nutrient.nutrientName}
-              value={nutrient.consumedAmount}
-              total={nutrient.dailyGoalAmount}
-              unitAbbreviation={nutrient.preferredUnit?.abbreviation ?? ""}
-              color={getNutrientColor(nutrient.nutrientName)}
+              nutrientName={nutrient.nutrientName}
+              consumedAmount={nutrient.consumedAmount}
+              targetAmount={nutrient.customTargetAmount}
+              status={nutrient.goalStatus}
+              unit={nutrient.preferredUnit.abbreviation}
             />
           ))}
       </GenericCard>
