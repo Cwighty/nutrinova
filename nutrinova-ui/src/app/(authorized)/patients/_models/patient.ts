@@ -9,5 +9,5 @@ export interface Patient {
 }
 
 export interface CreatePatientReq extends Patient {
-  useDefaultNutritionGoals: boolean;
+  useDefaultNutrientGoals: boolean;
 }

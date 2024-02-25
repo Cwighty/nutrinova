@@ -48,7 +48,7 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
       sex: patientInfo?.sex,
       base64image: patientInfo?.pff,
       age: patientInfo?.age,
-      useDefaultNutritionGoals: patientInfo.optOut
+      useDefaultNutrientGoals: patientInfo.optOut
     }
     createPatientMutation.mutate(patient);
 

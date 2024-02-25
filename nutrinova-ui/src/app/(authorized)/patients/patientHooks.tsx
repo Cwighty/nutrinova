@@ -41,6 +41,7 @@ const createPatient = async (patient: CreatePatientReq) => {
     additionalHeaders: {},
     origin: 'client',
   });
+  console.log("patient", patient);
   const response = await apiClient.post('/patient/create-patient', patient);
   return response.status === 200;
 };

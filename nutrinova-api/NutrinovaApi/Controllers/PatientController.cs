@@ -87,7 +87,8 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
-    if (patient?.UseDefaultNutrientGoals ?? false)
+    logger.LogInformation($"Default Patient Goals: {patient?.UseDefaultNutrientGoals}");
+    if (patient?.UseDefaultNutrientGoals ?? false || patient?.UseDefaultNutrientGoals == true)
     {
       patient.Age = 19; // Default age
       patient.Sex = "M"; // Default sex
