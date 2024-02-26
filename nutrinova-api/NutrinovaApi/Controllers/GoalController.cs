@@ -163,7 +163,6 @@ public class GoalController : ControllerBase
   }
 
   [HttpGet("report")]
-  public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(DateTime beginDate, DateTime endDate, int nutrientId = 0, Guid patientId = default)
   public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(
       DateTime beginDate,
       DateTime endDate,
@@ -172,6 +171,11 @@ public class GoalController : ControllerBase
   {
     beginDate = DateTime.SpecifyKind(beginDate, DateTimeKind.Utc);
     endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
+    if (beginDate == endDate)
+    {
+      endDate = endDate.AddDays(1);
+    }
 
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -213,8 +217,7 @@ public class GoalController : ControllerBase
       }
       catch (ArgumentException)
       {
-        return NotFound(
-            "No nutrient goals found matching patient, nutrient, or date range");
+        continue;
       }
     }
 

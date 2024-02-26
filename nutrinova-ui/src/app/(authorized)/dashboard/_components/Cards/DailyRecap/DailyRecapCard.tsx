@@ -5,63 +5,28 @@ import { CreatePatientNutrientGoalModal } from "@/components/forms/CreatePatient
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import {
-  useCreateGoal,
+  useCreateGoal, useFetchGoalReport,
   // useFetchGoalReport,
 } from "@/app/(authorized)/goals/goalHooks";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
-import { Box, Typography } from "@mui/material";
+import { Box, Skeleton, Typography } from "@mui/material";
 import NutrientProgress from "./NutrientProgress";
 
 const DailyRecapCard: React.FC = () => {
-  // const [today] = React.useState(new Date(Date.now()));
+  const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
-  // const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport(
-  //   { beginDate: today, endDate: today }
-  // );
+  console.log(patient);
+  const { data: report, isLoading: reportDataLoading } = useFetchGoalReport(
+    { beginDate: today, endDate: today },
+  );
 
-  const sampleNutrientGoalReportItem: NutrientGoalReportItem = {
-    nutrientId: 1,
-    nutrientName: "Protein",
-    preferredUnit: {
-      id: 1,
-      description: "Grams",
-      abbreviation: "g",
-      categoryId: 1,
-      category: { id: 1, description: "Weight" },
-    },
-    customTargetAmount: {
-      LowerLimit: 0,
-      UpperLimit: 100,
-      MaxLimit: 200,
-      Type: "Custom",
-    },
-    recommendedTargetAmount: {
-      LowerLimit: 0,
-      UpperLimit: 100,
-      MaxLimit: 200,
-      Type: "Recommended",
-    },
-    consumedAmount: 50,
-    goalStatus: 0,
-  };
-
-  const reportData = [
-    {
-      patientId: "1",
-      nutrientGoalReportItems: [
-        sampleNutrientGoalReportItem,
-      ]
-    },
-  ];
-
-  // const selectedPatientReport = reportData?.filter(
-  //   (r) => r.patientId === patient?.id
-  // )[0];
-  const selectedPatientReport = reportData[0];
+  const selectedPatientReport = report?.patientReports.filter(
+    (r) => r.patientId === patient?.id
+  )[0];
 
   const nutrients: NutrientGoalReportItem[] =
-    selectedPatientReport?.nutrientGoalReportItems ?? [];
+    selectedPatientReport?.days ?? [];
 
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
@@ -93,8 +58,8 @@ const DailyRecapCard: React.FC = () => {
   return (
     <>
       <GenericCard title="Daily Recap" actions={actionButton}>
-        {/* {reportDataLoading && <Skeleton variant="rectangular" height={200} />} */}
-        {reportData && nutrients && nutrients.length === 0 && (
+        {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
+        {(report?.daysCount == 0 || (selectedPatientReport && nutrients && nutrients.length === 0)) && (
           <Box>
             <Typography variant="body1">
               Set a nutrient goal above to track your progress.

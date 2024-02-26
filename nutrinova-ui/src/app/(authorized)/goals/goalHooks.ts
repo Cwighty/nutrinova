@@ -2,7 +2,7 @@ import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFact
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NutrientGoalResponse } from "./_models/NutrientGoalResponse";
 import { NutrientGoalRequestModel } from "./_models/NutrientGoalRequestModel";
-import { PatientNutrientGoalReport } from "./_models/PatientNutrientGoalReport";
+import { AggregatePatientNutrientReport } from "./_models/AggregatePatientNutrientReport";
 
 const goalKeys = {
   all: ['goals'] as const,
@@ -45,7 +45,7 @@ const deleteGoal = async (id: string): Promise<void> => {
   await apiClient.delete(`/Goal/${id}`);
 };
 
-const fetchGoalReport = async ({ beginDate, endDate }: { beginDate: Date; endDate: Date }): Promise<PatientNutrientGoalReport[]> => {
+const fetchGoalReports = async ({ beginDate, endDate }: { beginDate: Date; endDate: Date }): Promise<AggregatePatientNutrientReport> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -53,7 +53,7 @@ const fetchGoalReport = async ({ beginDate, endDate }: { beginDate: Date; endDat
   const beginDateStr = beginDate.toISOString().split('T')[0];
   const endDateStr = endDate.toISOString().split('T')[0];
   const response = await apiClient.get(`/Goal/report?beginDate=${beginDateStr}&endDate=${endDateStr}`);
-  return response.data as PatientNutrientGoalReport[];
+  return response.data as AggregatePatientNutrientReport;
 };
 
 // Custom Hooks
@@ -91,7 +91,7 @@ export const useDeleteGoal = (id: string) => {
 
 export const useFetchGoalReport = (dates: { beginDate: Date; endDate: Date }) => {
   return useQuery({
-    queryFn: () => fetchGoalReport(dates),
+    queryFn: () => fetchGoalReports(dates),
     queryKey: goalKeys.reports(dates),
   });
 }

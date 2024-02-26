@@ -37,20 +37,20 @@ services:
 
   api:
     container_name: nutrinova-api
+    user: 0:0
     build:
       context: .
-    user: 1000:1000
     volumes:
       - ../:/app/
-      - images:/app/images
+      - images:/images
     working_dir: /app
     environment:
       - DOTNET_URLS=http://+:5000 # by default Dotnet only listens to requests coming from 'localhost' from within the container, adding this will listen outside
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!
-      - IMAGE_PATH=/app/images/
+      - IMAGE_PATH=/images/
     command: >
       sh -c "
-        chown -R developer:developer /app/images
+        chown -R developer:developer /images
         su developer
         cd nutrinova-api/NutrinovaApi
         dotnet watch run --non-interactive --no-hot-reload
