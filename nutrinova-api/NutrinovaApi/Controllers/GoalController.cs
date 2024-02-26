@@ -163,6 +163,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpGet("report")]
+  public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(DateTime beginDate, DateTime endDate, int nutrientId = 0, Guid patientId = default)
   public async Task<ActionResult<AggregatePatientNutrientReport>> GetGoalReport(
       DateTime beginDate,
       DateTime endDate,
