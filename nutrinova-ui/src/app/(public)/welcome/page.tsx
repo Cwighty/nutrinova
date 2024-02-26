@@ -71,7 +71,7 @@ const Welcome = () => {
 
   return (
     <Container>
-      <PatientInfoModal openModal={openSingleCustomerModal} onClose={toggleCustomerInfoModal} defaultName={name} submitFunction={handleSingleUser} />
+      <PatientInfoModal openModal={openSingleCustomerModal} onClose={toggleCustomerInfoModal} patientName={name} submitFunction={handleSingleUser} />
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
         Welcome to Nutrinova!
       </Typography>

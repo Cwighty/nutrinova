@@ -10,7 +10,7 @@ import { PatientForm } from "./_components/PatientInfoForm";
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
 
 const PatientsPage = () => {
-  const { patients } = useContext(PatientContext);
+  const { patients, selectedPatient } = useContext(PatientContext);
   const createPatientMutation = useCreatePatientMutation();
 
 
@@ -44,7 +44,7 @@ const PatientsPage = () => {
       <PageContainer title="Patients">
         <Box>
           <Button onClick={toggleOpen}>Add a Patient</Button>
-          <PatientInfoModal openModal={open} onClose={toggleOpen} submitFunction={HandlePatientAdd} />
+          <PatientInfoModal patientAge={selectedPatient?.age} patientName={`${selectedPatient?.firstname} ${selectedPatient?.lastname}`} openModal={open} onClose={toggleOpen} submitFunction={HandlePatientAdd} />
         </Box >
 
         <Typography variant="button">Patients</Typography>

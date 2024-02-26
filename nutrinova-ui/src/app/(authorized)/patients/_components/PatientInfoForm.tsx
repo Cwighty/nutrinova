@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 export interface PatientForm {
   name: string;
-  age?: number;
+  age: number;
   sex?: 'M' | 'F' | 'O';
   optOut: boolean;
   pff?: string;
@@ -30,7 +30,7 @@ interface patientInfoFormProps {
   onSubmit: (patient: PatientForm) => void;
 }
 
-export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) => {
+export const PatientInfoForm = ({ name, age = 1, onSubmit }: patientInfoFormProps) => {
 
   const patient: PatientForm = {
     name: name,
@@ -39,6 +39,8 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
     optOut: false,
     pff: ''
   }
+
+  const [formPatient, setFormPatient] = useState(patient);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -62,11 +64,19 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
     const value = e.target.checked;
     setFormPatient({
       ...formPatient,
-      optOut: value
+      optOut: value,
+      age: value ? 1 : 0,
     })
   }
 
-  const [formPatient, setFormPatient] = useState(patient);
+  const handleSubmit = () => {
+    if (validateForm()) {
+      onSubmit(formPatient);
+    } else {
+      console.log("formPatient", formPatient)
+      toast.error('Please correct the errors before submitting.');
+    }
+  };
 
   const handleChange = (property: string, e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>) => {
     console.log('property', e.target.value);
@@ -75,6 +85,13 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
       [property]: e.target.value
     })
   }
+
+  const validateForm = () => {
+    return !isNameError && !isAgeError;
+  };
+
+  const isNameError = formPatient.name.length === 0 && formPatient.name == null;
+  const isAgeError = formPatient.age !== undefined && formPatient.age <= 0;
 
   const optOutLabel = { inputProps: { 'aria-label': 'Opt out' } };
   return (
@@ -107,6 +124,8 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
             label="Name"
             type="text"
             value={formPatient.name}
+            helperText={"Name Cannot be empty"}
+            error={isNameError}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('name', e)}
             fullWidth
           >
@@ -126,6 +145,8 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
           <TextField
             label="Age"
             type="number"
+            error={isAgeError}
+            helperText={"Age must be greater than 0"}
             value={formPatient.age}
             fullWidth
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('age', e)}
@@ -165,7 +186,7 @@ export const PatientInfoForm = ({ name, age, onSubmit }: patientInfoFormProps) =
               margin: '0px',
             }
           }
-            onClick={() => onSubmit(formPatient)}>Submit</Button>
+            onClick={() => handleSubmit()}>Submit</Button>
         </Grid>
       </Grid >
     </>
