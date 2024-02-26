@@ -87,8 +87,15 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
+    logger.LogInformation($"Default Patient Goals: {patient?.UseDefaultNutrientGoals}");
+    if (patient?.UseDefaultNutrientGoals ?? false || patient?.UseDefaultNutrientGoals == true)
+    {
+      patient.Age = 19; // Default age
+      patient.Sex = "M"; // Default sex
+    }
+
     var pictureName = Guid.NewGuid();
-    if (!patient.Base64Image.IsNullOrEmpty())
+    if (!patient?.Base64Image.IsNullOrEmpty() ?? false)
     {
       var base64Image = patient?.Base64Image?.Split(',')[1];
       byte[] bytes = Convert.FromBase64String(base64Image ?? throw new Exception("image stream is null your empty"));
@@ -101,7 +108,7 @@ public class PatientController : ControllerBase
       Firstname = patient?.Firstname ?? throw new InvalidOperationException("First name it required"),
       Lastname = patient.Lastname,
       Age = patient.Age,
-      Sex = patient.Sex,
+      Sex = patient.Sex != "M" && patient.Sex != "F" ? "M" : patient.Sex, // This was Drew Gordons desicion
       ProfilePictureName = patient?.Base64Image != null ? pictureName.ToString() : null,
       CustomerId = customer.Id,
     };
