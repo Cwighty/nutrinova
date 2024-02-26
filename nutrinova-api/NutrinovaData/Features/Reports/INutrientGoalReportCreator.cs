@@ -4,5 +4,5 @@ namespace NutrinovaData.Features.Reports;
 
 public interface INutrientGoalReportCreator
 {
-  PatientNutrientGoalReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate);
+  PatientNutrientReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate, int nutrientId = 0);
 }

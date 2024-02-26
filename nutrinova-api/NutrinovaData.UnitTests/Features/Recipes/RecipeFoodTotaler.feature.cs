@@ -30,56 +30,56 @@ namespace NutrinovaData.UnitTests.Features.Recipes
 
 #line 1 "RecipeFoodTotaler.feature"
 #line hidden
-
-    [NUnit.Framework.OneTimeSetUpAttribute()]
-    public virtual void FeatureSetup()
-    {
-      testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-      TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features/Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\n    As a nutrition analyst\n    I " +
-              "I want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
-      testRunner.OnFeatureStart(featureInfo);
-    }
-
-    [NUnit.Framework.OneTimeTearDownAttribute()]
-    public virtual void FeatureTearDown()
-    {
-      testRunner.OnFeatureEnd();
-      testRunner = null;
-    }
-
-    [NUnit.Framework.SetUpAttribute()]
-    public void TestInitialize()
-    {
-    }
-
-    [NUnit.Framework.TearDownAttribute()]
-    public void TestTearDown()
-    {
-      testRunner.OnScenarioEnd();
-    }
-
-    public void ScenarioInitialize(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
-    {
-      testRunner.OnScenarioInitialize(scenarioInfo);
-      testRunner.ScenarioContext.ScenarioContainer.RegisterInstanceAs<NUnit.Framework.TestContext>(NUnit.Framework.TestContext.CurrentContext);
-    }
-
-    public void ScenarioStart()
-    {
-      testRunner.OnScenarioStart();
-    }
-
-    public void ScenarioCleanup()
-    {
-      testRunner.CollectScenarioErrors();
-    }
-
-    [NUnit.Framework.TestAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Total nutrients from a list of recipe foods")]
-    [NUnit.Framework.CategoryAttribute("GetNutrientSummaries")]
-    public void TotalNutrientsFromAListOfRecipeFoods()
-    {
-      string[] tagsOfScenario = new string[] {
+        
+        [NUnit.Framework.OneTimeSetUpAttribute()]
+        public virtual void FeatureSetup()
+        {
+            testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features/Recipes", "RecipeFoodTotaler", "    In order to get accurate nutrient summaries\n    As a nutrition analyst\n    I " +
+                    "want to be able to total nutrients from various recipe foods", ProgrammingLanguage.CSharp, featureTags);
+            testRunner.OnFeatureStart(featureInfo);
+        }
+        
+        [NUnit.Framework.OneTimeTearDownAttribute()]
+        public virtual void FeatureTearDown()
+        {
+            testRunner.OnFeatureEnd();
+            testRunner = null;
+        }
+        
+        [NUnit.Framework.SetUpAttribute()]
+        public void TestInitialize()
+        {
+        }
+        
+        [NUnit.Framework.TearDownAttribute()]
+        public void TestTearDown()
+        {
+            testRunner.OnScenarioEnd();
+        }
+        
+        public void ScenarioInitialize(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
+        {
+            testRunner.OnScenarioInitialize(scenarioInfo);
+            testRunner.ScenarioContext.ScenarioContainer.RegisterInstanceAs<NUnit.Framework.TestContext>(NUnit.Framework.TestContext.CurrentContext);
+        }
+        
+        public void ScenarioStart()
+        {
+            testRunner.OnScenarioStart();
+        }
+        
+        public void ScenarioCleanup()
+        {
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Total nutrients from a list of recipe foods")]
+        [NUnit.Framework.CategoryAttribute("GetNutrientSummaries")]
+        public void TotalNutrientsFromAListOfRecipeFoods()
+        {
+            string[] tagsOfScenario = new string[] {
                     "GetNutrientSummaries"};
       System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
       TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Total nutrients from a list of recipe foods", null, tagsOfScenario, argumentsOfScenario, featureTags);
