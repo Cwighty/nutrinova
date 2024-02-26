@@ -1,4 +1,5 @@
 ﻿using NutrinovaData.Features.Goals;
+using NutrinovaData.Features.Reports;
 
 namespace NutrinovaApi.IntegrationTests;
 
