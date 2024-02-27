@@ -44,7 +44,7 @@ const PatientsPage = () => {
       <PageContainer title="Patients">
         <Box>
           <Button onClick={toggleOpen}>Add a Patient</Button>
-          <PatientInfoModal patientAge={selectedPatient?.age} patientName={`${selectedPatient?.firstname} ${selectedPatient?.lastname}`} openModal={open} onClose={toggleOpen} submitFunction={HandlePatientAdd} />
+          <PatientInfoModal patientAge={selectedPatient?.age} openModal={open} onClose={toggleOpen} submitFunction={HandlePatientAdd} />
         </Box >
 
         <Typography variant="button">Patients</Typography>
