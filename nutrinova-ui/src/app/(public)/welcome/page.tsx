@@ -116,7 +116,7 @@ const Welcome = () => {
 
                 <Grid item xs={6}>
                   <Box display="flex" justifyContent="center">
-                    <Button color="primary" onClick={() => {/* Handle click for care for others */ }}>
+                    <Button color="primary" onClick={() => { router.push('/addpatients') }}>
                       <ArrowCircleRight fontSize={'large'} />
                     </Button>
                   </Box>
