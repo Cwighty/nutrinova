@@ -229,7 +229,60 @@ public class GoalController : ControllerBase
       DaysCount = patientReports.Count,
     };
 
-    return Ok(aggregateReport);
+    var testReport = new AggregatePatientNutrientReport
+    {
+      BeginDate = beginDate,
+      EndDate = endDate,
+      PatientReports = new List<PatientNutrientReport>
+      {
+        new()
+        {
+          PatientId = string.Empty,
+          PatientName = "Test Patient",
+          AvgConsumption = 10,
+          Days = new List<DailyNutrientGoalReport>
+          {
+            new()
+            {
+              Date = beginDate,
+              NutrientGoalReportItems = new List<NutrientGoalReportItem>
+              {
+                new()
+                {
+                  ConsumedAmount = 10,
+                  CustomTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = 10,
+                    UpperLimit = null,
+                    Type = "RDA",
+                  },
+                  RecommendedTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = 10,
+                    UpperLimit = null,
+                    Type = "RDA",
+                  },
+                  NutrientId = 2,
+                  NutrientName = "Protien",
+                  GoalStatus = NutrientGoalStatus.Met,
+                  PreferredUnit = new UnitOption
+                  {
+                    Description = "Grams",
+                    Abbreviation = "g",
+                    Category = new UnitCategoryRequestModel
+                    {
+                      Description = "Solid",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    return Ok(testReport);
   }
 
   [HttpGet("reccomendation")]

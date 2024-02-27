@@ -16,17 +16,17 @@ const DailyRecapCard: React.FC = () => {
   const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
-  console.log(patient);
   const { data: report, isLoading: reportDataLoading } = useFetchGoalReport(
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = report?.patientReports.filter(
-    (r) => r.patientId === patient?.id
-  )[0];
+  const selectedPatientReport = report?.patientReports[0]
 
   const nutrients: NutrientGoalReportItem[] =
     selectedPatientReport?.days ?? [];
+
+  console.log(selectedPatientReport)
+  console.log(nutrients)
 
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
@@ -66,16 +66,16 @@ const DailyRecapCard: React.FC = () => {
             </Typography>
           </Box>
         )}
-        {nutrients &&
+        {selectedPatientReport && nutrients &&
           nutrients.length > 0 &&
-          nutrients.map((nutrient) => (
+          nutrients.map((day) => (
             <NutrientProgress
-              key={nutrient.nutrientId}
-              nutrientName={nutrient.nutrientName}
-              consumedAmount={nutrient.consumedAmount}
-              targetAmount={nutrient.customTargetAmount}
-              status={nutrient.goalStatus}
-              unit={nutrient.preferredUnit.abbreviation}
+              key={day.nutrientId}
+              nutrientName={day.nutrientName}
+              consumedAmount={day.consumedAmount}
+              targetAmount={day.customTargetAmount}
+              status={day.goalStatus}
+              unit={day.preferredUnit?.abbreviation}
             />
           ))}
       </GenericCard>
