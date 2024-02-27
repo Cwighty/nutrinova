@@ -18,7 +18,7 @@ public class UsdaNutrientRecommendationService : INutrientRecommendationService
     _dbContext = dbContext;
   }
 
-  public async Task<UsdaRecommendedNutrientValue> GetNutrientReccomendationAsync(UsdaNutrient nutrient, int age, Sex sex)
+  public async Task<UsdaRecommendedNutrientValue> GetNutrientRecommendationAsync(UsdaNutrient nutrient, int age, Sex sex)
   {
     if (nutrient == null)
     {

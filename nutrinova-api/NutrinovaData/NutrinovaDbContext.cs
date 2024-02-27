@@ -552,7 +552,7 @@ public partial class NutrinovaDbContext : DbContext
               .HasNoKey()
               .ToView("usda_recommended_nutrient_value");
 
-      entity.Property(e => e.Groupid).HasColumnName("groupid");
+      entity.Property(e => e.GroupId).HasColumnName("groupid");
       entity.Property(e => e.MaxAge).HasColumnName("max_age");
       entity.Property(e => e.MinAge).HasColumnName("min_age");
       entity.Property(e => e.NutrientName)

@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { Patient } from "@/app/(authorized)/patients/_models/patient";
-import { CreateGoalModalContent } from "@/components/forms/CreateGoalModalContent";
+import { CreateGoalModalContent } from "@/app/(authorized)/goals/CreateGoalModalContent";
 
 interface CreatePatientNutrientGoalModalProps {
   handleSubmit: () => void;

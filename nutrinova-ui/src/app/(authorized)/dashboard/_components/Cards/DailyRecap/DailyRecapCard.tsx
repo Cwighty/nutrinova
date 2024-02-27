@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import GenericCard from "../GenericCard";
-import { CreatePatientNutrientGoalModal } from "@/components/forms/CreatePatientNutrientGoalModal";
+import { CreatePatientNutrientGoalModal } from "@/app/(authorized)/goals/CreatePatientNutrientGoalModal";
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import {
@@ -17,11 +17,11 @@ const DailyRecapCard: React.FC = () => {
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
   const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport(
-    { beginDate: today, endDate: today }
+    { beginDate: today, endDate: today },
   );
 
   const selectedPatientReport = reportData?.filter(
-    (r) => r.patientId === patient?.id
+    (r) => r.patientId === patient?.id,
   )[0];
 
   const nutrients: NutrientGoalReportItem[] =
