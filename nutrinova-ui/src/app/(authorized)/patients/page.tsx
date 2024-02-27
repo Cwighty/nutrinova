@@ -13,6 +13,7 @@ const PatientsPage = () => {
   const { patients, selectedPatient } = useContext(PatientContext);
   const createPatientMutation = useCreatePatientMutation();
 
+  const [open, setOpen] = useState(false);
 
   const handleDelete = (patient: Patient) => {
     // TODO: how should we handle this?
@@ -20,7 +21,6 @@ const PatientsPage = () => {
     console.log("delete", patient);
   }
 
-  const [open, setOpen] = useState(false);
 
   const toggleOpen = () => {
     setOpen(!open);
