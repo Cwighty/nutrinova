@@ -19,8 +19,7 @@ services:
 
   client:
     container_name: nutrinova-client
-    build:
-      context: .
+    build: .
     user: developer
     environment:
       - NUTRINOVA_API_URL=http://api:5000
@@ -38,8 +37,7 @@ services:
   api:
     container_name: nutrinova-api
     user: 0:0
-    build:
-      context: .
+    build: .
     volumes:
       - ../:/app/
       - images:/images

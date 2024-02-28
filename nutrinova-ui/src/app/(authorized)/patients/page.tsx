@@ -1,8 +1,8 @@
 'use client'
-import CreatePatientDialog from "./_components/CreatePatientDialog";
 import { Box, IconButton, List, ListItem, Typography } from "@mui/material";
+import { PatientInfoModal } from "@/app/(authorized)/patients/_components/PatientInfoModal";
 import { PageContainer } from "@/components/PageContainer";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import { Delete } from "@mui/icons-material";
 import { Patient } from "./_models/patient";
@@ -16,12 +16,18 @@ const PatientsPage = () => {
     console.log("delete", patient);
   }
 
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  }
+
   return (
     <>
       <PageContainer title="Patients">
         <Box>
           <Typography variant="button">Add a Patient</Typography>
-          <CreatePatientDialog />
+          <PatientInfoModal openModal={open} onClose={toggleOpen} />
         </Box >
 
         <Typography variant="button">Patients</Typography>

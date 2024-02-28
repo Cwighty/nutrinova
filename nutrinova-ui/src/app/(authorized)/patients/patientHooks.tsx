@@ -1,7 +1,7 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Patient } from "./_models/patient";
+import { CreatePatientReq, Patient } from "./_models/patient";
 import { getSession } from "next-auth/react";
 import { customerService } from "@/services/customerService";
 
@@ -36,11 +36,12 @@ export const useGetAllPatientsQuery = () => {
 };
 
 // Create a new patient
-const createPatient = async (patient: Patient) => {
+const createPatient = async (patient: CreatePatientReq) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: 'client',
   });
+  console.log("patient", patient);
   const response = await apiClient.post('/patient/create-patient', patient);
   return response.status === 200;
 };
@@ -84,7 +85,6 @@ const getCurrentPatientImage = async (patientId: string) => {
   });
   const response = await apiClient.get(`/patient/image/${patientId}`, { responseType: 'blob' });
   console.log("response", response);
-  //convert here are return
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(response.data as Blob); // Converts Blob to Base64
