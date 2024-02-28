@@ -31,6 +31,10 @@ const AddPatientPage = () => {
     setPatients(prevPatients => [...prevPatients, patient]);
   };
 
+  const handleDeletePatient = (patient: PatientForm) => {
+    setPatients(prevPatients => prevPatients.filter(p => p !== patient));
+  }
+
 
   const handleMultiUserSubmission = async (patientInfo: PatientForm[]) => {
     const session = await getSession();
@@ -83,9 +87,7 @@ const AddPatientPage = () => {
 
                 <List>
                   {patients.map((patient, index) => (
-                    <PatientListItem key={index} patient={patient} handleDelete={function (patient: PatientForm): void {
-                      throw new Error('Function not implemented.');
-                    }} />
+                    <PatientListItem key={index} patient={patient} handleDelete={handleDeletePatient} />
                   ))}
                 </List>
               </Grid>
