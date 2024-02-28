@@ -10,24 +10,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useState } from "react";
 import {
   useGetNutrientsQuery,
   useGetUnitsQuery,
 } from "@/app/(authorized)/food/foodHooks";
 import { NutrientOption } from "@/app/(authorized)/food/_models/nutrientOption";
-import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import { useFetchNutrientRecommendation } from "@/app/(authorized)/goals/goalHooks";
 import { PatientContext } from "@/components/providers/PatientProvider";
+import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 
 interface CreateGoalModalContentProps {
   error?: boolean;
   helperText?: string;
   onSelectedNutrientChange: (nutrient: NutrientOption | null) => void;
-  onNutrientAmountChange: (
-    amount: number | null,
-    unit: UnitOption | null,
-  ) => void;
+  newGoal: NutrientGoalRequestModel;
+  setNewGoal: (newGoal: NutrientGoalRequestModel) => void;
   patientName: string;
 }
 
@@ -35,7 +33,8 @@ export const CreateGoalModalContent = ({
   error,
   helperText,
   onSelectedNutrientChange,
-  onNutrientAmountChange,
+  newGoal,
+  setNewGoal,
   patientName,
 }: CreateGoalModalContentProps) => {
   const goalRangeTypes = [
@@ -78,39 +77,26 @@ export const CreateGoalModalContent = ({
     value: NutrientOption | null,
   ) => {
     setSelectedNutrient(value);
+    if (value) setNewGoal({ ...newGoal, nutrientId: value.id });
     onSelectedNutrientChange(value);
-  };
-
-  const handleNutrientAmountChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const newAmount = parseFloat(event.target.value) ?? null;
-    const newUnit =
-      unitOptions?.find((u) => u.id === selectedNutrient?.preferredUnitId) ??
-      null;
-    onNutrientAmountChange(newAmount, newUnit);
   };
 
   const handleGoalTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     setGoalType(event.target.value);
+    setNewGoal({
+      ...newGoal,
+      useRecommended: event.target.value === "recommended",
+    });
   };
 
   const handleLowerLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
     setLowerLimit(event.target.value === "" ? "" : Number(event.target.value));
+    setNewGoal({ ...newGoal, dailyLowerLimit: Number(event.target.value) });
   };
 
   const handleUpperLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUpperLimit(event.target.value === "" ? "" : Number(event.target.value));
-  };
-
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Submit form logic here
-    alert(
-      `Protein goal set to: ${lowerLimit}g - ${
-        upperLimit || "No upper limit"
-      }g`,
-    );
+    setNewGoal({ ...newGoal, dailyUpperLimit: Number(event.target.value) });
   };
 
   if (nutrientOptionsLoading || unitOptionsLoading) {
@@ -127,12 +113,7 @@ export const CreateGoalModalContent = ({
   return (
     <>
       {nutrientOptions && unitOptions && (
-        <Box
-          component="form"
-          noValidate
-          onSubmit={handleFormSubmit}
-          sx={{ mt: 1 }}
-        >
+        <Box component="form" noValidate sx={{ mt: 1 }}>
           <Autocomplete
             options={nutrientOptions}
             groupBy={(option) => option.categoryName}
@@ -297,6 +278,7 @@ export const CreateGoalModalContent = ({
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming between{" "}
                               {lowerLimit +
+                                nutrientRecommendation.unit +
                                 " and " +
                                 upperLimit +
                                 nutrientRecommendation.unit +

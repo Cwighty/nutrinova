@@ -30,7 +30,7 @@ const DailyRecapCard: React.FC = () => {
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
     patientId: "",
-    dailyGoalAmount: 0,
+    useRecommended: true,
   };
   const [newGoal, setNewGoal] =
     React.useState<NutrientGoalRequestModel>(defaultGoal);

@@ -58,12 +58,8 @@ export const CreatePatientNutrientGoalModal = ({
                   patientId: selectedPatient.id!,
                 });
             }}
-            onNutrientAmountChange={(newAmount) => {
-              setNewGoal({
-                ...newGoal,
-                dailyGoalAmount: newAmount ?? 0,
-              });
-            }}
+            newGoal={newGoal}
+            setNewGoal={setNewGoal}
             patientName={selectedPatient.firstname}
           />
         </DialogContent>
