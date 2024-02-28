@@ -3,7 +3,7 @@ import { PatientForm } from '@/app/(authorized)/patients/_components/PatientInfo
 import { PatientInfoModal } from '@/app/(authorized)/patients/_components/PatientInfoModal';
 import { Customer, customerService } from '@/services/customerService';
 import { Add } from '@mui/icons-material';
-import { Box, Typography, List, Button, Container, Grid, Divider, Paper } from '@mui/material';
+import { Box, Typography, List, Button, Container, Grid, Paper } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ import { PatientListItem } from './_components/PatientListItem';
 
 const AddPatientPage = () => {
   const [patients, setPatients] = useState<PatientForm[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const router = useRouter();
   const createPatientMutation = useCreatePatientMutation();
 
@@ -78,10 +78,9 @@ const AddPatientPage = () => {
         <Paper>
 
           <Box sx={{ p: 2 }}>
-            <Typography variant="h3" gutterBottom>
-              Who Will You Care For?
+            <Typography variant="h4" gutterBottom>
+              Who Will You Be Caring For?
             </Typography>
-            <Divider />
             <Grid container alignItems={'center'} justifyContent={'center'} paddingTop={2} paddingBottom={2} >
               <Grid item xs={12} justifyContent={'center'}>
 
@@ -93,7 +92,6 @@ const AddPatientPage = () => {
               </Grid>
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
                 <Button
-                  variant="contained"
                   startIcon={<Add />}
                   onClick={handleOpenModal}
                 >
@@ -101,10 +99,9 @@ const AddPatientPage = () => {
                 </Button>
               </Grid>
             </Grid>
-            <Divider />
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button variant="contained" onClick={() => handleMultiUserSubmission(patients)}>Done</Button>
+              <Button variant="contained" disabled={patients.length <= 0} onClick={() => handleMultiUserSubmission(patients)}>Done</Button>
             </Box>
           </Box>
           <PatientInfoModal
