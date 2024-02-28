@@ -23,10 +23,7 @@ const DailyRecapCard: React.FC = () => {
   const selectedPatientReport = report?.patientReports[0]
 
   const nutrients: NutrientGoalReportItem[] =
-    selectedPatientReport?.days ?? [];
-
-  console.log(selectedPatientReport)
-  console.log(nutrients)
+    selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
 
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
@@ -68,14 +65,14 @@ const DailyRecapCard: React.FC = () => {
         )}
         {selectedPatientReport && nutrients &&
           nutrients.length > 0 &&
-          nutrients.map((day) => (
+          nutrients.map((nutrient) => (
             <NutrientProgress
-              key={day.nutrientId}
-              nutrientName={day.nutrientName}
-              consumedAmount={day.consumedAmount}
-              targetAmount={day.customTargetAmount}
-              status={day.goalStatus}
-              unit={day.preferredUnit?.abbreviation}
+              key={nutrient.nutrientId}
+              nutrientName={nutrient.nutrientName}
+              consumedAmount={nutrient.consumedAmount}
+              targetAmount={nutrient.customTargetAmount}
+              status={nutrient.goalStatus}
+              unit={nutrient.preferredUnit?.abbreviation}
             />
           ))}
       </GenericCard>

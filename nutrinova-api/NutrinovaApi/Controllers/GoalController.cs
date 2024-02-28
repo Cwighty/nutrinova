@@ -233,13 +233,14 @@ public class GoalController : ControllerBase
     {
       BeginDate = beginDate,
       EndDate = endDate,
+      DaysCount = 1,
       PatientReports = new List<PatientNutrientReport>
       {
         new()
         {
           PatientId = string.Empty,
           PatientName = "Test Patient",
-          AvgConsumption = 10,
+          AvgConsumption = 20,
           Days = new List<DailyNutrientGoalReport>
           {
             new()
@@ -249,7 +250,7 @@ public class GoalController : ControllerBase
               {
                 new()
                 {
-                  ConsumedAmount = 10,
+                  ConsumedAmount = 5,
                   CustomTargetAmount = new GoalTargetAmount
                   {
                     LowerLimit = 10,
@@ -264,7 +265,7 @@ public class GoalController : ControllerBase
                   },
                   NutrientId = 2,
                   NutrientName = "Protien",
-                  GoalStatus = NutrientGoalStatus.Met,
+                  GoalStatus = NutrientGoalStatus.NotMet,
                   PreferredUnit = new UnitOption
                   {
                     Description = "Grams",

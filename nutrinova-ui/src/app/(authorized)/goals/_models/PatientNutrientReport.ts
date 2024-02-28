@@ -1,4 +1,4 @@
-import { NutrientGoalReportItem } from "./NutrientGoalReportItem";
+import { DailyNutrientGoalReport } from "./NutrientGoalReportItem";
 
 
 export interface PatientNutrientReport {
@@ -7,5 +7,5 @@ export interface PatientNutrientReport {
   daysAchievedCount: number;
   maxConsumption: number;
   avgConsumption: number;
-  days: NutrientGoalReportItem[];
+  days: DailyNutrientGoalReport[];
 }

@@ -1,18 +1,34 @@
 import React from 'react';
 import { Box, Typography, Paper, LinearProgress, useTheme, Grid, } from '@mui/material';
 import { NutrientProgressProps } from './NutrientProgressProps';
-import { WarningAmberOutlined } from '@mui/icons-material';
+import { CheckBoxOutlined, PendingOutlined, WarningAmberOutlined } from '@mui/icons-material';
+import { NutrientGoalStatus } from '@/app/(authorized)/goals/_models/NutrientGoalReportItem';
 
 const NutrientProgress: React.FC<NutrientProgressProps> = ({
   nutrientName,
   consumedAmount,
   targetAmount,
   unit,
+  status,
 }) => {
   const theme = useTheme();
-  const percentage = (consumedAmount / targetAmount.LowerLimit) * 100;
-  const isOverLimit = consumedAmount > targetAmount.LowerLimit;
-  const progressColor = isOverLimit ? theme.palette.warning.main : theme.palette.primary.main;
+  const percentage = targetAmount.lowerLimit ? (consumedAmount / targetAmount.lowerLimit) * 100 : 0;
+
+  let progressColor;
+  switch (status) {
+    case NutrientGoalStatus.Exceeded:
+      progressColor = theme.palette.warning.main;
+      break;
+    case NutrientGoalStatus.Met:
+      progressColor = theme.palette.success.main;
+      break;
+    default:
+      progressColor = theme.palette.primary.main;
+  }
+
+  const ProgressIcon = status === NutrientGoalStatus.Met ? CheckBoxOutlined
+    : status === NutrientGoalStatus.Exceeded ? WarningAmberOutlined
+      : PendingOutlined;
 
   return (
     <Paper elevation={3} sx={{ padding: 1, backgroundColor: theme.palette.grey[900] }}>
@@ -27,11 +43,11 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
             <Box fontWeight="bold" fontSize="2em" color={progressColor}>
               {consumedAmount} {unit} {" "}
               <Typography variant="caption" color="white" fontSize=".5em">
-                /{targetAmount.LowerLimit} {unit}
+                /{targetAmount.lowerLimit} {unit}
               </Typography>
             </Box>
-            <Box color={progressColor}>
-              <WarningAmberOutlined sx={{ fontSize: "2.5em" }} />
+            <Box color={progressColor} >
+              <ProgressIcon sx={{ fontSize: "2.5em" }} />
             </Box>
           </Box>
         </Grid>
