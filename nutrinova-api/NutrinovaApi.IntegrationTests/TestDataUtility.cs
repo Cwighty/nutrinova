@@ -61,7 +61,7 @@ internal class TestDataUtility
       date = DateTime.UtcNow;
     }
 
-    var nutrient = await EnsureNutrientExistsAsync();
+    await EnsureNutrientExistsAsync();
     var customer = await EnsureCustomerExistsAsync(factory.DefaultCustomerId);
     var patient = await EnsurePatientExistsAsync(customer);
     var meal = new Meal
@@ -76,8 +76,15 @@ internal class TestDataUtility
       {
         new()
         {
-          NutrientId = nutrient.Id,
+          Id = Guid.NewGuid(),
+          NutrientId = 3,
           Amount = 10,
+        },
+        new()
+        {
+          Id = Guid.NewGuid(),
+          NutrientId = 2,
+          Amount = 20,
         },
       },
       Notes = "Test Notes",
@@ -196,13 +203,13 @@ internal class TestDataUtility
   public async Task<PatientNutrientDailyGoal> CreatePatientGoalAsync()
   {
     var patient = await EnsurePatientExistsAsync(await EnsureCustomerExistsAsync(factory.DefaultCustomerId));
-    var nutrient = await EnsureNutrientExistsAsync();
+    await EnsureNutrientExistsAsync();
 
     var goal = new PatientNutrientDailyGoal
     {
       Id = Guid.NewGuid(),
       PatientId = patient.Id,
-      NutrientId = nutrient.Id,
+      NutrientId = 2,
       CustomLowerTarget = 10,
       CustomUpperTarget = 20,
       RecommendedUpperTarget = 30,
