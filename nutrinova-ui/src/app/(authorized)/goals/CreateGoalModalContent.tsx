@@ -27,6 +27,8 @@ interface CreateGoalModalContentProps {
   newGoal: NutrientGoalRequestModel;
   setNewGoal: (newGoal: NutrientGoalRequestModel) => void;
   patientName: string;
+  validationMessage: string;
+  setValidationMessage: (validationMessage: string) => void;
 }
 
 export const CreateGoalModalContent = ({
@@ -36,6 +38,8 @@ export const CreateGoalModalContent = ({
   newGoal,
   setNewGoal,
   patientName,
+  validationMessage,
+  setValidationMessage,
 }: CreateGoalModalContentProps) => {
   const goalRangeTypes = [
     "RDA (Lower Limit)",
@@ -83,21 +87,77 @@ export const CreateGoalModalContent = ({
 
   const handleGoalTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     setGoalType(event.target.value);
+    setLowerLimit("");
+    setUpperLimit("");
+    setValidationMessage("");
     setNewGoal({
       ...newGoal,
+      dailyLowerLimit: undefined,
+      dailyUpperLimit: undefined,
       useRecommended: event.target.value === "recommended",
     });
   };
 
+  const handleGoalRangeTypeChange = (goalRangeType: string | null) => {
+    setLowerLimit("");
+    setUpperLimit("");
+    setValidationMessage("");
+    setGoalRangeType(goalRangeType);
+  };
+
   const handleLowerLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setLowerLimit(event.target.value === "" ? "" : Number(event.target.value));
-    setNewGoal({ ...newGoal, dailyLowerLimit: Number(event.target.value) });
+    if (/^\d*\.?\d*$/.test(event.target.value)) {
+      const numericValue =
+        event.target.value === "" ? "" : Number(event.target.value);
+      if (goalRangeType === "AMDR (Range)" && upperLimit !== "") {
+        setValidationMessage("");
+      }
+      if (
+        goalRangeType === "RDA (Lower Limit)" ||
+        goalRangeType === "AI (Lower Limit)"
+      ) {
+        setValidationMessage("");
+      }
+      setLowerLimit(numericValue);
+      setNewGoal({ ...newGoal, dailyLowerLimit: Number(numericValue) });
+    }
   };
 
   const handleUpperLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setUpperLimit(event.target.value === "" ? "" : Number(event.target.value));
-    setNewGoal({ ...newGoal, dailyUpperLimit: Number(event.target.value) });
+    if (/^\d*\.?\d*$/.test(event.target.value)) {
+      const numericValue =
+        event.target.value === "" ? "" : Number(event.target.value);
+      if (goalRangeType === "AMDR (Range)" && lowerLimit !== "") {
+        setValidationMessage("");
+      }
+      if (goalRangeType === "UL (Upper Limit)") {
+        setValidationMessage("");
+      }
+      setUpperLimit(numericValue);
+      setNewGoal({ ...newGoal, dailyUpperLimit: Number(numericValue) });
+    }
   };
+
+  if (
+    goalRangeType === "RDA (Lower Limit)" ||
+    goalRangeType === "AI (Lower Limit"
+  ) {
+    if (lowerLimit === "") {
+      setValidationMessage("Please enter a lower limit");
+    }
+  }
+
+  if (goalRangeType === "UL (Upper Limit)") {
+    if (upperLimit === "") {
+      setValidationMessage("Please enter an upper limit");
+    }
+  }
+
+  if (goalRangeType === "AMDR (Range)") {
+    if (lowerLimit === "" || upperLimit === "" || lowerLimit >= upperLimit) {
+      setValidationMessage("Please enter a valid range");
+    }
+  }
 
   if (nutrientOptionsLoading || unitOptionsLoading) {
     return <Skeleton variant="rounded" width={400} height={40} />;
@@ -188,7 +248,7 @@ export const CreateGoalModalContent = ({
                     options={goalRangeTypes}
                     getOptionLabel={(option) => option}
                     value={goalRangeType}
-                    onChange={(_, value) => setGoalRangeType(value)}
+                    onChange={(_, value) => handleGoalRangeTypeChange(value)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -204,7 +264,6 @@ export const CreateGoalModalContent = ({
                         <Box>
                           <TextField
                             label="Lower Limit"
-                            type="number"
                             value={lowerLimit}
                             onChange={handleLowerLimitChange}
                             InputProps={{
@@ -229,7 +288,6 @@ export const CreateGoalModalContent = ({
                         <Box>
                           <TextField
                             label="Upper Limit"
-                            type="number"
                             value={upperLimit}
                             onChange={handleUpperLimitChange}
                             InputProps={{
@@ -255,7 +313,6 @@ export const CreateGoalModalContent = ({
                           <Box sx={{ display: "flex", gap: 2 }}>
                             <TextField
                               label="Lower Limit"
-                              type="number"
                               value={lowerLimit}
                               onChange={handleLowerLimitChange}
                               InputProps={{
@@ -265,7 +322,6 @@ export const CreateGoalModalContent = ({
                             />
                             <TextField
                               label="Upper Limit"
-                              type="number"
                               value={upperLimit}
                               onChange={handleUpperLimitChange}
                               InputProps={{
@@ -274,7 +330,7 @@ export const CreateGoalModalContent = ({
                               sx={{ mb: 1 }}
                             />
                           </Box>
-                          {lowerLimit && upperLimit && (
+                          {lowerLimit && upperLimit && !validationMessage && (
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming between{" "}
                               {lowerLimit +
@@ -291,11 +347,10 @@ export const CreateGoalModalContent = ({
                       )}
                     </>
                   )}
-                  {!nutrientRecommendation.unit && (
-                    <Alert severity="warning">
-                      No unit found for this nutrient. Please contact your
-                      administrator to add a unit to this nutrient.
-                    </Alert>
+                  {validationMessage && (
+                    <Typography variant="caption" sx={{ mb: 1 }} color="error">
+                      {validationMessage}
+                    </Typography>
                   )}
                 </>
               )}

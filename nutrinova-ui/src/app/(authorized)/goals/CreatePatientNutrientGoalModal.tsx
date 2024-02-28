@@ -26,6 +26,7 @@ export const CreatePatientNutrientGoalModal = ({
   selectedPatient,
 }: CreatePatientNutrientGoalModalProps) => {
   const [open, setOpen] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
 
   const handleOpen = () => {
     setOpen(true);
@@ -36,9 +37,12 @@ export const CreatePatientNutrientGoalModal = ({
   };
 
   const submit = () => {
-    handleSubmit();
-    handleClose();
+    if (!validationMessage) {
+      handleSubmit();
+      handleClose();
+    }
   };
+
   return (
     <>
       <Button startIcon={<AddCircleOutlineIcon />} onClick={handleOpen}>
@@ -61,6 +65,8 @@ export const CreatePatientNutrientGoalModal = ({
             newGoal={newGoal}
             setNewGoal={setNewGoal}
             patientName={selectedPatient.firstname}
+            validationMessage={validationMessage}
+            setValidationMessage={setValidationMessage}
           />
         </DialogContent>
         <DialogActions>
