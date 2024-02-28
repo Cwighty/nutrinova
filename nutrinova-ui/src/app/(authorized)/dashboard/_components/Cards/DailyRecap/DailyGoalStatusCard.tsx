@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Paper, useTheme, Grid, Button } from '@mui/material';
 import { NutrientGoalReportItem, NutrientGoalStatus } from '@/app/(authorized)/goals/_models/NutrientGoalReportItem';
 import { CheckBoxOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 export interface DailyGoalStatusCardProps {
   nutrients: NutrientGoalReportItem[];
@@ -11,6 +12,7 @@ export const DailyGoalStatusCard: React.FC<DailyGoalStatusCardProps> = ({
   nutrients
 }) => {
   const theme = useTheme();
+  const router = useRouter();
 
   const totalAcheived = nutrients.filter(n => n.goalStatus === NutrientGoalStatus.Met).length;
   const totalGoals = nutrients.length;
@@ -34,7 +36,7 @@ export const DailyGoalStatusCard: React.FC<DailyGoalStatusCardProps> = ({
         </Grid>
         <Grid item>
           <Box>
-            <Button color="primary" size="small">View Goals</Button>
+            <Button color="primary" size="small" onClick={() => router.push("/goals")}>View Goals</Button>
           </Box>
         </Grid>
       </Grid>
