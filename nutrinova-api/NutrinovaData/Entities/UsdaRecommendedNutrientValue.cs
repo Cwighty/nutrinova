@@ -5,7 +5,7 @@ namespace NutrinovaData.Entities;
 
 public partial class UsdaRecommendedNutrientValue
 {
-  public int? GroupId { get; set; }
+  public int? Groupid { get; set; }
 
   public string? Sex { get; set; }
 
