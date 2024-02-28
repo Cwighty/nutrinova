@@ -3,28 +3,13 @@ import { PatientForm } from '@/app/(authorized)/patients/_components/PatientInfo
 import { PatientInfoModal } from '@/app/(authorized)/patients/_components/PatientInfoModal';
 import { Customer, customerService } from '@/services/customerService';
 import { Add } from '@mui/icons-material';
-import { ListItem, ListItemAvatar, Avatar, ListItemText, Box, Typography, List, Button, Container } from '@mui/material';
+import { Box, Typography, List, Button, Container, Grid } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { CreatePatientReq } from '@/app/(authorized)/patients/_models/patient';
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
-
-
-interface PatientListItemProps {
-  patient: PatientForm;
-}
-
-const PatientListItem = ({ patient }: PatientListItemProps) => {
-  return (
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar>{patient.name.charAt(0)}</Avatar>
-      </ListItemAvatar>
-      <ListItemText primary={patient.name} secondary={`Age: ${patient.optOut ? 19 : patient.age}`} />
-    </ListItem>
-  );
-};
+import { PatientListItem } from './_components/PatientListItem';
 
 
 const AddPatientPage = () => {
@@ -86,29 +71,40 @@ const AddPatientPage = () => {
   return (
     <Container>
       <Box sx={{ p: 2 }}>
-        <Typography variant="h5" gutterBottom>
-          Who will you be caring for?
-        </Typography>
-        <List>
-          {patients.map((patient, index) => (
-            <PatientListItem key={index} patient={patient} />
-          ))}
-        </List>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={handleOpenModal}
-        >
-          Add Patient
-        </Button>
-        <PatientInfoModal
-          openModal={isModalOpen}
-          onClose={handleCloseModal}
-          submitFunction={handleSubmitPatient}
-        />
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button variant="contained" onClick={() => handleMultiUserSubmission(patients)}>Done</Button>
-        </Box>
+        <Grid container alignItems={'center'}  >
+          <Grid item xs={6}>
+            <Typography variant="h1" gutterBottom>
+              Who will you be caring for?
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button variant="contained" onClick={() => handleMultiUserSubmission(patients)}>Done</Button>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <List>
+              {patients.map((patient, index) => (
+                <PatientListItem key={index} patient={patient} />
+              ))}
+            </List>
+          </Grid>
+          <Grid item xs={12}>
+
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={handleOpenModal}
+            >
+              Add Patient
+            </Button>
+          </Grid>
+          <PatientInfoModal
+            openModal={isModalOpen}
+            onClose={handleCloseModal}
+            submitFunction={handleSubmitPatient}
+          />
+        </Grid>
       </Box>
     </Container>
   );

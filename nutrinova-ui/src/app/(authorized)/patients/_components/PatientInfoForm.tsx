@@ -124,8 +124,8 @@ export const PatientInfoForm = ({ name, age = 1, onSubmit }: patientInfoFormProp
             label="Name"
             type="text"
             value={formPatient.name}
-            helperText={"Name Cannot be empty"}
             error={isNameError}
+            helperText={isNameError ? "Name Cannot be empty" : ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('name', e)}
             fullWidth
           >
@@ -146,7 +146,7 @@ export const PatientInfoForm = ({ name, age = 1, onSubmit }: patientInfoFormProp
             label="Age"
             type="number"
             error={isAgeError}
-            helperText={"Age must be greater than 0"}
+            helperText={isAgeError ? "Age must be greater than 0" : ""}
             value={formPatient.age}
             fullWidth
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('age', e)}
