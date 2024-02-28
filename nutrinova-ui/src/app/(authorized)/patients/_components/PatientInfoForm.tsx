@@ -90,7 +90,7 @@ export const PatientInfoForm = ({ name, age = 1, onSubmit }: patientInfoFormProp
     return !isNameError && !isAgeError;
   };
 
-  const isNameError = formPatient.name.length === 0 && formPatient.name == null;
+  const isNameError = formPatient.name.length === 0 || formPatient.name == null || formPatient.name === undefined;
   const isAgeError = formPatient.age !== undefined && formPatient.age <= 0;
 
   const optOutLabel = { inputProps: { 'aria-label': 'Opt out' } };
