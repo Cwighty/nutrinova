@@ -36,8 +36,6 @@ services:
 
   api:
     container_name: nutrinova-api
-    build:
-      context: .
     user: 0:0
     build: .
     volumes:
