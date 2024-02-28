@@ -6,5 +6,9 @@ public class NutrientGoalRequestModel
 
   public int NutrientId { get; set; }
 
-  public decimal DailyGoalAmount { get; set; }
+  public decimal DailyUpperLimit { get; set; }
+
+  public decimal DailyLowerLimit { get; set; }
+
+  public bool UseRecommended { get; set; }
 }

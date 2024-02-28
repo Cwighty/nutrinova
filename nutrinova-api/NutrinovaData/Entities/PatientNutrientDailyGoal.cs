@@ -1,18 +1,15 @@
-﻿namespace NutrinovaData.Features.Goals;
+﻿using System;
+using System.Collections.Generic;
 
-public class NutrientGoalResponse
+namespace NutrinovaData.Entities;
+
+public partial class PatientNutrientDailyGoal
 {
   public Guid Id { get; set; }
 
   public Guid PatientId { get; set; }
 
-  public string PatientName { get; set; } = string.Empty;
-
   public int NutrientId { get; set; }
-
-  public string NutrientName { get; set; } = string.Empty;
-
-  public UnitOption NutrientUnit { get; set; } = new UnitOption();
 
   public decimal? CustomUpperTarget { get; set; }
 
@@ -23,4 +20,10 @@ public class NutrientGoalResponse
   public decimal? RecommendedLowerTarget { get; set; }
 
   public decimal? RecommendedMax { get; set; }
+
+  public string? RecommendedGoalType { get; set; }
+
+  public virtual Nutrient Nutrient { get; set; } = null!;
+
+  public virtual Patient Patient { get; set; } = null!;
 }

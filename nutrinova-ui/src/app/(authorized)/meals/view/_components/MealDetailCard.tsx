@@ -2,30 +2,33 @@
 import { format } from "date-fns";
 import { Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import { Meal } from "@/app/(authorized)/meals/view/_models/viewMeal";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { EditMealModal } from "../../edit/EditMealModal";
 
 interface MealDetailCardProps {
   meal: Meal;
 }
 
 export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
-  const router = useRouter();
 
-  const foodOrRecipe = meal.foodHistoryResponses[0] ? "Food" : "Recipe";
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
-  const description = meal.foodHistoryResponses[0]
-    ? meal.foodHistoryResponses[0].description
-    : meal.recipeHistoryResponses[0]
-      ? meal.recipeHistoryResponses[0].description
-      : "No description available";
+  const handleEditModalToggle = () => {
+    setShowEditModal(!showEditModal);
+  }
+
+  const description = meal.description
+    ? meal.description
+    : "No description available";
 
   const mealTime = format(new Date(meal.recordedAt), "MMMM d, yyyy h:mm a");
 
-  const amount = foodOrRecipe === "Food" ? meal.foodHistoryResponses[0].servingSize : meal.recipeHistoryResponses[0].amount;
-  const unit = foodOrRecipe === "Food" ? meal.foodHistoryResponses[0].unit?.abbreviation : meal.recipeHistoryResponses[0].unit?.abbreviation;
+  const amount = meal.amount;
+  const unit = meal.unit;
 
   return (
     <Paper sx={{ p: 3 }}>
+      <EditMealModal meal={meal} open={showEditModal} handleClose={handleEditModalToggle} />
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
@@ -35,7 +38,7 @@ export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => router.push("/meals/edit?mealId=" + meal.id)}
+          onClick={handleEditModalToggle}
         >
           Edit
         </Button>
@@ -44,7 +47,7 @@ export const MealDetailCard = ({ meal }: MealDetailCardProps) => {
         <Grid item xs={12} md={6}>
           <Paper elevation={6} sx={{ p: 2 }}>
             <Typography variant="subtitle1" >
-              Servings Eaten: {amount} {unit}
+              Servings Eaten: {amount} {unit.abbreviation}
             </Typography>
           </Paper>
         </Grid>

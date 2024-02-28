@@ -1,4 +1,4 @@
-import { Food, Recipe } from "@/app/(authorized)/recipes/create/_models/recipe";
+import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import { Patient } from "@/app/(authorized)/patients/_models/patient";
 
 export interface Meal {
@@ -7,7 +7,23 @@ export interface Meal {
   patientId: string;
   recordedAt: Date;
   notes: string;
-  foodHistoryResponses: Food[];
-  recipeHistoryResponses: Recipe[];
+  amount: number;
+  unit: UnitOption;
+  nutrientSummaries: NutrientSummary[];
   patientResponse: Patient;
+  description: string;
+}
+
+export interface NutrientSummary {
+  nutrientId: string;
+  name: string;
+  amount: number;
+  unit: UnitOption;
+}
+
+export interface UpdateMeal {
+  id: string;
+  recordedat: Date;
+  unitId: number;
+  amount: number;
 }

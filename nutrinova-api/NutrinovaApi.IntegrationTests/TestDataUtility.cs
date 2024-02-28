@@ -33,6 +33,8 @@ internal class TestDataUtility
         CustomerId = customer!.Id,
         Firstname = "Test",
         Lastname = "Patient",
+        Age = 30,
+        Sex = "F",
       };
       context.Patients.Add(patient);
       await context.SaveChangesAsync();
@@ -59,7 +61,7 @@ internal class TestDataUtility
       date = DateTime.UtcNow;
     }
 
-    var nutrient = await EnsureNutrientExistsAsync();
+    await EnsureNutrientExistsAsync();
     var customer = await EnsureCustomerExistsAsync(factory.DefaultCustomerId);
     var patient = await EnsurePatientExistsAsync(customer);
     var meal = new Meal
@@ -74,8 +76,15 @@ internal class TestDataUtility
       {
         new()
         {
-          NutrientId = nutrient.Id,
+          Id = Guid.NewGuid(),
+          NutrientId = 3,
           Amount = 10,
+        },
+        new()
+        {
+          Id = Guid.NewGuid(),
+          NutrientId = 2,
+          Amount = 20,
         },
       },
       Notes = "Test Notes",
@@ -125,6 +134,7 @@ internal class TestDataUtility
       Description = "Test Food 1",
       Ingredients = "Test Ingredients 1",
       ServingSize = 1,
+      ServingSizeUnit = 1,
       FoodPlanNutrients = new List<FoodPlanNutrient>
       {
         new()
@@ -142,6 +152,7 @@ internal class TestDataUtility
       Description = "Test Food 2",
       Ingredients = "Test Ingredients 2",
       ServingSize = 1,
+      ServingSizeUnit = 1,
       FoodPlanNutrients = new List<FoodPlanNutrient>
       {
         new()
@@ -163,6 +174,7 @@ internal class TestDataUtility
       Description = "Test Recipe",
       CreatedAt = DateTime.UtcNow,
       Amount = 1,
+      ServingSizeUnit = 1,
     };
 
     recipePlan.RecipeFoods = new List<RecipeFood>
@@ -188,20 +200,24 @@ internal class TestDataUtility
     return recipePlan;
   }
 
-  public async Task<PatientNutrientGoal> CreatePatientGoalAsync()
+  public async Task<PatientNutrientDailyGoal> CreatePatientGoalAsync()
   {
     var patient = await EnsurePatientExistsAsync(await EnsureCustomerExistsAsync(factory.DefaultCustomerId));
-    var nutrient = await EnsureNutrientExistsAsync();
+    await EnsureNutrientExistsAsync();
 
-    var goal = new PatientNutrientGoal
+    var goal = new PatientNutrientDailyGoal
     {
       Id = Guid.NewGuid(),
       PatientId = patient.Id,
-      NutrientId = nutrient.Id,
-      DailyGoalAmount = 100,
+      NutrientId = 2,
+      CustomLowerTarget = 10,
+      CustomUpperTarget = 20,
+      RecommendedUpperTarget = 30,
+      RecommendedLowerTarget = 40,
+      RecommendedMax = 50,
     };
 
-    context.PatientNutrientGoals.Add(goal);
+    context.PatientNutrientDailyGoals.Add(goal);
     await context.SaveChangesAsync();
     return goal;
   }

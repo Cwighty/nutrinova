@@ -38,8 +38,12 @@ export default function SearchResultDataGrid({
       width: 100,
       valueGetter: (params) => {
         const row = params.row as FoodSearchResult;
-        if (row.foodNutrients && row.foodNutrients[3]) {
-          return row.foodNutrients[3].value.toString();
+        if (
+          row.foodNutrients &&
+          row.foodNutrients.map((x) => x.nutrientName).includes("Energy")
+        ) {
+          return row.foodNutrients.find((x) => x.nutrientName === "Energy")
+            ?.value;
         }
         return "";
       },

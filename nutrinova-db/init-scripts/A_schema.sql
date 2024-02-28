@@ -101,6 +101,9 @@ CREATE TABLE
         id UUID PRIMARY KEY,
         FirstName TEXT NOT NULL,
         LastName TEXT,
+        Age smallint Check (Age > 0),
+        Profile_Picture_Name TEXT,
+        Sex TEXT Check (Sex = 'M' OR Sex = 'F' OR Sex is null),
         Customer_id UUID,
         FOREIGN KEY (Customer_id) REFERENCES Customer (id)
     );
@@ -173,9 +176,14 @@ CREATE TABLE chat_message (
 
 
 -- Nutrient Goals
-CREATE TABLE patient_nutrient_goal (
+CREATE TABLE patient_nutrient_daily_goal (
     id UUID PRIMARY KEY,
     patient_id UUID REFERENCES Patient(id) not null,
     nutrient_id serial REFERENCES Nutrient(id) not null,
-    daily_goal_amount DECIMAL not null
+    custom_upper_target DECIMAL null,
+    custom_lower_target DECIMAL null,
+    recommended_upper_target DECIMAL null,
+    recommended_lower_target DECIMAL null,
+    recommended_max DECIMAL null,
+    recommended_goal_type TEXT 
 );

@@ -9,7 +9,7 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v2
@@ -18,7 +18,9 @@ jobs:
 
       - name: Restore dependencies and run tests
         run: |
-          cd nutrinova-api/NutrinovaData.UnitTests
+          cd ./nutrinova-api
+          dotnet build
+          cd ./NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
           dotnet test

@@ -83,6 +83,47 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     }
   }
 
+  public class RecordRecipeMealTests : MealControllerTests
+  {
+    public RecordRecipeMealTests(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Record_Recipe_As_Meal()
+    {
+      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+      var patient = await DataUtility.EnsurePatientExistsAsync(customer);
+      var recipe = await DataUtility.CreateRecipeAsync();
+      var recordMealRequest = new RecordMealRequest
+      {
+        PatientId = patient.Id,
+        SelectedMealItemId = recipe.Id,
+        MealSelectionType = MealSelectionItemType.Recipe.ToString(),
+        RecordedAt = DateTime.UtcNow,
+        Amount = 1,
+        UnitId = recipe.ServingSizeUnit,
+      };
+
+      // Act
+      var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
+      var stringResponse = await response.Content.ReadAsStringAsync();
+      var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
+
+      // Asserts
+      Assert.NotNull(response);
+      response.EnsureSuccessStatusCode();
+
+      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + desResponse?.Id ?? throw new InvalidOperationException());
+      Assert.NotNull(dbMeal);
+      Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
+      Assert.True(dbMeal.NutrientSummaries.Any());
+      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
+      Assert.Equal(recordMealRequest.UnitId, dbMeal.UnitId);
+    }
+  }
+
   public class RecordMealTests : MealControllerTests
   {
     public RecordMealTests(NutrinovaApiWebApplicationFactory factory)
@@ -123,38 +164,6 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
       Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
       Assert.True(dbMeal.MealNutrients.Any());
       Assert.True(dbMeal.MealNutrients.All(mn => mn.Amount > 0));
-    }
-
-    [Fact]
-    public async Task Record_Recipe_As_Meal()
-    {
-      var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
-      var patient = await DataUtility.EnsurePatientExistsAsync(customer);
-      var recipe = await DataUtility.CreateRecipeAsync();
-      var recordMealRequest = new RecordMealRequest
-      {
-        PatientId = patient.Id,
-        SelectedMealItemId = recipe.Id,
-        MealSelectionType = MealSelectionItemType.Recipe.ToString(),
-        RecordedAt = DateTime.UtcNow,
-        Amount = 1,
-        UnitId = recipe.ServingSizeUnit,
-      };
-
-      // Act
-      var response = await HttpClient.PostAsJsonAsync("be/meal", recordMealRequest);
-      var desResponse = await response.Content.ReadFromJsonAsync<MealResponse>();
-
-      // Assert
-      Assert.NotNull(response);
-      response.EnsureSuccessStatusCode();
-
-      var dbMeal = await HttpClient.GetFromJsonAsync<MealResponse>("be/meal/" + desResponse?.Id ?? throw new InvalidOperationException());
-      Assert.NotNull(dbMeal);
-      Assert.Equal(recordMealRequest.PatientId, dbMeal.PatientId);
-      Assert.True(dbMeal.NutrientSummaries.Any());
-      Assert.True(dbMeal.NutrientSummaries.All(mn => mn.Amount > 0));
-      Assert.Equal(recordMealRequest.UnitId, dbMeal.UnitId);
     }
   }
 
@@ -198,6 +207,42 @@ public class MealControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
 
       Assert.Equal(updateMealRequest.Amount, dbMeal.Amount);
       Assert.NotNull(dbMeal.RecordedAt);
+    }
+  }
+
+  public class DeleteMealTests : MealControllerTests
+  {
+    public DeleteMealTests(NutrinovaApiWebApplicationFactory factory)
+      : base(factory)
+    {
+    }
+
+    [Fact]
+    public async Task Delete_Meal()
+    {
+      // Arrange
+      var meal = await DataUtility.CreateMealAsync();
+      var mealId = meal.Id;
+      var newDate = DateTime.UtcNow;
+
+      // Act
+      var dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == meal.PatientId &&
+          m.Description == meal.Description);
+
+      var response = await HttpClient.DeleteAsync("be/meal/" + mealId);
+
+      dbMeal = await DbContext.Meals
+        .Include(m => m.MealNutrients)
+        .FirstOrDefaultAsync(
+          m => m.PatientId == meal.PatientId &&
+          m.Description == meal.Description);
+
+      // Assert
+      response.EnsureSuccessStatusCode();
+      Assert.Null(dbMeal);
     }
   }
 }

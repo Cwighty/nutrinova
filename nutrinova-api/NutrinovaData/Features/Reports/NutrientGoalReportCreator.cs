@@ -9,19 +9,50 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
   {
   }
 
-  public PatientNutrientGoalReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate)
+  public PatientNutrientReport CreateNutrientGoalReportForPatient(Patient patientWithMealsAndGoals, DateTime beginDate, DateTime endDate, int nutrientId = 0)
   {
     ValidateParameters(patientWithMealsAndGoals, beginDate, endDate);
 
-    var reportItems = CreateNutrientGoalReportItems(patientWithMealsAndGoals, beginDate, endDate);
-    var report = new PatientNutrientGoalReport()
+    var days = new List<DateTime>();
+    for (var date = beginDate; date <= endDate; date = date.AddDays(1))
     {
-      ReportBegin = beginDate,
-      ReportEnd = endDate,
+      days.Add(date);
+    }
+
+    var dailyReports = new List<DailyNutrientGoalReport>();
+
+    foreach (var day in days)
+    {
+      var dailyReport = CreateNutrientGoalReportItems(patientWithMealsAndGoals, day.Date, day.AddDays(1).AddSeconds(-1), nutrientId);
+      if (dailyReport.Count() == 0)
+      {
+        continue;
+      }
+
+      var dayReport = new DailyNutrientGoalReport
+      {
+        Date = day,
+        NutrientGoalReportItems = dailyReport,
+      };
+
+      dailyReports.Add(dayReport);
+    }
+
+    if (dailyReports.Count == 0)
+    {
+      throw new ArgumentException("No nutrient goals found for patient");
+    }
+
+    var report = new PatientNutrientReport()
+    {
       PatientId = patientWithMealsAndGoals.Id.ToString(),
       PatientName = patientWithMealsAndGoals.GetFullName(),
-      NutrientGoalReportItems = reportItems,
+      Days = dailyReports,
+      MaxConsumption = dailyReports.Max(d => d.NutrientGoalReportItems.Max(n => n.ConsumedAmount)),
+      AvgConsumption = dailyReports.Average(d => d.NutrientGoalReportItems.Average(n => n.ConsumedAmount)),
+      DaysAchievedCount = dailyReports.Count(d => d.NutrientGoalReportItems.All(n => n.GoalStatus == NutrientGoalStatus.Met)),
     };
+
     return report;
   }
 
@@ -42,13 +73,13 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       throw new ArgumentNullException(nameof(patientWithMealsAndGoals.Meals) + " is required");
     }
 
-    if (patientWithMealsAndGoals.PatientNutrientGoals == null)
+    if (patientWithMealsAndGoals.PatientNutrientDailyGoals == null)
     {
-      throw new ArgumentNullException(nameof(patientWithMealsAndGoals.PatientNutrientGoals) + " is required");
+      throw new ArgumentNullException(nameof(patientWithMealsAndGoals.PatientNutrientDailyGoals) + " is required");
     }
   }
 
-  private IEnumerable<NutrientGoalReportItem> CreateNutrientGoalReportItems(Patient p, DateTime beginDate, DateTime endDate)
+  private IEnumerable<NutrientGoalReportItem> CreateNutrientGoalReportItems(Patient p, DateTime beginDate, DateTime endDate, int nutrientId = 0)
   {
     // Aggregate eached consumed nutrient from meals with corresponding nutrient goals
     var mealsInDateRange = p.Meals
@@ -56,7 +87,12 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
       .ToList();
     Dictionary<int, NutrientSummary> consumedNutrientSummaries = GetConsumedNutrientTotals(mealsInDateRange);
 
-    var nutrientGoals = p.PatientNutrientGoals.ToList();
+    var nutrientGoals = p.PatientNutrientDailyGoals.ToList();
+    if (nutrientId != 0)
+    {
+      nutrientGoals = nutrientGoals.Where(g => g.NutrientId == nutrientId).ToList();
+    }
+
     var reportItems = nutrientGoals
     .GroupJoin(
       consumedNutrientSummaries,
@@ -70,17 +106,81 @@ public class NutrientGoalReportCreator : INutrientGoalReportCreator
           NutrientId = x.g.NutrientId,
           NutrientName = x.g.Nutrient.Description,
           PreferredUnit = x.g.Nutrient.PreferredUnitNavigation.ToUnitOption(),
-          DailyGoalAmount = x.g.DailyGoalAmount,
+          CustomTargetAmount = new GoalTargetAmount
+          {
+            UpperLimit = x.g.CustomUpperTarget,
+            LowerLimit = x.g.CustomLowerTarget,
+          },
+          RecommendedTargetAmount = new GoalTargetAmount
+          {
+            UpperLimit = x.g.RecommendedUpperTarget,
+            LowerLimit = x.g.RecommendedLowerTarget,
+            MaxLimit = x.g.RecommendedMax,
+          },
           ConsumedAmount = n.Value != null ? n.Value.Amount : 0,
-          RemainingAmount = n.Value != null ? x.g.DailyGoalAmount - n.Value.Amount : x.g.DailyGoalAmount,
-          GoalStatus = n.Value != null ? (n.Value.Amount >= x.g.DailyGoalAmount * 1.1M
-                ? NutrientGoalStatus.Exceeded
-                : n.Value.Amount >= x.g.DailyGoalAmount
-                    ? NutrientGoalStatus.Met
-                    : NutrientGoalStatus.NotMet) : NutrientGoalStatus.NotStarted,
+          GoalStatus = CalculateGoalStatus(n.Value != null ? n.Value.Amount : 0, new GoalTargetAmount
+          {
+            LowerLimit = x.g.CustomLowerTarget,
+            UpperLimit = x.g.CustomUpperTarget,
+            MaxLimit = x.g.RecommendedMax,
+          }),
         });
 
     return reportItems;
+  }
+
+  private NutrientGoalStatus CalculateGoalStatus(decimal consumedAmount, GoalTargetAmount targetAmount)
+  {
+    if (consumedAmount == 0)
+    {
+      return NutrientGoalStatus.NotStarted;
+    }
+
+    if (targetAmount.LowerLimit != null && targetAmount.UpperLimit != null)
+    {
+      // range
+      if (consumedAmount < targetAmount.LowerLimit)
+      {
+        return NutrientGoalStatus.NotMet;
+      }
+
+      if (consumedAmount > targetAmount.UpperLimit)
+      {
+        return NutrientGoalStatus.Exceeded;
+      }
+
+      return NutrientGoalStatus.Met;
+    }
+
+    if (targetAmount.LowerLimit != null && targetAmount.UpperLimit == null)
+    {
+      // RDA
+      if (consumedAmount < targetAmount.LowerLimit)
+      {
+        return NutrientGoalStatus.NotMet;
+      }
+
+      if (consumedAmount > targetAmount.LowerLimit)
+      {
+        return NutrientGoalStatus.Met;
+      }
+
+      if (consumedAmount > targetAmount.MaxLimit)
+      {
+        return NutrientGoalStatus.Exceeded;
+      }
+    }
+
+    if (targetAmount.LowerLimit == null && targetAmount.UpperLimit != null)
+    {
+      // UL
+      if (consumedAmount < targetAmount.UpperLimit)
+      {
+        return NutrientGoalStatus.Met;
+      }
+    }
+
+    return NutrientGoalStatus.NotMet;
   }
 
   private Dictionary<int, NutrientSummary> GetConsumedNutrientTotals(List<Meal> meals)
