@@ -3,7 +3,7 @@ import { PatientForm } from '@/app/(authorized)/patients/_components/PatientInfo
 import { PatientInfoModal } from '@/app/(authorized)/patients/_components/PatientInfoModal';
 import { Customer, customerService } from '@/services/customerService';
 import { Add } from '@mui/icons-material';
-import { Box, Typography, List, Button, Container, Grid } from '@mui/material';
+import { Box, Typography, List, Button, Container, Grid, Divider, Paper } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
@@ -69,44 +69,50 @@ const AddPatientPage = () => {
     router.push('/dashboard');
   }
   return (
-    <Container>
-      <Box sx={{ p: 2 }}>
-        <Grid container alignItems={'center'}  >
-          <Grid item xs={6}>
-            <Typography variant="h1" gutterBottom>
-              Who will you be caring for?
+    <>
+      <Container maxWidth='sm' sx={{ mt: 2 }}>
+        <Paper>
+
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h3" gutterBottom>
+              Who Will You Care For?
             </Typography>
-          </Grid>
-          <Grid item xs={6}>
+            <Divider />
+            <Grid container alignItems={'center'} justifyContent={'center'} paddingTop={2} paddingBottom={2} >
+              <Grid item xs={12} justifyContent={'center'}>
+
+                <List>
+                  {patients.map((patient, index) => (
+                    <PatientListItem key={index} patient={patient} handleDelete={function (patient: PatientForm): void {
+                      throw new Error('Function not implemented.');
+                    }} />
+                  ))}
+                </List>
+              </Grid>
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={handleOpenModal}
+                >
+                  Add Patient
+                </Button>
+              </Grid>
+            </Grid>
+            <Divider />
+
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
               <Button variant="contained" onClick={() => handleMultiUserSubmission(patients)}>Done</Button>
             </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <List>
-              {patients.map((patient, index) => (
-                <PatientListItem key={index} patient={patient} />
-              ))}
-            </List>
-          </Grid>
-          <Grid item xs={12}>
-
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={handleOpenModal}
-            >
-              Add Patient
-            </Button>
-          </Grid>
+          </Box>
           <PatientInfoModal
             openModal={isModalOpen}
             onClose={handleCloseModal}
             submitFunction={handleSubmitPatient}
           />
-        </Grid>
-      </Box>
-    </Container>
+        </Paper>
+      </Container>
+    </>
   );
 };
 export default AddPatientPage;
