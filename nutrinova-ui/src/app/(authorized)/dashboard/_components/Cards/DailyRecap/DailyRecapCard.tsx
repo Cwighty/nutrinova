@@ -11,6 +11,7 @@ import {
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
 import { Box, Skeleton, Typography } from "@mui/material";
 import NutrientProgress from "./NutrientProgress";
+import { DailyGoalStatusCard } from "./DailyGoalStatusCard";
 
 const DailyRecapCard: React.FC = () => {
   const [today] = React.useState(new Date(Date.now()));
@@ -63,18 +64,23 @@ const DailyRecapCard: React.FC = () => {
             </Typography>
           </Box>
         )}
-        {selectedPatientReport && nutrients &&
-          nutrients.length > 0 &&
-          nutrients.map((nutrient) => (
-            <NutrientProgress
-              key={nutrient.nutrientId}
-              nutrientName={nutrient.nutrientName}
-              consumedAmount={nutrient.consumedAmount}
-              targetAmount={nutrient.customTargetAmount}
-              status={nutrient.goalStatus}
-              unit={nutrient.preferredUnit?.abbreviation}
-            />
-          ))}
+        <Box sx={{ maxHeight: 240, overflow: "auto" }}>
+          {selectedPatientReport && nutrients &&
+            nutrients.length > 0 &&
+            nutrients.map((nutrient) => (
+              <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
+                <NutrientProgress
+                  key={nutrient.nutrientId}
+                  nutrientName={nutrient.nutrientName}
+                  consumedAmount={nutrient.consumedAmount}
+                  targetAmount={nutrient.customTargetAmount}
+                  status={nutrient.goalStatus}
+                  unit={nutrient.preferredUnit?.abbreviation}
+                />
+              </Box>
+            ))}
+        </Box>
+        <DailyGoalStatusCard nutrients={nutrients} />
       </GenericCard>
     </>
   );

@@ -12,7 +12,8 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
   status,
 }) => {
   const theme = useTheme();
-  const percentage = targetAmount.lowerLimit ? (consumedAmount / targetAmount.lowerLimit) * 100 : 0;
+  const goalValue = targetAmount.lowerLimit ? targetAmount.lowerLimit : targetAmount.upperLimit;
+  const percentage = Math.round(goalValue ? (consumedAmount / goalValue) * 100 : 0);
 
   let progressColor;
   switch (status) {
@@ -23,7 +24,7 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
       progressColor = theme.palette.success.main;
       break;
     default:
-      progressColor = theme.palette.primary.main;
+      progressColor = theme.palette.info.main;
   }
 
   const ProgressIcon = status === NutrientGoalStatus.Met ? CheckBoxOutlined
@@ -43,7 +44,7 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
             <Box fontWeight="bold" fontSize="2em" color={progressColor}>
               {consumedAmount} {unit} {" "}
               <Typography variant="caption" color="white" fontSize=".5em">
-                /{targetAmount.lowerLimit} {unit}
+                /{goalValue} {unit}
               </Typography>
             </Box>
             <Box color={progressColor} >
@@ -56,7 +57,7 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
             <Box width="100%" mr={1}>
               <LinearProgress
                 variant="determinate"
-                value={percentage}
+                value={percentage < 100 ? percentage : 100}
                 sx={{
                   backgroundColor: theme.palette.grey[800],
                   height: 10,

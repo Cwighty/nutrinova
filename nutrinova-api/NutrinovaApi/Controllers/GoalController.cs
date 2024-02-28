@@ -276,6 +276,62 @@ public class GoalController : ControllerBase
                     },
                   },
                 },
+                new()
+                {
+                  ConsumedAmount = 400,
+                  CustomTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = null,
+                    UpperLimit = 300,
+                    Type = "UL",
+                  },
+                  RecommendedTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = null,
+                    UpperLimit = 200,
+                    Type = "UL",
+                  },
+                  NutrientId = 22,
+                  NutrientName = "Sodium",
+                  GoalStatus = NutrientGoalStatus.Exceeded,
+                  PreferredUnit = new UnitOption
+                  {
+                    Description = "Milligrams",
+                    Abbreviation = "mg",
+                    Category = new UnitCategoryRequestModel
+                    {
+                      Description = "Solid",
+                    },
+                  },
+                },
+                new()
+                {
+                  ConsumedAmount = 200,
+                  CustomTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = 200,
+                    UpperLimit = null,
+                    Type = "RDA",
+                  },
+                  RecommendedTargetAmount = new GoalTargetAmount
+                  {
+                    LowerLimit = 200,
+                    UpperLimit = null,
+                    Type = "RDA",
+                  },
+                  NutrientId = 10,
+                  NutrientName = "Vitamin A",
+                  GoalStatus = NutrientGoalStatus.Met,
+                  PreferredUnit = new UnitOption
+                  {
+                    Description = "Micrograms",
+                    Abbreviation = "mcg",
+                    Category = new UnitCategoryRequestModel
+                    {
+                      Description = "Solid",
+                    },
+                  },
+                },
               },
             },
           },
