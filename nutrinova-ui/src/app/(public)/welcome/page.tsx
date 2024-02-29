@@ -4,10 +4,16 @@ import { Typography, Grid, Container, Box, Card, CardContent, Button } from '@mu
 import { ArrowCircleRight } from '@mui/icons-material';
 import { getSession } from 'next-auth/react';
 import { PatientInfoModal } from '../../(authorized)/patients/_components/PatientInfoModal';
+import { PatientForm } from '@/app/(authorized)/patients/_components/PatientInfoForm';
+import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
+import { useRouter } from 'next/navigation';
+import { customerService, Customer } from '@/services/customerService';
+import { CreatePatientReq } from '@/app/(authorized)/patients/_models/patient';
+
 
 const Welcome = () => {
 
-  const [openModal, setOpenModal] = useState(false);
+  const [openSingleCustomerModal, setOpenModal] = useState(false);
 
   const [name, setName] = useState('' as string);
 
@@ -21,13 +27,51 @@ const Welcome = () => {
 
   const toggleCustomerInfoModal = async () => {
     await getUserName();
-    setOpenModal(!openModal);
+    setOpenModal(!openSingleCustomerModal);
   }
 
+  const router = useRouter();
+  const createPatientMutation = useCreatePatientMutation();
+
+  const handleSingleUser = async (patientInfo: PatientForm) => {
+    const session = await getSession();
+
+    if (session == null || session == undefined) {
+      throw new Error('Failed to get user session');
+    }
+
+    if (await customerService.customerExists("client")) {
+      router.push('/dashboard');
+      return;
+    }
+
+    const customer = {
+      objectId: session.user.id,
+      email: session.user.email,
+      issingleuser: true,
+    } as Customer;
+
+    const created = await customerService.createCustomer(customer);
+    if (!created) {
+      throw new Error('Failed to create customer');
+    }
+
+    const patient: CreatePatientReq = {
+      firstname: patientInfo.name.split(' ')[0],
+      lastname: patientInfo.name.split(' ')[1] ?? '',
+      sex: patientInfo?.sex,
+      base64image: patientInfo?.pff,
+      age: patientInfo?.age,
+      useDefaultNutrientGoals: patientInfo.optOut
+    }
+    createPatientMutation.mutate(patient);
+
+    router.push('/dashboard');
+  }
 
   return (
     <Container>
-      <PatientInfoModal openModal={openModal} onClose={toggleCustomerInfoModal} defaultName={name} />
+      <PatientInfoModal openModal={openSingleCustomerModal} onClose={toggleCustomerInfoModal} patientName={name} submitFunction={handleSingleUser} />
       <Typography variant="h3" gutterBottom align="center" fontWeight="bold">
         Welcome to Nutrinova!
       </Typography>
@@ -72,7 +116,7 @@ const Welcome = () => {
 
                 <Grid item xs={6}>
                   <Box display="flex" justifyContent="center">
-                    <Button color="primary" onClick={() => {/* Handle click for care for others */ }}>
+                    <Button color="primary" onClick={() => { router.push('/addpatients') }}>
                       <ArrowCircleRight fontSize={'large'} />
                     </Button>
                   </Box>
