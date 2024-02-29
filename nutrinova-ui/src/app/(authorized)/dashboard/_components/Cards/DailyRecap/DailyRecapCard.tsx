@@ -21,7 +21,7 @@ const DailyRecapCard: React.FC = () => {
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = report?.patientReports[0];
+  const selectedPatientReport = report?.patientReports.find( (p) => p.patientId === patient?.id);
 
   const nutrients: NutrientGoalReportItem[] =
     selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
