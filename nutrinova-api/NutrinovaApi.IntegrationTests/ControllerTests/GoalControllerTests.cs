@@ -183,7 +183,7 @@ public abstract class GoalControllerTests : IClassFixture<NutrinovaApiWebApplica
       var patient = await DataUtility.EnsurePatientExistsAsync(customer);
 
       // Act
-      var response = await HttpClient.GetAsync($"be/goal/reccomendation?nutrientId={nutrient!.Id}&patientId={patient.Id}");
+      var response = await HttpClient.GetAsync($"be/goal/recommendation?nutrientId={nutrient!.Id}&patientId={patient.Id}");
 
       // Assert
       Assert.Equal(HttpStatusCode.OK, response.StatusCode);

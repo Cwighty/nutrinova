@@ -3,11 +3,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NutrientGoalResponse } from "./_models/NutrientGoalResponse";
 import { NutrientGoalRequestModel } from "./_models/NutrientGoalRequestModel";
 import { AggregatePatientNutrientReport } from "./_models/AggregatePatientNutrientReport";
+import { NutrientRecommendationResponse } from "./_models/NutrientRecommendationResponseModel";
 
 const goalKeys = {
-  all: ['goals'] as const,
-  reports: (dates: { beginDate: Date; endDate: Date }) => [dates, 'goalReports'] as const,
-  reportsandgoals: ['goals', 'goalReports'] as const,
+  all: ["goals"] as const,
+  reports: (dates: { beginDate: Date; endDate: Date }) =>
+    [dates, "goalReports"] as const,
+  reportsandgoals: ["goals", "goalReports"] as const,
 };
 
 const fetchAllGoals = async (): Promise<NutrientGoalResponse[]> => {
@@ -19,7 +21,9 @@ const fetchAllGoals = async (): Promise<NutrientGoalResponse[]> => {
   return response.data as NutrientGoalResponse[];
 };
 
-const createGoal = async (newGoal: NutrientGoalRequestModel): Promise<NutrientGoalResponse> => {
+const createGoal = async (
+  newGoal: NutrientGoalRequestModel,
+): Promise<NutrientGoalResponse> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -28,7 +32,13 @@ const createGoal = async (newGoal: NutrientGoalRequestModel): Promise<NutrientGo
   return response.data as NutrientGoalResponse;
 };
 
-const updateGoal = async ({ id, ...updateData }: { id: string; updateData: NutrientGoalRequestModel }): Promise<NutrientGoalResponse> => {
+const updateGoal = async ({
+  id,
+  ...updateData
+}: {
+  id: string;
+  updateData: NutrientGoalRequestModel;
+}): Promise<NutrientGoalResponse> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -57,27 +67,33 @@ const fetchGoalReports = async ({ beginDate, endDate }: { beginDate: Date; endDa
 };
 
 // Custom Hooks
-export const useFetchAllGoals = () => useQuery({ queryKey: goalKeys.all, queryFn: fetchAllGoals });
+export const useFetchAllGoals = () =>
+  useQuery({ queryKey: goalKeys.all, queryFn: fetchAllGoals });
 
 export const useCreateGoal = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (newGoal: NutrientGoalRequestModel) => createGoal(newGoal),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: goalKeys.reportsandgoals });
-    }
+      await queryClient.invalidateQueries({
+        queryKey: goalKeys.reportsandgoals,
+      });
+    },
   });
-}
+};
 
-export const useUpdateGoal = (id: string, updateData: NutrientGoalRequestModel) => {
+export const useUpdateGoal = (
+  id: string,
+  updateData: NutrientGoalRequestModel,
+) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => updateGoal({ id, updateData }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: goalKeys.all });
-    }
+    },
   });
-}
+};
 
 export const useDeleteGoal = (id: string) => {
   const queryClient = useQueryClient();
@@ -85,14 +101,41 @@ export const useDeleteGoal = (id: string) => {
     mutationFn: () => deleteGoal(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: goalKeys.all });
-    }
+    },
   });
-}
+};
 
-export const useFetchGoalReport = (dates: { beginDate: Date; endDate: Date }) => {
+export const useFetchGoalReport = (dates: {
+  beginDate: Date;
+  endDate: Date;
+}) => {
   return useQuery({
     queryFn: () => fetchGoalReports(dates),
     queryKey: goalKeys.reports(dates),
   });
-}
+};
 
+export const fetchNutrientRecommendation = async (
+  patientId: string | undefined,
+  nutrientId: number | undefined,
+): Promise<NutrientRecommendationResponse> => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const response = await apiClient.get(
+    `/Goal/recommendation?patientId=${patientId}&nutrientId=${nutrientId}`,
+  );
+  return response.data as NutrientRecommendationResponse;
+};
+
+export const useFetchNutrientRecommendation = (
+  patientId: string | undefined,
+  nutrientId: number | undefined,
+) => {
+  return useQuery({
+    queryFn: () => fetchNutrientRecommendation(patientId, nutrientId),
+    queryKey: ["nutrientRecommendation", patientId, nutrientId],
+    enabled: !!patientId && !!nutrientId,
+  });
+};

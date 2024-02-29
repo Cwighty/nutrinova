@@ -1,5 +1,7 @@
 export interface NutrientGoalRequestModel {
   patientId: string;
   nutrientId: number;
-  dailyGoalAmount: number;
+  dailyUpperLimit?: number;
+  dailyLowerLimit?: number;
+  useRecommended: boolean;
 }

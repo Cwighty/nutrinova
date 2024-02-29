@@ -12,18 +12,14 @@ public class GoalController : ControllerBase
   private readonly NutrinovaDbContext context;
   private readonly ILogger<ChatController> logger;
   private readonly INutrientGoalReportCreator reportCreator;
-  private readonly INutrientRecommendationService nutrientReccomendationService;
+  private readonly INutrientRecommendationService nutrientRecommendationService;
 
-  public GoalController(
-      NutrinovaDbContext context,
-      ILogger<ChatController> logger,
-      INutrientGoalReportCreator reportCreator,
-      INutrientRecommendationService nutrientReccomendationService)
+  public GoalController(NutrinovaDbContext context, ILogger<ChatController> logger, INutrientGoalReportCreator reportCreator, INutrientRecommendationService nutrientRecommendationService)
   {
     this.context = context;
     this.logger = logger;
     this.reportCreator = reportCreator;
-    this.nutrientReccomendationService = nutrientReccomendationService;
+    this.nutrientRecommendationService = nutrientRecommendationService;
   }
 
   [HttpGet("all")]
@@ -95,11 +91,7 @@ public class GoalController : ControllerBase
     }
 
     var patientSex = patient.Sex == "F" ? Sex.Female : Sex.Male;
-    var nutrientReccomendation =
-        await nutrientReccomendationService.GetNutrientReccomendationAsync(
-            usdaNutrient,
-            patient.Age ?? 0,
-            patientSex);
+    var nutrientRecommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age ?? 0, patientSex);
 
     var goal = new PatientNutrientDailyGoal
     {
@@ -108,16 +100,8 @@ public class GoalController : ControllerBase
       NutrientId = request.NutrientId,
       CustomLowerTarget = request.UseRecommended ? null : request.DailyLowerLimit,
       CustomUpperTarget = request.UseRecommended ? null : request.DailyUpperLimit,
-      RecommendedUpperTarget =
-            nutrientReccomendation.RecommendedValueType == "UL"
-                ? nutrientReccomendation.RecommendedValue
-                : null,
-      RecommendedLowerTarget =
-            (
-                nutrientReccomendation.RecommendedValueType == "AI"
-                | nutrientReccomendation.RecommendedValueType == "RDA")
-                ? nutrientReccomendation.RecommendedValue
-                : null,
+      RecommendedUpperTarget = nutrientRecommendation.RecommendedValueType == "UL" ? nutrientRecommendation.RecommendedValue : null,
+      RecommendedLowerTarget = (nutrientRecommendation.RecommendedValueType == "AI" | nutrientRecommendation.RecommendedValueType == "RDA") ? nutrientRecommendation.RecommendedValue : null,
     };
 
     context.PatientNutrientDailyGoals.Add(goal);
@@ -342,8 +326,8 @@ public class GoalController : ControllerBase
     return Ok(testReport);
   }
 
-  [HttpGet("reccomendation")]
-  public async Task<ActionResult<UsdaRecommendedNutrientValue>> GetNutrientReccomendation(
+  [HttpGet("recommendation")]
+  public async Task<ActionResult<UsdaRecommendedNutrientValue>> GetNutrientRecommendation(
       [FromQuery] int nutrientId,
       [FromQuery] Guid patientId)
   {
@@ -368,16 +352,13 @@ public class GoalController : ControllerBase
 
     var sex = patient.Sex == "F" ? Sex.Female : Sex.Male;
 
-    var reccomendation = await nutrientReccomendationService.GetNutrientReccomendationAsync(
-        usdaNutrient,
-        patient.Age ?? 0,
-        sex);
+    var recommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age ?? 0, sex);
 
-    if (reccomendation is null)
+    if (recommendation is null)
     {
-      return NotFound("Reccomendation Not Found");
+      return NotFound("Recommendation Not Found");
     }
 
-    return Ok(reccomendation);
+    return Ok(recommendation);
   }
 }
