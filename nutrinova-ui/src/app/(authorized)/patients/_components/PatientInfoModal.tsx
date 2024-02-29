@@ -1,62 +1,22 @@
 "use client"
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import React from 'react'
-import { CreatePatientReq } from '@/app/(authorized)/patients/_models/patient';
 import { PatientForm, PatientInfoForm } from './PatientInfoForm';
-import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
-import { useRouter } from 'next/navigation';
-import { customerService, Customer } from '@/services/customerService';
-import { getSession } from 'next-auth/react';
+
 
 
 interface patientModalProps {
   openModal: boolean;
   onClose: () => void;
-  defaultName?: string;
+  patientName?: string;
+  patientAge?: number;
+  submitFunction: (patient: PatientForm) => void;
 }
 
-export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patientModalProps) => {
-  const router = useRouter();
-  const createPatientMutation = useCreatePatientMutation();
+export const PatientInfoModal = ({ openModal, onClose, patientName: defaultName = '', submitFunction, patientAge }: patientModalProps) => {
 
-  const handleSingleUser = async (patientInfo: PatientForm) => {
-    const session = await getSession();
-
-    if (session == null || session == undefined) {
-      throw new Error('Failed to get user session');
-    }
-
-    if (await customerService.customerExists("client")) {
-      router.push('/dashboard');
-      return;
-    }
-
-    const customer = {
-      objectId: session.user.id,
-      email: session.user.email,
-      issingleuser: true,
-    } as Customer;
-
-    const created = await customerService.createCustomer(customer);
-    if (!created) {
-      throw new Error('Failed to create customer');
-    }
-
-    const patient: CreatePatientReq = {
-      firstname: patientInfo.name.split(' ')[0],
-      lastname: patientInfo.name.split(' ')[1] ?? '',
-      sex: patientInfo?.sex,
-      base64image: patientInfo?.pff,
-      age: patientInfo?.age,
-      useDefaultNutrientGoals: patientInfo.optOut
-    }
-    createPatientMutation.mutate(patient);
-
-    router.push('/dashboard');
-  }
-
-  const hadleSubmit = async (patient: PatientForm) => {
-    await handleSingleUser(patient);
+  const hadleSubmit = (patient: PatientForm) => {
+    submitFunction(patient);
     onClose();
   }
 
@@ -66,7 +26,7 @@ export const PatientInfoModal = ({ openModal, onClose, defaultName = '' }: patie
         We Need Some Information
       </DialogTitle>
       <DialogContent>
-        <PatientInfoForm name={defaultName} age={0} onSubmit={hadleSubmit} />
+        <PatientInfoForm name={defaultName} age={patientAge ?? 0} onSubmit={hadleSubmit} />
       </DialogContent>
     </Dialog>
   )
