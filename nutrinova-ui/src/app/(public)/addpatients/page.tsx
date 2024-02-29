@@ -81,6 +81,7 @@ const AddPatientPage = () => {
             <Typography variant="h4" gutterBottom>
               Who Will You Be Caring For?
             </Typography>
+            <Box component="img" src="/kitchen_talk.png" alt="Self Care" sx={{ width: '80%', height: '70%', mb: 4, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
             <Grid container alignItems={'center'} justifyContent={'center'} paddingTop={2} paddingBottom={2} >
               <Grid item xs={12} justifyContent={'center'}>
 
