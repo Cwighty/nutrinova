@@ -7,8 +7,6 @@ import { NutrientRecommendationResponse } from "./_models/NutrientRecommendation
 
 const goalKeys = {
   all: ["goals"] as const,
-  reports: (dates: { beginDate: Date; endDate: Date }) =>
-    [dates, "goalReports"] as const,
   reportsandgoals: ["goals", "goalReports"] as const,
 };
 
@@ -111,7 +109,8 @@ export const useFetchGoalReport = (dates: {
 }) => {
   return useQuery({
     queryFn: () => fetchGoalReports(dates),
-    queryKey: goalKeys.reports(dates),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: goalKeys.reportsandgoals,
   });
 };
 

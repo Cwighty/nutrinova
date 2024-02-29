@@ -57,30 +57,36 @@ const DailyRecapCard: React.FC = () => {
     <>
       <GenericCard title="Daily Recap" actions={actionButton}>
         {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
-        {(report?.daysCount == 0 || (selectedPatientReport && nutrients && nutrients.length === 0)) && (
-          <Box>
-            <Typography variant="body1">
-              Set a nutrient goal above to track your progress.
-            </Typography>
-          </Box>
-        )}
-        <Box sx={{ maxHeight: 240, overflow: "auto" }}>
-          {selectedPatientReport && nutrients &&
-            nutrients.length > 0 &&
-            nutrients.map((nutrient) => (
-              <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
-                <NutrientProgress
-                  key={nutrient.nutrientId}
-                  nutrientName={nutrient.nutrientName}
-                  consumedAmount={nutrient.consumedAmount}
-                  targetAmount={nutrient.customTargetAmount}
-                  status={nutrient.goalStatus}
-                  unit={nutrient.preferredUnit?.abbreviation}
-                />
-              </Box>
-            ))}
-        </Box>
-        <DailyGoalStatusCard nutrients={nutrients} />
+        {(report?.daysCount == 0 || (selectedPatientReport && nutrients && nutrients.length === 0))
+          ? (
+            <Box>
+              <Typography variant="overline">No Goals</Typography>
+              <br />
+              <Typography variant="body1" color={"text.secondary"}>
+                Set a nutrient goal above to track your progress.
+              </Typography>
+            </Box>
+          )
+          :
+          (<>
+            <Box sx={{ maxHeight: 240, overflow: "auto" }}>
+              {selectedPatientReport && nutrients &&
+                nutrients.length > 0 &&
+                nutrients.map((nutrient) => (
+                  <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
+                    <NutrientProgress
+                      key={nutrient.nutrientId}
+                      nutrientName={nutrient.nutrientName}
+                      consumedAmount={nutrient.consumedAmount}
+                      targetAmount={nutrient.customTargetAmount}
+                      status={nutrient.goalStatus}
+                      unit={nutrient.preferredUnit?.abbreviation}
+                    />
+                  </Box>
+                ))}
+            </Box>
+            <DailyGoalStatusCard nutrients={nutrients} />
+          </>)}
       </GenericCard>
     </>
   );
