@@ -19,8 +19,8 @@ public class NutrientGoalReportItem
 
 public enum NutrientGoalStatus
 {
-  NotStarted,
-  NotMet,
-  Met,
-  Exceeded,
+  NotStarted = 0,
+  NotMet = 1,
+  Met = 2,
+  Exceeded = 3,
 }

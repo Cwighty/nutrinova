@@ -2,13 +2,11 @@ import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFact
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NutrientGoalResponse } from "./_models/NutrientGoalResponse";
 import { NutrientGoalRequestModel } from "./_models/NutrientGoalRequestModel";
-import { PatientNutrientGoalReport } from "./_models/PatientNutrientGoalReport";
-import { NutrientRecommendationResponse } from "@/app/(authorized)/goals/_models/NutrientRecommendationResponseModel";
+import { AggregatePatientNutrientReport } from "./_models/AggregatePatientNutrientReport";
+import { NutrientRecommendationResponse } from "./_models/NutrientRecommendationResponseModel";
 
 const goalKeys = {
   all: ["goals"] as const,
-  reports: (dates: { beginDate: Date; endDate: Date }) =>
-    [dates, "goalReports"] as const,
   reportsandgoals: ["goals", "goalReports"] as const,
 };
 
@@ -55,23 +53,15 @@ const deleteGoal = async (id: string): Promise<void> => {
   await apiClient.delete(`/Goal/${id}`);
 };
 
-const fetchGoalReport = async ({
-  beginDate,
-  endDate,
-}: {
-  beginDate: Date;
-  endDate: Date;
-}): Promise<PatientNutrientGoalReport[]> => {
+const fetchGoalReports = async ({ beginDate, endDate }: { beginDate: Date; endDate: Date }): Promise<AggregatePatientNutrientReport> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
   });
-  const beginDateStr = beginDate.toISOString().split("T")[0];
-  const endDateStr = endDate.toISOString().split("T")[0];
-  const response = await apiClient.get(
-    `/Goal/report?beginDate=${beginDateStr}&endDate=${endDateStr}`,
-  );
-  return response.data as PatientNutrientGoalReport[];
+  const beginDateStr = beginDate.toISOString().split('T')[0];
+  const endDateStr = endDate.toISOString().split('T')[0];
+  const response = await apiClient.get(`/Goal/report?beginDate=${beginDateStr}&endDate=${endDateStr}`);
+  return response.data as AggregatePatientNutrientReport;
 };
 
 // Custom Hooks
@@ -118,8 +108,9 @@ export const useFetchGoalReport = (dates: {
   endDate: Date;
 }) => {
   return useQuery({
-    queryFn: () => fetchGoalReport(dates),
-    queryKey: goalKeys.reports(dates),
+    queryFn: () => fetchGoalReports(dates),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: goalKeys.reportsandgoals,
   });
 };
 

@@ -5,27 +5,26 @@ import { CreatePatientNutrientGoalModal } from "@/app/(authorized)/goals/CreateP
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import {
-  useCreateGoal,
-  useFetchGoalReport,
+  useCreateGoal, useFetchGoalReport,
+  // useFetchGoalReport,
 } from "@/app/(authorized)/goals/goalHooks";
-import { NutrientProgress } from "./NutrientProgress";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
 import { Box, Skeleton, Typography } from "@mui/material";
+import NutrientProgress from "./NutrientProgress";
+import { DailyGoalStatusCard } from "./DailyGoalStatusCard";
 
 const DailyRecapCard: React.FC = () => {
   const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
-  const { data: reportData, isLoading: reportDataLoading } = useFetchGoalReport(
+  const { data: report, isLoading: reportDataLoading } = useFetchGoalReport(
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = reportData?.filter(
-    (r) => r.patientId === patient?.id,
-  )[0];
+  const selectedPatientReport = report?.patientReports[0];
 
   const nutrients: NutrientGoalReportItem[] =
-    selectedPatientReport?.nutrientGoalReportItems ?? [];
+    selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
 
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,
@@ -39,22 +38,6 @@ const DailyRecapCard: React.FC = () => {
     if (patient) {
       createGoalMutation.mutate(newGoal);
     }
-  };
-
-  const getNutrientColor = (nutrientName: string): string => {
-    // hash the nutrient name to get a color
-    const colorPalette = [
-      "#FA6977",
-      "#F0B967",
-      "#FAF278",
-      "#9AE66E",
-      "#87D5F8",
-      "#CE81F8",
-    ];
-    const hash = nutrientName
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colorPalette[hash % colorPalette.length];
   };
 
   const actionButton = (
@@ -74,25 +57,36 @@ const DailyRecapCard: React.FC = () => {
     <>
       <GenericCard title="Daily Recap" actions={actionButton}>
         {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
-        {reportData && nutrients && nutrients.length === 0 && (
-          <Box>
-            <Typography variant="body1">
-              Set a nutrient goal above to track your progress.
-            </Typography>
-          </Box>
-        )}
-        {nutrients &&
-          nutrients.length > 0 &&
-          nutrients.map((nutrient) => (
-            <NutrientProgress
-              key={nutrient.nutrientId}
-              label={nutrient.nutrientName}
-              value={nutrient.consumedAmount}
-              total={nutrient.dailyGoalAmount}
-              unitAbbreviation={nutrient.preferredUnit?.abbreviation ?? ""}
-              color={getNutrientColor(nutrient.nutrientName)}
-            />
-          ))}
+        {(report?.daysCount == 0 || (selectedPatientReport && nutrients && nutrients.length === 0))
+          ? (
+            <Box>
+              <Typography variant="overline">No Goals</Typography>
+              <br />
+              <Typography variant="body1" color={"text.secondary"}>
+                Set a nutrient goal above to track your progress.
+              </Typography>
+            </Box>
+          )
+          :
+          (<>
+            <Box sx={{ maxHeight: 240, overflow: "auto" }}>
+              {selectedPatientReport && nutrients &&
+                nutrients.length > 0 &&
+                nutrients.map((nutrient) => (
+                  <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
+                    <NutrientProgress
+                      key={nutrient.nutrientId}
+                      nutrientName={nutrient.nutrientName}
+                      consumedAmount={nutrient.consumedAmount}
+                      targetAmount={nutrient.customTargetAmount}
+                      status={nutrient.goalStatus}
+                      unit={nutrient.preferredUnit?.abbreviation}
+                    />
+                  </Box>
+                ))}
+            </Box>
+            <DailyGoalStatusCard nutrients={nutrients} />
+          </>)}
       </GenericCard>
     </>
   );
