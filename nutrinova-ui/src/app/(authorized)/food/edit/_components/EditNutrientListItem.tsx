@@ -1,7 +1,15 @@
-import { Typography, Button, InputAdornment, TextField, Skeleton, Alert, Grid } from "@mui/material";
+import {
+  Typography,
+  Button,
+  InputAdornment,
+  TextField,
+  Skeleton,
+  Alert,
+  Grid,
+} from "@mui/material";
 import { EditFoodNutrientRequestModel } from "../_models/editFoodNutrientRequest";
 import { useGetUnitsQuery } from "../../foodHooks";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 interface EditNutrientListItemProp {
   nutrient: EditFoodNutrientRequestModel;
@@ -13,15 +21,33 @@ interface EditNutrientListItemProp {
   };
 }
 
-export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient, inputOptions }: EditNutrientListItemProp) => {
+export const EditNutrientListItem = ({
+  nutrient,
+  deleteNutrient,
+  updateNutrient,
+  inputOptions,
+}: EditNutrientListItemProp) => {
+  const {
+    data: unitOptions,
+    isLoading: unitOptionsLoading,
+    isError: unitOptionsIsError,
+  } = useGetUnitsQuery();
+  const [unitAmount, setUnitAmount] = useState<number | string>(
+    nutrient.amount,
+  );
 
-  const { data: unitOptions, isLoading: unitOptionsLoading, isError: unitOptionsIsError } = useGetUnitsQuery();
-  const [unitAmount, setUnitAmount] = useState<number | null>(nutrient.amount);
-  const handleNutrientAmountChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newAmount = parseFloat(event.target.value) ?? null;
-    setUnitAmount(newAmount);
-    updateNutrient(newAmount);
-  }
+  const handleNutrientAmountChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const value = event.target.value;
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      const newAmount = value === "" ? "" : parseFloat(value);
+      setUnitAmount(newAmount);
+      if (value !== "") {
+        updateNutrient(newAmount as number);
+      }
+    }
+  };
 
   if (unitOptionsLoading) {
     return <Skeleton variant="rounded" width="100%" height={40} />;
@@ -31,9 +57,6 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
     return <Alert severity="error">Error loading, try again later</Alert>;
   }
 
-  if (inputOptions?.error) {
-    return <Alert severity="error">{inputOptions?.helperText}</Alert>;
-  }
   return (
     <Grid container sx={{ m: 2 }} alignItems="center">
       <Grid item xs={12} sm={5} md={4} lg={3} sx={{ mb: 1 }}>
@@ -44,18 +67,26 @@ export const EditNutrientListItem = ({ nutrient, deleteNutrient, updateNutrient,
           error={inputOptions?.error}
           helperText={inputOptions?.helperText}
           label="Amount"
-          type="number"
           fullWidth
-          value={unitAmount ?? ''}
+          value={unitAmount ?? ""}
           onChange={handleNutrientAmountChange}
           InputProps={{
-            inputProps: { min: 0 },
-            endAdornment: <InputAdornment position="end">{unitOptions?.find(u => u.id === nutrient.unitId)?.abbreviation ?? ''}</InputAdornment>,
+            endAdornment: (
+              <InputAdornment position="end">
+                {unitOptions?.find((u) => u.id === nutrient.unitId)
+                  ?.abbreviation ?? ""}
+              </InputAdornment>
+            ),
           }}
         />
       </Grid>
       <Grid item xs={4} sm={2} md={2} lg={2}>
-        <Button variant="outlined" color="error" sx={{ ml: 2 }} onClick={deleteNutrient}>
+        <Button
+          variant="outlined"
+          color="error"
+          sx={{ ml: 2 }}
+          onClick={deleteNutrient}
+        >
           Delete
         </Button>
       </Grid>

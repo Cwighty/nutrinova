@@ -19,20 +19,27 @@ export const ServingSizeUnitField = ({
   setFormState,
   formValid,
 }: ServingSizeUnitFieldProps) => {
+  const handleServingSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === "" || /^\d*\.?\d*$/.test(e.target.value)) {
+      const servingSize =
+        e.target.value === "" ? "" : parseFloat(e.target.value);
+      if (servingSize !== "") {
+        setFormState({
+          ...formState,
+          servingSize: servingSize,
+        });
+      }
+    }
+  };
+
   return (
     <>
       {/* Serving Size */}
       <Grid item xs={12} md={6} mb={2} lg={12}>
         <TextField
           label="Serving Size"
-          type="number"
           value={formState.servingSize ?? ""}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              servingSize: Number(e.target.value),
-            })
-          }
+          onChange={handleServingSizeChange}
           fullWidth
           error={
             !formValid &&
@@ -40,7 +47,7 @@ export const ServingSizeUnitField = ({
           }
           helperText={
             !formValid &&
-              (formState.servingSize === undefined || formState.servingSize <= 0)
+            (formState.servingSize === undefined || formState.servingSize <= 0)
               ? "Please enter a valid serving size"
               : ""
           }
