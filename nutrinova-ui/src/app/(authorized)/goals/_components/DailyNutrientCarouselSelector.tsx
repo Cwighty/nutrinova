@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import GenericCard from "../GenericCard";
 import { CreatePatientNutrientGoalModal } from "@/app/(authorized)/goals/CreatePatientNutrientGoalModal";
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { PatientContext } from "@/components/providers/PatientProvider";
@@ -9,11 +8,11 @@ import {
   // useFetchGoalReport,
 } from "@/app/(authorized)/goals/goalHooks";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
-import { Box, Skeleton, Typography } from "@mui/material";
-import NutrientProgress from "../../../../goals/_components/NutrientProgress";
-import { DailyGoalStatusCard } from "./DailyGoalStatusCard";
+import { Box, Grid, Skeleton, Typography } from "@mui/material";
+import NutrientProgress from "./NutrientProgress";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
-const DailyRecapCard: React.FC = () => {
+export const DailyNutrientCarouselSelector: React.FC = () => {
   const [today] = React.useState(new Date(Date.now()));
   const patientContext = React.useContext(PatientContext);
   const patient = patientContext?.selectedPatient;
@@ -21,7 +20,7 @@ const DailyRecapCard: React.FC = () => {
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = report?.patientReports.find( (p) => p.patientId === patient?.id);
+  const selectedPatientReport = report?.patientReports.find((p) => p.patientId === patient?.id);
 
   const nutrients: NutrientGoalReportItem[] =
     selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
@@ -40,26 +39,27 @@ const DailyRecapCard: React.FC = () => {
     }
   };
 
-  const actionButton = (
-    <>
-      {patient && (
-        <CreatePatientNutrientGoalModal
-          handleSubmit={handleSubmit}
-          newGoal={newGoal}
-          setNewGoal={setNewGoal}
-          selectedPatient={patient}
-        />
-      )}
-    </>
-  );
+  const chevronStyle = {
+    my: "auto",
+    fontSize: "2.5em",
+  };
 
   return (
-    <>
-      <GenericCard title="Daily Recap" actions={actionButton}>
+    <Box sx={{ display: "flex", flexDirection: "row" }}>
+      <ChevronLeft sx={chevronStyle} />
+      <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", overflowX: "auto", py: 2 }}>
         {reportDataLoading && <Skeleton variant="rectangular" height={200} />}
         {(report?.daysCount == 0 || (selectedPatientReport && nutrients && nutrients.length === 0))
           ? (
             <Box>
+              {patient && (
+                <CreatePatientNutrientGoalModal
+                  handleSubmit={handleSubmit}
+                  newGoal={newGoal}
+                  setNewGoal={setNewGoal}
+                  selectedPatient={patient}
+                />
+              )}
               <Typography variant="overline">No Goals</Typography>
               <br />
               <Typography variant="body1" color={"text.secondary"}>
@@ -68,12 +68,12 @@ const DailyRecapCard: React.FC = () => {
             </Box>
           )
           :
-          (<>
-            <Box sx={{ maxHeight: 240, overflow: "auto" }}>
+          (
+            <>
               {selectedPatientReport && nutrients &&
                 nutrients.length > 0 &&
                 nutrients.map((nutrient) => (
-                  <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
+                  <Box key={nutrient.nutrientId} sx={{ mx: 1, maxWidth: 350, minWidth: 300 }}>
                     <NutrientProgress
                       key={nutrient.nutrientId}
                       nutrientName={nutrient.nutrientName}
@@ -84,12 +84,11 @@ const DailyRecapCard: React.FC = () => {
                     />
                   </Box>
                 ))}
-            </Box>
-            <DailyGoalStatusCard nutrients={nutrients} />
-          </>)}
-      </GenericCard>
-    </>
-  );
+            </>
+          )
+        }
+      </Box>
+      <ChevronRight sx={chevronStyle} />
+    </Box>
+  )
 };
-
-export default DailyRecapCard;
