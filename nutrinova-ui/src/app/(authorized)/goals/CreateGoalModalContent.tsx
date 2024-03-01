@@ -49,9 +49,7 @@ export const CreateGoalModalContent = ({
   ];
 
   const [goalType, setGoalType] = useState("recommended");
-  const [goalRangeType, setGoalRangeType] = useState<string | null>(
-    goalRangeTypes[0],
-  );
+  const [goalRangeType, setGoalRangeType] = useState<string | null>();
   const [lowerLimit, setLowerLimit] = useState<number | string>("");
   const [upperLimit, setUpperLimit] = useState<number | string>("");
   const [selectedNutrient, setSelectedNutrient] =
@@ -96,6 +94,11 @@ export const CreateGoalModalContent = ({
       dailyUpperLimit: undefined,
       useRecommended: event.target.value === "recommended",
     });
+    if (event.target.value === "recommended") {
+      setGoalRangeType(null);
+    } else {
+      setGoalRangeType(goalRangeTypes[0]);
+    }
   };
 
   const handleGoalRangeTypeChange = (goalRangeType: string | null) => {
