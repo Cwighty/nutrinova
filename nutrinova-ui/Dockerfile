@@ -1,28 +1,25 @@
-FROM node:21 as builder
-
+FROM node:21 as base
 WORKDIR /app
-
 COPY package*.json ./
-
 RUN npm install
-
 COPY . .
-
 ENV NEXT_TELEMETRY_DISABLED 1
 
+
+FROM base as builder
 RUN npm run build
 
-# stage 2
 
-FROM node:21
+FROM base as lint
+RUN npm run lint
 
+
+FROM node:21 as final
 WORKDIR /app
-
 ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-
 COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
