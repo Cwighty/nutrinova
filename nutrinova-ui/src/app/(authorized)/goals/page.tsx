@@ -1,6 +1,6 @@
 import { PatientContextPageContainer } from "@/components/PatientContextPageContainer";
 import { getServerSession } from "next-auth";
-import { DailyNutrientCarouselSelector } from "./_components/DailyNutrientCarouselSelector";
+import GoalsDetail from "./_components/GoalsDetail";
 
 export const metadata = {
   title: "Goals",
@@ -13,7 +13,7 @@ export default async function GoalsPage() {
     <PatientContextPageContainer title={metadata.title}>
       <>
         <h1>{session?.user.email}</h1>
-        <DailyNutrientCarouselSelector />
+        <GoalsDetail />
       </>
     </PatientContextPageContainer>
   );

@@ -16,7 +16,7 @@ export const PatientContextPageContainer = ({
     <>
       <PageBar title={title} />
       <Divider />
-      <Container maxWidth={"lg"} sx={{ pt: 3, pb: { xs: 3, md: 0 } }}>
+      <Container fixed sx={{ pt: 3, pb: { xs: 3, md: 0 } }}>
         {children}
       </Container>
       <ChatBot />
