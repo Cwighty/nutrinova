@@ -45,7 +45,7 @@ export const DailyNutrientCarouselSelector: React.FC<DailyNutrientCarouselSelect
     }
   };
 
-  const [selectedNutrient, setSelectedNutrient] = React.useState<NutrientGoalReportItem | null>(null);
+  const [selectedNutrient, setSelectedNutrient] = React.useState<NutrientGoalReportItem | null>();
   const handleNutrientClick = (nutrient: NutrientGoalReportItem) => {
     setSelectedNutrient(nutrient);
     onNutrientSelected(nutrient);

@@ -80,6 +80,24 @@ export const useCreateGoal = () => {
   });
 };
 
+const fetchGoalReportsByNutrient = async ({ beginDate, endDate, nutrientId, patientId }: { beginDate: Date, endDate: Date, nutrientId: number, patientId: string }) => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: "client",
+  });
+  const beginDateStr = beginDate.toISOString().split('T')[0];
+  const endDateStr = endDate.toISOString().split('T')[0];
+  const response = await apiClient.get(`/Goal/report?beginDate=${beginDateStr}&endDate=${endDateStr}&nutrientId=${nutrientId}&patientId=${patientId}`);
+  return response.data as AggregatePatientNutrientReport;
+}
+
+export const useFetchGoalReportByNutrient = (beginDate: Date, endDate: Date, nutrientId: number, patientId: string) => {
+  return useQuery({
+    queryFn: () => fetchGoalReportsByNutrient({ beginDate, endDate, nutrientId, patientId }),
+    queryKey: ["goalReports", beginDate, endDate, nutrientId, patientId],
+  });
+}
+
 export const useUpdateGoal = (
   id: string,
   updateData: NutrientGoalRequestModel,
