@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
 import { DailyNutrientCarouselSelector } from "./DailyNutrientCarouselSelector";
-import { NutrientGoalRangeSummary } from "./NutrientGoalChart/NutrientGoalChart";
+import { NutrientGoalRangeSummary } from "./NutrientGoalChart/NutrientGoalRangeSummary";
 import { Box } from "@mui/material";
 
 const GoalsDetail = () => {
