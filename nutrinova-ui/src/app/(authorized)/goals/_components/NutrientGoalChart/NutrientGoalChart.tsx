@@ -1,7 +1,7 @@
 "use client"
 
 import { PatientNutrientReport } from "../../_models/PatientNutrientReport";
-import { AllSeriesType, BarPlot, ChartContainer, ChartsReferenceLine, ChartsXAxis, ChartsYAxis, LinePlot } from "@mui/x-charts";
+import { AllSeriesType, BarPlot, ChartContainer, ChartsReferenceLine, ChartsXAxis, ChartsYAxis, LineChart, LinePlot, ResponsiveChartContainer } from "@mui/x-charts";
 import { TargetAmountChart } from "./TargetAmountChart";
 
 interface NutrientGoalChartProps {
@@ -24,15 +24,19 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
       type: 'bar',
       stack: '',
       yAxisKey: 'amount',
-      data: [10,12],
+      data: [10, 12],
+    },
+    {
+      type: 'line',
+      yAxisKey: 'amount',
+      data: [10, 10],
+      area: true,
     },
   ] as AllSeriesType[];
 
   return (<>
-    <ChartContainer
+    <ResponsiveChartContainer
       series={series}
-      width={700}
-      height={400}
       xAxis={[
         {
           id: 'days',
@@ -52,11 +56,21 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
       ]}
     >
       <BarPlot />
-      <LinePlot />
       <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount} color="yellow" />
       <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].customTargetAmount} color="green" />
       <ChartsXAxis label="Days" position="bottom" axisId="days" />
       <ChartsYAxis label="Results" position="left" axisId="amount" />
-    </ChartContainer>
+      <LineChart
+        xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+        series={[
+          {
+            data: [2, 5.5, 2, 8.5, 1.5, 5],
+            area: true,
+          },
+        ]}
+        width={500}
+        height={300}
+      />
+    </ResponsiveChartContainer>
   </>);
 };
