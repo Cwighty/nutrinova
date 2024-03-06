@@ -9,6 +9,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import React from "react";
 import { useFetchGoalReportByNutrient } from "../../goalHooks";
 import { PatientContext } from "@/components/providers/PatientProvider";
+import { NutrientGoalChart } from "./NutrientGoalChart";
 
 interface NutrientGoalRangeSummaryProps {
   selectedNutrient: NutrientGoalReportItem | null;
@@ -53,8 +54,8 @@ export const NutrientGoalRangeSummary: React.FC<NutrientGoalRangeSummaryProps> =
           </Grid>
           <Grid item xs={12} lg={8}>
             {reportData.isLoading && <Skeleton sx={{ height: 1 }} />}
-            {reportData.isSuccess &&
-              <h1>Success</h1>
+            {report &&
+              <NutrientGoalChart report={report} />
             }
           </Grid>
           <Grid item xs={12} lg={4}>
