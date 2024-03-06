@@ -8,11 +8,11 @@ export const metadata = {
 
 export default async function GoalsPage() {
   const session = await getServerSession();
+  console.log(session)
 
   return (
     <PatientContextPageContainer title={metadata.title}>
       <>
-        <h1>{session?.user.email}</h1>
         <GoalsDetail />
       </>
     </PatientContextPageContainer>
