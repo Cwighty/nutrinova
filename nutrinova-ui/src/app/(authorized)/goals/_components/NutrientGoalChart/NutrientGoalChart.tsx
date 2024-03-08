@@ -32,6 +32,12 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
       data: [10, 10],
       area: true,
     },
+    {
+      type: 'line',
+      yAxisKey: 'targetAmount',
+      data: report.days.map((day) => day.nutrientGoalReportItems[0].recommendedTargetAmount.lowerLimit),
+      area: true,
+    }
   ] as AllSeriesType[];
 
   return (<>
@@ -50,27 +56,18 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
           scaleType: 'linear',
         },
         {
-          id: 'pib',
-          scaleType: 'log',
-        },
+          id: 'targetAmount',
+          scaleType: 'linear',
+        }
       ]}
     >
-      <BarPlot />
-      <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount} color="yellow" />
-      <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].customTargetAmount} color="green" />
-      <ChartsXAxis label="Days" position="bottom" axisId="days" />
-      <ChartsYAxis label="Results" position="left" axisId="amount" />
-      <LineChart
-        xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-        series={[
-          {
-            data: [2, 5.5, 2, 8.5, 1.5, 5],
-            area: true,
-          },
-        ]}
-        width={500}
-        height={300}
-      />
+      <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount} color="yellow">
+        <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].customTargetAmount} color="green" >
+          <BarPlot />
+          <ChartsXAxis label="Days" position="bottom" axisId="days" />
+          <ChartsYAxis label="Results" position="left" axisId="amount" />
+        </TargetAmountChart>
+      </TargetAmountChart>
     </ResponsiveChartContainer>
   </>);
 };
