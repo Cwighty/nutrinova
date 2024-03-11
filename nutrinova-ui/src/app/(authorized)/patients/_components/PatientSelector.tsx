@@ -31,13 +31,12 @@ export const PatientSelector = () => {
   }
 
   const patientName = `${selectedPatient?.firstname} ${selectedPatient?.lastname}`;
-
   return (
     <>
       <Typography variant="button" sx={{ mx: 2 }}>{selectedPatient ? patientName : <></>}</Typography>
       <Tooltip title="Select a patient to care for">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          {selectedPatient ? <Avatar {...stringAvatar(patientName)} /> : <Avatar />}
+          {selectedPatient ? <Avatar src={`${selectedPatient.base64image}`} {...stringAvatar(patientName)} /> : <Avatar />}
         </IconButton>
       </Tooltip>
       <Menu

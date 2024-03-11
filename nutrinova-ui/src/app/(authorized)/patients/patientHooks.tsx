@@ -25,7 +25,22 @@ const getAllPatients = async () => {
     return [];
   }
   const response = await apiClient.get<Patient[]>('/patient/all-patients');
-  return response.data;
+  const res = response.data.map(async (patient) => {
+    if (patient?.base64image == null || patient?.base64image == undefined || patient?.base64image == '') {
+      return {
+        ...patient,
+        base64image: ''
+      } as Patient;
+    } else {
+      const image = await getCurrentPatientImage(patient?.id ?? '');
+      return {
+        ...patient,
+        base64image: `${image as string}`
+      } as Patient;
+    }
+  });
+  const awaitedRes = await Promise.all(res)
+  return awaitedRes;
 };
 
 export const useGetAllPatientsQuery = () => {
