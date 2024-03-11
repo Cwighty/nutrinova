@@ -56,7 +56,6 @@ const createPatient = async (patient: CreatePatientReq) => {
     additionalHeaders: {},
     origin: 'client',
   });
-  console.log("patient", patient);
   const response = await apiClient.post('/patient/create-patient', patient);
   return response.status === 200;
 };
@@ -105,7 +104,6 @@ const getCurrentPatientImage = async (patientId: string) => {
     reader.readAsDataURL(response.data as Blob); // Converts Blob to Base64
     reader.onloadend = function () {
       const base64data = reader.result;
-      console.log(base64data); // Log or use the Base64 string as needed
       resolve(base64data); // Resolve the promise with the Base64 string
     };
     reader.onerror = reject;
