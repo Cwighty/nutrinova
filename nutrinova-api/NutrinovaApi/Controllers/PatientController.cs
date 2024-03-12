@@ -21,7 +21,7 @@ public class PatientController : ControllerBase
 
   // Get all patients for the logged-in customer
   [HttpGet("all-patients")]
-  public async Task<ActionResult> GetAllPatients()
+  public async Task<ActionResult<List<PatientResponse>>> GetAllPatients()
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -35,7 +35,8 @@ public class PatientController : ControllerBase
         .Where(p => p.CustomerId == customer.Id)
         .ToListAsync();
 
-    return Ok(patients);
+    var patientResponses = patients.Select(p => p.ToPatientResponse()).ToList();
+    return Ok(patientResponses);
   }
 
   [HttpGet("image/{paitentId}")]
@@ -94,9 +95,10 @@ public class PatientController : ControllerBase
       patient.Sex = "M"; // Default sex
     }
 
-    var pictureName = Guid.NewGuid();
+    Guid? pictureName = null;
     if (!patient?.Base64Image.IsNullOrEmpty() ?? false)
     {
+      pictureName = Guid.NewGuid();
       var base64Image = patient?.Base64Image?.Split(',')[1];
       byte[] bytes = Convert.FromBase64String(base64Image ?? throw new Exception("image stream is null your empty"));
       System.IO.File.WriteAllBytes($"{configuration["IMAGE_PATH"]}/{pictureName}.png", bytes);
@@ -109,7 +111,7 @@ public class PatientController : ControllerBase
       Lastname = patient.Lastname,
       Age = patient.Age,
       Sex = patient.Sex != "M" && patient.Sex != "F" ? "M" : patient.Sex, // This was Drew Gordons desicion
-      ProfilePictureName = patient?.Base64Image != null ? pictureName.ToString() : null,
+      ProfilePictureName = patient?.Base64Image != null ? pictureName?.ToString() : null,
       CustomerId = customer.Id,
     };
 

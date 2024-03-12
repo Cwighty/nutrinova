@@ -37,7 +37,7 @@ export const PatientSelector = () => {
       <Typography variant="button" sx={{ mx: 2 }}>{selectedPatient ? patientName : <></>}</Typography>
       <Tooltip title="Select a patient to care for">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          {selectedPatient?.base64image ? <Avatar src={`${selectedPatient.base64image}`} /> : <Avatar {...stringAvatar(patientName)} />}
+          {selectedPatient?.hasPicture ? <Avatar src={`${selectedPatient.base64image}`} /> : <Avatar {...stringAvatar(patientName)} />}
         </IconButton>
       </Tooltip>
       <Menu

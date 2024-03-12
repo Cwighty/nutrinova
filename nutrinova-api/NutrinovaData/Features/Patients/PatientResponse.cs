@@ -12,5 +12,7 @@ public class PatientResponse
 
   public Guid? CustomerId { get; set; }
 
+  public bool HasPicture { get; set; }
+
   public CustomerResponse? CustomerResponse { get; set; }
 }

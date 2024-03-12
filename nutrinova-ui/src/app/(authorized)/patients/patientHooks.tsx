@@ -26,13 +26,15 @@ const getAllPatients = async () => {
   }
   const response = await apiClient.get<Patient[]>('/patient/all-patients');
   const res = response.data.map(async (patient) => {
-    if (patient?.base64image == null || patient?.base64image == undefined || patient?.base64image == '') {
+    if (!patient?.hasPicture) {
+      console.log("here is the image in the get all patients", "no image found")
       return {
         ...patient,
         base64image: ''
       } as Patient;
     } else {
-      const image = await getCurrentPatientImage(patient?.id ?? '');
+      const image = await getPatientImage(patient?.id ?? '');
+      console.log("here is the image in the get all patients", image);
       return {
         ...patient,
         base64image: `${image as string}`
@@ -40,6 +42,7 @@ const getAllPatients = async () => {
     }
   });
   const awaitedRes = await Promise.all(res)
+  console.log("here is the res", awaitedRes);
   return awaitedRes;
 };
 
@@ -92,7 +95,7 @@ export const useGetPatientByIdQuery = (patientId: string) => {
   });
 };
 
-const getCurrentPatientImage = async (patientId: string) => {
+const getPatientImage = async (patientId: string) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: 'client',
@@ -113,6 +116,6 @@ const getCurrentPatientImage = async (patientId: string) => {
 export const useGetCurrentPatientImageQuery = (patientId: string) => {
   return useQuery({
     queryKey: [patientKeys.details, patientId],
-    queryFn: () => getCurrentPatientImage(patientId),
+    queryFn: () => getPatientImage(patientId),
   });
 };
