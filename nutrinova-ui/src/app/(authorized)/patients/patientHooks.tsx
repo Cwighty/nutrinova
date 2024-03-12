@@ -101,7 +101,9 @@ const getPatientImage = async (patientId: string) => {
     origin: 'client',
   });
   const response = await apiClient.get(`/patient/image/${patientId}`, { responseType: 'blob' });
-  console.log("response", response);
+  if (response.status !== 200) {
+    throw new Error('Failed to fetch patient image');
+  }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(response.data as Blob); // Converts Blob to Base64
