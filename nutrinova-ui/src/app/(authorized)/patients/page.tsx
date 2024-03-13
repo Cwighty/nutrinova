@@ -51,9 +51,7 @@ const PatientsPage = () => {
         <Typography variant="button">Patients</Typography>
         <List>
           {patients?.map((patient, index) => (
-            <>
-              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: patient.firstname + patient.lastname, optOut: false }} handleDelete={handleDelete} />
-            </>
+            <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: patient.firstname + patient.lastname, optOut: false }} handleDelete={handleDelete} />
           ))}
         </List>
       </PageContainer>
