@@ -21,21 +21,13 @@ export const ServingSizeUnitField = ({
   formValid,
 }: ServingSizeUnitFieldProps) => {
   const handleServingSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "" || /^\d*\.?\d*$/.test(e.target.value)) {
-      const servingSize =
-        e.target.value === "" ? "" : parseFloat(e.target.value);
-      if (servingSize !== "") {
-        setFormState({
-          ...formState,
-          servingSize: servingSize,
-        });
-      }
-      if (servingSize === "") {
-        setFormState({
-          ...formState,
-          servingSize: undefined,
-        });
-      }
+    const inputValue = e.target.value;
+    const servingSize = inputValue === "" ? undefined : parseFloat(inputValue);
+    if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+      setFormState({
+        ...formState,
+        servingSize: servingSize,
+      });
     }
   };
 
