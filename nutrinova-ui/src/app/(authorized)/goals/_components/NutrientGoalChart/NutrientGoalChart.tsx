@@ -12,8 +12,6 @@ interface NutrientGoalChartProps {
 
 export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
 ) => {
-  console.log(report);
-
   const days = report.days.map((day) => {
     const date = new Date(day.date);
     const dayOfMonth = date.getDate();
