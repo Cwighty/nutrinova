@@ -10,7 +10,6 @@ export interface Customer {
 const fetchFromServer = async (url: string, origin: "client" | "server") => {
   const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin })
   const response = await axiosInstance.get(url);
-  console.log("response", response);
   return response.data as unknown;
 }
 

@@ -65,7 +65,8 @@ const AddPatientPage = () => {
         sex: element?.sex,
         base64image: element?.pff,
         age: element?.age,
-        useDefaultNutrientGoals: element.optOut
+        useDefaultNutrientGoals: element.optOut,
+        hasPicture: !!element?.pff,
       }
       createPatientMutation.mutate(patient);
     });

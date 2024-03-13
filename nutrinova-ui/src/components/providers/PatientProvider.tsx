@@ -24,7 +24,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       setSelectedPatient(patients?.[0] ?? null);
     }
   }, [patients, selectedPatient]);
-
+  
   const contextValue = useMemo(() => ({
     patients,
     selectedPatient,

@@ -13,12 +13,11 @@ export const PatientListItem = ({ patient, handleDelete }: PatientListItemProps)
     <Paper elevation={6} sx={{
       mb: 2
     }}>
-
       <ListItem secondaryAction={<IconButton onClick={() => handleDelete(patient)}>
         <Delete />
       </IconButton>}>
         <ListItemAvatar>
-          <Avatar>{patient.name.charAt(0)}</Avatar>
+          <Avatar src={`${patient.pff}`}>{patient.name.charAt(0)}</Avatar>
         </ListItemAvatar>
         <ListItemText primary={patient.name} secondary={`Age: ${patient.optOut ? 19 : patient.age}`} />
       </ListItem>

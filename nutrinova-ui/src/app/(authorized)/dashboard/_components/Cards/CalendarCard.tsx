@@ -50,7 +50,6 @@ const CalendarCard: React.FC = () => {
   const renderDots = (date: Date) => {
     const formattedDate = dateFns.format(date, 'yyyy-MM-dd');
     const dayEvents = events.find(event => event.date === formattedDate);
-    console.log(dayEvents);
     return dayEvents?.colors.map((color, index) => (
       <Box
         key={index}

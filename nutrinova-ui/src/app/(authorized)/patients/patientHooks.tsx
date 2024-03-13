@@ -25,7 +25,25 @@ const getAllPatients = async () => {
     return [];
   }
   const response = await apiClient.get<Patient[]>('/patient/all-patients');
-  return response.data;
+  const res = response.data.map(async (patient) => {
+    if (!patient?.hasPicture) {
+      console.log("here is the image in the get all patients", "no image found")
+      return {
+        ...patient,
+        base64image: ''
+      } as Patient;
+    } else {
+      const image = await getPatientImage(patient?.id ?? '');
+      console.log("here is the image in the get all patients", image);
+      return {
+        ...patient,
+        base64image: `${image as string}`
+      } as Patient;
+    }
+  });
+  const awaitedRes = await Promise.all(res)
+  console.log("here is the res", awaitedRes);
+  return awaitedRes;
 };
 
 export const useGetAllPatientsQuery = () => {
@@ -41,7 +59,6 @@ const createPatient = async (patient: CreatePatientReq) => {
     additionalHeaders: {},
     origin: 'client',
   });
-  console.log("patient", patient);
   const response = await apiClient.post('/patient/create-patient', patient);
   return response.status === 200;
 };
@@ -78,19 +95,20 @@ export const useGetPatientByIdQuery = (patientId: string) => {
   });
 };
 
-const getCurrentPatientImage = async (patientId: string) => {
+const getPatientImage = async (patientId: string) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: 'client',
   });
   const response = await apiClient.get(`/patient/image/${patientId}`, { responseType: 'blob' });
-  console.log("response", response);
+  if (response.status !== 200) {
+    throw new Error('Failed to fetch patient image');
+  }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(response.data as Blob); // Converts Blob to Base64
     reader.onloadend = function () {
       const base64data = reader.result;
-      console.log(base64data); // Log or use the Base64 string as needed
       resolve(base64data); // Resolve the promise with the Base64 string
     };
     reader.onerror = reject;
@@ -100,6 +118,6 @@ const getCurrentPatientImage = async (patientId: string) => {
 export const useGetCurrentPatientImageQuery = (patientId: string) => {
   return useQuery({
     queryKey: [patientKeys.details, patientId],
-    queryFn: () => getCurrentPatientImage(patientId),
+    queryFn: () => getPatientImage(patientId),
   });
 };
