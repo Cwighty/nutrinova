@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
 import { DailyNutrientCarouselSelector } from "./DailyNutrientCarouselSelector";
 import { NutrientGoalRangeSummary } from "./NutrientGoalChart/NutrientGoalRangeSummary";
-import { Box } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 
 const GoalsDetail = () => {
   const [selectedNutrient, setSelectedNutrient] = useState<NutrientGoalReportItem | null>(null);
@@ -19,7 +19,10 @@ const GoalsDetail = () => {
     <>
       <DailyNutrientCarouselSelector onNutrientSelected={handleSelectedNutrient} />
       <Box sx={{ mt: 3 }}>
-        <NutrientGoalRangeSummary selectedNutrient={selectedNutrient} />
+        {!selectedNutrient && <Box>
+          <Skeleton variant="rectangular" sx={{ height: 400 }} />
+        </Box>}
+        {selectedNutrient && <NutrientGoalRangeSummary selectedNutrient={selectedNutrient} />}
       </Box>
     </>
   );
