@@ -10,7 +10,6 @@ import WelcomeCard from "./Cards/WelcomeCard";
 import ReminderCard from "./Cards/ReminderCard";
 import { useContext } from "react";
 import { PatientContext } from "@/components/providers/PatientProvider";
-import { useGetCurrentPatientImageQuery } from "../../patients/patientHooks";
 
 interface DashboardLayoutProps {
   session?: Session | null;
@@ -19,11 +18,10 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ session }) => {
   // This would be replaced with state management in a real application
   const { selectedPatient } = useContext(PatientContext);
-  const { data: image } = useGetCurrentPatientImageQuery(selectedPatient?.id ?? '')
-  console.log("image", image);
   return (
     <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
-      <img src={image as string} alt="Patient Image" />
+
+      {selectedPatient?.base64image && <img src={selectedPatient?.base64image} alt="Patient Image" />}
       <WelcomeCard caretakerName={session?.user.name} />
       {/* <CalendarCard /> */}
       <NotificationsCard />

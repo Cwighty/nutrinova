@@ -33,7 +33,8 @@ const PatientsPage = () => {
       sex: patientInfo?.sex,
       base64image: patientInfo?.pff,
       age: patientInfo?.age,
-      useDefaultNutrientGoals: patientInfo.optOut
+      useDefaultNutrientGoals: patientInfo.optOut,
+      hasPicture: !!patientInfo.pff
     }
     createPatientMutation.mutate(patient);
   }

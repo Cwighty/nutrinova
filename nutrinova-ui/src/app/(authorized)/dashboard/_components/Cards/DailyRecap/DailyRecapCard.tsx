@@ -10,7 +10,7 @@ import {
 } from "@/app/(authorized)/goals/goalHooks";
 import { NutrientGoalReportItem } from "@/app/(authorized)/goals/_models/NutrientGoalReportItem";
 import { Box, Skeleton, Typography } from "@mui/material";
-import NutrientProgress from "./NutrientProgress";
+import NutrientProgress from "../../../../goals/_components/NutrientProgress";
 import { DailyGoalStatusCard } from "./DailyGoalStatusCard";
 
 const DailyRecapCard: React.FC = () => {

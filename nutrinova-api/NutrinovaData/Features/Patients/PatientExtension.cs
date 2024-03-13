@@ -13,6 +13,7 @@ public static class PatientExtension
       Firstname = patient.Firstname,
       Lastname = patient.Lastname,
       CustomerId = patient.CustomerId,
+      HasPicture = !string.IsNullOrEmpty(patient.ProfilePictureName),
       CustomerResponse = patient.Customer?.ToCustomerResponse(),
     };
   }

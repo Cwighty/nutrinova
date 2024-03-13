@@ -9,6 +9,7 @@ const nextConfig = {
       aggregateTimeout: 300,
     },
   }),
+  transpilePackages: ['@mui/x-charts'],
   async rewrites() {
     return [
       {
