@@ -19,7 +19,7 @@ public partial class Patient
 
   public Guid? CustomerId { get; set; }
 
-  public bool Optedoutpatientdetails { get; set; }
+  public bool OptOutDetails { get; set; }
 
   public virtual Customer? Customer { get; set; }
 

@@ -105,7 +105,7 @@ CREATE TABLE
         Profile_Picture_Name TEXT,
         Sex TEXT Check (Sex = 'M' OR Sex = 'F' OR Sex is null),
         Customer_id UUID,
-        OptedOutPatientDetails BOOL Not Null,
+        Opt_Out_Details BOOL Not Null,
         FOREIGN KEY (Customer_id) REFERENCES Customer (id)
     );
 
