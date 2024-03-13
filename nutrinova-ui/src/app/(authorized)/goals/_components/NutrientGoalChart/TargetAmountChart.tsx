@@ -21,11 +21,20 @@ export const TargetAmountChart: React.FC<TargetAmountChartProps> = ({ targetAmou
     : targetAmount.lowerLimit ? TargetAmountChartType.LowerBound
       : TargetAmountChartType.UpperBound;
 
-  const lineStyle = {
-    stroke: recommended ? "#ffa726" : type === TargetAmountChartType.LowerBound ? '#388e3c' : type === TargetAmountChartType.UpperBound ? '#d32f2f' : '#0288d1',
-    strokeDasharray: recommended ? '5 5' : '6 5',
-    strokeWidth: '3',
+  const getStyle = (recommended: boolean, type: TargetAmountChartType) => {
+    const colors: { [key: string]: string } = {
+      recommended: "#ffa726",
+      rda: "#388e3c",
+      ul: "#d32f2f",
+      range: "#0288d1",
+    };
+    return {
+      stroke: recommended ? colors.recommended : colors[type.toLowerCase()],
+      strokeDasharray: recommended ? '5 5' : '6 5',
+      strokeWidth: '3',
+    };
   };
+  const lineStyle = getStyle(recommended, type);
 
   const label = recommended ? "Recommended" : "Custom";
   const labelAlign = recommended ? 'end' : 'middle';

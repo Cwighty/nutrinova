@@ -18,7 +18,11 @@ interface NutrientGoalRangeSummaryProps {
 export const NutrientGoalRangeSummary: React.FC<NutrientGoalRangeSummaryProps> = ({
   selectedNutrient
 }) => {
-  const [fromDate, setFromDate] = React.useState<Date>(new Date());
+  const [fromDate, setFromDate] = React.useState<Date>(() => {
+    const weekBefore = new Date();
+    weekBefore.setDate(weekBefore.getDate() - 6);
+    return weekBefore;
+  });
   const [toDate, setToDate] = React.useState<Date>(new Date());
 
   const patientContext = React.useContext(PatientContext);
@@ -39,14 +43,22 @@ export const NutrientGoalRangeSummary: React.FC<NutrientGoalRangeSummaryProps> =
                   <DatePicker
                     label="From Date"
                     value={fromDate}
-                    onChange={(e: Date | null) => setFromDate(e as Date)}
+                    onChange={(e: Date | null) => {
+                      if (e && e <= toDate) {
+                        setFromDate(e);
+                      }
+                    }}
                   />
                 </LocalizationProvider>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="To Date"
                     value={toDate}
-                    onChange={(e: Date | null) => setToDate(e as Date)}
+                    onChange={(e: Date | null) => {
+                      if (e && e >= fromDate) {
+                        setToDate(e);
+                      }
+                    }}
                   />
                 </LocalizationProvider>
               </Box>

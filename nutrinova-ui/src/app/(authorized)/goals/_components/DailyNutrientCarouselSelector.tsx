@@ -26,10 +26,8 @@ export const DailyNutrientCarouselSelector: React.FC<DailyNutrientCarouselSelect
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = report?.patientReports.find((p) => p.patientId === patient?.id);
-
-  const nutrients: NutrientGoalReportItem[] =
-    selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
+  const selectedPatientReport = React.useMemo(() => report?.patientReports.find((p) => p.patientId === patient?.id), [report, patient?.id]);
+  const nutrients: NutrientGoalReportItem[] = React.useMemo(() => selectedPatientReport?.days[0].nutrientGoalReportItems ?? [], [selectedPatientReport]);
 
   const defaultGoal: NutrientGoalRequestModel = {
     nutrientId: 0,

@@ -80,7 +80,14 @@ export const useCreateGoal = () => {
   });
 };
 
-const fetchGoalReportsByNutrient = async ({ beginDate, endDate, nutrientId, patientId }: { beginDate: Date, endDate: Date, nutrientId: number, patientId: string }) => {
+export interface FetchGoalReportsByNutrientParams {
+  beginDate: Date;
+  endDate: Date;
+  nutrientId: number;
+  patientId: string;
+}
+
+const fetchGoalReportsByNutrient = async ({ beginDate, endDate, nutrientId, patientId }: FetchGoalReportsByNutrientParams) => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -90,6 +97,7 @@ const fetchGoalReportsByNutrient = async ({ beginDate, endDate, nutrientId, pati
   const response = await apiClient.get(`/Goal/report?beginDate=${beginDateStr}&endDate=${endDateStr}&nutrientId=${nutrientId}&patientId=${patientId}`);
   return response.data as AggregatePatientNutrientReport;
 }
+
 
 export const useFetchGoalReportByNutrient = (beginDate: Date, endDate: Date, nutrientId: number, patientId: string) => {
   return useQuery({
