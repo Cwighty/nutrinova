@@ -14,7 +14,7 @@ import { ChangeEvent, useState } from "react";
 interface EditNutrientListItemProp {
   nutrient: EditFoodNutrientRequestModel;
   deleteNutrient: () => void;
-  updateNutrient: (nutrientAmount: number) => void;
+  updateNutrient: (nutrientAmount: number | "") => void;
   inputOptions?: {
     helperText?: string;
     error?: boolean;
@@ -43,9 +43,7 @@ export const EditNutrientListItem = ({
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       const newAmount = value === "" ? "" : parseFloat(value);
       setUnitAmount(newAmount);
-      if (value !== "") {
-        updateNutrient(newAmount as number);
-      }
+      updateNutrient(newAmount);
     }
   };
 

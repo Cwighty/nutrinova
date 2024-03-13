@@ -1,6 +1,7 @@
 import SelectUnit from "@/components/forms/SelectUnit";
 import { Grid, TextField } from "@mui/material";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+import { ChangeEvent } from "react";
 
 export interface SelectNutrientWithUnitState {
   servingSize?: number;
@@ -19,7 +20,7 @@ export const ServingSizeUnitField = ({
   setFormState,
   formValid,
 }: ServingSizeUnitFieldProps) => {
-  const handleServingSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleServingSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "" || /^\d*\.?\d*$/.test(e.target.value)) {
       const servingSize =
         e.target.value === "" ? "" : parseFloat(e.target.value);
@@ -29,12 +30,17 @@ export const ServingSizeUnitField = ({
           servingSize: servingSize,
         });
       }
+      if (servingSize === "") {
+        setFormState({
+          ...formState,
+          servingSize: undefined,
+        });
+      }
     }
   };
 
   return (
     <>
-      {/* Serving Size */}
       <Grid item xs={12} md={6} mb={2} lg={12}>
         <TextField
           label="Serving Size"
