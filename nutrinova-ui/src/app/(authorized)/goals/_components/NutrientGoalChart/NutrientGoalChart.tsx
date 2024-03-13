@@ -1,8 +1,9 @@
 "use client"
 
 import { PatientNutrientReport } from "../../_models/PatientNutrientReport";
-import { AllSeriesType, BarPlot, ChartContainer, ChartsReferenceLine, ChartsXAxis, ChartsYAxis, LineChart, LinePlot, ResponsiveChartContainer } from "@mui/x-charts";
+import { AllSeriesType, BarPlot, ChartsXAxis, ChartsYAxis, ResponsiveChartContainer } from "@mui/x-charts";
 import { TargetAmountChart } from "./TargetAmountChart";
+import React from "react";
 
 interface NutrientGoalChartProps {
   report: PatientNutrientReport;
@@ -18,26 +19,17 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
     const month = date.toLocaleString('default', { month: 'short' });
     return `${dayOfMonth} ${month}`;
   });
+  const recommendedTarget = report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount;
+  const customTarget = report.days[0].nutrientGoalReportItems[0].customTargetAmount;
   const consumed = report.days.map((day) => day.nutrientGoalReportItems[0].consumedAmount);
   const series = [
     {
       type: 'bar',
       stack: '',
       yAxisKey: 'amount',
-      data: [10, 12],
+      data: consumed,
+      color: '#1976d2',
     },
-    {
-      type: 'line',
-      yAxisKey: 'amount',
-      data: [10, 10],
-      area: true,
-    },
-    {
-      type: 'line',
-      yAxisKey: 'targetAmount',
-      data: report.days.map((day) => day.nutrientGoalReportItems[0].recommendedTargetAmount.lowerLimit),
-      area: true,
-    }
   ] as AllSeriesType[];
 
   return (<>
@@ -54,18 +46,14 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
         {
           id: 'amount',
           scaleType: 'linear',
-        },
-        {
-          id: 'targetAmount',
-          scaleType: 'linear',
         }
       ]}
     >
-      <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount} color="yellow">
-        <TargetAmountChart targetAmount={report.days[0].nutrientGoalReportItems[0].customTargetAmount} color="green" >
+      <TargetAmountChart targetAmount={recommendedTarget} recommended >
+        <TargetAmountChart targetAmount={customTarget} >
           <BarPlot />
           <ChartsXAxis label="Days" position="bottom" axisId="days" />
-          <ChartsYAxis label="Results" position="left" axisId="amount" />
+          <ChartsYAxis position="left" axisId="amount" />
         </TargetAmountChart>
       </TargetAmountChart>
     </ResponsiveChartContainer>

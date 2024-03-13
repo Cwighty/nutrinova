@@ -1,11 +1,11 @@
 "use client"
 
-import { ChartsReferenceLine, AreaPlot } from "@mui/x-charts";
+import { ChartsReferenceLine } from "@mui/x-charts";
 import { GoalTargetAmount } from "../../_models/NutrientGoalReportItem";
 
 interface TargetAmountChartProps {
   targetAmount: GoalTargetAmount;
-  color: string;
+  recommended?: boolean;
   children?: React.ReactNode;
 }
 
@@ -15,52 +15,41 @@ export enum TargetAmountChartType {
   Range = "AMDR",
 }
 
-export const TargetAmountChart: React.FC<TargetAmountChartProps> = ({ targetAmount, color, children }) => {
-  const type = targetAmount.lowerLimit && targetAmount.upperLimit ? TargetAmountChartType.Range : targetAmount.lowerLimit ? TargetAmountChartType.LowerBound : TargetAmountChartType.UpperBound;
+export const TargetAmountChart: React.FC<TargetAmountChartProps> = ({ targetAmount, children, recommended = false }) => {
+
+  const type = targetAmount.lowerLimit && targetAmount.upperLimit ? TargetAmountChartType.Range
+    : targetAmount.lowerLimit ? TargetAmountChartType.LowerBound
+      : TargetAmountChartType.UpperBound;
 
   const lineStyle = {
-    stroke: color,
-    strokeDasharray: type === TargetAmountChartType.LowerBound ? '10 5' : '5 5',
-    strokeWidth: type === TargetAmountChartType.LowerBound ? '3' : undefined,
+    stroke: recommended ? "#ffa726" : type === TargetAmountChartType.LowerBound ? '#388e3c' : type === TargetAmountChartType.UpperBound ? '#d32f2f' : '#0288d1',
+    strokeDasharray: recommended ? '5 5' : '6 5',
+    strokeWidth: '3',
   };
 
-  const areaPlotStyle = {
-    type: "monotone",
-    dataKey: "targetAmount",
-    fill: color,
-    fillOpacity: 0.5,
-  };
+  const label = recommended ? "Recommended" : "Custom";
 
   return (
     <>
       {type === TargetAmountChartType.UpperBound &&
         <>
-          <AreaPlot
-            {...areaPlotStyle}
-          />
           {children}
-          <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} />
+          <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} label={label} />
         </>
       }
 
       {type === TargetAmountChartType.LowerBound &&
         <>
-          <AreaPlot
-            {...areaPlotStyle}
-          />
           {children}
-          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} />
+          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} />
         </>
       }
 
       {type === TargetAmountChartType.Range &&
         <>
-          <AreaPlot
-            {...areaPlotStyle}
-          />
           {children}
           <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} />
-          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} />
+          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} />
         </>
       }
     </>
