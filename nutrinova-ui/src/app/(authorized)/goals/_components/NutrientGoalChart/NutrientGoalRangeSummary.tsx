@@ -71,8 +71,8 @@ export const NutrientGoalRangeSummary: React.FC<NutrientGoalRangeSummaryProps> =
               <Stack spacing={2}>
                 <Typography variant="h6">Progress</Typography>
                 <ProgressSummaryCard title="Days Achieved" summaryValue={`${report.daysAchievedCount}/${report.days.length}`} visualContent={<Typography sx={{ fontSize: "3em" }}>{Math.round(report.daysAchievedCount / report.days.length)}%</Typography>} cardColor="success.main" />
-                <ProgressSummaryCard title="Best Day" summaryValue={`${report.maxConsumption} ${selectedNutrient?.preferredUnit.abbreviation}`} visualContent={<Star sx={{ fontSize: "4em" }} />} cardColor="warning.main" />
-                <ProgressSummaryCard title="Avg. Consumption" summaryValue={`${report.avgConsumption} ${selectedNutrient?.preferredUnit.abbreviation}`} visualContent={<Timeline sx={{ fontSize: "4em" }} />} cardColor="info.main" />
+                <ProgressSummaryCard title="Best Day" summaryValue={`${Math.round(report.maxConsumption * 100) / 100} ${selectedNutrient?.preferredUnit.abbreviation}`} visualContent={<Star sx={{ fontSize: "4em" }} />} cardColor="warning.main" />
+                <ProgressSummaryCard title="Avg. Consumption" summaryValue={`${Math.round(report.avgConsumption * 100) / 100} ${selectedNutrient?.preferredUnit.abbreviation}`} visualContent={<Timeline sx={{ fontSize: "4em" }} />} cardColor="info.main" />
               </Stack>
             }
           </Grid>
