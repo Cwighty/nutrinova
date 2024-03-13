@@ -3,6 +3,7 @@
 import { Box, Grid, TextField } from "@mui/material";
 import SelectUnit from "./SelectUnit";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
+import { ChangeEvent } from "react";
 
 interface AmountInputProps {
   amount: number;
@@ -21,7 +22,7 @@ export const AmountInput = ({
   restrictToUnitCategory = null,
   submitted = true,
 }: AmountInputProps) => {
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
   };
 
@@ -31,12 +32,13 @@ export const AmountInput = ({
         <Grid item xs={12} md={6}>
           <TextField
             label="Amount"
-            type="number"
             value={amount}
             onChange={handleAmountChange}
             fullWidth
             error={submitted && amount <= 0}
-            helperText={submitted && amount <= 0 ? "Amount must be greater than 0" : ""}
+            helperText={
+              submitted && amount <= 0 ? "Amount must be greater than 0" : ""
+            }
           />
         </Grid>
 
@@ -60,7 +62,9 @@ export const AmountInput = ({
               );
             }}
             error={submitted && unit.description === ""}
-            helperText={submitted && unit.description === "" ? "Please select a unit" : ""}
+            helperText={
+              submitted && unit.description === "" ? "Please select a unit" : ""
+            }
           />
         </Grid>
       </Grid>
