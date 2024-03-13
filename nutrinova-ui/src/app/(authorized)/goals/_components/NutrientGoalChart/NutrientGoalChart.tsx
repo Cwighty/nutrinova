@@ -4,6 +4,7 @@ import { PatientNutrientReport } from "../../_models/PatientNutrientReport";
 import { AllSeriesType, BarPlot, ChartsXAxis, ChartsYAxis, ResponsiveChartContainer } from "@mui/x-charts";
 import { TargetAmountChart } from "./TargetAmountChart";
 import React from "react";
+import { Box, Typography } from "@mui/material";
 
 interface NutrientGoalChartProps {
   report: PatientNutrientReport;
@@ -22,6 +23,7 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
   const recommendedTarget = report.days[0].nutrientGoalReportItems[0].recommendedTargetAmount;
   const customTarget = report.days[0].nutrientGoalReportItems[0].customTargetAmount;
   const consumed = report.days.map((day) => day.nutrientGoalReportItems[0].consumedAmount);
+  const noData = consumed.every((day) => day === 0);
   const series = [
     {
       type: 'bar',
@@ -33,29 +35,38 @@ export const NutrientGoalChart: React.FC<NutrientGoalChartProps> = ({ report }
   ] as AllSeriesType[];
 
   return (<>
-    <ResponsiveChartContainer
-      series={series}
-      xAxis={[
-        {
-          id: 'days',
-          data: days,
-          scaleType: 'band',
-        },
-      ]}
-      yAxis={[
-        {
-          id: 'amount',
-          scaleType: 'linear',
-        }
-      ]}
-    >
-      <TargetAmountChart targetAmount={recommendedTarget} recommended >
-        <TargetAmountChart targetAmount={customTarget} >
-          <BarPlot />
-          <ChartsXAxis label="Days" position="bottom" axisId="days" />
-          <ChartsYAxis position="left" axisId="amount" />
+    {noData &&
+      (
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
+          <Typography textAlign="center" variant="h6" color="textSecondary">No consumption for that range</Typography>
+        </Box>
+      )
+    }
+    {!noData &&
+      <ResponsiveChartContainer
+        series={series}
+        xAxis={[
+          {
+            id: 'days',
+            data: days,
+            scaleType: 'band',
+          },
+        ]}
+        yAxis={[
+          {
+            id: 'amount',
+            scaleType: 'linear',
+          }
+        ]}
+      >
+        <TargetAmountChart targetAmount={recommendedTarget} recommended >
+          <TargetAmountChart targetAmount={customTarget} >
+            <BarPlot />
+            <ChartsXAxis label="Days" position="bottom" axisId="days" />
+            <ChartsYAxis position="left" axisId="amount" />
+          </TargetAmountChart>
         </TargetAmountChart>
-      </TargetAmountChart>
-    </ResponsiveChartContainer>
+      </ResponsiveChartContainer>
+    }
   </>);
 };

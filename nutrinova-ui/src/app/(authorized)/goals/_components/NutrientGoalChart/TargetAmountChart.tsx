@@ -28,20 +28,24 @@ export const TargetAmountChart: React.FC<TargetAmountChartProps> = ({ targetAmou
   };
 
   const label = recommended ? "Recommended" : "Custom";
+  const labelAlign = recommended ? 'end' : 'middle';
+  const labelStyle = {
+    fill: recommended ? "#ffa726" : type === TargetAmountChartType.LowerBound ? '#388e3c' : type === TargetAmountChartType.UpperBound ? '#d32f2f' : '#0288d1',
+  };
 
   return (
     <>
       {type === TargetAmountChartType.UpperBound &&
         <>
           {children}
-          <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} label={label} />
+          <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} label={label} labelAlign={labelAlign} labelStyle={labelStyle} />
         </>
       }
 
       {type === TargetAmountChartType.LowerBound &&
         <>
           {children}
-          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} />
+          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} labelAlign={labelAlign} labelStyle={labelStyle} />
         </>
       }
 
@@ -49,7 +53,7 @@ export const TargetAmountChart: React.FC<TargetAmountChartProps> = ({ targetAmou
         <>
           {children}
           <ChartsReferenceLine y={targetAmount.upperLimit} lineStyle={lineStyle} />
-          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} />
+          <ChartsReferenceLine y={targetAmount.lowerLimit} lineStyle={lineStyle} label={label} labelAlign={labelAlign} labelStyle={labelStyle} />
         </>
       }
     </>
