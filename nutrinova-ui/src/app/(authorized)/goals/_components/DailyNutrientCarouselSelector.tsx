@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { CreatePatientNutrientGoalModal } from "@/app/(authorized)/goals/CreatePatientNutrientGoalModal";
 import { NutrientGoalRequestModel } from "@/app/(authorized)/goals/_models/NutrientGoalRequestModel";
 import { PatientContext } from "@/components/providers/PatientProvider";
@@ -45,7 +45,17 @@ export const DailyNutrientCarouselSelector: React.FC<DailyNutrientCarouselSelect
     }
   };
 
-  const [selectedNutrient, setSelectedNutrient] = React.useState<NutrientGoalReportItem | null>();
+  const [selectedNutrient, setSelectedNutrient] = React.useState<NutrientGoalReportItem | null>(null);
+
+  useEffect(() => {
+    if (!reportDataLoading && report && nutrients && nutrients.length > 0) {
+      if (!selectedNutrient) {
+        setSelectedNutrient(nutrients[0]);
+        onNutrientSelected(nutrients[0]);
+      }
+    }
+  }, [reportDataLoading, report, nutrients, onNutrientSelected, selectedNutrient]);
+
   const handleNutrientClick = (nutrient: NutrientGoalReportItem) => {
     setSelectedNutrient(nutrient);
     onNutrientSelected(nutrient);
