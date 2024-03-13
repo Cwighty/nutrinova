@@ -1,13 +1,13 @@
 'use client'
-import { Box, Button, IconButton, List, ListItem, Typography } from "@mui/material";
+import { Box, Button, List, Typography } from "@mui/material";
 import { PatientInfoModal } from "@/app/(authorized)/patients/_components/PatientInfoModal";
 import { PageContainer } from "@/components/PageContainer";
 import { useContext, useState } from "react";
 import { PatientContext } from "@/components/providers/PatientProvider";
-import { Delete } from "@mui/icons-material";
-import { CreatePatientReq, Patient } from "./_models/patient";
+import { CreatePatientReq } from "./_models/patient";
 import { PatientForm } from "./_components/PatientInfoForm";
 import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
+import { PatientListItem } from "@/app/(public)/addpatients/_components/PatientListItem";
 
 const PatientsPage = () => {
   const { patients, selectedPatient } = useContext(PatientContext);
@@ -15,10 +15,10 @@ const PatientsPage = () => {
 
   const [open, setOpen] = useState(false);
 
-  const handleDelete = (patient: Patient) => {
+  const handleDelete = () => {
     // TODO: how should we handle this?
     // we don't want them deleting themselves either
-    console.log("delete", patient);
+    console.log("delete");
   }
 
 
@@ -50,14 +50,9 @@ const PatientsPage = () => {
 
         <Typography variant="button">Patients</Typography>
         <List>
-          {patients?.map(patient => (
+          {patients?.map((patient, index) => (
             <>
-              <ListItem>
-                <Typography variant="body1" key={patient.id}>{patient.firstname} {patient.lastname}</Typography>
-                <IconButton onClick={() => handleDelete(patient)}>
-                  <Delete />
-                </IconButton>
-              </ListItem>
+              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: patient.firstname + patient.lastname, optOut: false }} handleDelete={handleDelete} />
             </>
           ))}
         </List>

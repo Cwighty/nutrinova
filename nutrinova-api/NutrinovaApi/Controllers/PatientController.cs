@@ -123,7 +123,7 @@ public class PatientController : ControllerBase
 
   // Get a single patient by ID
   [HttpGet("{id}")]
-  public async Task<ActionResult<Patient>> GetPatient(Guid id)
+  public async Task<ActionResult<PatientResponse>> GetPatient(Guid id)
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -141,6 +141,6 @@ public class PatientController : ControllerBase
       return NotFound();
     }
 
-    return Ok(patient);
+    return Ok(patient.ToPatientResponse());
   }
 }

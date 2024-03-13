@@ -14,5 +14,7 @@ public class PatientResponse
 
   public bool HasPicture { get; set; }
 
+  public short? Age { get; set; }
+
   public CustomerResponse? CustomerResponse { get; set; }
 }

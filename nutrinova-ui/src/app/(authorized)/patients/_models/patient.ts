@@ -3,7 +3,7 @@ export interface Patient {
   firstname: string;
   lastname?: string;
   customerId?: string;
-  age?: number;
+  age: number;
   sex?: 'M' | 'F' | 'O';
   base64image?: string;
   hasPicture: boolean;
