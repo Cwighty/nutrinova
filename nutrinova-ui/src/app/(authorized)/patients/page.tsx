@@ -28,14 +28,16 @@ const PatientsPage = () => {
   }
 
   const HandlePatientAdd = (patientInfo: PatientForm) => {
+    const split_name = patientInfo.name.split(/(?<=^\S+)\s/)
     const patient: CreatePatientReq = {
-      firstname: patientInfo.name.split(' ')[0],
-      lastname: patientInfo.name.split(' ')[1] ?? '',
+      firstname: split_name[0],
+      lastname: split_name[1] ?? '',
       sex: patientInfo?.sex,
       base64image: patientInfo?.pff,
       age: patientInfo?.age,
       useDefaultNutrientGoals: patientInfo.optOut,
-      hasPicture: !!patientInfo.pff
+      hasPicture: !!patientInfo.pff,
+      optOut: patientInfo.optOut,
     }
     createPatientMutation.mutate(patient);
   }
@@ -50,7 +52,7 @@ const PatientsPage = () => {
         <Paper sx={{ padding: 3 }} >
           <List>
             {patients?.map((patient, index) => (
-              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: `${patient.firstname} ${patient.lastname}`, optOut: false }} handleDelete={handleDelete} />
+              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: `${patient.firstname} ${patient.lastname}` }} handleDelete={handleDelete} />
             ))}
           </List>
           <Grid container alignItems={'center'} justifyContent={'center'} paddingTop={2} paddingBottom={2} >

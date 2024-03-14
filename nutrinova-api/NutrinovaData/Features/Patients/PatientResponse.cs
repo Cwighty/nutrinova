@@ -16,5 +16,7 @@ public class PatientResponse
 
   public short? Age { get; set; }
 
+  public bool OptOut { get; set; }
+
   public CustomerResponse? CustomerResponse { get; set; }
 }

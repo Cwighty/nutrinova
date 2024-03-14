@@ -7,6 +7,7 @@ export interface Patient {
   sex?: 'M' | 'F' | 'O';
   base64image?: string;
   hasPicture: boolean;
+  optOut: boolean;
 }
 
 export interface CreatePatientReq extends Patient {
