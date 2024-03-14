@@ -101,10 +101,11 @@ CREATE TABLE
         id UUID PRIMARY KEY,
         FirstName TEXT NOT NULL,
         LastName TEXT,
-        Age smallint Check (Age > 0),
+        Age smallint Check (Age > 0) Not Null,
         Profile_Picture_Name TEXT,
         Sex TEXT Check (Sex = 'M' OR Sex = 'F' OR Sex is null),
         Customer_id UUID,
+        Opt_Out_Details BOOL Not Null,
         FOREIGN KEY (Customer_id) REFERENCES Customer (id)
     );
 

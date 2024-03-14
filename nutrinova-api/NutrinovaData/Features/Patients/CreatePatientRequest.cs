@@ -6,7 +6,7 @@ public class CreatePatientRequest
 
   public string? Lastname { get; set; }
 
-  public short? Age { get; set; }
+  public short Age { get; set; }
 
   public string? Base64Image { get; set; }
 

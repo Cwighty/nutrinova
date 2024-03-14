@@ -91,7 +91,7 @@ public class GoalController : ControllerBase
     }
 
     var patientSex = patient.Sex == "F" ? Sex.Female : Sex.Male;
-    var nutrientRecommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age ?? 0, patientSex);
+    var nutrientRecommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age, patientSex);
 
     var goal = new PatientNutrientDailyGoal
     {
@@ -242,7 +242,7 @@ public class GoalController : ControllerBase
 
     var sex = patient.Sex == "F" ? Sex.Female : Sex.Male;
 
-    var recommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age ?? 0, sex);
+    var recommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age, sex);
 
     if (recommendation is null)
     {

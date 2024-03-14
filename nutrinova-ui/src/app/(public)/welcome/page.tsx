@@ -55,15 +55,16 @@ const Welcome = () => {
     if (!created) {
       throw new Error('Failed to create customer');
     }
-
+    const split_name = patientInfo.name.split(/(?<=^\S+)\s/)
     const patient: CreatePatientReq = {
-      firstname: patientInfo.name.split(' ')[0],
-      lastname: patientInfo.name.split(' ')[1] ?? '',
+      firstname: split_name[0],
+      lastname: split_name[1] ?? '',
       sex: patientInfo?.sex,
       base64image: patientInfo?.pff,
       age: patientInfo?.age,
       useDefaultNutrientGoals: patientInfo.optOut,
       hasPicture: !!patientInfo?.pff,
+      optOut: patientInfo.optOut,
     }
     createPatientMutation.mutate(patient);
 

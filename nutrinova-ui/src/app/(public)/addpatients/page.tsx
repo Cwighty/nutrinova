@@ -59,14 +59,16 @@ const AddPatientPage = () => {
       throw new Error('Failed to create customer');
     }
     patientInfo.forEach(element => {
+      const split_name = element.name.split(/(?<=^\S+)\s/)
       const patient: CreatePatientReq = {
-        firstname: element.name.split(' ')[0],
-        lastname: element.name.split(' ')[1] ?? '',
+        firstname: split_name[0],
+        lastname: split_name[1] ?? '',
         sex: element?.sex,
         base64image: element?.pff,
         age: element?.age,
         useDefaultNutrientGoals: element.optOut,
         hasPicture: !!element?.pff,
+        optOut: element.optOut,
       }
       createPatientMutation.mutate(patient);
     });
