@@ -1,14 +1,16 @@
 'use client'
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { signOut } from 'next-auth/react';
 import React, { ReactNode } from 'react'
 import { Toaster, toast } from "react-hot-toast";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error: unknown) => {
+    onError: async (error: unknown) => {
       if (error instanceof Error) {
         if (error.message.includes("401")) {
           toast.error("You are not authorized to perform this action. Please sign out and in again.");
+          await signOut();
         }
         toast.error("There was an error with your request: " + error.message);
       } else {
