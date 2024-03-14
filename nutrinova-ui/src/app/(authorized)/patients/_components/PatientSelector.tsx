@@ -31,7 +31,6 @@ export const PatientSelector = () => {
   }
 
   const patientName = `${selectedPatient?.firstname} ${selectedPatient?.lastname}`;
-  console.log(`here is the image ${selectedPatient?.base64image}`)
   return (
     <>
       <Typography variant="button" sx={{ mx: 2 }}>{selectedPatient ? patientName : <></>}</Typography>
