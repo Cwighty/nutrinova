@@ -6,11 +6,12 @@ import { Toaster, toast } from "react-hot-toast";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: async (error: unknown) => {
+    onError: async (error: Error) => {
       if (error instanceof Error) {
         if (error.message.includes("401")) {
           toast.error("You are not authorized to perform this action. Please sign out and in again.");
           await signOut();
+          return;
         }
         toast.error("There was an error with your request: " + error.message);
       } else {
