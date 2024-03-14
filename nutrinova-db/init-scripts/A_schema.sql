@@ -130,7 +130,7 @@ CREATE TABLE
         RecordedAt TIMESTAMP WITH TIME ZONE not null,
         Notes TEXT,
         ingredients TEXT,
-        FOREIGN KEY (Patient_id) REFERENCES Patient (id)
+        FOREIGN KEY (Patient_id) REFERENCES Patient (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
@@ -179,12 +179,14 @@ CREATE TABLE chat_message (
 -- Nutrient Goals
 CREATE TABLE patient_nutrient_daily_goal (
     id UUID PRIMARY KEY,
-    patient_id UUID REFERENCES Patient(id) not null,
+    patient_id UUID not null,
     nutrient_id serial REFERENCES Nutrient(id) not null,
     custom_upper_target DECIMAL null,
     custom_lower_target DECIMAL null,
     recommended_upper_target DECIMAL null,
     recommended_lower_target DECIMAL null,
     recommended_max DECIMAL null,
-    recommended_goal_type TEXT 
+    recommended_goal_type TEXT,
+    FOREIGN KEY (Patient_id) REFERENCES Patient (id) ON DELETE CASCADE
+
 );
