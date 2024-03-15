@@ -76,7 +76,7 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account }: { token: JWT, account: Account | null, user: User }): Promise<JWT> {
-      const bufferTime = process.env.REFRESH_TOKEN_BUFFER_TIME_MINUTES ?? 5 * 60 * 1000;
+      const bufferTime = (process.env.REFRESH_TOKEN_BUFFER_TIME_MINUTES ?? 5) * 60 * 1000;
       const newToken = token;
       if (account) {
         // This will only be executed at login. Each next invocation will skip this part.
