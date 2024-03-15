@@ -1,3 +1,4 @@
+import { resetSingletonInstance } from "@/services/axiosRequestFactory";
 import axios, { AxiosResponse } from "axios";
 import { Account, NextAuthOptions, Profile, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt"
@@ -75,21 +76,26 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account }: { token: JWT, account: Account | null, user: User }): Promise<JWT> {
+      const bufferTime = process.env.REFRESH_TOKEN_BUFFER_TIME_MINUTES ?? 5 * 60 * 1000;
       const newToken = token;
       if (account) {
         // This will only be executed at login. Each next invocation will skip this part.
+        console.log("Fresh login detected")
         newToken.access_token = account.access_token;
         newToken.expires_at = Math.floor(Date.now() / 1000 + account.expires_in);
         newToken.refresh_token = account.refresh_token;
         newToken.id_token = account.id_token;
       }
-      else if (Date.now() < token.expires_at * 1000) {
+      else if (Date.now() < token.expires_at * 1000 - bufferTime) {
         // If the access token has not expired yet, return it
+        console.log("Access token has not expired yet, time left: ", token.expires_at * 1000 - Date.now());
         return token
       }
       else {
         try {
           const refreshedToken = await refreshAccessToken(newToken);
+          resetSingletonInstance();
+          console.log("Access token refreshed", refreshedToken);
           return refreshedToken;
         }
         catch (error) {

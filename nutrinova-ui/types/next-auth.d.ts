@@ -56,6 +56,7 @@ declare global {
       KEYCLOAK_BASE_URL?: string
       NUTRINOVA_API_URL?: string
       WEBSOCKET_URL?: string
+      REFRESH_TOKEN_BUFFER_TIME_MINUTES?: number
     }
   }
 }

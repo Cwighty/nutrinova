@@ -3,8 +3,6 @@ import axios, { AxiosInstance } from "axios";
 import { Session, getServerSession } from "next-auth";
 import { getSession } from "next-auth/react";
 
-
-
 let singletonInstance: AxiosInstance | null = null;
 
 const createAuthenticatedAxiosInstanceFactory = async ({
@@ -34,6 +32,10 @@ const createAuthenticatedAxiosInstanceFactory = async ({
   });
 
   return singletonInstance;
+}
+
+export const resetSingletonInstance = () => {
+  singletonInstance = null;
 }
 
 export default createAuthenticatedAxiosInstanceFactory;
