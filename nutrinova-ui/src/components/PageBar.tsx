@@ -22,7 +22,13 @@ export interface PageBarProps {
 export default function PageBar({ title }: PageBarProps) {
   const { theme, toggleTheme } = useTheme();
   const { data: customer } = useGetCustomer();
-  if (!customer) { return <Skeleton></Skeleton> }
+  if (!customer) {
+    return (
+      <AppBar color="transparent" position="static" elevation={0}>
+        <Skeleton></Skeleton>
+      </AppBar>
+    )
+  }
   return (
     <AppBar color="transparent" position="static" elevation={0}>
       <Container maxWidth={false}>
