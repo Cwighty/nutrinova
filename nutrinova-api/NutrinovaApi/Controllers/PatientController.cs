@@ -110,6 +110,7 @@ public class PatientController : ControllerBase
       Firstname = patient?.Firstname ?? throw new InvalidOperationException("First name it required"),
       Lastname = patient.Lastname,
       Age = patient.Age,
+      OptOutDetails = patient.UseDefaultNutrientGoals ?? false ? true : false,
       Sex = patient.Sex != "M" && patient.Sex != "F" ? "M" : patient.Sex, // This was Drew Gordons desicion
       ProfilePictureName = patient?.Base64Image != null ? pictureName?.ToString() : null,
       CustomerId = customer.Id,
@@ -123,7 +124,7 @@ public class PatientController : ControllerBase
 
   // Get a single patient by ID
   [HttpGet("{id}")]
-  public async Task<ActionResult<Patient>> GetPatient(Guid id)
+  public async Task<ActionResult<PatientResponse>> GetPatient(Guid id)
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -141,6 +142,6 @@ public class PatientController : ControllerBase
       return NotFound();
     }
 
-    return Ok(patient);
+    return Ok(patient.ToPatientResponse());
   }
 }

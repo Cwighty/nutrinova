@@ -25,6 +25,7 @@ const getAllPatients = async () => {
     return [];
   }
   const response = await apiClient.get<Patient[]>('/patient/all-patients');
+  console.log("here is the response data", response.data);
   const res = response.data.map(async (patient) => {
     if (!patient?.hasPicture) {
       return {

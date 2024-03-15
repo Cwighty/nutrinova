@@ -19,7 +19,8 @@ export const PatientListItem = ({ patient, handleDelete }: PatientListItemProps)
         <ListItemAvatar>
           <Avatar src={`${patient.pff}`}>{patient.name.charAt(0)}</Avatar>
         </ListItemAvatar>
-        <ListItemText primary={patient.name} secondary={`Age: ${patient.optOut ? 19 : patient.age}`} />
+        <ListItemText primary={patient.name} secondary={!patient?.optOut ? `Age: ${patient.age}` : 'Patient opted out of sharing personal details.'} />
+
       </ListItem>
     </Paper >
   );

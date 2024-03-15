@@ -11,13 +11,15 @@ public partial class Patient
 
   public string? Lastname { get; set; }
 
-  public short? Age { get; set; }
+  public short Age { get; set; }
 
   public string? ProfilePictureName { get; set; }
 
   public string? Sex { get; set; }
 
   public Guid? CustomerId { get; set; }
+
+  public bool OptOutDetails { get; set; }
 
   public virtual Customer? Customer { get; set; }
 
