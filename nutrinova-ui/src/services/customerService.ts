@@ -1,4 +1,4 @@
-import createAuthenticatedAxiosInstanceFactory from "./axiosRequestFactory";
+import createAuthenticatedAxiosInstanceFactory, { resetSingletonInstance } from "./axiosRequestFactory";
 import { getSession } from "next-auth/react";
 
 export interface Customer {
@@ -14,6 +14,7 @@ const fetchFromServer = async (url: string, origin: "client" | "server") => {
 }
 
 const postToServer = async (url: string, data: unknown) => {
+  resetSingletonInstance();
   const axiosInstance = await createAuthenticatedAxiosInstanceFactory({ additionalHeaders: { "Content-Type": "application/json" }, origin: "client" })
   const response = await axiosInstance.post(url, JSON.stringify(data));
   return response.data as unknown;

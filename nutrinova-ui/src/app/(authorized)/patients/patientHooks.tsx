@@ -28,14 +28,12 @@ const getAllPatients = async () => {
   console.log("here is the response data", response.data);
   const res = response.data.map(async (patient) => {
     if (!patient?.hasPicture) {
-      console.log("here is the image in the get all patients", "no image found")
       return {
         ...patient,
         base64image: ''
       } as Patient;
     } else {
       const image = await getPatientImage(patient?.id ?? '');
-      console.log("here is the image in the get all patients", image);
       return {
         ...patient,
         base64image: `${image as string}`
@@ -43,7 +41,6 @@ const getAllPatients = async () => {
     }
   });
   const awaitedRes = await Promise.all(res)
-  console.log("here is the res", awaitedRes);
   return awaitedRes;
 };
 
