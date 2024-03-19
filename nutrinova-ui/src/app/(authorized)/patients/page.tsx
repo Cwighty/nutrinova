@@ -20,8 +20,7 @@ const PatientsPage = () => {
   const handleDelete = (patient: Patient) => {
     // TODO: how should we handle this?
     if (patient.id == null) {
-      new Error("Patient ID is null");
-      return;
+      throw new Error("Patient ID is null");
     }
     deletePatientMutation.mutate(patient.id);
     console.log("delete");
