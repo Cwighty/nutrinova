@@ -141,7 +141,7 @@ export const useDeletePatientMutation = () => {
       await queryClient.invalidateQueries({ queryKey: [patientKeys.all] });
     },
     onError: (error) => {
-      toast.error('Error deleting patient: ' + error.message);
+      toast.error('Error deleting patient: Must have one patient');
       console.error(error);
     },
   });

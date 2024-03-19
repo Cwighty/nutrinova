@@ -4,21 +4,26 @@ import { PatientInfoModal } from "@/app/(authorized)/patients/_components/Patien
 import { PageContainer } from "@/components/PageContainer";
 import { useContext, useState } from "react";
 import { PatientContext } from "@/components/providers/PatientProvider";
-import { CreatePatientReq } from "./_models/patient";
+import { CreatePatientReq, Patient } from "./_models/patient";
 import { PatientForm } from "./_components/PatientInfoForm";
-import { useCreatePatientMutation } from '@/app/(authorized)/patients/patientHooks';
+import { useCreatePatientMutation, useDeletePatientMutation } from '@/app/(authorized)/patients/patientHooks';
 import { PatientListItem } from "@/app/(public)/addpatients/_components/PatientListItem";
 import { Add } from "@mui/icons-material";
 
 const PatientsPage = () => {
   const { patients } = useContext(PatientContext);
   const createPatientMutation = useCreatePatientMutation();
+  const deletePatientMutation = useDeletePatientMutation();
 
   const [open, setOpen] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = (patient: Patient) => {
     // TODO: how should we handle this?
-    // we don't want them deleting themselves either
+    if (patient.id == null) {
+      new Error("Patient ID is null");
+      return;
+    }
+    deletePatientMutation.mutate(patient.id);
     console.log("delete");
   }
 
@@ -52,7 +57,7 @@ const PatientsPage = () => {
         <Paper sx={{ padding: 3 }} >
           <List>
             {patients?.map((patient, index) => (
-              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: `${patient.firstname} ${patient.lastname}` }} handleDelete={handleDelete} />
+              <PatientListItem key={index} patient={{ ...patient, pff: patient.base64image, age: patient.age, name: `${patient.firstname} ${patient.lastname}` }} handleDelete={() => handleDelete({ ...patient })} />
             ))}
           </List>
           <Grid container alignItems={'center'} justifyContent={'center'} paddingTop={2} paddingBottom={2} >
