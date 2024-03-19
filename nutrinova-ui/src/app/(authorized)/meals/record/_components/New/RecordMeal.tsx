@@ -4,10 +4,13 @@ import { useState } from "react";
 import { MyFoodSearch } from "./MyFoodSearch";
 import { SearchAll } from "./SearchAll";
 import { MyRecipeSearch } from "./MyRecipeSearch";
+import { useDebounce } from "@uidotdev/usehooks";
 
 export const RecordMeal = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -32,9 +35,9 @@ export const RecordMeal = () => {
         <Tab label="My Foods" />
         <Tab label="My Recipes" />
       </Tabs>
-      {selectedTab === 0 && <SearchAll searchKeyword={searchKeyword} />}
-      {selectedTab === 1 && <MyFoodSearch searchKeyword={searchKeyword} />}
-      {selectedTab === 2 && <MyRecipeSearch searchKeyword={searchKeyword} />}
+      {selectedTab === 0 && <SearchAll searchKeyword={debouncedSearchKeyword} />}
+      {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} />}
+      {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} />}
     </>
   );
 };
