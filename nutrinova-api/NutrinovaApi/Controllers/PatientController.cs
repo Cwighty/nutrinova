@@ -156,6 +156,13 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
+    // Don't allow deletion of last patient
+    var patientCount = await context.Patients.CountAsync(p => p.CustomerId == customer.Id);
+    if (patientCount == 1)
+    {
+      return BadRequest(new { message = "You cannot delete your last patient" });
+    }
+
     using var transaction = await context.Database.BeginTransactionAsync();
 
     var patient = await context.Patients
