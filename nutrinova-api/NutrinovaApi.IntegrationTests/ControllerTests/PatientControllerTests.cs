@@ -150,5 +150,40 @@ public class PatientControllerTests : IClassFixture<NutrinovaApiWebApplicationFa
         Assert.True(patientResponse.Id == patientGet?.Id);
       }
     }
+
+    public class DeletePatientOptOutTests : PatientControllerTests
+    {
+      public DeletePatientOptOutTests(NutrinovaApiWebApplicationFactory factory)
+        : base(factory)
+      {
+      }
+
+      [Fact]
+      public async Task Delete_Patient()
+      {
+        // Arrange
+        var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+        var patient = new CreatePatientRequest
+        {
+          Firstname = "default",
+          Lastname = "Patient",
+          Age = 31,
+          Sex = "F",
+          UseDefaultNutrientGoals = true,
+        };
+        var patientCreationRes = await HttpClient.PostAsJsonAsync("be/patient/create-patient", patient);
+
+        var patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+
+        // Act
+        var response = await HttpClient.DeleteAsync($"be/patient/delete/{patientGet?.Id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var patientResponse = await response.Content.ReadFromJsonAsync<PatientResponse>();
+        patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+        Assert.Null(patientGet);
+      }
+    }
   }
 }

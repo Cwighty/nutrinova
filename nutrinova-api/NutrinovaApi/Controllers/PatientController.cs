@@ -144,4 +144,32 @@ public class PatientController : ControllerBase
 
     return Ok(patient.ToPatientResponse());
   }
+
+  [HttpDelete("Delete/{patientId}")]
+  public async Task<ActionResult> DeletePatient(Guid patientId)
+  {
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    using var transaction = await context.Database.BeginTransactionAsync();
+
+    var patient = await context.Patients
+        .FirstOrDefaultAsync(p => p.Id == patientId && p.CustomerId == customer.Id);
+
+    if (patient == null)
+    {
+      return NotFound();
+    }
+
+    context.Patients.Remove(patient);
+    await context.SaveChangesAsync();
+    await transaction.CommitAsync();
+
+    return Ok(new { message = "Patient deleted successfully" });
+  }
 }
