@@ -166,10 +166,17 @@ public class PatientController : ControllerBase
     using var transaction = await context.Database.BeginTransactionAsync();
 
     var patient = await context.Patients
-        .FirstOrDefaultAsync(p => p.Id == patientId && p.CustomerId == customer.Id);
+        .FirstOrDefaultAsync(p => p.Id == patientId);
+
+    if (patient?.CustomerId != customer.Id)
+    {
+      transaction.Rollback();
+      return Unauthorized();
+    }
 
     if (patient == null)
     {
+      transaction.Rollback();
       return NotFound();
     }
 
