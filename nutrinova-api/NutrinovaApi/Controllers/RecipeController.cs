@@ -292,7 +292,7 @@ public class RecipeController : ControllerBase
 
     if (editRecipeRequest.Tags != null && editRecipeRequest.Tags.Count > 0)
     {
-      recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
+      recipePlan.Tags = string.Join(",", editRecipeRequest.Tags);
     }
     else
     {
