@@ -1,6 +1,7 @@
 import { Add } from "@mui/icons-material";
-import { Box, Button, Menu, MenuItem, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FilterMenu } from "./FilterMenu";
 import { useState } from "react";
 
 interface MyRecipeSearchProps {
@@ -10,16 +11,9 @@ interface MyRecipeSearchProps {
 export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }: MyRecipeSearchProps) => {
 
   const router = useRouter();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [sortby, setSortby] = useState<string>("Date Created");
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  }
-  const handleClose = (sortBy: string) => {
-    setSortby(sortBy);
-    setAnchorEl(null);
-  }
+  const options = ["Date Created", "Name", "Calories"];
+  const [sortBy , setSortBy] = useState<string>(options[0]);
+
 
   return (
     <Box sx={{ p: 2 }}>
@@ -31,28 +25,7 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }:
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
         <Typography variant="h5">My Recipes</Typography>
-        <div>
-          <Button
-            id="basic-button"
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
-          >
-            <Typography variant="subtitle1">{sortby}</Typography>
-          </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
-            <MenuItem onClick={() => handleClose("Date Created")}>Date Created</MenuItem>
-          </Menu>
-        </div>
+        <FilterMenu options={options} selectedFilter={sortBy} onFilterChange={(filter) => setSortBy(filter)} />
       </Box>
     </Box>
   )
