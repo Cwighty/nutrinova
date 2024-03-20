@@ -290,9 +290,17 @@ public class RecipeController : ControllerBase
       return NotFound("Invalid unit id");
     }
 
+    if (editRecipeRequest.Tags != null && editRecipeRequest.Tags.Count > 0)
+    {
+      recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
+    }
+    else
+    {
+      recipePlan.Tags = null;
+    }
+
     recipePlan.Description = editRecipeRequest.Description;
     recipePlan.Notes = editRecipeRequest.Notes;
-    recipePlan.Tags = editRecipeRequest.Tags?.Aggregate((a, b) => $"{a},{b}");
     recipePlan.Amount = editRecipeRequest.Amount;
     recipePlan.ServingSizeUnit = editRecipeRequest.UnitId;
     recipePlan.ServingSizeUnitNavigation = recipeUnit;
