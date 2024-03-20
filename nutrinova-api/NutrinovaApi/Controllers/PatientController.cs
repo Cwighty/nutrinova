@@ -144,4 +144,46 @@ public class PatientController : ControllerBase
 
     return Ok(patient.ToPatientResponse());
   }
+
+  [HttpDelete("Delete/{patientId}")]
+  public async Task<ActionResult> DeletePatient(Guid patientId)
+  {
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    // Don't allow deletion of last patient
+    var patientCount = await context.Patients.CountAsync(p => p.CustomerId == customer.Id);
+    if (patientCount <= 1)
+    {
+      return BadRequest(new { message = "You cannot delete your last patient" });
+    }
+
+    using var transaction = await context.Database.BeginTransactionAsync();
+
+    var patient = await context.Patients
+        .FirstOrDefaultAsync(p => p.Id == patientId);
+
+    if (patient?.CustomerId != customer.Id)
+    {
+      transaction.Rollback();
+      return Unauthorized();
+    }
+
+    if (patient == null)
+    {
+      transaction.Rollback();
+      return NotFound();
+    }
+
+    context.Patients.Remove(patient);
+    await context.SaveChangesAsync();
+    await transaction.CommitAsync();
+
+    return Ok(new { message = "Patient deleted successfully" });
+  }
 }

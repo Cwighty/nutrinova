@@ -150,5 +150,83 @@ public class PatientControllerTests : IClassFixture<NutrinovaApiWebApplicationFa
         Assert.True(patientResponse.Id == patientGet?.Id);
       }
     }
+
+    public class DeletePatientTests : PatientControllerTests
+    {
+      public DeletePatientTests(NutrinovaApiWebApplicationFactory factory)
+        : base(factory)
+      {
+      }
+
+      [Fact]
+      public async Task Delete_Patient()
+      {
+        // Arrange
+        var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+        var patient = new CreatePatientRequest
+        {
+          Firstname = "default",
+          Lastname = "Patient",
+          Age = 31,
+          Sex = "F",
+          UseDefaultNutrientGoals = true,
+        };
+
+        var male_patient = new CreatePatientRequest
+        {
+          Firstname = "default Male",
+          Lastname = "Patient",
+          Age = 31,
+          Sex = "m",
+          UseDefaultNutrientGoals = true,
+        };
+        var patientCreationRes = await HttpClient.PostAsJsonAsync("be/patient/create-patient", patient);
+        await HttpClient.PostAsJsonAsync("be/patient/create-patient", male_patient);
+
+        var patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+
+        // Act
+        var response = await HttpClient.DeleteAsync($"be/patient/delete/{patientGet?.Id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var patientResponse = await response.Content.ReadFromJsonAsync<PatientResponse>();
+        patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+        Assert.Null(patientGet);
+      }
+    }
+
+    public class DeletePatientLastTests : PatientControllerTests
+    {
+      public DeletePatientLastTests(NutrinovaApiWebApplicationFactory factory)
+        : base(factory)
+      {
+      }
+
+      [Fact]
+      public async Task DeleteLast_Patient()
+      {
+        // Arrange
+        var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+        var patient = new CreatePatientRequest
+        {
+          Firstname = "default",
+          Lastname = "Patient",
+          Age = 31,
+          Sex = "F",
+          UseDefaultNutrientGoals = true,
+        };
+
+        var patientCreationRes = await HttpClient.PostAsJsonAsync("be/patient/create-patient", patient);
+
+        var patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+
+        // Act
+        var response = await HttpClient.DeleteAsync($"be/patient/delete/{patientGet?.Id}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+      }
+    }
   }
 }
