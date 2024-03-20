@@ -98,7 +98,7 @@ export const MyRecipesDetailCard = ({ recipeId }: MyRecipesDetailCardProps) => {
                   mt: 2,
                 }}
               >
-                {recipe?.tags && recipe?.tags
+                {(recipe?.tags === undefined || recipe?.tags === '' || recipe?.tags === null) ? "No Tags" : recipe?.tags
                   .split(",")
                   .map((tag, index) => (
                     <Chip key={index} label={tag} sx={{ boxShadow: 2 }} />
