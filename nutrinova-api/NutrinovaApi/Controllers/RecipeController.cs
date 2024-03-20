@@ -296,7 +296,7 @@ public class RecipeController : ControllerBase
     }
     else
     {
-      recipePlan.Tags = null;
+      recipePlan.Tags = string.Empty;
     }
 
     recipePlan.Description = editRecipeRequest.Description;

@@ -159,7 +159,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       return {
         id: recipe?.id || '',
         description: recipe?.description,
-        tags: recipe?.tags?.split(','),
+        tags: (recipe?.tags && recipe.tags !== '') ? recipe.tags.split(',') : [],
         notes: recipe?.notes || '',
         recipeFoods: recipe?.recipeFoods.map(rf => {
           return {
