@@ -20,12 +20,12 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyF
         <Button variant="text" color="primary" onClick={() => router.push("/food/create")}>
           <Add /> Create Food
         </Button>
-        {searchKeyword}
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
         <Typography variant="h5">My Food</Typography>
         <FilterMenu options={options} selectedFilter={sortby} onFilterChange={(filter) => setSortby(filter)} />
       </Box>
+        {searchKeyword}
     </Box>
   )
 };

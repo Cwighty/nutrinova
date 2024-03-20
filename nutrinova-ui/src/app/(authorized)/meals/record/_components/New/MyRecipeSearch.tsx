@@ -12,7 +12,7 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }:
 
   const router = useRouter();
   const options = ["Date Created", "Name", "Calories"];
-  const [sortBy , setSortBy] = useState<string>(options[0]);
+  const [sortBy, setSortBy] = useState<string>(options[0]);
 
 
   return (
@@ -21,12 +21,12 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }:
         <Button variant="text" color="primary" onClick={() => router.push("/recipes/create")}>
           <Add /> Create Recipe
         </Button>
-        {searchKeyword}
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
         <Typography variant="h5">My Recipes</Typography>
         <FilterMenu options={options} selectedFilter={sortBy} onFilterChange={(filter) => setSortBy(filter)} />
       </Box>
+      {searchKeyword}
     </Box>
   )
 };
