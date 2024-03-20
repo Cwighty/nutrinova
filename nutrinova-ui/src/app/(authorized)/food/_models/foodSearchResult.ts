@@ -6,6 +6,7 @@ export interface FoodSearchResult {
   description: string;
   ingredients: string;
   brandName: string;
+  createdAt: Date;
   servingSize: number;
   servingSizeUnit: string;
   servingSizeUnitCategory?: string;

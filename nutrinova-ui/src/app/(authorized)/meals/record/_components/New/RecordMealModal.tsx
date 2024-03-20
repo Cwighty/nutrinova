@@ -19,7 +19,7 @@ const RecordMealModal: React.FC<RecordMealModalProps> = ({ open, handleClose = u
             </IconButton>
           </Box>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ minHeight: 650 }}>
           <RecordMeal />
         </DialogContent>
       </Dialog>
