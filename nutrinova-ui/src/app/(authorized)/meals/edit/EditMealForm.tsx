@@ -1,23 +1,21 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { useDeleteMealMutation, useUpdateMealMutation } from "../mealHooks";
 import { Meal, UpdateMeal } from "../view/_models/viewMeal";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, IconButton } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { UnitOption } from "../../food/_models/unitOption";
 import { useRouter } from "next/navigation";
-
+import { DeleteOutline } from "@mui/icons-material";
 
 interface EditMealFormProps {
   meal: Meal;
   closeModal?: () => void;
 }
 
-
 export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
-
   const { mutate: updateMeal } = useUpdateMealMutation();
 
   const { mutate: deleteMeal } = useDeleteMealMutation();
@@ -25,7 +23,6 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
 
   const router = useRouter();
-
 
   const [mealToUpdate, setMealToUpdate] = useState<UpdateMeal>({
     id: meal.id,
@@ -36,13 +33,15 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
 
   const setAmount = (amount: number) => {
     setMealToUpdate({ ...mealToUpdate, amount: amount });
-  }
+  };
 
   const setUnit = (unit: UnitOption) => {
     setMealToUpdate({ ...mealToUpdate, unitId: unit.id });
-  }
+  };
 
-  const [dateTime, setDateTime] = useState<Date | null>(new Date(meal.recordedAt));
+  const [dateTime, setDateTime] = useState<Date | null>(
+    new Date(meal.recordedAt),
+  );
 
   const handleDelete = () => {
     deleteMeal(meal.id);
@@ -50,7 +49,7 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
       closeModal();
     }
     router.push("/meals/view");
-  }
+  };
 
   const handleUpdate = () => {
     updateMeal({ ...mealToUpdate, recordedat: dateTime as Date });
@@ -63,40 +62,50 @@ export const EditMealForm = ({ meal, closeModal }: EditMealFormProps) => {
 
   return (
     <>
-      <Grid container spacing={1} justifyContent="flext-start" alignItems="center" marginTop={1}>
-        <Grid item xs={12} md={12}>
+      <Grid
+        container
+        spacing={1}
+        justifyContent="flext-start"
+        alignItems="center"
+        marginTop={1}
+      >
+        <Grid item xs={12}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateTimePicker
               label="Recorded Date"
               value={dateTime}
               onChange={(e: Date | null) => setDateTime(e)}
               disableFuture={true}
+              sx={{ width: { xs: "100%", md: "50%" } }}
             />
           </LocalizationProvider>
         </Grid>
-        <Grid item xs={12} md={12} paddingBottom={3}>
+        <Grid item xs={12} paddingBottom={3}>
           <AmountInput
             amount={mealToUpdate.amount}
             setAmount={setAmount}
             unit={meal.unit ?? ({} as UnitOption)}
             setUnit={setUnit}
-            restrictToUnitCategory={
-              meal.unit.category.description
-            }
+            restrictToUnitCategory={meal.unit.category.description}
             submitted={submitted}
           />
         </Grid>
-        <Grid item xs={6} md={6}>
-          <Button variant="contained" color="primary" onClick={handleUpdate}>
-            Update
-          </Button>
+        <Grid item xs={2} md={6}>
+          <IconButton color="error" onClick={handleDelete}>
+            <DeleteOutline />
+          </IconButton>
         </Grid>
-        <Grid item container xs={6} md={6} justifyContent={'flex-end'}>
-          <Button variant="contained" color="warning" onClick={handleDelete}>
-            Delete
+        <Grid container item xs={10} md={6} justifyContent={"flex-end"}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpdate}
+            sx={{ width: { xs: "100%", md: "auto" } }}
+          >
+            Update
           </Button>
         </Grid>
       </Grid>
     </>
   );
-}
+};
