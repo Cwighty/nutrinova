@@ -31,30 +31,28 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   const { data: unitOptions } = useGetUnitsQuery();
   const editRecipeMutation = useEditRecipeMutation(recipeId);
 
-  const [editRecipeFormState, setEditRecipeForm] =
-    React.useState<EditRecipeRequestModel>({
-      id: "",
-      description: recipe?.description,
-      tags: recipe?.tags.split(","),
-      notes: recipe?.notes,
-      recipeFoods:
-        recipe?.recipeFoods.map((rf) => {
-          return {
-            id: rf.id,
-            servingSize: rf.servingSize,
-            unitId: rf.unitId,
-            description: rf.description,
-            unit: rf.unit,
-            unitName: rf?.unit?.description || "",
-            name: rf.description,
-          };
-        }) || [],
-      amount: recipe?.amount,
-      servingsUnit: recipe?.unit,
-      unitId: recipe?.servingsSizeUnit,
-      categoryId: recipe?.unit?.categoryId || 0,
-    });
-
+  const [editRecipeFormState, setEditRecipeForm] = React.useState<EditRecipeRequestModel>({
+    id: '',
+    description: recipe?.description,
+    tags: (recipe?.tags !== undefined && recipe?.tags !== null && recipe?.tags.length !== 0) ? recipe?.tags?.split(',') : [],
+    notes: recipe?.notes,
+    recipeFoods: recipe?.recipeFoods.map(rf => {
+      return {
+        id: rf.id,
+        servingSize: rf.servingSize,
+        unitId: rf.unitId,
+        description: rf.description,
+        unit: rf.unit,
+        unitName: rf?.unit?.description || "",
+        name: rf.description,
+      }
+    }) || [],
+    amount: recipe?.amount,
+    servingsUnit: recipe?.unit,
+    unitId: recipe?.servingsSizeUnit,
+    categoryId: recipe?.unit?.categoryId || 0,
+  });
+  
   const initialFood: CreateRecipeFoodModel = {
     foodId: "",
     measurement: 1,
@@ -179,21 +177,20 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
       return {
         id: recipe?.id || "",
         description: recipe?.description,
-        tags: recipe?.tags.split(","),
-        notes: recipe?.notes || "",
-        recipeFoods:
-          recipe?.recipeFoods.map((rf) => {
-            return {
-              id: rf.id,
-              servingSize: rf.servingSize,
-              unitId: rf.unitId,
-              description: rf.description,
-              unit: rf.unit,
-              unitName: rf.unit?.description || "",
-              name: rf.description,
-              servingSizeUnit: rf.servingSizeUnit,
-            };
-          }) || [],
+        tags: (recipe?.tags && recipe.tags !== '') ? recipe.tags.split(',') : [],
+        notes: recipe?.notes || '',
+        recipeFoods: recipe?.recipeFoods.map(rf => {
+          return {
+            id: rf.id,
+            servingSize: rf.servingSize,
+            unitId: rf.unitId,
+            description: rf.description,
+            unit: rf.unit,
+            unitName: rf.unit?.description || "",
+            name: rf.description,
+            servingSizeUnit: rf.servingSizeUnit
+          }
+        }) || [],
         amount: recipe?.amount,
         servingsUnit: recipe?.unit,
         unitId: recipe?.unit?.id,
