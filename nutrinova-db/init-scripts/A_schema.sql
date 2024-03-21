@@ -60,6 +60,7 @@ CREATE TABLE
         created_at TIMESTAMP WITH TIME ZONE not null,
         serving_size DECIMAL not null,
         serving_size_unit serial REFERENCES Unit(id) not null,
+        imported BOOL not null,
         note TEXT null
         );
 

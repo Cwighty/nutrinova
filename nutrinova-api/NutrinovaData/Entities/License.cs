@@ -5,13 +5,13 @@ namespace NutrinovaData.Entities;
 
 public partial class License
 {
-  public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-  public string? LicenseName { get; set; }
+    public string? LicenseName { get; set; }
 
-  public TimeOnly? Duration { get; set; }
+    public TimeOnly? Duration { get; set; }
 
-  public decimal? Price { get; set; }
+    public decimal? Price { get; set; }
 
-  public bool? Active { get; set; }
+    public bool? Active { get; set; }
 }
