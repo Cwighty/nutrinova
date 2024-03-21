@@ -34,6 +34,8 @@ public class FoodResponse
 
   public string ServingSizeWithUnits { get; set; }
 
+  public bool Imported { get; set; }
+
   public UnitOption? Unit { get; set; }
 
   public List<FoodNutrient> FoodNutrients { get; set; }

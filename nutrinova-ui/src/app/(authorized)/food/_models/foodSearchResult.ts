@@ -11,6 +11,7 @@ export interface FoodSearchResult {
   servingSizeUnit: string;
   servingSizeUnitCategory?: string;
   servingSizeWithUnits: string;
+  imported: boolean;
   foodNutrients: FoodSearchResultNutrient[];
   note: string;
   unitCategoryId: number;

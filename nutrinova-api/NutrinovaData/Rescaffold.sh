@@ -9,7 +9,7 @@ docker compose down
 docker container prune -f
 
 # Step 3: Delete the specific data volume
-docker volume rm nutrinova_db_data
+docker volume --force rm nutrinova_devcontainer_nutrinova_db_data
 
 # Step 4: Start the Docker Compose managed containers again
 docker compose up -d --build

@@ -29,7 +29,7 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyF
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchParameters);
   const sortedData = data?.sort((a, b) => {
     if (sortby === "Date Created") {
-      return a.createdAt.getMilliseconds() - b.createdAt.getMilliseconds();
+      return a.createdAt?.getMilliseconds() - b.createdAt?.getMilliseconds();
     }
     if (sortby === "Name") {
       return a.description.localeCompare(b.description);
@@ -52,7 +52,8 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyF
       {isLoading && <div>Loading...</div>}
       {sortedData && sortedData.slice(0, 10).map((food) => {
         return PrepMealCard({ description: food.description, amount: food.servingSize, unit: food.servingSizeUnit, calories: 0 });
-      })}
+      })
+      }
       {sortedData && sortedData.length === 0 &&
         (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
