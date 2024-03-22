@@ -52,7 +52,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     unitId: recipe?.servingsSizeUnit,
     categoryId: recipe?.unit?.categoryId || 0,
   });
-  
+
   const initialFood: CreateRecipeFoodModel = {
     foodId: "",
     measurement: 1,
