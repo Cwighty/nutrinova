@@ -54,16 +54,15 @@ export const ServingSizeUnitField = ({
             setFormState({
               ...formState,
               servingSizeUnit: unit,
-              servingSizeUnitId: unit?.id ?? 0,
+              servingSizeUnitId: unit?.id ?? undefined,
             })
           }
           error={
             !formValid &&
-            (formState.servingSize === undefined ||
-              formState.servingSizeUnit === undefined)
+            (formState.servingSizeUnitId === undefined || formState.servingSizeUnitId < 0)
           }
           helperText={
-            !formValid && formState.servingSizeUnit === undefined
+            formState.servingSizeUnitId === undefined || formState.servingSizeUnitId < 0
               ? "A unit must be supplied with a serving size"
               : ""
           }

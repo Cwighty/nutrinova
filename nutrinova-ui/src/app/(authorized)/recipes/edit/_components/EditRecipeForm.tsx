@@ -5,7 +5,7 @@ import {
   useEditRecipeMutation,
   useGetRecipeByIdQuery,
 } from "../../recipeHooks";
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Alert, Box, Button, Grid, TextField } from "@mui/material";
 import TagInput from "@/components/forms/TagInput";
 import toast from "react-hot-toast";
 import { EditRecipeRequestModel } from "../_models/EditRecipeRequestModel";
@@ -52,7 +52,7 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     unitId: recipe?.servingsSizeUnit,
     categoryId: recipe?.unit?.categoryId || 0,
   });
-  
+
   const initialFood: CreateRecipeFoodModel = {
     foodId: "",
     measurement: 1,
@@ -85,8 +85,8 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   };
 
   const [isValid, setIsValid] = useState<boolean>(false);
-  const [recipeFoodsAreValid, setFoodRecipesAreValid] =
-    useState<boolean>(false);
+  const [recipeFoodsAreValid, setFoodRecipesAreValid] = useState<boolean>(false);
+  const [descriptionIsValid, setDescriptionIsValid] = useState<boolean>(false);
 
   const handleSubmit = () => {
     if (!isValid) {
@@ -101,38 +101,41 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
     }
   };
 
-  const handleSelectServingSizeUpdate = ({
-    servingSize,
-    servingSizeUnit,
-    servingSizeUnitId,
-  }: SelectNutrientWithUnitState) => {
+  const handleSelectServingSizeUpdate = ({ servingSize, servingSizeUnit }: SelectNutrientWithUnitState) => {
     setEditRecipeForm({
       ...editRecipeFormState,
       amount: servingSize,
       servingsUnit: servingSizeUnit,
-      unitId: servingSizeUnitId,
+      unitId: servingSizeUnit?.id,
     });
   };
 
   const validateForm = () => {
+
     const validateServing = () => {
-      const isValidServing =
-        editRecipeFormState?.amount &&
-        editRecipeFormState?.amount > 0 &&
-        editRecipeFormState?.unitId !== undefined &&
-        editRecipeFormState?.unitId > -1;
-      setServingSizeIsValid(isValidServing || false);
+      const isValidServing = (editRecipeFormState.amount !== null
+        && editRecipeFormState.amount !== undefined
+        && editRecipeFormState?.amount > 0
+        && editRecipeFormState?.unitId !== undefined
+        && editRecipeFormState?.unitId > -1)
+      setServingSizeIsValid(isValidServing);
       return isValidServing;
     };
     const validateFoods = () => {
-      const isValidFood =
-        editRecipeFormState?.recipeFoods?.every((n) => n.servingSize > 0) &&
-        editRecipeFormState.recipeFoods.length > 0;
-      setFoodRecipesAreValid(isValidFood || false);
+
+      const isValidFood = editRecipeFormState.recipeFoods.length > 0 && editRecipeFormState?.recipeFoods?.every(n => n.servingSize > 0);
+      setFoodRecipesAreValid(isValidFood);
       return isValidFood;
-    };
-    return validateServing() && validateFoods();
-  };
+    }
+
+    const validateDescription = () => {
+      const isValidDescription = (editRecipeFormState.description !== undefined && editRecipeFormState.description !== "" && editRecipeFormState.description !== null);
+      setDescriptionIsValid(isValidDescription);
+      return isValidDescription;
+    }
+
+    return validateServing() && validateFoods() && validateDescription();
+  }
 
   const handleFoodUpdate = (foodId: string, foodAmount: number) => {
     const newRecipeFoods = editRecipeFormState.recipeFoods.map((rf) => {
@@ -165,8 +168,8 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
   const validateFormCallback = useCallback(validateForm, [editRecipeFormState]);
 
   useEffect(() => {
-    setIsValid(validateFormCallback() || false);
-  }, [editRecipeFormState, validateFormCallback]);
+    setIsValid(() => validateFormCallback());
+  }, [editRecipeFormState, validateFormCallback])
 
   if (isLoading || isFetching) {
     return <div>Loading...</div>;
@@ -211,10 +214,12 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
               onChange={(e) => {
                 setEditRecipeForm({
                   ...editRecipeFormState,
-                  description: e.target.value,
+                  description: e.target.value ?? "",
                 });
               }}
-              sx={{ marginBottom: 2 }}
+              error={!descriptionIsValid}
+              helperText={!descriptionIsValid ? "Please enter a description" : ""}
+              sx={{ marginBottom: 2 }} // Adding space below each input
             />
             <Box>
               <TagInput
@@ -255,18 +260,13 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
               sx={{ marginBottom: 2 }}
             />
           </Grid>
-          <Grid
-            sx={{ marginBottom: 2 }}
-            xs={12}
-            justifyContent="center"
-            padding={2}
-          >
+          <Grid item sx={{ marginBottom: 2 }} xs={12} justifyContent="center" padding={2}>
             <AddFoodDialog
               newFood={newFood}
               setNewFood={setNewFood}
               handleAddFood={handleAddFood}
             />
-            {editRecipeFormState?.recipeFoods?.map((food) => (
+            {editRecipeFormState.recipeFoods.length > 0 ? (editRecipeFormState?.recipeFoods?.map((food) => (
               <Box sx={{ marginBottom: 1 }} key={food.id}>
                 <EditRecipeFoodItem
                   food={food}
@@ -280,12 +280,12 @@ export const EditRecipeForm = ({ recipeId }: EditRecipeFormProps) => {
                   }}
                 />
               </Box>
-            ))}
+            ))) :
+              (<Alert severity="warning">Please add at least one food</Alert>)
+            }
           </Grid>
           <Grid item xs={12} container justifyContent="flex-end">
-            <Button variant="contained" onClick={handleSubmit}>
-              Save
-            </Button>
+            <Button variant="contained" onClick={handleSubmit} disabled={!isValid}>Save</Button>
           </Grid>
         </Grid>
       </Grid>
