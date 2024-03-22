@@ -32,11 +32,13 @@ export const AmountInput = ({
           <TextField
             label="Amount"
             type="number"
-            value={amount}
+            value={amount.toString()}
             onChange={handleAmountChange}
             fullWidth
             error={submitted && amount <= 0}
-            helperText={submitted && amount <= 0 ? "Amount must be greater than 0" : ""}
+            helperText={
+              submitted && amount <= 0 ? "Amount must be greater than 0" : ""
+            }
           />
         </Grid>
 
@@ -60,7 +62,9 @@ export const AmountInput = ({
               );
             }}
             error={submitted && unit.description === ""}
-            helperText={submitted && unit.description === "" ? "Please select a unit" : ""}
+            helperText={
+              submitted && unit.description === "" ? "Please select a unit" : ""
+            }
           />
         </Grid>
       </Grid>

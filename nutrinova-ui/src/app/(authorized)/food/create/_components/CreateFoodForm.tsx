@@ -134,7 +134,7 @@ export default function CreateFoodForm() {
             <TextField
               label="Serving Size"
               type="number"
-              value={foodFormState.servingSize ?? ""}
+              value={foodFormState.servingSize?.toString()}
               onChange={(e) =>
                 setFoodFormState({
                   ...foodFormState,

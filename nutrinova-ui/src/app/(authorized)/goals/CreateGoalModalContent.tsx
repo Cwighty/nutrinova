@@ -50,8 +50,8 @@ export const CreateGoalModalContent = ({
 
   const [goalType, setGoalType] = useState("recommended");
   const [goalRangeType, setGoalRangeType] = useState<string | null>();
-  const [lowerLimit, setLowerLimit] = useState<number | string>("");
-  const [upperLimit, setUpperLimit] = useState<number | string>("");
+  const [lowerLimit, setLowerLimit] = useState<number | undefined>();
+  const [upperLimit, setUpperLimit] = useState<number | undefined>();
   const [selectedNutrient, setSelectedNutrient] =
     useState<NutrientOption | null>(null);
 
@@ -85,8 +85,8 @@ export const CreateGoalModalContent = ({
 
   const handleGoalTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     setGoalType(event.target.value);
-    setLowerLimit("");
-    setUpperLimit("");
+    setLowerLimit(undefined);
+    setUpperLimit(undefined);
     setValidationMessage("");
     setNewGoal({
       ...newGoal,
@@ -102,62 +102,56 @@ export const CreateGoalModalContent = ({
   };
 
   const handleGoalRangeTypeChange = (goalRangeType: string | null) => {
-    setLowerLimit("");
-    setUpperLimit("");
+    setLowerLimit(undefined);
+    setUpperLimit(undefined);
     setValidationMessage("");
     setGoalRangeType(goalRangeType);
   };
 
   const handleLowerLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (/^\d*\.?\d*$/.test(event.target.value)) {
-      const numericValue =
-        event.target.value === "" ? "" : Number(event.target.value);
-      if (goalRangeType === "AMDR (Range)" && upperLimit !== "") {
-        setValidationMessage("");
-      }
-      if (
-        goalRangeType === "RDA (Lower Limit)" ||
-        goalRangeType === "AI (Lower Limit)"
-      ) {
-        setValidationMessage("");
-      }
-      setLowerLimit(numericValue);
-      setNewGoal({ ...newGoal, dailyLowerLimit: Number(numericValue) });
+    const numericValue = Number(event.target.value);
+    if (goalRangeType === "AMDR (Range)" && upperLimit && upperLimit !== 0) {
+      setValidationMessage("");
     }
+    if (
+      goalRangeType === "RDA (Lower Limit)" ||
+      goalRangeType === "AI (Lower Limit)"
+    ) {
+      setValidationMessage("");
+    }
+    setLowerLimit(Number(event.target.value));
+    setNewGoal({ ...newGoal, dailyLowerLimit: numericValue });
   };
 
   const handleUpperLimitChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (/^\d*\.?\d*$/.test(event.target.value)) {
-      const numericValue =
-        event.target.value === "" ? "" : Number(event.target.value);
-      if (goalRangeType === "AMDR (Range)" && lowerLimit !== "") {
-        setValidationMessage("");
-      }
-      if (goalRangeType === "UL (Upper Limit)") {
-        setValidationMessage("");
-      }
-      setUpperLimit(numericValue);
-      setNewGoal({ ...newGoal, dailyUpperLimit: Number(numericValue) });
+    const numericValue = Number(event.target.value);
+    if (goalRangeType === "AMDR (Range)" && lowerLimit && lowerLimit !== 0) {
+      setValidationMessage("");
     }
+    if (goalRangeType === "UL (Upper Limit)") {
+      setValidationMessage("");
+    }
+    setUpperLimit(numericValue);
+    setNewGoal({ ...newGoal, dailyUpperLimit: numericValue });
   };
 
   if (
     goalRangeType === "RDA (Lower Limit)" ||
     goalRangeType === "AI (Lower Limit"
   ) {
-    if (lowerLimit === "") {
+    if (!lowerLimit || lowerLimit === 0) {
       setValidationMessage("Please enter a lower limit");
     }
   }
 
   if (goalRangeType === "UL (Upper Limit)") {
-    if (upperLimit === "") {
+    if (!upperLimit || upperLimit === 0) {
       setValidationMessage("Please enter an upper limit");
     }
   }
 
   if (goalRangeType === "AMDR (Range)") {
-    if (lowerLimit === "" || upperLimit === "" || lowerLimit >= upperLimit) {
+    if (!lowerLimit || lowerLimit === 0 || !upperLimit || upperLimit === 0) {
       setValidationMessage("Please enter a valid range");
     }
   }
@@ -267,7 +261,8 @@ export const CreateGoalModalContent = ({
                         <Box>
                           <TextField
                             label="Lower Limit"
-                            value={lowerLimit}
+                            type="number"
+                            value={lowerLimit?.toString()}
                             onChange={handleLowerLimitChange}
                             InputProps={{
                               endAdornment: nutrientRecommendation.unit,
@@ -275,7 +270,7 @@ export const CreateGoalModalContent = ({
                             fullWidth
                             sx={{ mb: 1 }}
                           />
-                          {lowerLimit && (
+                          {!validationMessage && (
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming at least{" "}
                               {lowerLimit +
@@ -291,7 +286,8 @@ export const CreateGoalModalContent = ({
                         <Box>
                           <TextField
                             label="Upper Limit"
-                            value={upperLimit}
+                            type="number"
+                            value={upperLimit?.toString()}
                             onChange={handleUpperLimitChange}
                             InputProps={{
                               endAdornment: nutrientRecommendation.unit,
@@ -299,7 +295,7 @@ export const CreateGoalModalContent = ({
                             fullWidth
                             sx={{ mb: 1 }}
                           />
-                          {upperLimit && (
+                          {!validationMessage && (
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming at most{" "}
                               {upperLimit +
@@ -316,7 +312,8 @@ export const CreateGoalModalContent = ({
                           <Box sx={{ display: "flex", gap: 2 }}>
                             <TextField
                               label="Lower Limit"
-                              value={lowerLimit}
+                              type="number"
+                              value={lowerLimit?.toString()}
                               onChange={handleLowerLimitChange}
                               InputProps={{
                                 endAdornment: nutrientRecommendation.unit,
@@ -325,7 +322,7 @@ export const CreateGoalModalContent = ({
                             />
                             <TextField
                               label="Upper Limit"
-                              value={upperLimit}
+                              value={upperLimit?.toString()}
                               onChange={handleUpperLimitChange}
                               InputProps={{
                                 endAdornment: nutrientRecommendation.unit,
@@ -333,7 +330,7 @@ export const CreateGoalModalContent = ({
                               sx={{ mb: 1 }}
                             />
                           </Box>
-                          {lowerLimit && upperLimit && !validationMessage && (
+                          {!validationMessage && (
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming between{" "}
                               {lowerLimit +
