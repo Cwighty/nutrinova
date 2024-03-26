@@ -334,5 +334,61 @@ public class PatientControllerTests : IClassFixture<NutrinovaApiWebApplicationFa
         Assert.True(patientUpdatedGet.Sex == "M");
       }
     }
+
+    public class UpdateOptOutOffPatientTests : PatientControllerTests
+    {
+      public UpdateOptOutOffPatientTests(NutrinovaApiWebApplicationFactory factory)
+        : base(factory)
+      {
+      }
+
+      [Fact]
+      public async Task UpdateOptOut_Patient()
+      {
+        // Arrange
+        var customer = await DataUtility.EnsureCustomerExistsAsync(Factory.DefaultCustomerId);
+        var patient = new CreatePatientRequest
+        {
+          Firstname = "default",
+          Lastname = "Patient",
+          Age = 31,
+          UseDefaultNutrientGoals = true,
+          Sex = "M",
+        };
+        var patientCreationRes = await HttpClient.PostAsJsonAsync("be/patient/create-patient", patient);
+
+        var patientGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "default");
+
+        Assert.NotNull(patientGet);
+
+        var updatePatient = new UpdatePatientRequest
+        {
+          Firstname = "updated",
+          Lastname = "Patient",
+          Age = 33,
+          CustomerId = customer.Objectid,
+          Id = patientGet.Id,
+          Sex = "F",
+          OptOut = false,
+        };
+
+        // Act
+        var response = await HttpClient.PutAsJsonAsync("be/patient/update-patient", updatePatient);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var patientResponse = await response.Content.ReadFromJsonAsync<PatientResponse>();
+        Assert.NotNull(patientResponse);
+
+        var patientUpdatedGet = await DbContext.Patients.FirstOrDefaultAsync(p => p.Firstname == "updated");
+        Assert.NotNull(patientUpdatedGet);
+        DbContext.Entry(patientUpdatedGet).Reload();
+        Assert.True(patientUpdatedGet.Firstname == "updated");
+        Assert.True(patientUpdatedGet.Age == 33);
+        Assert.True(patientUpdatedGet.Lastname == "Patient");
+        Assert.True(!patientUpdatedGet.OptOutDetails);
+        Assert.True(patientUpdatedGet.Sex == "F");
+      }
+    }
   }
 }
