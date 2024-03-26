@@ -135,6 +135,12 @@ public class PatientController : ControllerBase
       return Unauthorized();
     }
 
+    if (patient?.OptOut ?? false)
+    {
+      patient.Age = 19; // Default age
+      patient.Sex = "M"; // Default sex
+    }
+
     if (patient == null)
     {
       return BadRequest(new { message = "Patient data is required" });
@@ -161,6 +167,7 @@ public class PatientController : ControllerBase
     }
 
     using var transaction = await context.Database.BeginTransactionAsync();
+
     var patientToUpdate = await context.Patients
         .FirstOrDefaultAsync(p => p.Id == patient.Id && p.CustomerId == customer.Id);
 
@@ -191,7 +198,6 @@ public class PatientController : ControllerBase
       patientToUpdate.ProfilePictureName = pictureName.ToString();
     }
 
-    context.Patients.Update(patientToUpdate);
     await context.SaveChangesAsync();
     await transaction.CommitAsync();
 
