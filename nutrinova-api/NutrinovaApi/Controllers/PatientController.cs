@@ -89,6 +89,7 @@ public class PatientController : ControllerBase
     }
 
     logger.LogInformation($"Default Patient Goals: {patient?.UseDefaultNutrientGoals}");
+
     if (patient?.UseDefaultNutrientGoals ?? false || patient?.UseDefaultNutrientGoals == true)
     {
       patient.Age = 19; // Default age
@@ -120,6 +121,87 @@ public class PatientController : ControllerBase
     await context.SaveChangesAsync();
 
     return Ok(new { message = "Patient created successfully", id = newPatient.Id });
+  }
+
+  // Update a patient
+  [HttpPut("update-patient")]
+  public async Task<ActionResult> UpdatePatient([FromBody] UpdatePatientRequest patient)
+  {
+    var userObjectId = User.GetObjectIdFromClaims();
+    var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
+
+    if (customer == null)
+    {
+      return Unauthorized();
+    }
+
+    if (patient?.OptOut ?? false)
+    {
+      patient.Age = 19; // Default age
+      patient.Sex = "M"; // Default sex
+    }
+
+    if (patient == null)
+    {
+      return BadRequest(new { message = "Patient data is required" });
+    }
+
+    if (patient?.Firstname == null)
+    {
+      return BadRequest(new { message = "First name is required" });
+    }
+
+    if (patient?.Lastname == null)
+    {
+      return BadRequest(new { message = "Last name is required" });
+    }
+
+    if (patient?.Id == null)
+    {
+      return BadRequest(new { message = "Patient ID is required" });
+    }
+
+    if (patient?.CustomerId == null)
+    {
+      return BadRequest(new { message = "Customer ID is required" });
+    }
+
+    using var transaction = await context.Database.BeginTransactionAsync();
+
+    var patientToUpdate = await context.Patients
+        .FirstOrDefaultAsync(p => p.Id == patient.Id && p.CustomerId == customer.Id);
+
+    if (patientToUpdate == null)
+    {
+      transaction.Rollback();
+      return NotFound();
+    }
+
+    patientToUpdate.Firstname = patient.Firstname;
+    patientToUpdate.Lastname = patient.Lastname;
+    patientToUpdate.Age = patient.Age;
+    patientToUpdate.OptOutDetails = (patient.OptOut ?? false) ? true : false;
+    patientToUpdate.Sex = (patient.Sex != "M" && patient.Sex != "F") ? "M" : patient.Sex;
+
+    // handle updating patient image
+    if (!patient.Base64Image.IsNullOrEmpty() && patient.Base64Image != null)
+    {
+      if (patientToUpdate.ProfilePictureName != null)
+      {
+        System.IO.File.Delete($"{configuration["IMAGE_PATH"]}/{patientToUpdate.ProfilePictureName}.png");
+      }
+
+      var pictureName = Guid.NewGuid();
+      var base64Image = patient.Base64Image.Split(',')[1];
+      byte[] bytes = Convert.FromBase64String(base64Image);
+      System.IO.File.WriteAllBytes($"{configuration["IMAGE_PATH"]}/{pictureName}.png", bytes);
+      patientToUpdate.ProfilePictureName = pictureName.ToString();
+    }
+
+    await context.SaveChangesAsync();
+    await transaction.CommitAsync();
+
+    return Ok(new { message = "Patient updated successfully" });
   }
 
   // Get a single patient by ID
