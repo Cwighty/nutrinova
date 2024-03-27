@@ -2,27 +2,26 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { useAddMealMutation } from "../../../mealHooks";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import { RecordMealRequest } from "../../_models/recordMealRequest";
-import { MealSelectionItem } from "../../_models/mealSelectionItem";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState, useContext, FormEvent } from "react";
-import { MealSelectionItemCard } from "../MealSelectionItemCard";
 import { ArrowBack } from "@mui/icons-material";
+import { PrepMealItem } from "../../_models/preMealItem";
 
 interface PreMealDetailProps {
-  onClose: () => void;
-  selectedFood: MealSelectionItem;
+  selectedMealItem: PrepMealItem;
+  setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
 }
 
-export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedFood, onClose }: PreMealDetailProps) => {
-  const [amount, setAmount] = useState<number>(0);
+export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, setSelectedMealItem }: PreMealDetailProps) => {
+  const [amount, setAmount] = useState<number>(selectedMealItem.servingSize);
   const [unit, setUnit] = useState<UnitOption>({
-    description: "",
+    description: selectedMealItem.servingSizeUnit,
   } as UnitOption);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [recordedAt, setRecordedAt] = useState<Date | null>();
+  const [recordedAt, setRecordedAt] = useState<Date | null>(new Date(Date.now()));
   const { mutate: addMeal } = useAddMealMutation();
   const patientContext = useContext(PatientContext);
 
@@ -46,15 +45,15 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedFood, onCl
         amount: amount,
         recordedAt: recordedAt,
         unitId: unit?.id ?? 0,
-        selectedMealItemId: selectedFood.id ?? "",
-        mealSelectionType: selectedFood.type,
+        selectedMealItemId: selectedMealItem.id ?? "",
+        mealSelectionType: selectedMealItem.type,
       };
       addMeal(recordMealRequest, {
         onSuccess: () => {
           setAmount(0);
           setUnit({ description: "" } as UnitOption);
           setRecordedAt(new Date(Date.now()));
-          onClose();
+          setSelectedMealItem(undefined);
         },
       });
     }
@@ -62,15 +61,19 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedFood, onCl
 
   return (
     <Box sx={{ mx: "auto" }}>
-      <Box>
-        <Button onClick={onClose} variant="text">
+      <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
+        <Button onClick={() => setSelectedMealItem(undefined)} variant="text">
           <ArrowBack />
         </Button>
+        <Button type="submit" variant="contained">
+          Record Meal
+        </Button>
       </Box>
-      <Box sx={{ mb: 2 }}>
-        <MealSelectionItemCard item={selectedFood} />
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="h5">{selectedMealItem.description}</Typography>
+        <Typography>Serving Size: {selectedMealItem.servingSize} {selectedMealItem.servingSizeUnit} | {selectedMealItem.calories} kcal</Typography>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ mt: 2 }}>
         <Grid item xs={12} sm={6}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateTimePicker
@@ -92,16 +95,11 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedFood, onCl
           setAmount={setAmount}
           unit={unit ?? ({} as UnitOption)}
           setUnit={setUnit}
-          restrictToUnitCategory={
-            selectedFood.servingSizeUnit?.category.description
-          }
+          // restrictToUnitCategory={
+          //   selectedMealItem.servingSizeUnit?.category.description
+          // }
           submitted={submitted}
         />
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-          <Button type="submit" variant="contained">
-            Record Meal
-          </Button>
-        </Box>
       </Box>
     </Box>
   );

@@ -4,12 +4,14 @@ import { PrepMealCard } from "./PrepMealCard";
 import { FilterMenu } from "./FilterMenu";
 import { useState } from "react";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
+import { PrepMealItem } from "../../_models/preMealItem";
 
 interface SearchAllProps {
   searchKeyword: string;
+  setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
 }
 
-export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword }: SearchAllProps) => {
+export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelectedMealItem }: SearchAllProps) => {
   const filterParams = {
     foodName: searchKeyword,
     filterOption: "Foundation",
@@ -33,6 +35,9 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword }: SearchAll
 
   const showHistory = (!usdaFoods || usdaFoods.length === 0 || searchKeyword === "");
 
+  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       {showHistory &&
@@ -45,7 +50,15 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword }: SearchAll
             {storedFoodsLoading && <div>Loading...</div>}
             {
               historyFoods && historyFoods.slice(0, 5).map((food) => {
-                return <PrepMealCard key={food.id} description={food.description} amount={0} unit={food.servingSizeUnit} calories={0} />
+                const mealItem: PrepMealItem = {
+                  description: food.description,
+                  id: food.id,
+                  type: "Food",
+                  servingSize: food.servingSize,
+                  servingSizeUnit: food.servingSizeUnit,
+                  calories: 0
+                }
+                return <PrepMealCard key={food.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => handleAddMeal(mealItem)} />
               })
             }
             {
@@ -68,7 +81,15 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword }: SearchAll
           {usdaFoodsLoading && <div>Loading...</div>}
           {usdaFoods && <div>{usdaFoods.length} results</div>}
           {usdaFoods && usdaFoods.slice(0, 5).map((food) => {
-            return <PrepMealCard key={food.id} description={food.description} amount={0} unit={food.servingSizeUnit} calories={0} />
+            const mealItem: PrepMealItem = {
+              description: food.description,
+              id: food.id,
+              type: "Food",
+              servingSize: food.servingSize,
+              servingSizeUnit: food.servingSizeUnit,
+              calories: 0
+            }
+            return <PrepMealCard key={food.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => handleAddMeal(mealItem)} />
           })
           }
         </>

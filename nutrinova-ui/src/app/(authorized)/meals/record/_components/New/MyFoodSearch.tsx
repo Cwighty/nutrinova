@@ -7,12 +7,14 @@ import { FilterMenu } from "./FilterMenu";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
 import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { PrepMealCard } from "./PrepMealCard";
+import { PrepMealItem } from "../../_models/preMealItem";
 
 interface MyFoodSearchProps {
   searchKeyword: string;
+  setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
 }
 
-export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyFoodSearchProps) => {
+export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword, setSelectedMealItem }: MyFoodSearchProps) => {
 
   const router = useRouter();
   const options = ["Date Created", "Name", "Calories"];
@@ -37,6 +39,9 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyF
     return 0;
   });
 
+  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -51,7 +56,15 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword }: MyF
       {isError && <div>Error loading recipes</div>}
       {isLoading && <div>Loading...</div>}
       {sortedData && sortedData.slice(0, 10).map((food) => {
-        return PrepMealCard({ description: food.description, amount: food.servingSize, unit: food.servingSizeUnit, calories: 0 });
+        const preMealItem: PrepMealItem = {
+          description: food.description,
+          id: food.id,
+          type: "Food",
+          servingSize: food.servingSize,
+          servingSizeUnit: food.servingSizeUnit,
+          calories: 0
+        }
+        return PrepMealCard({ mealSelectionItem: preMealItem, onDetailClick: () => setSelectedMealItem(preMealItem), onAddClick: () => handleAddMeal(preMealItem) });
       })
       }
       {sortedData && sortedData.length === 0 &&

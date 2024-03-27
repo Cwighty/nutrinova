@@ -1,22 +1,21 @@
 
 import { Add } from "@mui/icons-material";
 import { Box, IconButton, ListItem, ListItemButton, Typography } from "@mui/material";
-import { MealSelectionItem } from "../../_models/mealSelectionItem";
+import { PrepMealItem } from "../../_models/preMealItem";
 
 interface PrepMealCardProps {
-  mealSelectionItem: MealSelectionItem;
-  calories: number;
-  onDetailClick: (selectedFood : MealSelectionItem) => void;
-  onAddClick: (selectedFood : MealSelectionItem) => void;
+  mealSelectionItem: PrepMealItem;
+  onDetailClick: (selectedFood: PrepMealItem) => void;
+  onAddClick: (selectedFood: PrepMealItem) => void;
 }
 
-export const PrepMealCard: React.FC<PrepMealCardProps> = ({ mealSelectionItem, calories, onDetailClick, onAddClick }: PrepMealCardProps) => {
+export const PrepMealCard: React.FC<PrepMealCardProps> = ({ mealSelectionItem, onDetailClick, onAddClick }: PrepMealCardProps) => {
   return (
     <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
       <ListItemButton onClick={() => onDetailClick(mealSelectionItem)}>
         <Box>
           <Typography>{mealSelectionItem.description}</Typography>
-          <Typography>{mealSelectionItem.servingSize} {mealSelectionItem.servingSizeUnit?.abbreviation} | {calories} kcal</Typography>
+          <Typography>{mealSelectionItem.servingSize} {mealSelectionItem.servingSizeUnit} | {mealSelectionItem.calories} kcal</Typography>
         </Box>
       </ListItemButton>
       <Box>
