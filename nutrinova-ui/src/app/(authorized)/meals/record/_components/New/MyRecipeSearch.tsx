@@ -5,16 +5,20 @@ import { FilterMenu } from "./FilterMenu";
 import { useState } from "react";
 import { useGetAllRecipesQuery } from "@/app/(authorized)/recipes/recipeHooks";
 import { PrepMealCard } from "./PrepMealCard";
+import { PrepMealItem } from "../../_models/preMealItem";
 
 interface MyRecipeSearchProps {
   searchKeyword: string;
+  setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
 }
 
-export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }: MyRecipeSearchProps) => {
+export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, setSelectedMealItem }: MyRecipeSearchProps) => {
 
   const router = useRouter();
   const options = ["Date Created", "Name", "Calories"];
   const { data, isError, isLoading } = useGetAllRecipesQuery();
+
+  // const { data: units, isLoading: unitsLoading } = useGetUnitsQuery();
 
   const filteredData = data?.filter((recipe) => {
     return (
@@ -35,6 +39,8 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }:
 
   const [sortBy, setSortBy] = useState<string>(options[0]);
 
+  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -50,7 +56,16 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword }:
       {isError && <div>Error loading recipes</div>}
       {isLoading && <div>Loading...</div>}
       {sortedData && sortedData.slice(0, 10).map((recipe) => {
-        return PrepMealCard({ description: recipe.description, amount: recipe.amount, unit: recipe.unit.abbreviation, calories: 0 });
+        const preMealItem: PrepMealItem = {
+          description: recipe.description,
+          id: recipe.id,
+          type: "Food",
+          servingSize: recipe.amount,
+          servingSizeUnit: recipe.unit.description,
+          calories: 0
+        }
+        console.log(recipe.servingsSizeUnit)
+        return PrepMealCard({ mealSelectionItem: preMealItem, onDetailClick: () => setSelectedMealItem(preMealItem), onAddClick: () => handleAddMeal(preMealItem) });
       })
       }
       {sortedData && sortedData.length === 0 &&

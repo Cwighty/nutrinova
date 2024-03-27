@@ -47,7 +47,7 @@ export const RecordMeal = () => {
           </Tabs>
           {selectedTab === 0 && <SearchAll searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
           {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
-          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} />}
+          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
         </>
       }
     </>
