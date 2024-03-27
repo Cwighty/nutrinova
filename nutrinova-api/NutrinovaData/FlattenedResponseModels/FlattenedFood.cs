@@ -22,6 +22,8 @@ public class FlattenedFood
 
   public string? ServingSizeUnit { get; set; }
 
+  public UnitOption? ServingSizeUnitOption { get; set; }
+
   public string? ServingSizeWithUnits { get; set; }
 
   public bool Imported { get; set; }
@@ -43,6 +45,7 @@ public class FlattenedFood
     this.UnitCategoryId = fp.ServingSizeUnitNavigation.CategoryId;
     Imported = fp.Imported;
     ServingSizeUnit = fp.ServingSizeUnitNavigation?.Description;
+    ServingSizeUnitOption = fp.ServingSizeUnitNavigation?.ToUnitOption();
     ServingSizeWithUnits = ServingSize + ServingSizeUnit;
     FoodNutrients = fp.FoodPlanNutrients
         .Select(fpn => fpn.ToFlattenedFoodNutrient())
@@ -59,6 +62,7 @@ public class FlattenedFood
     this.ServingSize = foodResponse?.ServingSize;
     this.Imported = foodResponse?.Imported ?? false;
     this.ServingSizeUnit = foodResponse?.ServingSizeUnit;
+    this.ServingSizeUnitOption = foodResponse?.Unit;
     this.UnitCategoryId = foodResponse?.UnitCategoryId;
     this.ServingSizeWithUnits = $"{foodResponse?.ServingSize} {foodResponse?.ServingSizeUnit}";
     this.FoodNutrients = foodResponse?.FoodNutrients

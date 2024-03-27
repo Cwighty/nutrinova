@@ -15,7 +15,7 @@ export const PrepMealCard: React.FC<PrepMealCardProps> = ({ mealSelectionItem, o
       <ListItemButton onClick={() => onDetailClick(mealSelectionItem)}>
         <Box>
           <Typography>{mealSelectionItem.description}</Typography>
-          <Typography>{mealSelectionItem.servingSize} {mealSelectionItem.servingSizeUnit} | {Math.round(mealSelectionItem.calories)} kcal</Typography>
+          <Typography>{mealSelectionItem.servingSize} {mealSelectionItem.servingSizeUnit?.description} | {Math.round(mealSelectionItem.calories)} kcal</Typography>
         </Box>
       </ListItemButton>
       <Box>

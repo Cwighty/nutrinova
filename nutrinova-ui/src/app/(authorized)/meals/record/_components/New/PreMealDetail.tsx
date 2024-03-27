@@ -17,9 +17,7 @@ interface PreMealDetailProps {
 
 export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, setSelectedMealItem }: PreMealDetailProps) => {
   const [amount, setAmount] = useState<number>(selectedMealItem.servingSize);
-  const [unit, setUnit] = useState<UnitOption>({
-    description: selectedMealItem.servingSizeUnit,
-  } as UnitOption);
+  const [unit, setUnit] = useState<UnitOption>(selectedMealItem.servingSizeUnit ?? ({} as UnitOption));
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [recordedAt, setRecordedAt] = useState<Date | null>(new Date(Date.now()));
   const { mutate: addMeal } = useAddMealMutation();
@@ -71,7 +69,7 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
       </Box>
       <Box sx={{ mt: 2 }}>
         <Typography variant="h5">{selectedMealItem.description}</Typography>
-        <Typography>Serving Size: {selectedMealItem.servingSize} {selectedMealItem.servingSizeUnit} | {Math.round(selectedMealItem.calories)} kcal</Typography>
+        <Typography>Serving Size: {selectedMealItem.servingSize} {selectedMealItem.servingSizeUnit?.description} | {Math.round(selectedMealItem.calories)} kcal</Typography>
       </Box>
       <Grid container spacing={2} sx={{ mt: 2 }}>
         <Grid item xs={12} sm={6}>
@@ -95,9 +93,9 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
           setAmount={setAmount}
           unit={unit ?? ({} as UnitOption)}
           setUnit={setUnit}
-          // restrictToUnitCategory={
-          //   selectedMealItem.servingSizeUnit?.category.description
-          // }
+          restrictToUnitCategory={
+            selectedMealItem.servingSizeUnit?.category.description
+          }
           submitted={submitted}
         />
       </Box>

@@ -1,6 +1,6 @@
 import createAuthenticatedAxiosInstanceFactory from "@/services/axiosRequestFactory";
 import { NutrientOption } from "./_models/nutrientOption";
-import { FoodResponse, FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
+import { FoodResponse, FlattenedFood } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UnitCategory, UnitOption } from "./_models/unitOption";
 import { CreateFoodRequestModel } from "./create/_models/createFoodRequest";
@@ -58,7 +58,7 @@ const fetchFoodById = async (foodId: string): Promise<FoodResponse> => {
 
 const fetchFoodsForUser = async (
   foodSearchParameters: SearchParameters
-): Promise<FoodSearchResult[]> => {
+): Promise<FlattenedFood[]> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -73,7 +73,7 @@ const fetchFoodsForUser = async (
     }
   }
   );
-  return response.data as FoodSearchResult[];
+  return response.data as FlattenedFood[];
 };
 
 export const useGetNutrientsQuery = () => {
@@ -209,7 +209,7 @@ const fetchFoodSearchResults = async (filterParams: FoodSearchFilterParams) => {
   if (filterParams.foodName.trim() === "") {
     return [];
   }
-  const response = await foodSearchInstance.get<FoodSearchResult[]>(
+  const response = await foodSearchInstance.get<FlattenedFood[]>(
     "food/search?" + query.toString()
   );
   return response.data;
@@ -224,7 +224,7 @@ export const useGetFoodSearchResultsQuery = (
   });
 };
 
-const getFoodSearchResult = (foodId: number, foods: FoodSearchResult[]) => {
+const getFoodSearchResult = (foodId: number, foods: FlattenedFood[]) => {
   return foods.find((food) => food.fdcId === foodId);
 };
 

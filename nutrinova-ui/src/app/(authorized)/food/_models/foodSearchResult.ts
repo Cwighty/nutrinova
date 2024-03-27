@@ -1,6 +1,6 @@
 import { UnitOption } from "./unitOption";
 
-export interface FoodSearchResult {
+export interface FlattenedFood {
   fdcId: number;
   id: string;
   description: string;
@@ -9,10 +9,11 @@ export interface FoodSearchResult {
   createdAt: Date;
   servingSize: number;
   servingSizeUnit: string;
+  servingSizeUnitOption: UnitOption;
   servingSizeUnitCategory?: string;
   servingSizeWithUnits: string;
   imported: boolean;
-  foodNutrients: FoodSearchResultNutrient[];
+  foodNutrients: FlattenedFoodNutrient[];
   note: string;
   unitCategoryId: number;
 }
@@ -27,13 +28,13 @@ export interface FoodResponse {
   servingSizeUnit: string;
   servingSizeUnitCategory?: string;
   servingSizeWithUnits: string;
-  foodNutrients: FoodSearchResultNutrient[];
+  foodNutrients: FlattenedFoodNutrient[];
   unit: UnitOption;
   note: string;
   unitCategoryId: number;
 }
 
-export interface FoodSearchResultNutrient {
+export interface FlattenedFoodNutrient {
   nutrientName: string;
   nameWithAmountAndUnit: string;
   unitName: string;

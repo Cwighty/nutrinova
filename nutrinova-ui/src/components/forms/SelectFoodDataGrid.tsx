@@ -1,5 +1,5 @@
 "use client";
-import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
+import { FlattenedFood } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
@@ -8,7 +8,7 @@ import { SearchParameters } from "@/app/(authorized)/food/view/page";
 
 interface MyFoodsSearchResultDataGridProps {
   searchQuery: SearchParameters;
-  onFoodSelected: (food: FoodSearchResult) => void;
+  onFoodSelected: (food: FlattenedFood) => void;
 }
 
 export const SelectFoodDataGrid = ({
@@ -35,7 +35,7 @@ export const SelectFoodDataGrid = ({
       }}
     >
       <DataGrid
-        getRowId={(row: FoodSearchResult) => row.description}
+        getRowId={(row: FlattenedFood) => row.description}
         rows={data ?? []}
         columns={columns}
         autoHeight
@@ -46,7 +46,7 @@ export const SelectFoodDataGrid = ({
           noRowsOverlay: () => NoFoodRowsOverlay(searchQuery.foodSearchTerm),
         }}
         onCellClick={(params) => {
-          onFoodSelected(params.row as FoodSearchResult);
+          onFoodSelected(params.row as FlattenedFood);
         }}
       />
     </Box>
