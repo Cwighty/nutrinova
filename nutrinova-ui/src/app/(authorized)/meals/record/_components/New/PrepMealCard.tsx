@@ -1,25 +1,26 @@
 
 import { Add } from "@mui/icons-material";
 import { Box, IconButton, ListItem, ListItemButton, Typography } from "@mui/material";
+import { MealSelectionItem } from "../../_models/mealSelectionItem";
 
 interface PrepMealCardProps {
-  description: string;
-  amount: number;
-  unit: string;
+  mealSelectionItem: MealSelectionItem;
   calories: number;
+  onDetailClick: (selectedFood : MealSelectionItem) => void;
+  onAddClick: (selectedFood : MealSelectionItem) => void;
 }
 
-export const PrepMealCard: React.FC<PrepMealCardProps> = ({ description, amount, unit, calories }: PrepMealCardProps) => {
+export const PrepMealCard: React.FC<PrepMealCardProps> = ({ mealSelectionItem, calories, onDetailClick, onAddClick }: PrepMealCardProps) => {
   return (
     <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
-      <ListItemButton>
+      <ListItemButton onClick={() => onDetailClick(mealSelectionItem)}>
         <Box>
-          <Typography>{description}</Typography>
-          <Typography>{amount} {unit} | {calories} kcal</Typography>
+          <Typography>{mealSelectionItem.description}</Typography>
+          <Typography>{mealSelectionItem.servingSize} {mealSelectionItem.servingSizeUnit?.abbreviation} | {calories} kcal</Typography>
         </Box>
       </ListItemButton>
       <Box>
-        <IconButton><Add /></IconButton>
+        <IconButton onClick={() => onAddClick(mealSelectionItem)}><Add /></IconButton>
       </Box>
     </ListItem>
   )
