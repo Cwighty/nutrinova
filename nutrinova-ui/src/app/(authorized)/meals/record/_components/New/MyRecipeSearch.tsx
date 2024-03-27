@@ -62,9 +62,8 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
           type: "Food",
           servingSize: recipe.amount,
           servingSizeUnit: recipe.unit.description,
-          calories: 0
+          calories: recipe.nutrientSummaries.find((summary) => summary.name.includes("Energy"))?.amount || 0
         }
-        console.log(recipe.servingsSizeUnit)
         return PrepMealCard({ mealSelectionItem: preMealItem, onDetailClick: () => setSelectedMealItem(preMealItem), onAddClick: () => handleAddMeal(preMealItem) });
       })
       }

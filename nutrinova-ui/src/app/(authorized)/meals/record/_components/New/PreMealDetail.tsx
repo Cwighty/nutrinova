@@ -71,7 +71,7 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
       </Box>
       <Box sx={{ mt: 2 }}>
         <Typography variant="h5">{selectedMealItem.description}</Typography>
-        <Typography>Serving Size: {selectedMealItem.servingSize} {selectedMealItem.servingSizeUnit} | {selectedMealItem.calories} kcal</Typography>
+        <Typography>Serving Size: {selectedMealItem.servingSize} {selectedMealItem.servingSizeUnit} | {Math.round(selectedMealItem.calories)} kcal</Typography>
       </Box>
       <Grid container spacing={2} sx={{ mt: 2 }}>
         <Grid item xs={12} sm={6}>
