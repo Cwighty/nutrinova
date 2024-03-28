@@ -11,7 +11,7 @@ const RecordMealModal: React.FC<RecordMealModalProps> = ({ open, handleClose = u
     <>
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogContent sx={{ minHeight: 650 }}>
-          <RecordMeal />
+          <RecordMeal handleClose={handleClose} />
         </DialogContent>
       </Dialog>
     </>

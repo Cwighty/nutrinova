@@ -1,22 +1,49 @@
 import { Search } from "@mui/icons-material";
 import { Box, InputAdornment, Tab, Tabs, TextField } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { MyFoodSearch } from "./MyFoodSearch";
 import { SearchAll } from "./SearchAll";
 import { MyRecipeSearch } from "./MyRecipeSearch";
 import { useDebounce } from "@uidotdev/usehooks";
 import { PreMealDetail } from "./PreMealDetail";
 import { PrepMealItem } from "../../_models/preMealItem";
+import { useAddMealMutation } from "../../../mealHooks";
+import { RecordMealRequest } from "../../_models/recordMealRequest";
+import { PatientContext } from "@/components/providers/PatientProvider";
 
-export const RecordMeal = () => {
+export interface RecordMealProps {
+  handleClose?: () => void | undefined;
+}
+
+export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
   const [selectedMealItem, setSelectedMealItem] = useState<PrepMealItem | undefined>();
 
+  const selectedPatient = useContext(PatientContext).selectedPatient;
+
+  const addMealMutation = useAddMealMutation();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
+  };
+
+  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
+    const mealRequest: RecordMealRequest = {
+      amount: mealSelectionItem.servingSize,
+      mealSelectionType: mealSelectionItem.type,
+      patientId: selectedPatient?.id ?? "",
+      recordedAt: new Date(Date.now()),
+      selectedMealItemId: mealSelectionItem.id,
+      unitId: mealSelectionItem.servingSizeUnit!.id ?? 1,
+    };
+
+    addMealMutation.mutate(mealRequest, {
+      onSuccess: () => {
+        handleClose && handleClose();
+      },
+    });
   };
 
   return (
@@ -46,8 +73,8 @@ export const RecordMeal = () => {
             <Tab label="My Recipes" />
           </Tabs>
           {selectedTab === 0 && <SearchAll searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
-          {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
-          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
+          {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMeal(m)} />}
+          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMeal(m)} />}
         </>
       }
     </>

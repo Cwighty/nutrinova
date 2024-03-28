@@ -10,9 +10,10 @@ import { PrepMealItem } from "../../_models/preMealItem";
 interface MyRecipeSearchProps {
   searchKeyword: string;
   setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
+  addMeal: (selectedMealItem: PrepMealItem) => void;
 }
 
-export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, setSelectedMealItem }: MyRecipeSearchProps) => {
+export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, setSelectedMealItem, addMeal }: MyRecipeSearchProps) => {
 
   const router = useRouter();
   const options = ["Date Created", "Name", "Calories"];
@@ -39,9 +40,6 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
 
   const [sortBy, setSortBy] = useState<string>(options[0]);
 
-  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
-  };
-
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -64,7 +62,7 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
           servingSizeUnit: recipe.unit,
           calories: recipe.nutrientSummaries.find((summary) => summary.name.includes("Energy"))?.amount || 0
         }
-        return PrepMealCard({ mealSelectionItem: preMealItem, onDetailClick: () => setSelectedMealItem(preMealItem), onAddClick: () => handleAddMeal(preMealItem) });
+        return PrepMealCard({ mealSelectionItem: preMealItem, onDetailClick: () => setSelectedMealItem(preMealItem), onAddClick: () => addMeal(preMealItem) });
       })
       }
       {sortedData && sortedData.length === 0 &&
