@@ -15,6 +15,7 @@ import { PatientListItem } from "@/app/(public)/addpatients/_components/PatientL
 import { Add } from "@mui/icons-material";
 import { PatientEditModal } from "./_components/PatientEditModal";
 import toast from "react-hot-toast";
+import { AcceptDeclineModal } from "./_components/WarningModal";
 
 const PatientsPage = () => {
   const { patients } = useContext(PatientContext);
@@ -24,6 +25,7 @@ const PatientsPage = () => {
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openWarningModal, setOpenWarningModal] = useState(false);
   const [selectedEditPatient, setSelectedEditPatient] = useState<Patient | null>(null);
 
   const handleDelete = ({ id }: Patient) => {
@@ -41,6 +43,10 @@ const PatientsPage = () => {
 
   const togglePatientEdit = () => {
     setOpenEditModal(!openEditModal);
+  }
+
+  const toggleWarningModal = () => {
+    setOpenWarningModal(!openWarningModal);
   }
 
   const HandlePatientAdd = (patientInfo: PatientForm) => {
@@ -91,6 +97,17 @@ const PatientsPage = () => {
           submitFunction={HandlePatientAdd}
         />
 
+        {selectedEditPatient && <AcceptDeclineModal
+          openModal={openWarningModal}
+          decline={toggleWarningModal}
+          accept={() => {
+            handleDelete(selectedEditPatient);
+            setSelectedEditPatient(null);
+            togglePatientEdit();
+          }}
+          warningText="Are you sure you want to delete this patient? This action cannot be undone."
+        />}
+
         {selectedEditPatient && <PatientEditModal
           patient={selectedEditPatient}
           openModal={openEditModal}
@@ -114,7 +131,10 @@ const PatientsPage = () => {
                   age: patient.age,
                   name: `${patient.firstname} ${patient.lastname}`,
                 }}
-                handleDelete={() => handleDelete({ ...patient })}
+                handleDelete={() => {
+                  setSelectedEditPatient({ ...patient });
+                  toggleWarningModal();
+                }}
                 handleEdit={() => {
                   togglePatientEdit();
                   setSelectedEditPatient({ ...patient });
