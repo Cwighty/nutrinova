@@ -29,7 +29,7 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
     setSelectedTab(newValue);
   };
 
-  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
+  const handleAddMealFromSuggested = (mealSelectionItem: PrepMealItem) => {
     const mealRequest: RecordMealRequest = {
       amount: mealSelectionItem.servingSize,
       mealSelectionType: mealSelectionItem.type,
@@ -46,11 +46,19 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
     });
   };
 
+  const handleAddMealCustomized = (mealRequest: RecordMealRequest) => {
+    addMealMutation.mutate(mealRequest, {
+      onSuccess: () => {
+        handleClose && handleClose();
+      },
+    });
+  }
+
   return (
     <>
       {selectedMealItem &&
         <Box sx={{ my: "auto" }}>
-          <PreMealDetail selectedMealItem={selectedMealItem} setSelectedMealItem={setSelectedMealItem} />
+          <PreMealDetail selectedMealItem={selectedMealItem} setSelectedMealItem={setSelectedMealItem} addMeal={handleAddMealCustomized} />
         </Box>
       }
       {!selectedMealItem &&
@@ -73,8 +81,8 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
             <Tab label="My Recipes" />
           </Tabs>
           {selectedTab === 0 && <SearchAll searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} />}
-          {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMeal(m)} />}
-          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMeal(m)} />}
+          {selectedTab === 1 && <MyFoodSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMealFromSuggested(m)} />}
+          {selectedTab === 2 && <MyRecipeSearch searchKeyword={debouncedSearchKeyword} setSelectedMealItem={setSelectedMealItem} addMeal={(m) => handleAddMealFromSuggested(m)} />}
         </>
       }
     </>

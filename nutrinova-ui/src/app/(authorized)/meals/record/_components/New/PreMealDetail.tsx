@@ -1,26 +1,24 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useAddMealMutation } from "../../../mealHooks";
 import { UnitOption } from "@/app/(authorized)/food/_models/unitOption";
 import { RecordMealRequest } from "../../_models/recordMealRequest";
 import { AmountInput } from "@/components/forms/AmountInput";
 import { PatientContext } from "@/components/providers/PatientProvider";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useState, useContext, FormEvent } from "react";
+import { useState, useContext } from "react";
 import { ArrowBack } from "@mui/icons-material";
 import { PrepMealItem } from "../../_models/preMealItem";
 
 interface PreMealDetailProps {
   selectedMealItem: PrepMealItem;
   setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
+  addMeal: (selectedMealItem: RecordMealRequest) => void;
 }
 
-export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, setSelectedMealItem }: PreMealDetailProps) => {
+export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, setSelectedMealItem, addMeal }: PreMealDetailProps) => {
   const [amount, setAmount] = useState<number>(selectedMealItem.servingSize);
   const [unit, setUnit] = useState<UnitOption>(selectedMealItem.servingSizeUnit ?? ({} as UnitOption));
-  const [submitted, setSubmitted] = useState<boolean>(false);
   const [recordedAt, setRecordedAt] = useState<Date | null>(new Date(Date.now()));
-  const { mutate: addMeal } = useAddMealMutation();
   const patientContext = useContext(PatientContext);
 
   const patientName =
@@ -28,34 +26,18 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
     " " +
     patientContext.selectedPatient?.lastname;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmitted(true);
-    if (amount <= 0) {
-      return;
-    }
-    if (unit.description === "") {
-      return;
-    }
-    if (recordedAt) {
-      const recordMealRequest: RecordMealRequest = {
-        patientId: patientContext.selectedPatient?.id as string,
-        amount: amount,
-        recordedAt: recordedAt,
-        unitId: unit?.id ?? 0,
-        selectedMealItemId: selectedMealItem.id ?? "",
-        mealSelectionType: selectedMealItem.type,
-      };
-      addMeal(recordMealRequest, {
-        onSuccess: () => {
-          setAmount(0);
-          setUnit({ description: "" } as UnitOption);
-          setRecordedAt(new Date(Date.now()));
-          setSelectedMealItem(undefined);
-        },
-      });
-    }
-  };
+  const handleAddMeal = () => {
+    const recordMealRequest = {
+      amount,
+      mealSelectionType: selectedMealItem.type,
+      patientId: patientContext.selectedPatient?.id ?? "",
+      recordedAt: recordedAt ?? new Date(Date.now()),
+      selectedMealItemId: selectedMealItem.id,
+      unitId: unit.id ?? 1,
+    };
+    addMeal(recordMealRequest);
+  }
+
 
   return (
     <Box sx={{ mx: "auto" }}>
@@ -63,7 +45,7 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
         <Button onClick={() => setSelectedMealItem(undefined)} variant="text">
           <ArrowBack />
         </Button>
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" onClick={handleAddMeal}>
           Record Meal
         </Button>
       </Box>
@@ -87,7 +69,7 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
         </Grid>
       </Grid>
 
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box component="form" >
         <AmountInput
           amount={amount}
           setAmount={setAmount}
@@ -96,7 +78,6 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
           restrictToUnitCategory={
             selectedMealItem.servingSizeUnit?.category.description
           }
-          submitted={submitted}
         />
       </Box>
     </Box>

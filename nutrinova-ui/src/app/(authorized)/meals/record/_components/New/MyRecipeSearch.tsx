@@ -57,7 +57,7 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
         const preMealItem: PrepMealItem = {
           description: recipe.description,
           id: recipe.id,
-          type: "Food",
+          type: "Recipe",
           servingSize: recipe.amount,
           servingSizeUnit: recipe.unit,
           calories: recipe.nutrientSummaries.find((summary) => summary.name.includes("Energy"))?.amount || 0
