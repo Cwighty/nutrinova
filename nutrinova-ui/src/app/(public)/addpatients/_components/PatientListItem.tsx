@@ -16,11 +16,11 @@ export const PatientListItem = ({ patient, handleDelete, handleEdit }: PatientLi
     }}>
       <ListItem secondaryAction={
         (<div>
-          <IconButton onClick={() => handleDelete(patient)}>
+          <IconButton onClick={() => handleDelete(patient)} aria-label="Delete patient">
             <Delete />
           </IconButton>
           {handleEdit &&
-            <IconButton onClick={() => handleEdit()}>
+            <IconButton onClick={() => handleEdit()} aria-label="Edit patient">
               <Edit />
             </IconButton>
           }
