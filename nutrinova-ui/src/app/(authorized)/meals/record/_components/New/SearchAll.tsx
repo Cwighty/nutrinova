@@ -87,10 +87,10 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelected
             const mealItem: PrepMealItem = {
               description: food.description,
               id: food.id,
-              type: "Food",
-              servingSize: food.servingSize,
-              servingSizeUnit: units.find((unit) => unit.abbreviation.includes(food.servingSizeUnit)),
-              calories: 0
+              type: "USDAFood",
+              servingSize: food.servingSize == 0 ? 100 : food.servingSize,
+              servingSizeUnit: units.find((unit) => unit.abbreviation.includes(food.servingSizeUnit)) ?? units[0],
+              calories: food.foodNutrients.find((summary) => summary.nutrientName.includes("Energy"))?.value || 0
             }
             return <PrepMealCard key={food.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => handleAddMeal(mealItem)} />
           })
