@@ -19,8 +19,6 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
   const options = ["Date Created", "Name", "Calories"];
   const { data, isError, isLoading } = useGetAllRecipesQuery();
 
-  // const { data: units, isLoading: unitsLoading } = useGetUnitsQuery();
-
   const filteredData = data?.filter((recipe) => {
     return (
       recipe.description.toLowerCase().includes(searchKeyword.toLowerCase()) ||

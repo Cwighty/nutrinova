@@ -198,6 +198,33 @@ public class MealController : ControllerBase
           await context.MealNutrients.AddAsync(mealNutrient);
         }
       }
+      else if (recordMealRequest.MealSelectionType == MealSelectionItemType.ClonedMeal.ToString())
+      {
+        var clonedMeal = await context.Meals
+          .Include(m => m.MealNutrients)
+          .FirstOrDefaultAsync(m => m.Id == recordMealRequest.SelectedMealItemId);
+
+        if (clonedMeal is null)
+        {
+          return NotFound();
+        }
+
+        mealEntity.Description = clonedMeal.Description;
+        mealEntity.Ingredients = clonedMeal.Ingredients;
+
+        foreach (var mealNutrient in clonedMeal.MealNutrients)
+        {
+          var newMealNutrient = new MealNutrient
+          {
+            Id = Guid.NewGuid(),
+            MealId = mealEntity.Id,
+            NutrientId = mealNutrient.NutrientId,
+            Amount = mealNutrient.Amount * recordMealRequest.Amount / clonedMeal.Amount, // TODO: Handle unit conversion
+          };
+
+          await context.MealNutrients.AddAsync(newMealNutrient);
+        }
+      }
       else
       {
         return BadRequest();
