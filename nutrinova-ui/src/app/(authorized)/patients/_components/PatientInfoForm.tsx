@@ -27,16 +27,18 @@ const VisuallyHiddenInput = styled('input')({
 interface patientInfoFormProps {
   name: string;
   age: number;
+  optout?: boolean;
+  sex?: 'M' | 'F' | 'O';
   onSubmit: (patient: PatientForm) => void;
 }
 
-export const PatientInfoForm = ({ name, age = 1, onSubmit }: patientInfoFormProps) => {
+export const PatientInfoForm = ({ name, age = 1, onSubmit, optout, sex }: patientInfoFormProps) => {
 
   const patient: PatientForm = {
     name: name,
     age: age,
-    sex: 'M',
-    optOut: false,
+    sex: sex ?? "M",
+    optOut: optout ?? false,
     pff: ''
   }
 

@@ -9,16 +9,24 @@ import { PatientForm } from "./_components/PatientInfoForm";
 import {
   useCreatePatientMutation,
   useDeletePatientMutation,
+  useUpdatePatientMutation,
 } from "@/app/(authorized)/patients/patientHooks";
 import { PatientListItem } from "@/app/(public)/addpatients/_components/PatientListItem";
 import { Add } from "@mui/icons-material";
+import { PatientEditModal } from "./_components/PatientEditModal";
+import toast from "react-hot-toast";
+import { AcceptDeclineModal } from "./_components/WarningModal";
 
 const PatientsPage = () => {
   const { patients } = useContext(PatientContext);
   const createPatientMutation = useCreatePatientMutation();
   const deletePatientMutation = useDeletePatientMutation();
+  const editPatientMutation = useUpdatePatientMutation();
 
-  const [open, setOpen] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openWarningModal, setOpenWarningModal] = useState(false);
+  const [selectedEditPatient, setSelectedEditPatient] = useState<Patient | null>(null);
 
   const handleDelete = ({ id }: Patient) => {
     // TODO: how should we handle this?
@@ -29,9 +37,17 @@ const PatientsPage = () => {
     console.log("delete");
   };
 
-  const toggleOpen = () => {
-    setOpen(!open);
+  const togglePatientAdd = () => {
+    setOpenAddModal(!openAddModal);
   };
+
+  const togglePatientEdit = () => {
+    setOpenEditModal(!openEditModal);
+  }
+
+  const toggleWarningModal = () => {
+    setOpenWarningModal(!openWarningModal);
+  }
 
   const HandlePatientAdd = (patientInfo: PatientForm) => {
     const split_name = patientInfo.name.split(/(?<=^\S+)\s/);
@@ -48,15 +64,59 @@ const PatientsPage = () => {
     createPatientMutation.mutate(patient);
   };
 
+  const HandlePatientEdit = (patientInfo: PatientForm) => {
+    const split_name = patientInfo.name.split(/(?<=^\S+)\s/);
+
+    if (selectedEditPatient === null) {
+      toast.error("Please select a patient to edit");
+      return;
+    }
+
+    const patient: Patient = {
+      id: selectedEditPatient.id,
+      firstname: split_name[0],
+      lastname: split_name[1] ?? "",
+      customerId: selectedEditPatient.customerId,
+      age: patientInfo?.age,
+      sex: selectedEditPatient.sex,
+      hasPicture: !!patientInfo.pff,
+      base64image: patientInfo.pff,
+      optOut: patientInfo.optOut,
+    };
+
+    editPatientMutation.mutate(patient);
+  }
+
   return (
     <>
       <PageContainer title="Patients">
         <PatientInfoModal
           patientAge={0}
-          openModal={open}
-          onClose={toggleOpen}
+          openModal={openAddModal}
+          onClose={togglePatientAdd}
           submitFunction={HandlePatientAdd}
         />
+
+        {selectedEditPatient && <AcceptDeclineModal
+          openModal={openWarningModal}
+          decline={toggleWarningModal}
+          accept={() => {
+            handleDelete(selectedEditPatient);
+            setSelectedEditPatient(null);
+            togglePatientEdit();
+          }}
+          warningText="Are you sure you want to delete this patient? This action cannot be undone."
+        />}
+
+        {selectedEditPatient && <PatientEditModal
+          patient={selectedEditPatient}
+          openModal={openEditModal}
+          onClose={() => {
+            togglePatientEdit();
+            setSelectedEditPatient(null);
+          }}
+          submitFunction={HandlePatientEdit}
+        />}
 
         <Typography variant="h2">Patients</Typography>
 
@@ -71,7 +131,14 @@ const PatientsPage = () => {
                   age: patient.age,
                   name: `${patient.firstname} ${patient.lastname}`,
                 }}
-                handleDelete={() => handleDelete({ ...patient })}
+                handleDelete={() => {
+                  setSelectedEditPatient({ ...patient });
+                  toggleWarningModal();
+                }}
+                handleEdit={() => {
+                  togglePatientEdit();
+                  setSelectedEditPatient({ ...patient });
+                }}
               />
             ))}
           </List>
@@ -87,7 +154,7 @@ const PatientsPage = () => {
               xs={12}
               sx={{ display: "flex", justifyContent: "center", mt: 1 }}
             >
-              <Button startIcon={<Add />} onClick={toggleOpen}>
+              <Button startIcon={<Add />} onClick={togglePatientAdd}>
                 Add Patient
               </Button>
             </Grid>

@@ -143,3 +143,27 @@ export const useDeletePatientMutation = () => {
     },
   });
 };
+
+const UpdatePatient = async (patient: Patient) => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: 'client',
+  });
+  const response = await apiClient.put(`/patient/update-patient/`, patient);
+  return response.status === 200;
+}
+
+export const useUpdatePatientMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: UpdatePatient,
+    onSuccess: async () => {
+      toast.success('Patient updated successfully');
+      await queryClient.invalidateQueries({ queryKey: [patientKeys.all] });
+    },
+    onError: (error) => {
+      toast.error('Error updating patient: ' + error.message);
+      console.error(error);
+    },
+  });
+};
