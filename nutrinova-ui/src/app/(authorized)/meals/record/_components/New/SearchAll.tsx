@@ -3,16 +3,16 @@ import { Box, Typography } from "@mui/material";
 import { PrepMealCard } from "./PrepMealCard";
 import { FilterMenu } from "./FilterMenu";
 import { useState } from "react";
-import { SearchParameters } from "@/app/(authorized)/food/view/page";
 import { PrepMealItem } from "../../_models/preMealItem";
 import { useGetAllRecentMealsQuery } from "../../../mealHooks";
 
 interface SearchAllProps {
   searchKeyword: string;
   setSelectedMealItem: (selectedMealItem: PrepMealItem | undefined) => void;
+  addMeal: (selectedMealItem: PrepMealItem) => void;
 }
 
-export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelectedMealItem }: SearchAllProps) => {
+export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelectedMealItem, addMeal}: SearchAllProps) => {
   const filterParams = {
     foodName: searchKeyword,
     filterOption: "Foundation",
@@ -24,22 +24,9 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelected
 
   const { data: units, isLoading: unitsLoading } = useGetUnitsQuery();
 
-  const searchParameters: SearchParameters = {
-    nutrientSearchTerm: {
-      id: 0, description: "", preferredUnitId: 0,
-      categoryName: ""
-    },
-    foodSearchTerm: "",
-    comparisonOperator: "gt",
-    nutrientValue: 0,
-  };
-
   const { data: mealHistory, isLoading: mealHistoryLoading } = useGetAllRecentMealsQuery();
 
   const showHistory = (!usdaFoods || usdaFoods.length === 0 || searchKeyword === "");
-
-  const handleAddMeal = (mealSelectionItem: PrepMealItem) => {
-  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -61,7 +48,7 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelected
                   servingSizeUnit: meal.unit,
                   calories: meal.nutrientSummaries.find((summary) => summary.name.includes("Energy"))?.amount || 0
                 }
-                return <PrepMealCard key={meal.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => handleAddMeal(mealItem)} />
+                return <PrepMealCard key={meal.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => addMeal(mealItem)} />
               })
             }
             {
@@ -86,13 +73,14 @@ export const SearchAll: React.FC<SearchAllProps> = ({ searchKeyword, setSelected
           {usdaFoods && usdaFoods.slice(0, 5).map((food) => {
             const mealItem: PrepMealItem = {
               description: food.description,
-              id: food.id,
+              id: food.fdcId.toString(),
               type: "USDAFood",
+              fdcid: food.fdcId,
               servingSize: food.servingSize == 0 ? 100 : food.servingSize,
               servingSizeUnit: units.find((unit) => unit.abbreviation.includes(food.servingSizeUnit)) ?? units[0],
               calories: food.foodNutrients.find((summary) => summary.nutrientName.includes("Energy"))?.value || 0
             }
-            return <PrepMealCard key={food.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => handleAddMeal(mealItem)} />
+            return <PrepMealCard key={food.id} mealSelectionItem={mealItem} onDetailClick={(mealItem) => setSelectedMealItem(mealItem)} onAddClick={(mealItem) => addMeal(mealItem)} />
           })
           }
         </>
