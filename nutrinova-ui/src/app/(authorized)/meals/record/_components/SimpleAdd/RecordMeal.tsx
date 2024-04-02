@@ -50,24 +50,29 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
 
   const handleAddMealFromUSDA = (mealSelectionItem: PrepMealItem) => {
 
-    importFoodMutation.mutate(mealSelectionItem.fdcid!, {
-      onSuccess: (response: ImportFoodResponse) => {
-        const mealRequest: RecordMealRequest = {
-          amount: mealSelectionItem.servingSize,
-          mealSelectionType: "CustomFood",
-          patientId: selectedPatient?.id ?? "",
-          recordedAt: new Date(Date.now()),
-          selectedMealItemId: response.id.toString(),
-          unitId: mealSelectionItem.servingSizeUnit!.id ?? 1,
-        };
+    if (mealSelectionItem.mealSelectionType === "USDAFood") {
+      importFoodMutation.mutate(mealSelectionItem.fdcid!, {
+        onSuccess: (response: ImportFoodResponse) => {
+          const mealRequest: RecordMealRequest = {
+            amount: mealSelectionItem.servingSize,
+            mealSelectionType: "CustomFood",
+            patientId: selectedPatient?.id ?? "",
+            recordedAt: new Date(Date.now()),
+            selectedMealItemId: response.id.toString(),
+            unitId: mealSelectionItem.servingSizeUnit!.id ?? 1,
+          };
 
-        addMealMutation.mutate(mealRequest, {
-          onSuccess: () => {
-            handleClose && handleClose();
-          },
-        });
-      },
-    });
+          addMealMutation.mutate(mealRequest, {
+            onSuccess: () => {
+              handleClose && handleClose();
+            },
+          });
+        },
+      });
+    }
+    else {
+      handleAddMealFromSuggested(mealSelectionItem);
+    }
   };
 
   const handleAddMealCustomized = (mealRequest: RecordMealRequest) => {
