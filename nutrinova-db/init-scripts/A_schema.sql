@@ -50,18 +50,19 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  Food_Plan (
-    id UUID PRIMARY KEY,
-    fdcid integer null,
-    description TEXT not null, 
-    brand_name TEXT null,
-    ingredients TEXT null,
-    created_by uuid REFERENCES Customer(id),
-    created_at TIMESTAMP WITH TIME ZONE not null,
-    serving_size DECIMAL not null,
-    serving_size_unit serial REFERENCES Unit(id) not null,
-    note TEXT null
-  );
+    Food_Plan (
+        id UUID PRIMARY KEY,
+        fdcid integer null,
+        description TEXT not null, 
+        brand_name TEXT null,
+        ingredients TEXT null,
+        created_by uuid REFERENCES Customer(id),
+        created_at TIMESTAMP WITH TIME ZONE not null,
+        serving_size DECIMAL not null,
+        serving_size_unit serial REFERENCES Unit(id) not null,
+        imported BOOL not null,
+        note TEXT null
+        );
 
 CREATE TABLE 
   Food_Conversion_Sample (

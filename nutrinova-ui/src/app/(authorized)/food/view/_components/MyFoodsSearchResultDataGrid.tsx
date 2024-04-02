@@ -1,5 +1,5 @@
 "use client";
-import { FoodSearchResult } from "@/app/(authorized)/food/_models/foodSearchResult";
+import { FlattenedFood } from "@/app/(authorized)/food/_models/foodSearchResult";
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { Alert, Box, Skeleton } from "@mui/material";
 import { useGetAllFoodForUserQuery } from "@/app/(authorized)/food/foodHooks";
@@ -27,8 +27,8 @@ export const MyFoodsSearchResultDataGrid = ({
       field: "servingSize",
       headerName: "Serving Size",
       valueGetter: (params) => {
-        const row = params.row as FoodSearchResult;
-        return `${row.servingSize} ${row.servingSizeUnit}`;
+        const row = params.row as FlattenedFood;
+        return `${row?.servingSize ?? ""} ${row?.servingSizeUnit ?? ""}`;
       },
       width: 100,
     },
@@ -37,7 +37,7 @@ export const MyFoodsSearchResultDataGrid = ({
       headerName: "Calories",
       width: 100,
       valueGetter: (params) => {
-        const row = params.row as FoodSearchResult;
+        const row = params.row as FlattenedFood;
         return (
           row.foodNutrients.find(
             (fn) => fn.nutrientName === "Energy (Calories)",
@@ -48,7 +48,7 @@ export const MyFoodsSearchResultDataGrid = ({
   ];
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchQuery);
 
-  const handleOnRowClick = (row: GridRowParams<FoodSearchResult>) => {
+  const handleOnRowClick = (row: GridRowParams<FlattenedFood>) => {
     router.push(`/food/view/details?foodId=${row.row.id}`);
   };
 
@@ -67,7 +67,7 @@ export const MyFoodsSearchResultDataGrid = ({
       }}
     >
       <DataGrid
-        getRowId={(row: FoodSearchResult) => row.description}
+        getRowId={(row: FlattenedFood) => row?.description ?? ''}
         rows={data ?? []}
         columns={columns}
         autoHeight

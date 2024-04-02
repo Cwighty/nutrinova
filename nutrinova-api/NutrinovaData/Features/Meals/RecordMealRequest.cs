@@ -20,4 +20,5 @@ public enum MealSelectionItemType
   CustomFood,
   Recipe,
   USDAFood,
+  ClonedMeal,
 }

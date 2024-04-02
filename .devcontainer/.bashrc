@@ -142,3 +142,5 @@ commit() {
     git commit -m  "$*"; 
     git push;
 }
+
+export PATH="$PATH:/home/developer/.dotnet/tools"

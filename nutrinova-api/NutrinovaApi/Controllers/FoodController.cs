@@ -476,6 +476,7 @@ public class FoodController : ControllerBase
         CreatedAt = DateTime.UtcNow,
         ServingSize = deserializedResult.ServingSize == 0 ? 100 : deserializedResult.ServingSize,
         ServingSizeUnit = GetUnit(deserializedResult.ServingSizeUnit)?.Id ?? 1, // default to 100 grams
+        Imported = true,
         Note = deserializedResult.Ingredients,
       };
 

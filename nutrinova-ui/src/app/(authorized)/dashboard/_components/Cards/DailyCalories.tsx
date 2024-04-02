@@ -4,7 +4,7 @@ import GenericCard from './GenericCard';
 import { List, ListItem, ListItemText, Box, Typography, IconButton, LinearProgress } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
-import { useRouter } from 'next/navigation';
+import RecordMealModal from '@/app/(authorized)/meals/record/_components/SimpleAdd/RecordMealModal';
 
 // Define the interface for meal items
 interface MealItem {
@@ -19,8 +19,8 @@ interface Meal {
 }
 
 const DailyCaloriesCard: React.FC = () => {
-  const router = useRouter();
   const [meals, setClientMeals] = useState<Meal[]>([]);
+  const [isRecordedMealModalOpen, setIsRecordedMealModalOpen] = useState(false);
   // This data would come from props or state in a real app
   useEffect(() => {
     const fetchMeals = () => {
@@ -69,6 +69,10 @@ const DailyCaloriesCard: React.FC = () => {
     return colors[colorIndex];
   };
 
+  const handleClose = () => {
+    setIsRecordedMealModalOpen(false);
+  }
+
   return (
     <GenericCard title="Daily Calories">
       <List dense>
@@ -99,13 +103,13 @@ const DailyCaloriesCard: React.FC = () => {
         <Typography variant="body2">
           {remainingCalories} Kcal
         </Typography>
-        <IconButton color="primary" sx={{ ml: 1 }} onClick={() => router.push("/meals/record")}>
+        <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setIsRecordedMealModalOpen(true)}>
           <AddIcon />
         </IconButton>
       </Box>
+      <RecordMealModal open={isRecordedMealModalOpen} handleClose={handleClose} />
     </GenericCard >
   );
 };
 
 export default DailyCaloriesCard;
-

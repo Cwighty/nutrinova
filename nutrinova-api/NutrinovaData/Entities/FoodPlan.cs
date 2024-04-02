@@ -23,6 +23,8 @@ public partial class FoodPlan
 
   public int ServingSizeUnit { get; set; }
 
+  public bool Imported { get; set; }
+
   public string? Note { get; set; }
 
   public virtual Customer? CreatedByNavigation { get; set; }

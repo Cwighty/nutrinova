@@ -12,6 +12,8 @@ public class RecipeResponseModel
 
   public decimal Amount { get; set; }
 
+  public DateTime CreatedAt { get; set; }
+
   public int ServingSizeUnit { get; set; }
 
   public IEnumerable<NutrientSummary>? NutrientSummaries { get; set; }

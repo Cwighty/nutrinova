@@ -1,6 +1,6 @@
 "use client";
 import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
-import { FoodSearchResult } from "../../_models/foodSearchResult";
+import { FlattenedFood } from "../../_models/foodSearchResult";
 import { NoFoodRowsOverlay } from "@/components/data-grid/NoFoodRowsOverlay";
 import { useRouter } from "next/navigation";
 import { FoodSearchFilterParams } from "../../_models/foodSearchFilterParams";
@@ -27,7 +27,7 @@ export default function SearchResultDataGrid({
       field: "servingSize",
       headerName: "Serving Size",
       valueGetter: (params) => {
-        const row = params.row as FoodSearchResult;
+        const row = params.row as FlattenedFood;
         return `${row.servingSize} ${row.servingSizeUnit}`;
       },
       width: 100,
@@ -37,7 +37,7 @@ export default function SearchResultDataGrid({
       headerName: "Calories",
       width: 100,
       valueGetter: (params) => {
-        const row = params.row as FoodSearchResult;
+        const row = params.row as FlattenedFood;
         if (
           row.foodNutrients &&
           row.foodNutrients.map((x) => x.nutrientName).includes("Energy")
@@ -49,7 +49,7 @@ export default function SearchResultDataGrid({
       },
     },
   ];
-  const handleRowClick = (row: GridRowParams<FoodSearchResult>) => {
+  const handleRowClick = (row: GridRowParams<FlattenedFood>) => {
     router.push(
       `/food/search/detail?fdcid=${row.id}&foodName=${filterParams.foodName}&filterOption=${filterParams.filterOption}`,
     );
@@ -65,7 +65,7 @@ export default function SearchResultDataGrid({
       )}
       {rows && (
         <DataGrid
-          getRowId={(row: FoodSearchResult) => row.fdcId}
+          getRowId={(row: FlattenedFood) => row.fdcId}
           rows={rows}
           columns={columns}
           onRowClick={handleRowClick}

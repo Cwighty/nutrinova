@@ -73,6 +73,21 @@ export const useGetMealHistoryQuery = (startTime: Date, endTime: Date) => {
   });
 };
 
+
+export const useGetAllRecentMealsQuery = () => {
+  const monthAgo = new Date(new Date().setMonth(new Date().getMonth() - 1));
+  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+
+  // trim off the time part of the date so they don't invalidate the query
+  monthAgo.setHours(0, 0, 0, 0);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  return useQuery({
+    queryKey: [mealKeys.all, monthAgo, tomorrow],
+    queryFn: () => getMealHistory(monthAgo, tomorrow),
+  });
+}
+
 const getMealDetails = async (mealId: string): Promise<Meal> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
