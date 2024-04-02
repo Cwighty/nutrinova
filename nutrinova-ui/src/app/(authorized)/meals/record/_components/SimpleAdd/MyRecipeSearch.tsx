@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FilterMenu } from "./FilterMenu";
 import { useState } from "react";
@@ -50,8 +50,8 @@ export const MyRecipeSearch: React.FC<MyRecipeSearchProps> = ({ searchKeyword, s
         <FilterMenu options={options} selectedFilter={sortBy} onFilterChange={(filter) => setSortBy(filter)} />
       </Box>
       {isError && <div>Error loading recipes</div>}
-      {isLoading && <div>Loading...</div>}
-      {sortedData && sortedData.slice(0, 10).map((recipe) => {
+      {isLoading && <LinearProgress />}
+      {sortedData && sortedData.slice(0, 5).map((recipe) => {
         const preMealItem: PrepMealItem = {
           description: recipe.description,
           id: recipe.id,

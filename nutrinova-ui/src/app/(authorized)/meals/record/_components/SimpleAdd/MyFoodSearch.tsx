@@ -1,6 +1,6 @@
 "use client"
 import { Add } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FilterMenu } from "./FilterMenu";
@@ -18,7 +18,7 @@ interface MyFoodSearchProps {
 export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword, setSelectedMealItem, addMeal }: MyFoodSearchProps) => {
 
   const router = useRouter();
-  const options = ["Date Created", "Name", "Calories"];
+  const options = ["Date Created", "Name"];
   const [sortby, setSortby] = useState<string>("Date Created");
   const searchParameters: SearchParameters = {
     nutrientSearchTerm: {
@@ -54,8 +54,8 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword, setSe
         <FilterMenu options={options} selectedFilter={sortby} onFilterChange={(filter) => setSortby(filter)} />
       </Box>
       {isError && <div>Error loading recipes</div>}
-      {isLoading && <div>Loading...</div>}
-      {sortedData && sortedData.slice(0, 10).map((food) => {
+      {isLoading && <LinearProgress />}
+      {sortedData && sortedData.slice(0, 5).map((food) => {
         const preMealItem: PrepMealItem = {
           description: food.description,
           id: food.id,

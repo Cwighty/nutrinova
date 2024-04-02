@@ -1,5 +1,5 @@
 import { Search } from "@mui/icons-material";
-import { Box, InputAdornment, Tab, Tabs, TextField } from "@mui/material";
+import { Box, InputAdornment, LinearProgress, Tab, Tabs, TextField } from "@mui/material";
 import { useContext, useState } from "react";
 import { MyFoodSearch } from "./MyFoodSearch";
 import { SearchAll } from "./SearchAll";
@@ -96,6 +96,7 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
 
   return (
     <>
+      {(importFoodMutation.isPending || addMealMutation.isPending) && <LinearProgress />}
       {selectedMealItem &&
         <Box sx={{ my: "auto" }}>
           <PreMealDetail selectedMealItem={selectedMealItem} setSelectedMealItem={setSelectedMealItem} addMeal={handleAddMealCustomized} />
@@ -107,6 +108,7 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             placeholder="Search"
+            sx={{ width: "100%" }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

@@ -4,7 +4,7 @@ import GenericCard from './GenericCard';
 import { List, ListItem, ListItemText, Box, Typography, IconButton, LinearProgress } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
-import RecordMealModal from '@/app/(authorized)/meals/record/_components/New/RecordMealModal';
+import RecordMealModal from '@/app/(authorized)/meals/record/_components/SimpleAdd/RecordMealModal';
 
 // Define the interface for meal items
 interface MealItem {
