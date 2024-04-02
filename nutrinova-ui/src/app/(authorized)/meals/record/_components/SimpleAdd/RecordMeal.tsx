@@ -50,7 +50,7 @@ export const RecordMeal: React.FC<RecordMealProps> = ({ handleClose }) => {
 
   const handleAddMealFromUSDA = (mealSelectionItem: PrepMealItem) => {
 
-    if (mealSelectionItem.mealSelectionType === "USDAFood") {
+    if (mealSelectionItem.type === "USDAFood") {
       importFoodMutation.mutate(mealSelectionItem.fdcid!, {
         onSuccess: (response: ImportFoodResponse) => {
           const mealRequest: RecordMealRequest = {
