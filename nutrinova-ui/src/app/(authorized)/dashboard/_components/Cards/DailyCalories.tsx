@@ -44,8 +44,8 @@ const DailyCaloriesCard: React.FC = () => {
   const formatMealItems = (meals: Meal[]) => {
     return meals.map(meal => ({
       name: meal.description,
-      amount: meal.amount,
-      unit: meal.unit.abbreviation
+      amount: Math.round(meal.nutrientSummaries.find(nutrient => nutrient.name.includes("Energy"))?.amount ?? 0),
+      unit: 'kcal'
     }));
   }
 
@@ -56,7 +56,7 @@ const DailyCaloriesCard: React.FC = () => {
   ];
 
   // This would also be dynamic, calculated based on total calories - consumed calories
-  const remainingCalories = 635;
+  const remainingCalories = 2000;
 
   const renderMealItems = (items: MealItem[]) => {
     const visibleItems = items.slice(0, 4);
@@ -121,14 +121,11 @@ const DailyCaloriesCard: React.FC = () => {
     setIsRecordedMealModalOpen(false);
   }
 
-  const actionButton = (
-    <IconButton color="primary" onClick={() => setIsRecordedMealModalOpen(true)}>
-      <AddIcon />
-    </IconButton>
-  );
+
+  const totalCalories = meals.reduce((acc, meal) => acc + meal.items.reduce((acc, item) => acc + item.amount, 0), 0);
 
   return (
-    <GenericCard title="Eaten Today" actions={actionButton}>
+    <GenericCard title="Eaten Today" >
       {isMealDataLoading && <AtomSpinner />}
       {!isMealDataLoading && meals.length === 0 && <Typography variant="body2">No meals recorded today</Typography>}
       {!isMealDataLoading && meals.length > 0 && (
@@ -149,22 +146,22 @@ const DailyCaloriesCard: React.FC = () => {
               </ListItem>
             ))}
           </List>
-          {/* <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
             <Typography variant="body2" sx={{ flexGrow: 1, mr: 1 }}>
-              Remaining
+              Total Calories
             </Typography>
             <LinearProgress
               variant="determinate"
-              value={(remainingCalories / (remainingCalories + meals.reduce((acc, meal) => acc + meal.items.reduce((acc, item) => acc + item.amount, 0), 0))) * 100}
+              value={(totalCalories / (remainingCalories)) * 100}
               sx={{ flexGrow: 2, mr: 1 }}
             />
             <Typography variant="body2">
-              {remainingCalories} Kcal
+              {totalCalories} Kcal
             </Typography>
             <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setIsRecordedMealModalOpen(true)}>
               <AddIcon />
             </IconButton>
-          </Box> */}
+          </Box>
           <RecordMealModal open={isRecordedMealModalOpen} handleClose={handleClose} />
         </>
       )}
