@@ -5,25 +5,25 @@ namespace NutrinovaData.Entities;
 
 public partial class Patient
 {
-    public Guid Id { get; set; }
+  public Guid Id { get; set; }
 
-    public string Firstname { get; set; } = null!;
+  public string Firstname { get; set; } = null!;
 
-    public string? Lastname { get; set; }
+  public string? Lastname { get; set; }
 
-    public short Age { get; set; }
+  public short Age { get; set; }
 
-    public string? ProfilePictureName { get; set; }
+  public string? ProfilePictureName { get; set; }
 
-    public string? Sex { get; set; }
+  public string? Sex { get; set; }
 
-    public Guid? CustomerId { get; set; }
+  public Guid? CustomerId { get; set; }
 
-    public bool OptOutDetails { get; set; }
+  public bool OptOutDetails { get; set; }
 
-    public virtual Customer? Customer { get; set; }
+  public virtual Customer? Customer { get; set; }
 
-    public virtual ICollection<Meal> Meals { get; set; } = new List<Meal>();
+  public virtual ICollection<Meal> Meals { get; set; } = new List<Meal>();
 
-    public virtual ICollection<PatientNutrientDailyGoal> PatientNutrientDailyGoals { get; set; } = new List<PatientNutrientDailyGoal>();
+  public virtual ICollection<PatientNutrientDailyGoal> PatientNutrientDailyGoals { get; set; } = new List<PatientNutrientDailyGoal>();
 }
