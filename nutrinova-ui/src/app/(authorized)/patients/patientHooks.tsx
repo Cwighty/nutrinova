@@ -119,3 +119,51 @@ export const useGetCurrentPatientImageQuery = (patientId: string) => {
     queryFn: () => getPatientImage(patientId),
   });
 };
+
+const DeletePatient = async (patientId: string) => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: 'client',
+  });
+  const response = await apiClient.delete(`/patient/delete/${patientId}`);
+  return response.status === 200;
+}
+
+export const useDeletePatientMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: DeletePatient,
+    onSuccess: async () => {
+      toast.success('Patient deleted successfully');
+      await queryClient.invalidateQueries({ queryKey: [patientKeys.all] });
+    },
+    onError: (error) => {
+      toast.error('Error deleting patient: Must have one patient');
+      console.error(error);
+    },
+  });
+};
+
+const UpdatePatient = async (patient: Patient) => {
+  const apiClient = await createAuthenticatedAxiosInstanceFactory({
+    additionalHeaders: {},
+    origin: 'client',
+  });
+  const response = await apiClient.put(`/patient/update-patient/`, patient);
+  return response.status === 200;
+}
+
+export const useUpdatePatientMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: UpdatePatient,
+    onSuccess: async () => {
+      toast.success('Patient updated successfully');
+      await queryClient.invalidateQueries({ queryKey: [patientKeys.all] });
+    },
+    onError: (error) => {
+      toast.error('Error updating patient: ' + error.message);
+      console.error(error);
+    },
+  });
+};

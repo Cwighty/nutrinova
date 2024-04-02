@@ -22,11 +22,11 @@ export const ServingSizeUnitField = ({
   return (
     <>
       {/* Serving Size */}
-      <Grid item xs={12} md={6} mb={2} lg={12}>
+      <Grid item xs={12} md={6}>
         <TextField
           label="Serving Size"
           type="number"
-          value={formState.servingSize ?? ""}
+          value={formState.servingSize?.toString() ?? ""}
           onChange={(e) =>
             setFormState({
               ...formState,
@@ -40,30 +40,29 @@ export const ServingSizeUnitField = ({
           }
           helperText={
             !formValid &&
-              (formState.servingSize === undefined || formState.servingSize <= 0)
+            (formState.servingSize === undefined || formState.servingSize <= 0)
               ? "Please enter a valid serving size"
               : ""
           }
         />
       </Grid>
 
-      <Grid item xs={12} md={6} lg={12}>
+      <Grid item xs={12} md={6}>
         <SelectUnit
           value={formState.servingSizeUnit ? formState.servingSizeUnit : null}
           onSelectedUnitChange={(unit) =>
             setFormState({
               ...formState,
               servingSizeUnit: unit,
-              servingSizeUnitId: unit?.id ?? 0,
+              servingSizeUnitId: unit?.id ?? undefined,
             })
           }
           error={
             !formValid &&
-            (formState.servingSize === undefined ||
-              formState.servingSizeUnit === undefined)
+            (formState.servingSizeUnitId === undefined || formState.servingSizeUnitId < 0)
           }
           helperText={
-            !formValid && formState.servingSizeUnit === undefined
+            formState.servingSizeUnitId === undefined || formState.servingSizeUnitId < 0
               ? "A unit must be supplied with a serving size"
               : ""
           }
