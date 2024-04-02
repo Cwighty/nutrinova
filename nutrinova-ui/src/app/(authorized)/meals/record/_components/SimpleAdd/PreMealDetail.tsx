@@ -21,10 +21,7 @@ export const PreMealDetail: React.FC<PreMealDetailProps> = ({ selectedMealItem, 
   const [recordedAt, setRecordedAt] = useState<Date | null>(new Date(Date.now()));
   const patientContext = useContext(PatientContext);
 
-  const patientName =
-    patientContext.selectedPatient?.firstname +
-    " " +
-    patientContext.selectedPatient?.lastname;
+  const patientName = `${patientContext.selectedPatient?.firstname ?? ''} ${patientContext.selectedPatient?.lastname ?? ''}`.trim();
 
   const handleAddMeal = () => {
     const recordMealRequest = {

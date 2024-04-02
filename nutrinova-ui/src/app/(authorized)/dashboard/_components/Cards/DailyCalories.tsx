@@ -20,7 +20,7 @@ interface Meal {
 
 const DailyCaloriesCard: React.FC = () => {
   const [meals, setClientMeals] = useState<Meal[]>([]);
-  const [open, setOpen] = useState(false);
+  const [isRecordedMealModalOpen, setIsRecordedMealModalOpen] = useState(false);
   // This data would come from props or state in a real app
   useEffect(() => {
     const fetchMeals = () => {
@@ -70,7 +70,7 @@ const DailyCaloriesCard: React.FC = () => {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setIsRecordedMealModalOpen(false);
   }
 
   return (
@@ -103,11 +103,11 @@ const DailyCaloriesCard: React.FC = () => {
         <Typography variant="body2">
           {remainingCalories} Kcal
         </Typography>
-        <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setOpen(true)}>
+        <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setIsRecordedMealModalOpen(true)}>
           <AddIcon />
         </IconButton>
       </Box>
-      <RecordMealModal open={open} handleClose={handleClose} />
+      <RecordMealModal open={isRecordedMealModalOpen} handleClose={handleClose} />
     </GenericCard >
   );
 };

@@ -28,7 +28,7 @@ export const MyFoodsSearchResultDataGrid = ({
       headerName: "Serving Size",
       valueGetter: (params) => {
         const row = params.row as FlattenedFood;
-        return `${row.servingSize} ${row.servingSizeUnit}`;
+        return `${row?.servingSize ?? ""} ${row?.servingSizeUnit ?? ""}`;
       },
       width: 100,
     },
@@ -67,7 +67,7 @@ export const MyFoodsSearchResultDataGrid = ({
       }}
     >
       <DataGrid
-        getRowId={(row: FlattenedFood) => row.description}
+        getRowId={(row: FlattenedFood) => row?.description ?? ''}
         rows={data ?? []}
         columns={columns}
         autoHeight

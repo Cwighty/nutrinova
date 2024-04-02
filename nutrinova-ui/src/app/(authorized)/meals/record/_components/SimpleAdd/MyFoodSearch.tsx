@@ -32,7 +32,7 @@ export const MyFoodSearch: React.FC<MyFoodSearchProps> = ({ searchKeyword, setSe
   const { data, isError, isLoading } = useGetAllFoodForUserQuery(searchParameters);
   const sortedData = data?.sort((a, b) => {
     if (sortby === "Date Created") {
-      return a.createdAt?.getMilliseconds() - b.createdAt?.getMilliseconds();
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
     if (sortby === "Name") {
       return a.description.localeCompare(b.description);
