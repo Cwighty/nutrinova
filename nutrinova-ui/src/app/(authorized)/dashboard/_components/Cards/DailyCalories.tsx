@@ -1,49 +1,97 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import GenericCard from './GenericCard';
 import { List, ListItem, ListItemText, Box, Typography, IconButton, LinearProgress } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import RecordMealModal from '@/app/(authorized)/meals/record/_components/SimpleAdd/RecordMealModal';
+import { useGetTodaysMealsQuery } from '@/app/(authorized)/meals/mealHooks';
+import { Meal } from '@/app/(authorized)/meals/view/_models/viewMeal';
+import { AtomSpinner } from '@/components/atom-spinner/AtomSpinner';
+import { useRouter } from 'next/navigation';
 
 // Define the interface for meal items
 interface MealItem {
   name: string;
-  calories: number;
+  amount: number;
+  unit: string;
 }
 
 // Interface for the meal with a period of the day and an array of meal items
-interface Meal {
+interface FormattedMeal {
   period: 'Morning' | 'Afternoon' | 'Evening';
   items: MealItem[];
 }
 
 const DailyCaloriesCard: React.FC = () => {
-  const [meals, setClientMeals] = useState<Meal[]>([]);
-  const [isRecordedMealModalOpen, setIsRecordedMealModalOpen] = useState(false);
-  // This data would come from props or state in a real app
-  useEffect(() => {
-    const fetchMeals = () => {
-      // Fetch meals from an API or other asynchronous source
-      const meals: Meal[] = [
-        { period: 'Morning', items: [{ name: 'Oatmeal', calories: 150 }, { name: 'Orange Juice', calories: 90 }] },
-        { period: 'Afternoon', items: [{ name: 'Salad', calories: 240 }] },
-        { period: 'Evening', items: [{ name: 'Grilled Chicken', calories: 350 }, { name: 'Rice', calories: 200 }] },
-      ];
-      setClientMeals(meals);
-    };
+  const router = useRouter();
 
-    fetchMeals();
-  }, []);
+  const [isRecordedMealModalOpen, setIsRecordedMealModalOpen] = useState(false);
+
+  const { data: mealData, isLoading: isMealDataLoading } = useGetTodaysMealsQuery();
+
+  const getMealPeriod = (time: Date) => {
+    const hour = time.getHours();
+    if (hour < 12) {
+      return 'Morning';
+    } else if (hour < 18) {
+      return 'Afternoon';
+    } else {
+      return 'Evening';
+    }
+  };
+
+  const formatMealItems = (meals: Meal[]) => {
+    return meals.map(meal => ({
+      name: meal.description,
+      amount: Math.round(meal.nutrientSummaries.find(nutrient => nutrient.name.includes("Energy"))?.amount ?? 0),
+      unit: 'kcal'
+    }));
+  }
+
+  const meals: FormattedMeal[] = [
+    { period: 'Morning', items: formatMealItems(mealData?.filter(meal => getMealPeriod(new Date(meal.recordedAt)) === 'Morning') ?? []) },
+    { period: 'Afternoon', items: formatMealItems(mealData?.filter(meal => getMealPeriod(new Date(meal.recordedAt)) === 'Afternoon') ?? []) },
+    { period: 'Evening', items: formatMealItems(mealData?.filter(meal => getMealPeriod(new Date(meal.recordedAt)) === 'Evening') ?? []) },
+  ];
 
   // This would also be dynamic, calculated based on total calories - consumed calories
-  const remainingCalories = 635;
+  const remainingCalories = 2000;
 
-  const renderMealItems = (items: MealItem[]) => items.map((item, index) => (
-    <Typography key={index} variant="body2" sx={{ display: 'block' }}>
-      {item.name} - {item.calories} Kcal
-    </Typography>
-  ));
+  const renderMealItems = (items: MealItem[]) => {
+    const visibleItems = items.slice(0, 4);
+    const additionalItemsCount = items.length - visibleItems.length;
+
+    return (
+      <>
+        {items.length === 0 && <Typography variant="body2">No items recorded</Typography>}
+        {visibleItems.map((item, index) => (
+          <Box key={index} display={'flex'} justifyContent={'space-between'}>
+            <Typography
+              variant="body2"
+              sx={{
+                width: '70%',
+                display: 'block',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {item.name}
+            </Typography>
+            <Typography variant="body2">
+              {item.amount} {item.unit}
+            </Typography>
+          </Box>
+        ))}
+        {additionalItemsCount > 0 && (
+          <Typography variant="body2" sx={{ display: 'block' }}>
+            {additionalItemsCount} more items...
+          </Typography>
+        )}
+      </>
+    );
+  };
 
 
   const getBackgroundColor = (index: number) => {
@@ -73,41 +121,50 @@ const DailyCaloriesCard: React.FC = () => {
     setIsRecordedMealModalOpen(false);
   }
 
+
+  const totalCalories = meals.reduce((acc, meal) => acc + meal.items.reduce((acc, item) => acc + item.amount, 0), 0);
+
   return (
-    <GenericCard title="Daily Calories">
-      <List dense>
-        {meals.map((meal, index) => (
-          <ListItem key={index} sx={{ mb: 2, borderRadius: '16px', bgcolor: getBackgroundColor(index) }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <ListItemText
-                primary={meal.period}
-                secondary={renderMealItems(meal.items)}
-                primaryTypographyProps={{ fontWeight: 'medium' }}
-              />
-              <IconButton edge="end" size="small">
-                <ArrowForwardIosIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </ListItem>
-        ))}
-      </List>
-      <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-        <Typography variant="body2" sx={{ flexGrow: 1, mr: 1 }}>
-          Remaining
-        </Typography>
-        <LinearProgress
-          variant="determinate"
-          value={(remainingCalories / (remainingCalories + meals.reduce((acc, meal) => acc + meal.items.reduce((acc, item) => acc + item.calories, 0), 0))) * 100}
-          sx={{ flexGrow: 2, mr: 1 }}
-        />
-        <Typography variant="body2">
-          {remainingCalories} Kcal
-        </Typography>
-        <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setIsRecordedMealModalOpen(true)}>
-          <AddIcon />
-        </IconButton>
-      </Box>
-      <RecordMealModal open={isRecordedMealModalOpen} handleClose={handleClose} />
+    <GenericCard title="Eaten Today" >
+      {isMealDataLoading && <AtomSpinner />}
+      {!isMealDataLoading && meals.length === 0 && <Typography variant="body2">No meals recorded today</Typography>}
+      {!isMealDataLoading && meals.length > 0 && (
+        <>
+          <List dense>
+            {meals.map((meal, index) => (
+              <ListItem key={index} sx={{ mb: 2, borderRadius: '16px', bgcolor: getBackgroundColor(index) }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                  <ListItemText
+                    primary={meal.period}
+                    secondary={renderMealItems(meal.items)}
+                    primaryTypographyProps={{ fontWeight: 'medium' }}
+                  />
+                  <IconButton edge="end" size="small" onClick={() => router.push("/meals/view")}>
+                    <ArrowForwardIosIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            <Typography variant="body2" sx={{ flexGrow: 1, mr: 1 }}>
+              Total Calories
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={(totalCalories / (remainingCalories)) * 100}
+              sx={{ flexGrow: 2, mr: 1 }}
+            />
+            <Typography variant="body2">
+              {totalCalories} Kcal
+            </Typography>
+            <IconButton color="primary" sx={{ ml: 1 }} onClick={() => setIsRecordedMealModalOpen(true)}>
+              <AddIcon />
+            </IconButton>
+          </Box>
+          <RecordMealModal open={isRecordedMealModalOpen} handleClose={handleClose} />
+        </>
+      )}
     </GenericCard >
   );
 };

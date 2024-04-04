@@ -73,6 +73,17 @@ export const useGetMealHistoryQuery = (startTime: Date, endTime: Date) => {
   });
 };
 
+export const useGetTodaysMealsQuery = () => {
+  const todaysDate = new Date();
+  const today = new Date(todaysDate.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(todaysDate.setHours(23, 59, 59, 999));
+
+  return useQuery({
+      queryKey: [mealKeys.all, today, endOfDay],
+      queryFn: () => getMealHistory(today, endOfDay),
+    });
+};
+
 
 export const useGetAllRecentMealsQuery = () => {
   const monthAgo = new Date(new Date().setMonth(new Date().getMonth() - 1));
