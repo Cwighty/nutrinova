@@ -10,3 +10,4 @@ lint.Dockerfile
 .env.template
 .gitignore
 README.md
+**/docs 
