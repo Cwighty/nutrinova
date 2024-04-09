@@ -1,3 +1,5 @@
+// Copyright (c) Nutrinova
+
 /*
 using NutrinovaData.FlattenedResponseModels;
 
