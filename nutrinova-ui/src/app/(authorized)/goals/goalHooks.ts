@@ -4,6 +4,7 @@ import { NutrientGoalResponse } from "./_models/NutrientGoalResponse";
 import { NutrientGoalRequestModel } from "./_models/NutrientGoalRequestModel";
 import { AggregatePatientNutrientReport } from "./_models/AggregatePatientNutrientReport";
 import { NutrientRecommendationResponse } from "./_models/NutrientRecommendationResponseModel";
+import axios from "axios";
 
 const goalKeys = {
   all: ["goals"] as const,
@@ -143,15 +144,22 @@ export const useFetchGoalReport = (dates: {
 export const fetchNutrientRecommendation = async (
   patientId: string | undefined,
   nutrientId: number | undefined,
-): Promise<NutrientRecommendationResponse> => {
+): Promise<NutrientRecommendationResponse | null> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
   });
-  const response = await apiClient.get(
-    `/Goal/recommendation?patientId=${patientId}&nutrientId=${nutrientId}`,
-  );
-  return response.data as NutrientRecommendationResponse;
+  try {
+    const response = await apiClient.get(
+      `/Goal/recommendation?patientId=${patientId}&nutrientId=${nutrientId}`,
+    );
+    return response.data as NutrientRecommendationResponse;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 };
 
 export const useFetchNutrientRecommendation = (

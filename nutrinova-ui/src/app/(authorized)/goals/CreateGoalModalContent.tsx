@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { ChangeEvent, SyntheticEvent, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import {
   useGetNutrientsQuery,
   useGetUnitsQuery,
@@ -74,6 +74,10 @@ export const CreateGoalModalContent = ({
     isError: nutrientRecommendationIsError,
   } = useFetchNutrientRecommendation(patient?.id, selectedNutrient?.id);
 
+  const selectedUnit = unitOptions && unitOptions.find(
+    (unit) => unit.id === selectedNutrient?.preferredUnitId,
+  );
+
   const handleNutrientSelectionChange = (
     _: SyntheticEvent<Element, Event>,
     value: NutrientOption | null,
@@ -135,6 +139,15 @@ export const CreateGoalModalContent = ({
     setNewGoal({ ...newGoal, dailyUpperLimit: numericValue });
   };
 
+  useEffect(() => {
+    const recommendationDisabled = !nutrientOptionsLoading && nutrientRecommendation == null;
+    if (recommendationDisabled) {
+      setGoalType("custom");
+      setNewGoal({ ...newGoal, useRecommended: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nutrientOptionsLoading, nutrientRecommendation]);
+
   if (
     goalRangeType === "RDA (Lower Limit)" ||
     goalRangeType === "AI (Lower Limit"
@@ -166,6 +179,8 @@ export const CreateGoalModalContent = ({
       </Alert>
     );
   }
+
+  const recommendationDisabled = !nutrientOptionsLoading && nutrientRecommendation == null;
 
   return (
     <>
@@ -201,7 +216,7 @@ export const CreateGoalModalContent = ({
               Error loading nutrient recommendation, try again later
             </Alert>
           )}
-          {selectedNutrient && nutrientRecommendation && (
+          {selectedNutrient && !recommendationDisabled && nutrientRecommendation && (
             <>
               <Typography sx={{ mb: 1 }}>
                 {"The USDA recommended " +
@@ -220,6 +235,17 @@ export const CreateGoalModalContent = ({
               <Typography sx={{ mb: 1 }}>
                 Would you like to use the recommended amount as your target?
               </Typography>
+            </>
+          )}
+          {selectedNutrient && recommendationDisabled && (
+            <>
+              <Typography sx={{ mb: 1 }}>
+                There was no recommended found for this nutrient.
+              </Typography>
+            </>
+          )}
+          {selectedNutrient && (
+            <>
               <RadioGroup
                 name="goalType"
                 value={goalType}
@@ -231,6 +257,7 @@ export const CreateGoalModalContent = ({
                   value="recommended"
                   control={<Radio />}
                   label="Use Recommended"
+                  disabled={recommendationDisabled}
                 />
                 <FormControlLabel
                   value="custom"
@@ -238,7 +265,6 @@ export const CreateGoalModalContent = ({
                   label="Create Custom Goal"
                 />
               </RadioGroup>
-
               {goalType === "custom" && (
                 <>
                   <Autocomplete
@@ -254,34 +280,34 @@ export const CreateGoalModalContent = ({
                       />
                     )}
                   />
-                  {nutrientRecommendation.unit && (
+                  {selectedUnit && selectedNutrient && (
                     <>
                       {(goalRangeType === "RDA (Lower Limit)" ||
                         goalRangeType === "AI (Lower Limit)") && (
-                        <Box>
-                          <TextField
-                            label="Lower Limit"
-                            type="number"
-                            value={lowerLimit?.toString()}
-                            onChange={handleLowerLimitChange}
-                            InputProps={{
-                              endAdornment: nutrientRecommendation.unit,
-                            }}
-                            fullWidth
-                            sx={{ mb: 1 }}
-                          />
-                          {!validationMessage && (
-                            <Typography sx={{ mb: 1 }}>
-                              Goal achieved by consuming at least{" "}
-                              {lowerLimit +
-                                nutrientRecommendation.unit +
-                                " of " +
-                                nutrientRecommendation.nutrientName}
-                              .
-                            </Typography>
-                          )}
-                        </Box>
-                      )}
+                          <Box>
+                            <TextField
+                              label="Lower Limit"
+                              type="number"
+                              value={lowerLimit?.toString()}
+                              onChange={handleLowerLimitChange}
+                              InputProps={{
+                                endAdornment: selectedUnit.abbreviation
+                              }}
+                              fullWidth
+                              sx={{ mb: 1 }}
+                            />
+                            {!validationMessage && (
+                              <Typography sx={{ mb: 1 }}>
+                                Goal achieved by consuming at least{" "}
+                                {lowerLimit +
+                                  selectedUnit.description +
+                                  " of " +
+                                  selectedNutrient.description}
+                                .
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
                       {goalRangeType === "UL (Upper Limit)" && (
                         <Box>
                           <TextField
@@ -290,19 +316,19 @@ export const CreateGoalModalContent = ({
                             value={upperLimit?.toString()}
                             onChange={handleUpperLimitChange}
                             InputProps={{
-                              endAdornment: nutrientRecommendation.unit,
+                              endAdornment: selectedUnit.abbreviation,
                             }}
                             fullWidth
                             sx={{ mb: 1 }}
                           />
                           {!validationMessage && (
                             <Typography sx={{ mb: 1 }}>
-                              Goal achieved by consuming at most{" "}
-                              {upperLimit +
-                                nutrientRecommendation.unit +
+                              {"Goal achieved by consuming at most " +
+                                upperLimit +
+                                selectedUnit.description +
                                 " of " +
-                                nutrientRecommendation.nutrientName}
-                              .
+                                selectedNutrient.description +
+                                "."}
                             </Typography>
                           )}
                         </Box>
@@ -316,7 +342,7 @@ export const CreateGoalModalContent = ({
                               value={lowerLimit?.toString()}
                               onChange={handleLowerLimitChange}
                               InputProps={{
-                                endAdornment: nutrientRecommendation.unit,
+                                endAdornment: selectedUnit.abbreviation,
                               }}
                               sx={{ mb: 1 }}
                             />
@@ -325,7 +351,7 @@ export const CreateGoalModalContent = ({
                               value={upperLimit?.toString()}
                               onChange={handleUpperLimitChange}
                               InputProps={{
-                                endAdornment: nutrientRecommendation.unit,
+                                endAdornment: selectedUnit.abbreviation,
                               }}
                               sx={{ mb: 1 }}
                             />
@@ -334,12 +360,12 @@ export const CreateGoalModalContent = ({
                             <Typography sx={{ mb: 1 }}>
                               Goal achieved by consuming between{" "}
                               {lowerLimit +
-                                nutrientRecommendation.unit +
+                                selectedUnit.abbreviation +
                                 " and " +
                                 upperLimit +
-                                nutrientRecommendation.unit +
+                                selectedUnit.abbreviation +
                                 " of " +
-                                nutrientRecommendation.nutrientName}
+                                selectedNutrient.description}
                               .
                             </Typography>
                           )}
