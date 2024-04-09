@@ -23,4 +23,5 @@ jobs:
           cd ./NutrinovaData.UnitTests
           dotnet test
           cd ../NutrinovaApi.IntegrationTests
+          dotnet clean
           dotnet test
