@@ -54,5 +54,4 @@ public class FoodControllerTests : IClassFixture<NutrinovaApiWebApplicationFacto
     var response = await httpClient.PostAsJsonAsync("be/food", createFoodRequestModel);
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
   }
-
 }
