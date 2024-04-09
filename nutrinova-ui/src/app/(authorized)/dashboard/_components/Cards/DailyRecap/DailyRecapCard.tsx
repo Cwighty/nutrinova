@@ -21,7 +21,7 @@ const DailyRecapCard: React.FC = () => {
     { beginDate: today, endDate: today },
   );
 
-  const selectedPatientReport = report?.patientReports.find( (p) => p.patientId === patient?.id);
+  const selectedPatientReport = report?.patientReports.find((p) => p.patientId === patient?.id);
 
   const nutrients: NutrientGoalReportItem[] =
     selectedPatientReport?.days[0].nutrientGoalReportItems ?? [];
@@ -53,6 +53,7 @@ const DailyRecapCard: React.FC = () => {
     </>
   );
 
+
   return (
     <>
       <GenericCard title="Daily Recap" actions={actionButton}>
@@ -78,7 +79,7 @@ const DailyRecapCard: React.FC = () => {
                       key={nutrient.nutrientId}
                       nutrientName={nutrient.nutrientName}
                       consumedAmount={nutrient.consumedAmount}
-                      targetAmount={nutrient.customTargetAmount}
+                      targetAmount={(nutrient.customTargetAmount.lowerLimit || nutrient.customTargetAmount.maxLimit) ? nutrient.customTargetAmount : nutrient.recommendedTargetAmount}
                       status={nutrient.goalStatus}
                       unit={nutrient.preferredUnit?.abbreviation}
                     />

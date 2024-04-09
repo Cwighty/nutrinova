@@ -85,13 +85,17 @@ public class GoalController : ControllerBase
 
     var usdaNutrient = await context.UsdaNutrients.FirstOrDefaultAsync(n =>
         n.Name == nutrient.Description);
-    if (usdaNutrient is null)
+    if (usdaNutrient is null && request.UseRecommended)
     {
-      return NotFound("Nutrient Not Found");
+      return NotFound("USDA Nutrient Not Found");
     }
 
     var patientSex = patient.Sex == "F" ? Sex.Female : Sex.Male;
-    var nutrientRecommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age, patientSex);
+    UsdaRecommendedNutrientValue? nutrientRecommendation = null;
+    if (usdaNutrient != null)
+    {
+      nutrientRecommendation = await nutrientRecommendationService.GetNutrientRecommendationAsync(usdaNutrient, patient.Age, patientSex);
+    }
 
     var goal = new PatientNutrientDailyGoal
     {
@@ -100,8 +104,8 @@ public class GoalController : ControllerBase
       NutrientId = request.NutrientId,
       CustomLowerTarget = request.UseRecommended ? null : request.DailyLowerLimit,
       CustomUpperTarget = request.UseRecommended ? null : request.DailyUpperLimit,
-      RecommendedUpperTarget = nutrientRecommendation.RecommendedValueType == "UL" ? nutrientRecommendation.RecommendedValue : null,
-      RecommendedLowerTarget = (nutrientRecommendation.RecommendedValueType == "AI" | nutrientRecommendation.RecommendedValueType == "RDA") ? nutrientRecommendation.RecommendedValue : null,
+      RecommendedUpperTarget = nutrientRecommendation?.RecommendedValueType == "UL" ? nutrientRecommendation.RecommendedValue : null,
+      RecommendedLowerTarget = (nutrientRecommendation?.RecommendedValueType == "AI" | nutrientRecommendation?.RecommendedValueType == "RDA") ? nutrientRecommendation?.RecommendedValue : null,
     };
 
     context.PatientNutrientDailyGoals.Add(goal);
