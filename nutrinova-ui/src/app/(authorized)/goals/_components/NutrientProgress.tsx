@@ -42,7 +42,7 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
         <Grid item xs={12}>
           <Box display="flex" justifyContent="space-between">
             <Box fontWeight="bold" fontSize="2em" color={progressColor}>
-              {consumedAmount} {unit} {" "}
+              {parseFloat(consumedAmount.toFixed(2))} {unit} {" "}
               <Typography variant="caption" color="white" fontSize=".5em">
                 /{goalValue} {unit}
               </Typography>
