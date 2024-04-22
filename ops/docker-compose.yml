@@ -26,6 +26,7 @@ services:
       - KEYCLOAK_BASE_URL=${KEYCLOAK_BASE_URL}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - WEBSOCKET_URL=${WEBSOCKET_URL}
+      - TZ=America/Denver
     restart: always
 
   api:
@@ -38,6 +39,7 @@ services:
       - USDA_API_KEY=${USDA_API_KEY}
       - OpenAIServiceOptions__ApiKey=${OPENAI_API_KEY}
       - IMAGE_PATH=/app/images/
+      - TZ=America/Denver
     restart: always
     # This might not be needed but this is how I did file permissions for the ChatApp
     # If there is a better way to do this please let me know

@@ -23,6 +23,7 @@ services:
     user: developer
     environment:
       - NUTRINOVA_API_URL=http://api:5000
+      - TZ=America/Denver
     volumes:
       - ../:/app
     command: >
@@ -46,6 +47,7 @@ services:
       - DOTNET_URLS=http://+:5000 # by default Dotnet only listens to requests coming from 'localhost' from within the container, adding this will listen outside
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=nutrinovadb;Username=admin;Password=Pleasegivemecoke!
       - IMAGE_PATH=/images/
+      - TZ=America/Denver
     command: >
       sh -c "
         chown -R developer:developer /images
