@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  # check-lint:
-  #   uses: ./.github/workflows/ui_lint.yml
+  check-lint:
+    uses: ./.github/workflows/ui_lint.yml
 
   check-tests:
     needs: check-lint
