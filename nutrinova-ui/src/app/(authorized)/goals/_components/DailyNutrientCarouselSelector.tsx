@@ -52,6 +52,8 @@ export const DailyNutrientCarouselSelector: React.FC<DailyNutrientCarouselSelect
         onNutrientSelected(nutrients[0]);
       }
     }
+    else
+      setSelectedNutrient(null);
   }, [reportDataLoading, report, nutrients, onNutrientSelected, selectedNutrient]);
 
   const handleNutrientClick = (nutrient: NutrientGoalReportItem) => {
@@ -116,6 +118,7 @@ export const DailyNutrientCarouselSelector: React.FC<DailyNutrientCarouselSelect
                   >
                     <NutrientProgress
                       key={nutrient.nutrientId}
+                      id={nutrient.nutrientId}
                       nutrientName={nutrient.nutrientName}
                       consumedAmount={nutrient.consumedAmount}
                       targetAmount={nutrient.customTargetAmount}

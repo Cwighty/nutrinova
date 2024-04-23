@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Typography, Paper, LinearProgress, useTheme, Grid, } from '@mui/material';
+import { Box, Typography, Paper, LinearProgress, useTheme, Grid, IconButton, } from '@mui/material';
 import { NutrientProgressProps } from './NutrientProgressProps';
-import { CheckBoxOutlined, PendingOutlined, WarningAmberOutlined } from '@mui/icons-material';
+import { CheckBoxOutlined, DeleteOutline, PendingOutlined, WarningAmberOutlined } from '@mui/icons-material';
 import { NutrientGoalStatus } from '@/app/(authorized)/goals/_models/NutrientGoalReportItem';
+import { useDeleteGoal } from '../goalHooks';
 
 const NutrientProgress: React.FC<NutrientProgressProps> = ({
+  id,
   nutrientName,
   consumedAmount,
   targetAmount,
@@ -14,6 +16,8 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
   const theme = useTheme();
   const goalValue = targetAmount.lowerLimit ? targetAmount.lowerLimit : targetAmount.upperLimit;
   const percentage = Math.round(goalValue ? (consumedAmount / goalValue) * 100 : 0);
+
+  const deleteHook = useDeleteGoal(id);
 
   let progressColor;
   switch (status) {
@@ -35,9 +39,14 @@ const NutrientProgress: React.FC<NutrientProgressProps> = ({
     <Paper elevation={3} sx={{ padding: 1, backgroundColor: theme.palette.grey[900] }}>
       <Grid container spacing={0}>
         <Grid item xs={12}>
-          <Typography variant="caption" color="white" fontWeight="bold">
-            {nutrientName}
-          </Typography>
+          <Grid container justifyContent="flex-start">
+            <Typography variant="caption" color="white" fontWeight="bold">
+              {nutrientName}
+            </Typography>
+            <IconButton style={{ fontSize: '1px', margin: 0, padding: 0, marginLeft: 8 }} color="primary" onClick={() => deleteHook.mutate()}>
+              <DeleteOutline />
+            </IconButton>
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <Box display="flex" justifyContent="space-between">
