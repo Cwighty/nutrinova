@@ -120,7 +120,7 @@ public class GoalController : ControllerBase
   }
 
   [HttpDelete("{id}")]
-  public async Task<ActionResult> DeleteGoal(Guid id)
+  public async Task<ActionResult> DeleteGoal(int id)
   {
     var userObjectId = User.GetObjectIdFromClaims();
     var customer = await context.Customers.FirstOrDefaultAsync(c => c.Objectid == userObjectId);
@@ -132,7 +132,7 @@ public class GoalController : ControllerBase
     var patients = await context.Patients.Where(p => p.CustomerId == customer.Id).ToListAsync();
 
     var goal = await context
-        .PatientNutrientDailyGoals.Where(g => g.Id == id)
+        .PatientNutrientDailyGoals.Where(g => g.NutrientId == id)
         .FirstOrDefaultAsync();
     if (goal is null)
     {

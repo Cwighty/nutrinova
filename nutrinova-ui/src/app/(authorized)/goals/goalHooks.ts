@@ -46,7 +46,7 @@ const updateGoal = async ({
   return response.data as NutrientGoalResponse;
 };
 
-const deleteGoal = async (id: string): Promise<void> => {
+const deleteGoal = async (id: number): Promise<void> => {
   const apiClient = await createAuthenticatedAxiosInstanceFactory({
     additionalHeaders: {},
     origin: "client",
@@ -120,7 +120,7 @@ export const useUpdateGoal = (
   });
 };
 
-export const useDeleteGoal = (id: string) => {
+export const useDeleteGoal = (id: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => deleteGoal(id),

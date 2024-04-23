@@ -77,6 +77,7 @@ const DailyRecapCard: React.FC = () => {
                   <Box key={nutrient.nutrientId} sx={{ my: 1 }}>
                     <NutrientProgress
                       key={nutrient.nutrientId}
+                      id={nutrient.nutrientId}
                       nutrientName={nutrient.nutrientName}
                       consumedAmount={nutrient.consumedAmount}
                       targetAmount={(nutrient.customTargetAmount.lowerLimit || nutrient.customTargetAmount.maxLimit) ? nutrient.customTargetAmount : nutrient.recommendedTargetAmount}

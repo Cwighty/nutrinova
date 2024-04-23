@@ -5,6 +5,7 @@ import { GoalTargetAmount, NutrientGoalStatus } from "@/app/(authorized)/goals/_
 export type StatusType = 'In Progress' | 'Over' | 'Achieved';
 
 export interface NutrientProgressProps {
+  id: number;
   nutrientName: string;
   consumedAmount: number;
   targetAmount: GoalTargetAmount;
