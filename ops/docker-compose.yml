@@ -35,6 +35,7 @@ services:
     build:
       context: ../nutrinova-api/
     environment:
+      - DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
       - USDA_API_KEY=${USDA_API_KEY}
       - OpenAIServiceOptions__ApiKey=${OPENAI_API_KEY}
