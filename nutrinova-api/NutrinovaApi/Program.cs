@@ -28,7 +28,7 @@ public class Program
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
     builder.Configuration
-        .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: false);
+        .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: false)
         .AddEnvironmentVariables()
         .AddCommandLine(args)
         .Build();
