@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN NODE_ENV=development npm i
+RUN npm install 
 
 COPY . .
 
@@ -20,8 +20,8 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 777 nodejs
+RUN adduser --system --uid 777 nextjs
 
 COPY --from=builder /app/public ./public
 
