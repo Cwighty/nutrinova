@@ -23,6 +23,11 @@ Note: You may also be able to start up the project by running `docker compose up
 
 Keycloak is used for authentication. The first time you run the project you will need to set up a new realm and a new client.
 
+IMPORTANT: For keycloak to work correctly in development you need to add the following line to your hosts file (/etc/hosts on linux, C:\Windows\System32\drivers\etc\hosts on windows):
+```
+127.0.0.1 nutrinova-kc
+```
+
 1. Open a browser and navigate to `http://localhost:8080`
 2. Log in with the following credentials:
    - Username: `admin`
