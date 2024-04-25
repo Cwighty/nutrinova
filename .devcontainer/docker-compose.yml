@@ -1,4 +1,5 @@
-version: "3.9"
+include: ../keycloak/compose.yml
+
 services:
   editor:
     build: .
