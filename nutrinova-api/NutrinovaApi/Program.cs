@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DotNetEnv;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using NutrinovaData.Features.Chat;
 using NutrinovaData.Features.Nutrients;
@@ -29,6 +30,7 @@ public class Program
 
     builder.Configuration
         .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: false)
+        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
         .AddEnvironmentVariables()
         .AddCommandLine(args)
         .Build();
