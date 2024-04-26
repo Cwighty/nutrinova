@@ -24,6 +24,7 @@ Note: You may also be able to start up the project by running `docker compose up
 Keycloak is used for authentication. The first time you run the project you will need to set up a new realm and a new client.
 
 IMPORTANT: For keycloak to work correctly in development you need to add the following line to your hosts file (/etc/hosts on linux, C:\Windows\System32\drivers\etc\hosts on windows):
+
 ```
 127.0.0.1 nutrinova-kc
 ```
@@ -32,8 +33,8 @@ IMPORTANT: For keycloak to work correctly in development you need to add the fol
 2. Log in with the following credentials:
    - Username: `admin`
    - Password: `password`
-3. Click on `Add realm` and create a new realm
-4. Click on import and select the `realm-export.json` file in the keycloak folder at the root of the project
+3. Click on the drop down in the top left and click `Create Realm` and create a new realm
+4. When prompted to create realm click on import/browse and select the `realm-export.json` file in the keycloak folder at the root of the project
 5. You should now have a new realm called `nutrinova` and under clients a new client called `nutrinova-ui`
 
 ## Logging in
