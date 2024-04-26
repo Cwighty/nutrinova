@@ -1,0 +1,28 @@
+services:
+  nutrinova-kc:
+    container_name: nutrinova-kc
+    image: bitnami/keycloak:22
+    restart: always
+    environment:
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password
+      - KEYCLOAK_DATABASE_HOST=nutrinova-kc-db
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_USER=keycloak
+      - KEYCLOAK_DATABASE_PASSWORD=password
+      - KEYCLOAK_EXTRA_ARGS=--proxy edge
+    ports:
+      - 8080:8080
+
+  nutrinova-kc-db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=keycloak
+    volumes:
+      - nutrinova-kc-data:/var/lib/postgresql/data
+
+volumes:
+  nutrinova-kc-data:
