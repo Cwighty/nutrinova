@@ -22,9 +22,6 @@ public class Program
       Env.Load(".env.local");
     }
 
-    // Add services to the container.
-    builder.Services.AddKeycloakAuthentication(builder.Configuration);
-
     builder.Services.AddControllers().AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -34,6 +31,9 @@ public class Program
         .AddEnvironmentVariables()
         .AddCommandLine(args)
         .Build();
+
+    // Add services to the container.
+    builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();

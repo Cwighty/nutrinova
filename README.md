@@ -33,9 +33,19 @@ IMPORTANT: For keycloak to work correctly in development you need to add the fol
 2. Log in with the following credentials:
    - Username: `admin`
    - Password: `password`
-3. Click on the drop down in the top left and click `Create Realm` and create a new realm
-4. When prompted to create realm click on import/browse and select the `realm-export.json` file in the keycloak folder at the root of the project
-5. You should now have a new realm called `nutrinova` and under clients a new client called `nutrinova-ui`
+3. Click on the drop down in the top left and click `Create Realm` and create a new realm with the following name
+    - Name: `nutrinova`
+2. Create a new client with the following client ID
+    - Client ID: `nutrinova-ui`
+3. Don't touch anything on the next page in the client creation
+4. Add these to the Valid redirect urls on the next page
+    - `http://localhost:3000/api/auth/callback/oidc`
+    - `https://localhost:3000/api/auth/callback/oidc`
+5. That is all, don't touch anything else, this should work. You should now have a new realm called `nutrinova` and under clients a new client called `nutrinova-ui`
+
+### Turn on User Registration
+1. `Realm Settings` -> `Login`
+2. User Registration ON
 
 ## Logging in
 
