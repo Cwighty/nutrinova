@@ -34,16 +34,17 @@ IMPORTANT: For keycloak to work correctly in development you need to add the fol
    - Username: `admin`
    - Password: `password`
 3. Click on the drop down in the top left and click `Create Realm` and create a new realm with the following name
-    - Name: `nutrinova`
-2. Create a new client with the following client ID
-    - Client ID: `nutrinova-ui`
-3. Don't touch anything on the next page in the client creation
-4. Add these to the Valid redirect urls on the next page
-    - `http://localhost:3000/api/auth/callback/oidc`
-    - `https://localhost:3000/api/auth/callback/oidc`
-5. That is all, don't touch anything else, this should work. You should now have a new realm called `nutrinova` and under clients a new client called `nutrinova-ui`
+   - Name: `nutrinova`
+4. Create a new client with the following client ID
+   - Client ID: `nutrinova-ui`
+5. Don't touch anything on the next page in the client creation
+6. Add these to the Valid redirect urls on the next page
+   - `http://localhost:3000/api/auth/callback/oidc`
+   - `https://localhost:3000/api/auth/callback/oidc`
+7. That is all, don't touch anything else, this should work. You should now have a new realm called `nutrinova` and under clients a new client called `nutrinova-ui`
 
 ### Turn on User Registration
+
 1. `Realm Settings` -> `Login`
 2. User Registration ON
 
@@ -53,3 +54,10 @@ IMPORTANT: For keycloak to work correctly in development you need to add the fol
 2. Click on `Register`, this will navigate you to the Keycloak login page if everything is set up correctly
 3. Click on `Register` and create a new user
 4. You should be redirected back to the application and be logged in
+
+## Environment Variables
+
+For full functionality, you will need to create an `.env.local` file in the root of the NutrinovaApi (`nutrinova-api/NutrinovaApi/.env.local`) project with the following variables:
+
+- `USDA_API_KEY`: The API key for the USDA API for searching for food items
+- `OPENAI_API_KEY`: The API key for the OpenAI API for talking to the Nova Chatbot
